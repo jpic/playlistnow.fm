@@ -1,24 +1,53 @@
-{% extends "base.html" %}
-
 {% load i18n %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" >
+<head>
+    <title>{% block head_title_base %}{% if SITE_NAME %}{{ SITE_NAME }} : {% endif %}{% block head_title %}{% endblock %}{% endblock %}</title>
+	<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
+    
+    <link rel="stylesheet" href="{{ STATIC_URL }}local/screen.css" />
 
-{% block extra_head_base %}
-    <link rel="stylesheet" href="{{ STATIC_URL }}css/site_tabs.css" />
-    {% block extra_head %}{% endblock %}
-{% endblock %}
+    <!--[if lt IE 7]>
+    <style media="screen" type="text/css">
+    .col1 {
+	    width:100%;
+	}
+    </style>
+    <![endif]-->
+    
+    {% block extra_head_base %}
+        {% block extra_head %}{% endblock %}
+    {% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
 
-{% block logo_link_image %}<a href="{% url home %}"><img src="{{ STATIC_URL }}pinax/img/logo.png" alt="Pinax"/></a>{% endblock %}
 
-{% block login %}
-    {% include "_account_bar.html" %}
-{% endblock %}
-
-{% block footer %}
-<div class="legal">
-    {% trans "&copy; 2010 &lt;your company here&gt;" %}
-    - <a href="{% url about %}">{% trans "About" %}</a>
-    - <a href="{% url terms %}">{% trans "Terms of Service" %}</a>
-    - <a href="{% url privacy %}">{% trans "Privacy Policy" %}</a>
-    - <a href="{% url dmca %}">{% trans "DMCA Notice" %}</a>
+<div id="header">
+    I'm the header
 </div>
+<div class="colmask leftmenu">
+    <div class="colright">
+        <div class="col1wrap">
+            <div class="col1">
+                <!-- Column 2 start -->
+                I'm the contents
+				<!-- Column 2 end -->
+            </div>
+        </div>
+        <div class="col2">
+            <!-- Column 1 start -->
+            I'm the sidebar
+			<!-- Column 1 end -->
+        </div>
+    </div>
+</div>
+<div id="footer">
+i'm the footer
+</div>
+
+{% block extra_body_base %}
+    {% block extra_body %}{% endblock %}
 {% endblock %}
+
+</body>
+</html>
