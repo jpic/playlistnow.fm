@@ -1,0 +1,37 @@
+{% extends "playlist/base.html" %}
+{% load i18n %}
+
+{% block body %}
+<form action="" method="post">
+    {{ form.non_field_errors }}
+
+    {% csrf_token %}
+
+    {{ form.title.errors }}
+    {{ form.title.label_tag }}: {{ form.title }}
+
+    <br />
+
+    {{ form.tags.errors }}
+    {{ form.tags.label_tag }}: {{ form.tags }}
+
+    <br />
+
+    {{ form.category.errors }}
+    {{ form.category.label_tag }}:
+    <select name="category">
+    {% for category in form.playlist_categories %}
+        <optgroup label="{{ category }}">
+        {% for subcategory in category.children.all %}
+            <option value="{{ subcategory.pk }}">
+                {{ subcategory }}
+            </option>
+        {% endfor %}
+        </optgroup>
+    {% endfor %}
+    </select>
+
+    <input type="submit" value="{% trans "Create playlist" %}" />
+</form>
+
+{% endblock %}

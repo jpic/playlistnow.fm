@@ -25,12 +25,16 @@
 <div id="header">
     I'm the header
 </div>
+
+
+{% block body_outer %}
 <div class="colmask leftmenu">
     <div class="colright">
         <div class="col1wrap">
             <div class="col1">
                 <!-- Column 2 start -->
-                I'm the contents
+                {% block body %}
+                {% endblock %}
 				<!-- Column 2 end -->
             </div>
         </div>
@@ -41,6 +45,8 @@
         </div>
     </div>
 </div>
+{% endblock body_outer %}
+
 <div id="footer">
 i'm the footer
 </div>

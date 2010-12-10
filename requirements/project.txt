@@ -2,6 +2,7 @@
 # required by your project to run.
 
 --requirement=base.txt
-
+django-admin-tools
+-e svn+http://python-lastfm.googlecode.com/svn/trunk/#egg=lastfm
 # Put project-specific requirements here.
 # See http://pip-installer.org/requirement-format.html for more information.
