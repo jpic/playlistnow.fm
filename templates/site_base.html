@@ -14,7 +14,8 @@
 	}
     </style>
     <![endif]-->
-    
+
+    <link rel="stylesheet" href="{{ STATIC_URL }}jquery-ui-1.8.7/css/ui-lightness/jquery-ui-1.8.7.custom.css" />
     {% block extra_head_base %}
         {% block extra_head %}{% endblock %}
     {% endblock %}
@@ -51,6 +52,8 @@
 i'm the footer
 </div>
 
+<script src="{% block jquery_src %}{{ STATIC_URL }}jquery-ui-1.8.7/js/jquery-1.4.4.min.js{% endblock %}" type="text/javascript"></script>
+<script src="{% block jquery_ui_src %}{{ STATIC_URL }}jquery-ui-1.8.7/js/jquery-ui-1.8.7.custom.min.js{% endblock %}" type="text/javascript"></script>
 {% block extra_body_base %}
     {% block extra_body %}{% endblock %}
 {% endblock %}

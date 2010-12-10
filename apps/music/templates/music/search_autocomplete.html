@@ -1,0 +1,11 @@
+[
+{% for artist in artists %}
+    {% with artist.name|escapejs as artist_name %}
+    {
+        "id": "{{ artist_name }}", 
+        "label": "{{ artist_name }}", 
+        "value": "{{ artist_name }}",
+    },
+    {% endwith %}
+{% endfor %}
+]

@@ -4,20 +4,30 @@
 
 {% block body %}
 <form action="{% url music_search %}" method="get">
-    <input type="text" name="q" />
+    <input type="text" name="term" />
     <input type="submit" value="{% trans "Search" %}" />
 </form>
 
 {% if artists %}
 <ul>
     {% for artist in artists %}
-    {% if artist.streamable %}
     <li>
         {{ artist.name }}
     </li>
-    {% endif %}
     {% endfor %}
 </ul>
 {% endif %}
 
+{% endblock %}
+
+{% block extra_body %}
+<script type="text/javascript">
+$(document).ready(function() {
+    var autocomplete_input = $('input[type=text][name=term]');
+    autocomplete_input.autocomplete({
+        'source': '{% url music_search_autocomplete %}',
+        // 'source': ['aaa', 'aaaa', 'aaaaa'],
+    });
+});
+</script>
 {% endblock %}

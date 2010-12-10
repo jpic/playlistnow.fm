@@ -6,7 +6,14 @@ from django.core import urlresolvers
 from tagging.models import Tag
 
 class Artist(models.Model):
-    name = models.CharField(max_length=100, verbose_name=_(u'name'))
+    name = models.CharField(max_length=255, verbose_name=_(u'name'))
+    slug = models.CharField(max_length=255, verbose_name=_(u'slug'))
+    lastfm_listeners = models.IntegerField(null=True, blank=True)
+    lastfm_mbid = models.CharField(max_length=64, null=True, blank=True)
+    lastfm_url = models.URLField()
+
+    def __unicode__(self):
+        return self.name
 
 class Album(models.Model):
     artist = models.ForeignKey(Artist, verbose_name=_(u'artist'))

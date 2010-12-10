@@ -4,5 +4,6 @@
 --requirement=base.txt
 django-admin-tools
 -e svn+http://python-lastfm.googlecode.com/svn/trunk/#egg=lastfm
+gdata
 # Put project-specific requirements here.
 # See http://pip-installer.org/requirement-format.html for more information.
