@@ -7,4 +7,17 @@
     <input type="text" name="q" />
     <input type="submit" value="{% trans "Search" %}" />
 </form>
+
+{% if artists %}
+<ul>
+    {% for artist in artists %}
+    {% if artist.streamable %}
+    <li>
+        {{ artist.name }}
+    </li>
+    {% endif %}
+    {% endfor %}
+</ul>
+{% endif %}
+
 {% endblock %}
