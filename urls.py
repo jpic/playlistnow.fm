@@ -23,6 +23,7 @@ urlpatterns = patterns("",
 
     url(r'^admin_tools/', include('admin_tools.urls')),
     url(r'^playlist/', include('playlist.urls')),
+    url(r'^music/', include('music.urls')),
 )
 
 

@@ -1,0 +1,10 @@
+{% extends "music/base.html" %}
+
+{% load i18n %}
+
+{% block body %}
+<form action="{% url music_search %}" method="get">
+    <input type="text" name="q" />
+    <input type="submit" value="{% trans "Search" %}" />
+</form>
+{% endblock %}
