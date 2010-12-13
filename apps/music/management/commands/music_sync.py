@@ -1,11 +1,12 @@
 import logging
-
-import lastfm
+from lxml import etree
 
 from django.core.management.base import NoArgsCommand
+from django.conf import settings
 
 from music.models import *
-from music.views import get_lastfm_api
+
+etree.set_default_parser(etree.XMLParser(no_network=False))
 
 letters = [chr(i) for i in xrange(ord('a'), ord('z')+1)]
 letters = ['a']
@@ -16,46 +17,83 @@ class Command(NoArgsCommand):
     def handle_noargs(self, **options):
         logging.basicConfig(level=logging.DEBUG, format="%(message)s")
         logging.info("-" * 72)
-        api = get_lastfm_api()
 
         for letter in letters:
-            logging.debug("Loop for letter %s" % letter)
+            total_pages = None
 
-            page = 1
-            count = None
+            url = 'http://ws.audioscrobbler.com/2.0/?api_key=%s&method=%s&artist=%s&page=%s' % (
+                settings.LASTFM_API_KEY,
+                'artist.search',
+                letter,
+                1
+            )
 
-            while count == None or count > 30:
-                logging.debug("  Loop for page %s" % page)
-                
-                count = 0
-                page += 1
-                
-                artists = lastfm.Artist.search(api, letter, page=page)
-                
+            tree = etree.parse(url)
+            for item in tree.iter():
+                if not total_pages and 'totalResults' in item.tag:
+                    # +2 was required as of 2010-12-10
+                    total_pages = ( int(item.text) / 30 ) + 2
+
+            page = 1464
+            artist = {}
+            while page <= total_pages:
+                logging.info("Doing page %s of search term '%s'" % (page, letter))
+
+                url = 'http://ws.audioscrobbler.com/2.0/?api_key=%s&method=%s&artist=%s&page=%s' % (
+                    settings.LASTFM_API_KEY,
+                    'artist.search',
+                    letter,
+                    page
+                )
+
                 try:
-                    for artist in artists:
-                        self.save_artist(artist)
-                        count += 1
-                except lastfm.LastfmError:
-                    """
-                    An operationnal error is sometimes raised because the xml
-                    is "malformed", but iterating over the list again works in
-                    that case ...
-                    """
-                    for artist in artists:
-                        self.save_artist(artist)
-                        count += 1
-                
-                logging.debug("  Got %s" % count)
-    
-    def save_artist(self, artist):
-        if not artist.streamable:
-            return True
+                    tree = etree.parse(url)
+                except Exception:
+                    page += 1
+                    logging.warn("Broken page: %s" % url)
+                    continue
 
-        model = Artist()
-        model.name = artist.name
-        model.lastfm_listeners = artist.listeners
-        model.lastfm_mbid = artist.mbid
-        model.lastfm_url = artist.url
+                for item in tree.iter():
+                    if item.tag == 'name':
+                        # save the current artist and create a new one
+                        if artist:
+                            model, created = Artist.objects.get_or_create(name=artist['name'])
+                            model.lastfm_listeners = artist['lastfm_listeners']
+                            model.lastfm_mbid = artist['lastfm_mbid']
+                            model.save()
+                        
+                        artist = {
+                            'name': item.text
+                        }
+                    
+                    elif item.tag == 'streamable' and item.text == '0':
+                        # usually non streamable artist aren't interresting for
+                        # our database
+                        artist = None
+                        continue
 
-        model.save()
+                    elif item.tag == 'listeners' and not item.text:
+                        # usually artists with less than 100 aren't interresting
+                        # for our database
+                        artist = None
+                        continue
+
+                    elif item.tag == 'listeners':
+                        artist['lastfm_listeners'] = int(item.text)
+
+                    elif item.tag == 'mbid' and not item.text:
+                        # usually artists without uuid aren't interresting for 
+                        # our database
+                        artist = None
+                        continue
+
+                    elif item.tag == 'mbid':
+                        artist['lastfm_mbid'] = item.text
+
+                if artist:
+                    model, created = Artist.objects.get_or_create(name=artist['name'])
+                    model.lastfm_listeners = artist['lastfm_listeners']
+                    model.lastfm_mbid = artist['lastfm_mbid']
+                    model.save()
+
+                page += 1
