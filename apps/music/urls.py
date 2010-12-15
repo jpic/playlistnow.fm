@@ -34,3 +34,22 @@ urlpatterns = patterns('music.views',
         name='music_search_autocomplete'
     ),
 )
+
+urlpatterns += patterns ('',
+    url(
+        r'player/frame/$',
+        'django.views.generic.simple.direct_to_template',
+        {
+            'template': 'music/player_frame.html',
+        },
+        name='music_player_frame'
+    ),
+    url(
+        r'player/frameset/$',
+        'django.views.generic.simple.direct_to_template',
+        {
+            'template': 'music/player_frameset.html',
+        },
+        name='music_player_frameset'
+    ),
+)

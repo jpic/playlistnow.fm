@@ -132,7 +132,7 @@
 {% endblock body_outer %}
 
 <div id="footer">
-{% include 'player.html' %}
+{# include 'player.html' #}
 </div>
 
 <script src="{% block jquery_src %}{{ STATIC_URL }}jquery.min.js{% endblock %}" type="text/javascript"></script>
@@ -142,8 +142,10 @@
 {% endblock %}
  <script src="{{ STATIC_URL }}tipTip/jquery.tipTip.minified.js"></script>
     <script type="text/javascript">
+
 $(function(){
   $(".tiptip").tipTip();
-});</script>
+});
+</script>
 </body>
 </html>
