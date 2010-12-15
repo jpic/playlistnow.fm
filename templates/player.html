@@ -1,0 +1,56 @@
+<div id="player">
+<div id="player_content">
+	<div id="player_top">
+		<div id="player_mzname"><a href="#%21/song/Angus+%26+Julia+Stone/You%27re+The+One+That+I+Want" onclick="return xind(this.href)"><b>You're The One That I Want</b></a> &nbsp;&nbsp; <a href="#%21/artist/Angus+%26+Julia+Stone" onclick="return xind(this.href)">Angus &amp; Julia Stone</a> &nbsp;&nbsp; <a href="#%21/artist/Angus+%26+Julia+Stone" onclick="return xind(this.href)">Revolution</a> </div>
+		
+		<div id="right_action">
+				<div id="player_bottomsep"></div>
+				<a href="javascript:void(0);" class="fav tiptip" onclick="return use('iLikeThisSongFromPlayer', mzAr[nbMz], mzInf[nbMz]);" title="I Like" fade=[on]"></a>
+			
+				<a href="javascript:void(0);" class="add tiptip" onclick="use('addThisSongFromPlayer', mzAr[nbMz], mzInf[nbMz]);" title="Add this song" fade=[on]"></a>
+	
+										<a href="javascript:void(0);" class="share tiptip" onclick="return shareSongFromPlayer(mzAr[nbMz]);" title="Share"></a>
+				<div id="player_bottomsep"></div>
+
+						</div>
+
+
+	</div>
+	
+	<div id="player_bottom">
+	<ul>
+			<li><a href="javascript:void(0);" onclick="nbMz--; nbMz = getTrack(nbMz, mzAr, mzInf, true);" class="player_bttn_prev"></a></li>
+			<li><a style="background-image: url(images/player/player_bttn_play.png);" href="javascript:void(0);" onclick="playPause();" id="player_playpause_bttn" class="player_bttn_play"></a></li>
+			<li><a href="javascript:void(0);" onclick="nbMz++; nbMz = getTrack(nbMz, mzAr, mzInf, true);" class="player_bttn_forw"></a></li>
+			<li><a href="javascript:void(0);" onclick="ytplayer.stopVideo();" class="player_bttn_stop"></a></li>
+
+		</ul>
+<div id="player_bar">
+
+			<span id="videoCurrentTime">0:14</span>
+			<div id="player_bar_control" onclick="navSongBar(event);">
+				<div style="width: 60.9327px;" id="player_loading_bar"><div style="width: 39.5746px;" id="player_progress_bar"></div></div>
+			</div>
+			<span id="videoDuration">3:12</span>
+		</div>
+		<div id="player_flag"><a href="javascript:void(0);" onclick="return use('flagSong', mzAr[nbMz]);"><img src="images/remove.png" alt="" title=""></a></div>
+					<div id="player_bottomseparator"></div>
+		<ul>
+		
+			<li><a href="javascript:void(0);" class="player_bttn_mute" id="player_mute_bttn" onclick="playerMute = playerMuteStat(playerMute);" title="header=[] body=[Mute] fade=[on]"></a>
+			</li><li><a style="background-position: left top;" href="javascript:void(0);" class="player_bttn_sound" id="player_sound1" onmouseover="updateVolumeStatus(20);" onmouseout="updateVolumeStatus(ytplayer.getVolume());" onclick="playerVolume(20);"></a>
+			</li><li><a style="background-position: left top;" href="javascript:void(0);" class="player_bttn_sound" id="player_sound2" onmouseover="updateVolumeStatus(40);" onmouseout="updateVolumeStatus(ytplayer.getVolume());" onclick="playerVolume(40);"></a>
+			</li><li><a style="background-position: left top;" href="javascript:void(0);" class="player_bttn_sound" id="player_sound3" onmouseover="updateVolumeStatus(60);" onmouseout="updateVolumeStatus(ytplayer.getVolume());" onclick="playerVolume(60);"></a>
+			</li><li><a style="background-position: left bottom;" href="javascript:void(0);" class="player_bttn_sound" id="player_sound4" onmouseover="updateVolumeStatus(80);" onmouseout="updateVolumeStatus(ytplayer.getVolume());" onclick="playerVolume(80);"></a>
+			</li><li><a style="background-position: left bottom;" href="javascript:void(0);" class="player_bttn_sound" id="player_sound5" onmouseover="updateVolumeStatus(100);" onmouseout="updateVolumeStatus(ytplayer.getVolume());" onclick="playerVolume(100);"></a>
+			</li>
+			<div id="player_bottomseparator"></div>
+			<li><a style="background-position: left bottom;" href="javascript:void(0);" class="player_bttn_rand" id="player_rand_bttn" onclick="playerRand = playerRandStat(playerRand);" title="header=[] body=[Toggle Random Mode] fade=[on]"></a>
+
+			</li>
+			<li><a href="javascript:void(0);" class="player_bttn_repeat" id="player_rep_bttn" onclick="playerRepeat = playerRepeatStat(playerRepeat);" title="header=[] body=[Toggle Repeat Mode] fade=[on]"></a>
+			</li>
+			
+		</ul>	<div id="player_bottomseparator"></div>
+			</div>
+

@@ -6,8 +6,13 @@
 	<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
     
     <link rel="stylesheet" href="{{ STATIC_URL }}JSONSuggestBox/jsonSuggest.css" />
-    <link rel="stylesheet" href="{{ STATIC_URL }}local/screen.css" />
+    <link rel="stylesheet" href="{{ STATIC_URL }}local/reset.css" />
+     <link rel="stylesheet" href="{{ STATIC_URL }}local/screen.css" />
+ <link rel="stylesheet" href="{{ STATIC_URL }}local/prod.css" />
+<link rel="stylesheet" href="{{ STATIC_URL }}local/tipTip.css" />
 
+ 
+  
     <!--[if lt IE 7]>
     <style media="screen" type="text/css">
     .col1 {
@@ -19,12 +24,28 @@
     {% block extra_head_base %}
         {% block extra_head %}{% endblock %}
     {% endblock %}
+
+ 
 </head>
 <body class="{% block body_class %}{% endblock %}">
 
 
-<div id="header">
-    I'm the header
+<div id="topheader">
+   <h1><a href="/" id="playlistnow"><span>Playistnow</span></a></h1>
+<ul id="menu">
+<li id="topheader_search">
+    <a href="#" class="tiptip" title="Search songs or playlists"></a>
+</li>
+
+</ul>
+
+ <ul id="menu_right" class="right">
+ <li> <a class="button super violet" href="#"><span>Login</span></a></li>
+ <li> <a class="button super blue" href="#"><span>Become Member</span></a></li>
+ 
+</ul>
+
+
 </div>
 
 
@@ -40,16 +61,78 @@
             </div>
         </div>
         <div class="col2">
+      
             <!-- Column 1 start -->
-            I'm the sidebar
+           <div id="sidebar">
+
+<div class="container_inner_wrapper">
+    <div class="container_inner">
+    
+        <ul class="sidebar_list">
+
+            <li class="sidebar_general_playlist sidebar_info">
+                <a href="#">
+                    <span class="icon"></span>
+                    <span class="label">Playlists</span>
+                </a>
+            </li>
+
+            <li class="sidebar_favorites sidebar_info">
+                <a href="#">
+
+                    <span class="icon"></span>
+                    <span class="label">All Playlists</span>
+                </a>
+            </li>
+            <li class="sidebar_Topplaylists sidebar_info">
+                <a href="#">
+                    <span class="icon"></span>
+                    <span class="label">Top Playlists</span>
+
+                </a>
+            </li>
+            <li class="sidebar_Myplaylists sidebar_info">
+                
+                    <a class="upload">
+                
+                    <span class="icon"></span>
+                    <span class="label">My Playlists</span>
+                </a>
+            </li>
+
+            <li class="sidebar_Tinyplaylists sidebar_info">
+                <a href="#">
+                    <span class="icon"></span>
+                    <span class="label">Tiny Playlist</span>
+                </a>
+            </li>
+
+            <li class="sidebar_playing sidebar_info">
+
+                <a href="#">
+                    <span class="icon"></span>
+                    <span class="label">Now Playing</span>
+                </a>
+            </li>
+            
+        </ul>
+
+       <div class="divider"></div>
+       
+     </div>
+    </div>
+  
+    <div class="clear"></div>
+</div>
 			<!-- Column 1 end -->
+		
         </div>
     </div>
 </div>
 {% endblock body_outer %}
 
 <div id="footer">
-i'm the footer
+{% include 'player.html' %}
 </div>
 
 <script src="{% block jquery_src %}{{ STATIC_URL }}jquery.min.js{% endblock %}" type="text/javascript"></script>
@@ -57,6 +140,10 @@ i'm the footer
 {% block extra_body_base %}
     {% block extra_body %}{% endblock %}
 {% endblock %}
-
+ <script src="{{ STATIC_URL }}tipTip/jquery.tipTip.minified.js"></script>
+    <script type="text/javascript">
+$(function(){
+  $(".tiptip").tipTip();
+});</script>
 </body>
 </html>
