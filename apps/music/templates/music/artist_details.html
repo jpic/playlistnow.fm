@@ -1,0 +1,57 @@
+{% extends 'music/base.html' %}
+
+{% load i18n %}
+
+{% block extra_head %}
+<meta name="keywords" content="{% for tag in object.tags %}{{ tag }}{% endfor %}" />
+{% if object.description %}
+<meta name="description" content="{{ object.description|striptags }}" />
+{% else %}
+<meta name="description" content="{% trans "Read details of artist" %} {{ object.name }}" />
+{% endif %}
+{% endblock %}
+
+{% block head_title %}{% trans "Details of artist" %} {{ object.name }}{% endblock %}
+
+{% block body %}
+<h1>{{ object.name }}</h1>
+
+{% if object.image_large %}
+<img src="{{ object.image_large }}" alt="{{ object }}" />
+{% endif %}
+
+{% if object.description %}
+<p>
+{{ object.description|striptags }}
+</p>
+{% endif %}
+
+{% if object.top_tracks %}
+<h2>{% trans "top tracks" %}</h2>
+<ul>
+    {% for track in object.top_tracks %}
+    <li>
+        <a href="{{ track.get_absolute_url }}" title="{{ track.name }}">
+            <img src="{{ track.image_medium }}" alt="{{ track.name }}" />
+            {{ track.name }}
+        </a>
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+{% if object.similar %}
+<h2>{% trans "similar artists" %}</h2>
+<ul>
+    {% for artist in object.similar %}
+    <li>
+        <a href="{{ artist.get_absolute_url }}" title="{{ artist.name }}">
+            <img src="{{ artist.image_medium }}" alt="{{ artist.name }}" />
+            {{ artist.name }}
+        </a>
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+{% endblock %}

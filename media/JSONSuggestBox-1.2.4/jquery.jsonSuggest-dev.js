@@ -91,20 +91,20 @@
 	
 		return this.each(function() {
 			
-			function regexEscape(txt, omit) {
-				var specials = ['/', '.', '*', '+', '?', '|',
-								'(', ')', '[', ']', '{', '}', '\\'];
-				
-				if (omit) {
-					for (var i=0; i < specials.length; i++) {
-						if (specials[i] === omit) { specials.splice(i,1); }
-					}
-				}
-				
-				var escapePatt = new RegExp('(\\' + specials.join('|\\') + ')', 'g');
-				return txt.replace(escapePatt, '\\$1');
-			}
-			
+	function regexEscape(txt, omit) {
+        var specials = ['/', '.', '*', '+', '?', '|',
+                        '(', ')', '[', ']', '{', '}', '\\'];
+
+        if (omit) {
+            for (var i=0; i < specials.length; i++) {
+                if (specials[i] === omit) { specials.splice(i,1); }
+            }
+        }
+
+        var escapePatt = new RegExp('(\\' + specials.join('|\\') + ')', 'g');
+        return txt.replace(escapePatt, '\\$1');
+    }
+		
 			var obj = $(this),
 				wildCardPatt = new RegExp(regexEscape(settings.wildCard || ''),'g'),
 				results = $('<div />'),

@@ -98,7 +98,7 @@ img {
     clear:both;
     float:left;
     width:100%;			/* width of whole page */
-    overflow:hidden;	/* This chops off any overhanging divs */
+    /*overflow:hidden;	[> This chops off any overhanging divs <]*/
 }
 /* 2 column left menu settings */
 .leftmenu {
@@ -122,7 +122,7 @@ img {
     margin:0 15px 0 215px;
     position:relative;
     right:100%;
-    overflow:hidden;
+    /*overflow:hidden;*/
 }
 .leftmenu .col2 {
     float:left;

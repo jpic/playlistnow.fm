@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "tagging",
     "music",
     "playlist",
+    "django_extensions",
 ]
 
 ADMIN_TOOLS_MENU = 'menu.CustomMenu'
