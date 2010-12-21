@@ -14,20 +14,32 @@
 {% block head_title %}{% trans "Details of artist" %} {{ object.name }}{% endblock %}
 
 {% block body %}
-<h1>{{ object.name }}</h1>
+<h1 class="left">{{ object.name }} <span class="artist_rank">Ranked:</span></h1>
+
+ <ul id="tab_artist" class="tab_artist">
+ <li class="first"><a class="active" href="#">Oreview</a></li>
+            <li><a class="" href="#">Music</a></li>
+            <li><a class="" href="#">Fans</a></li>
+
+            <li><a class="" href="#">Similar Artists</a></li>
+            <li class="last"><a class="" href="#">Events</a></li>
+
+        </ul>
+ <div class="clear"></div>
 
 {% if object.image_large %}
-<img src="{{ object.image_large }}" alt="{{ object }}" />
+<img src="{{ object.image_large }}" alt="{{ object }}" class="avatar big left espace"/>
 {% endif %}
 
 {% if object.description %}
-<p>
+<p class="artist_descr">
 {{ object.description|striptags }}
 </p>
+<div class="clear"></div>
 {% endif %}
 
 {% if object.top_tracks %}
-<h2>{% trans "top tracks" %}</h2>
+<h2>{% trans "Top Tracks" %}</h2>
 <ul>
     {% for track in object.top_tracks %}
     <li>

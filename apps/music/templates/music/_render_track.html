@@ -1,0 +1,9 @@
+<li class="song_play song_info dd">
+<a class="hidden artist" href="{{ track.artist.get_absolute_url }}">{{ track.artist.name }}</a>
+<a class="hidden track" href="{{ track.get_absolute_url }}">{{ track.name }}</a>
+<a class="youtube_play" href="{{ youtube.link.0.href }}">
+<span class="number">1</span>
+             <span class="icon"></span>
+                    <span class="label">{{ track.name }}</span>
+</a>
+ </li>

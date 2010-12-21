@@ -1,6 +1,7 @@
 {% extends 'music/base.html' %}
 
 {% load i18n %}
+{% load music_tags %}
 
 {% block extra_head %}
 <meta name="keywords" content="{% for tag in object.tags %}{{ tag }}{% endfor %}" />
@@ -27,7 +28,7 @@
     title {{ entry.title.text }}
 </p>
 <p>
-    url <a href="{{ entry.link.0.href }}">{{ entry.link.0.href }}</a>
+    {% render_track object entry %}
 </p>
 {% endfor %}
 {% endif %}
