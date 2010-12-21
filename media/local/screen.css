@@ -27,11 +27,11 @@ body, #page_body {
     top: 41px;
     bottom: 72px;
     position: fixed;
-    width: 170px;
+    width: 184px;
 }
 #body {
     float: left;
-    margin-left: 170px;
+    margin-left: 184px;
     margin-bottom: 72px;
     margin-top: 41px;
     min-height: 100%;
