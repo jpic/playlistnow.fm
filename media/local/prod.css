@@ -82,7 +82,7 @@ input {border:1px solid #ccc;border-radius:4px;-moz-border-radius:4px;-webkit-bo
 
 
 /* Sidebar */
-#sidebar {}
+#sidebar { background:#DFD4D9 url(../images/side_bg.png) repeat-y top left; }
 
 #sidebar .container_inner_wrapper{position:absolute; bottom: 24px; top:0; height: auto; overflow: scrolly;}
 #sidebar .container_inner {width: 150px; margin: 10px 10px;}
