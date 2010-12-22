@@ -1,0 +1,13 @@
+<ul class="song_list">
+{% for track in tracks %}
+<li class="song_play song_info {% cycle "dd" "" %}">
+    <a style="display:none" class="hidden artist" href="{{ track.artist.get_absolute_url }}">{{ track.artist.name }}</a>
+    <a style="display:none" class="hidden track" href="{{ track.get_absolute_url }}">{{ track.name }}</a>
+    <a class="youtube_play" href="{{ track.youtube.0.link.0.href }}">
+        <span class="number">{{ forloop.counter }}</span>
+        <span class="icon"></span>
+        <span class="label">{{ track.name }}</span>
+    </a>
+</li>
+{% endfor %}
+</ul>

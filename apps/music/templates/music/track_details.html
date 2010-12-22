@@ -21,17 +21,7 @@
 <img src="{{ object.image_large }}" alt="{{ object }}" />
 {% endif %}
 
-{% if object.youtube %}
-<h2>youtube</h2>
-{% for entry in object.youtube %}
-<p>
-    title {{ entry.title.text }}
-</p>
-<p>
-    {% render_track object entry %}
-</p>
-{% endfor %}
-{% endif %}
+{% render_track object %}
 
 {% if object.artist %}
 <p>
@@ -47,16 +37,8 @@ Artist:
 {% endif %}
 
 {% if object.similar %}
-<ul>
-    {% for track in object.similar %}
-    <li>
-        <a href="{{ track.get_absolute_url }}" title="{{ track.name }}">
-            <img src="{{ track.image_medium }}" alt="{{ track.name }}" />
-            {{ track.name }}
-        </a>
-    </li>
-    {% endfor %}
-</ul>
+<h2>{% trans "similar tracks" %}</h2>
+{% render_tracks object.similar %}
 {% endif %}
 
 {% endblock %}

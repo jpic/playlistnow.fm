@@ -1,10 +1,13 @@
+import re, htmlentitydefs
+
 from django.db import models
 from django.db.models import signals
 from django.utils.translation import ugettext as _
 from django.core import urlresolvers
 from django.template import defaultfilters
 
-import re, htmlentitydefs
+import gdata.youtube
+import gdata.youtube.service
 
 ##
 # Removes HTML or XML character references and entities from a text string.
@@ -59,20 +62,57 @@ class MusicalEntity(models.Model):
     def __unicode__(self):
         return self.name
 
+    @property
+    def youtube(self):
+        if hasattr(self, '_youtube'):
+            return self._youtube
+
+        client = gdata.youtube.service.YouTubeService()
+        query = gdata.youtube.service.YouTubeVideoQuery()
+        
+        query.vq = self.get_term()
+        query.max_results = 1
+        query.start_index = 1
+        query.racy = 'exclude'
+        query.format = '5'
+        query.orderby = 'relevance'
+        #query.restriction = 'fr'
+        feed = client.YouTubeQuery(query)
+        
+        self._youtube = []
+        for entry in feed.entry:
+            self._youtube.append(entry)
+        return self._youtube
+
 class Artist(MusicalEntity):
     def get_type(self):
         return 'artist'
+
+    def get_term(self):
+        return self.name
 
 class Album(MusicalEntity):
     artist = models.ForeignKey(Artist, verbose_name=_(u'artist'))
     
     def get_type(self):
         return 'album'
-    
+   
+    def get_term(self):
+        return u'%s - %s' % (
+            self.artist.name,
+            self.name
+        )
+
 class Track(MusicalEntity):
     album = models.ForeignKey(Album, verbose_name=_(u'album'))
     artist = models.ForeignKey(Artist, verbose_name=_(u'artist'))
     
+    def get_term(self):
+        return u'%s - %s' % (
+            self.artist.name,
+            self.name
+        )
+
     def get_type(self):
         return 'track'
 

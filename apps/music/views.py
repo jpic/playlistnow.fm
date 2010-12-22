@@ -64,26 +64,6 @@ def music_track_details(request, name, artist, album=None,
     lastfm_get_info(context['object'])
     context['object'].similar = context['object'].similar[:5]
 
-    client = gdata.youtube.service.YouTubeService()
-    query = gdata.youtube.service.YouTubeVideoQuery()
-    
-    query.vq = "%s - %s" % (
-        context['object'].artist.name,
-        context['object'].name
-    )
-    query.max_results = 1
-    query.start_index = 1
-    query.racy = 'exclude'
-    query.format = '5'
-    query.orderby = 'relevance'
-    #query.restriction = 'fr'
-    feed = client.YouTubeQuery(query)
-    
-    context['object'].youtube = []
-    for entry in feed.entry:
-        context['object'].youtube.append(entry)
-    context['object'].youtube = context['object'].youtube[:1]
-
     context.update(extra_context or {})
     return shortcuts.render_to_response(template_name, context,
         context_instance=template.RequestContext(request))

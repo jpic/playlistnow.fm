@@ -1,6 +1,7 @@
 {% extends 'music/base.html' %}
 
 {% load i18n %}
+{% load music_tags %}
 
 {% block extra_head %}
 <meta name="keywords" content="{% for tag in object.tags %}{{ tag }}{% endfor %}" />
@@ -16,16 +17,25 @@
 {% block body %}
 <h1 class="left">{{ object.name }} <span class="artist_rank">Ranked:</span></h1>
 
- <ul id="tab_artist" class="tab_artist">
- <li class="first"><a class="active" href="#">Oreview</a></li>
-            <li><a class="" href="#">Music</a></li>
-            <li><a class="" href="#">Fans</a></li>
+<ul id="tab_artist" class="tab_artist tabs">
+    <li class="first tab">
+        {% trans "overview" %}
+    </li>
+    <li class="tab">
+        {% trans "music" %}
+    </li>
+    <li class="tab">
+        {% trans "fans" %}
+    </li>
+    <li class="tab">
+        {% trans "similar artists" %}
+    </li>
+    <li class="tab last">
+        {% trans "evens" %}
+    </li>
+</ul>
 
-            <li><a class="" href="#">Similar Artists</a></li>
-            <li class="last"><a class="" href="#">Events</a></li>
-
-        </ul>
- <div class="clear"></div>
+<div class="clear"></div>
 
 {% if object.image_large %}
 <img src="{{ object.image_large }}" alt="{{ object }}" class="avatar big left espace"/>
@@ -40,16 +50,7 @@
 
 {% if object.top_tracks %}
 <h2>{% trans "Top Tracks" %}</h2>
-<ul>
-    {% for track in object.top_tracks %}
-    <li>
-        <a href="{{ track.get_absolute_url }}" title="{{ track.name }}">
-            <img src="{{ track.image_medium }}" alt="{{ track.name }}" />
-            {{ track.name }}
-        </a>
-    </li>
-    {% endfor %}
-</ul>
+{% render_tracks object.top_tracks %}
 {% endif %}
 
 {% if object.similar %}
