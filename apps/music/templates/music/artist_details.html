@@ -67,6 +67,15 @@
     </ul>
 </div>
 
+<div class="tab tab_music">
+    {% for album in object.albums %}
+        <h2>{{ album.name }}</h2>
+        {% with album.tracks as tracks %}
+        {% render_tracks tracks %}
+        {% endwith %}
+    {% endfor %}
+</div>
+
 <div class="tab tab_similar_artists">
 test
 </div>

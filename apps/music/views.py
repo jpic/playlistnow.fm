@@ -34,7 +34,7 @@ def music_artist_details(request, name,
 
     name = name.replace('-', ' ')
     context['object'] = Artist(name=name)
-    lastfm_get_info(context['object'])
+    lastfm_get_info(context['object'], full=True)
     context['object'].top_tracks = context['object'].top_tracks[:5]
 
     context.update(extra_context or {})

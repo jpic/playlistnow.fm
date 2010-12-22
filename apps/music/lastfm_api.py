@@ -23,10 +23,14 @@ def lastfm_get_tree(method, **kwargs):
     )
     print url
 
-    tree = etree.parse(url)
-    return tree
+    try:
+        tree = etree.parse(url)
+        return tree
+    except IOError:
+        print "Did not work: "+url
+        return None
 
-def lastfm_get_info(entity):
+def lastfm_get_info(entity, full=False):
     if not entity.name:
         return False
 
