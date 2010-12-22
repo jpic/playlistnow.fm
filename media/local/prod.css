@@ -605,14 +605,14 @@ li.tab {
     font-size: 12px;
     line-height: 22px;
     margin: 0 10px;
+    cursor: pointer;
 }
 li.tab span { line-height: 22px }
-li.tab {
+li.tab.selected {
     color: #461b50;
     margin: 0;
     float: left;
     position: relative;
-    cursor: pointer;
     -webkit-border-top-left-radius: 4px;
     -webkit-border-top-right-radius: 4px;
     -moz-border-radius-topleft: 4px;

@@ -37,25 +37,23 @@
 
 <div class="clear"></div>
 
-<div class="tab tab_overview">
-    {% if object.image_large %}
-    <img src="{{ object.image_large }}" alt="{{ object }}" class="avatar big left espace"/>
-    {% endif %}
-    
-    {% if object.description %}
-    <p class="artist_descr">
-    {{ object.description|striptags }}
-    </p>
-    <div class="clear"></div>
-    {% endif %}
-    
+{% if object.image_large %}
+<img src="{{ object.image_large }}" alt="{{ object }}" class="avatar big left espace"/>
+{% endif %}
+
+{% if object.description %}
+<p class="artist_descr">
+{{ object.description|striptags }}
+</p>
+<div class="clear"></div>
+{% endif %}
+
+<div class="tab tab_overview">    
     {% if object.top_tracks %}
     <h2>{% trans "Top Tracks" %}</h2>
     {% render_tracks object.top_tracks %}
     {% endif %}
-</div>
 
-<div class="tab tab_similar_artists">
     <h2>{% trans "Similar Artists" %}</h2>
     <ul class="similar-artists">
         {% for artist in object.similar %}
@@ -67,6 +65,10 @@
         </li>
         {% endfor %}
     </ul>
+</div>
+
+<div class="tab tab_similar_artists">
+test
 </div>
 
 {% endblock %}
