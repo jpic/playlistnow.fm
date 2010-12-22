@@ -10,7 +10,7 @@ class PlaylistAddForm(forms.ModelForm):
 
     class Meta:
         fields = (
-            'title',
+            'name',
             'tags',
             'category',
         )
