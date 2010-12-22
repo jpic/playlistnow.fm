@@ -70,7 +70,7 @@ class MusicalEntity(models.Model):
         client = gdata.youtube.service.YouTubeService()
         query = gdata.youtube.service.YouTubeVideoQuery()
         
-        query.vq = self.get_term()
+        query.vq = self.get_term().encode('utf-8')
         query.max_results = 1
         query.start_index = 1
         query.racy = 'exclude'

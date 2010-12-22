@@ -13,6 +13,9 @@ def lastfm_get_api():
     return lastfm.Api(settings.LASTFM_API_KEY)
 
 def lastfm_get_tree(method, **kwargs):
+    for k, v in kwargs.items():
+        kwargs[k] = unicode(v).encode('utf-8')
+    
     url = 'http://ws.audioscrobbler.com/2.0/?api_key=%s&method=%s&%s' % (
         settings.LASTFM_API_KEY,
         method,
