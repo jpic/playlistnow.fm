@@ -6,7 +6,7 @@
 {% block extra_head %}
 <meta name="keywords" content="{% for tag in object.tags %}{{ tag }}{% endfor %}" />
 {% if object.description %}
-<meta name="description" content="{{ object.description|striptags }}" />
+<meta name="description" content="{{ object.description|striptags|safe }}" />
 {% else %}
 <meta name="description" content="{% trans "Read details of track" %} {{ object.name }} {% trans "by" %} {{ object.artist.name }}" />
 {% endif %}
@@ -33,7 +33,7 @@ Artist:
 {% endif %}
 
 {% if object.description %}
-<p>{{ object.description|striptags }}</p>
+<p>{{ object.description|striptags|safe }}</p>
 {% endif %}
 
 {% if object.similar %}
