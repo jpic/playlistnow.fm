@@ -224,14 +224,13 @@ border-bottom-color: #ebebeb;
 
 line-height: 22px}
 /* Artistes Tabs */
-#tab_artist {float: right; padding-right: 10px; margin-right: 15px; height: 24px;border-bottom:1px solid #ddd;overflow-x: hidden;overflow-y: hidden;text-shadow: #ffffff;}
-#tab_artist li {display:inline; margin:0; padding:0; line-height: 22px;}
-#tab_artist li a{float:left; display:block; color: #999; font-size: 12px; line-height: 22px; margin: 0 10px;}
-#tab_artist li a span{line-height: 22px;}
-#tab_artist li a.active{color: #461b50;margin:0;float:left;position:relative;cursor:pointer;-webkit-border-top-left-radius:4px;-webkit-border-top-right-radius:4px;-moz-border-radius-topleft:4px;-moz-border-radius-topright:4px;border-top-left-radius:4px;border-top-right-radius:4px;border-top:1px solid #ddd;border-left:1px solid #ddd;border-right:1px solid #ddd;border-bottom:1px solid #fff;text-decoration: none;cursor: pointer;overflow:hidden;font-weight: bold;display: block;padding:0 10px;}
-#tab_artist li a:hover{color:#461b50;}
+ul.tabs {float: right; padding-right: 10px; margin-right: 15px; height: 24px;border-bottom:1px solid #ddd;overflow-x: hidden;overflow-y: hidden;text-shadow: #ffffff;}
+li.tab {display:inline; margin:0; padding:0; line-height: 22px;}
+li.tab {float:left; display:block; color: #999; font-size: 12px; line-height: 22px; margin: 0 10px;}
+li.tab span{line-height: 22px;}
+li.tab {color: #461b50;margin:0;float:left;position:relative;cursor:pointer;-webkit-border-top-left-radius:4px;-webkit-border-top-right-radius:4px;-moz-border-radius-topleft:4px;-moz-border-radius-topright:4px;border-top-left-radius:4px;border-top-right-radius:4px;border-top:1px solid #ddd;border-left:1px solid #ddd;border-right:1px solid #ddd;border-bottom:1px solid #fff;text-decoration: none;cursor: pointer;overflow:hidden;font-weight: bold;display: block;padding:0 10px;}
+li.tab:hover{color:#461b50;}.artiste_actions {padding:8px 10px;background:#f4f4f4;-webkit-box-shadow:0 1px 0 #fff;-moz-box-shadow:0 1px 0 #fff;border-radius:4px;-moz-border-radius:4px;-webkit-border-radius:4px;clear:both;display:block;margin:10px 0px 15px;height:28px;}
 
-.artiste_actions {padding:8px 10px;background:#f4f4f4;-webkit-box-shadow:0 1px 0 #fff;-moz-box-shadow:0 1px 0 #fff;border-radius:4px;-moz-border-radius:4px;-webkit-border-radius:4px;clear:both;display:block;margin:10px 0px 15px;height:28px;}
 .artiste_actions .buttons{float:right;font-size:0;}
 
 /* Player  */	

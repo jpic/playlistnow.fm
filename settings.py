@@ -12,14 +12,14 @@ PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 PINAX_THEME = "default"
 
 DEBUG = True
-TEMPLATE_DEBUG = DEBUG
+TEMPLATE_DEBUG = False
 
 # tells Pinax to serve media through the staticfiles app.
 SERVE_MEDIA = DEBUG
 
 INTERNAL_IPS = [
     "127.0.0.1",
-    '',
+    #'',
 ]
 
 ADMINS = [

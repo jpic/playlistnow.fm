@@ -25,6 +25,9 @@
         {% block extra_head %}{% endblock %}
     {% endblock %}
 
+    <style type="text/css">
+        div.tab {display:none;}
+    </style>
 </head>
 <body class="{% block body_class %}{% endblock %}">
 
@@ -205,6 +208,17 @@ $(document).ready(function() {
     $('.player_bttn_mute').click(function() {
         player.mute();
     });
+    $('ul.tabs li.tab').live('click', function() {
+        var tab = $(this).attr('class').match(/tab_[^ ]*/);
+        if ($('div.'+tab).css('display') == 'none') {
+            $('div.tab').hide();
+            $('div.'+tab).show();
+            $('li.tab').removeClass('selected');
+            $('li.'+tab).addClass('selected');
+        }
+    });
+    $('li.tab:first').addClass('selected');
+    $('div.tab:first').fadeIn();
 });
 
 </script>

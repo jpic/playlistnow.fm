@@ -6,7 +6,7 @@ body, #page_body {
     width:100%;
     font-size:90%;
 }
-.hidden, div.hidden { display: none; }
+.hidden, a.hidden, div.hidden { display: none; }
 
 #player {
     bottom: 0;
