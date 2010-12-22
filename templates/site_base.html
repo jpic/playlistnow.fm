@@ -155,6 +155,11 @@ swfobject.embedSWF("http://www.youtube.com/apiplayer?enablejsapi=1&playerapiid=y
 </script>
 
 <script type="text/javascript">
+function postPageLoad() {
+    $('li.tab:first').addClass('selected');
+    $('div.tab:first').fadeIn();
+}
+
 $(document).ready(function() {
     $('a:not(".youtube_play")').live('click', function(e) {
         e.preventDefault();
@@ -165,6 +170,7 @@ $(document).ready(function() {
             dataType: 'html',
             success: function(html, textStatus, request) {
                 $('#page_body').html(html);
+                postPageLoad();
             },
         });
     });
@@ -217,8 +223,8 @@ $(document).ready(function() {
             $('li.'+tab).addClass('selected');
         }
     });
-    $('li.tab:first').addClass('selected');
-    $('div.tab:first').fadeIn();
+
+    postPageLoad();
 });
 
 </script>
