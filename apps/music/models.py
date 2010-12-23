@@ -56,7 +56,7 @@ class MusicalEntity(models.Model):
 
     def lastfm_get_tree(self, method):
         kwargs = {
-            'autocorrect': 0,
+            'autocorrect': 1,
             self.get_type(): unicode(self).encode('utf-8'),
         }
 
