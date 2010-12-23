@@ -39,48 +39,8 @@
 {% endblock %}
 
 {% block extra_body %}
-<script src="{{ STATIC_URL }}JSONSuggestBox/jquery.jsonSuggest-dev.js" type="text/javascript"></script>
-
 <div id="csrf_token" style="display:none">
 {% csrf_token %}
 </div>
 
-<script type="text/javascript">
-var autocompleteData = [];
-var autocompleteRequest;
-var autocompleteSettings = {
-    minCharacters: 1,
-    maxResults: undefined,
-    wildCard: "",
-    caseSensitive: false,
-    notCharacter: "!",
-    maxHeight: 350,
-    highlightMatches: false,
-    onSelect: function(item) {
-        window.location.href = item['url'];
-    },
-    ajaxResults: true,
-    width: undefined
-
-};
-
-$('input#term').jsonSuggest(function() {
-    if( autocompleteRequest ) {
-        autocompleteRequest.abort();
-    }
-
-    autocompleteRequest = $.ajax({
-        url: '{% url music_search_autocomplete %}?term='+$('input#term').val(),
-        dataType: 'json',
-        success: function(data) {
-            autocompleteData = data;
-            autocompleteRequest = false;
-        },
-        async: false,
-    });
-
-    return autocompleteData;
-}, autocompleteSettings);
-
-</script>
 {% endblock %}
