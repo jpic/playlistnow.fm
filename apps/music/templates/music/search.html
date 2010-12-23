@@ -11,10 +11,26 @@
 </form>
 
 {% if artists %}
+<h2>{% trans "artists matching" %} '{{ request.GET.term }}'</h2>
 <ul>
     {% for artist in artists %}
     <li>
+        <a href="{{ artist.get_absolute_url }}" title="{% trans "details for artist" %} {{ artist }}">
         {{ artist.name }}
+        </a>
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+{% if tracks %}
+<h2>{% trans "tracks matching" %} '{{ request.GET.term }}'</h2>
+<ul>
+    {% for track in tracks %}
+    <li>
+        <a href="{{ track.get_absolute_url }}" title="{% trans "details for track" %} {{ track }}">
+            {{ track.name }}
+        </a>
     </li>
     {% endfor %}
 </ul>

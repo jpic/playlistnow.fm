@@ -26,6 +26,7 @@ class MusicalEntity(models.Model):
         self.images = {}
         self.tracks = []
         self.events = []
+        self.matches = []
         super(MusicalEntity, self).__init__(*args, **kwargs)
 
     class Meta:
@@ -95,6 +96,15 @@ class MusicalEntity(models.Model):
             self.tags.append(element.text)
 
         return tree
+
+    def lastfm_search(self):
+        klass = self.__class__
+        tree = self.lastfm_get_tree(self.get_type() + '.search')
+
+        for element in tree.findall('results/%smatches/%s' % (self.get_type(), self.get_type() )):
+            match = klass(name=element.find('name').text)
+            match.lastfm_get_info(element)
+            self.matches.append(match)
 
 class Artist(MusicalEntity):
     def get_type(self):
@@ -206,6 +216,16 @@ class Track(MusicalEntity):
         return urlresolvers.reverse('music_track_details', args=(
             artist, defaultfilters.slugify(self.name)
         ))
+
+    def lastfm_search(self):
+        klass = self.__class__
+        tree = self.lastfm_get_tree(self.get_type() + '.search')
+
+        for element in tree.findall('results/%smatches/%s' % (self.get_type(), self.get_type() )):
+            match = klass(name=element.find('name').text, 
+                artist=Artist(name=element.find('artist').text))
+            match.lastfm_get_info(element)
+            self.matches.append(match)
 
 #signals.pre_save.connect(resync, sender=Track)
 #signals.pre_save.connect(resync, sender=Artist)
