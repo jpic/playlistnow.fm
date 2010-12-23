@@ -258,7 +258,6 @@ function postPageLoad() {
         
             return autocompleteData;
         }, autocompleteSettings);
-
     }
 
     if ($('form').length) {
@@ -269,11 +268,13 @@ function postPageLoad() {
                 url: $(this).attr('action'),
                 dataType: 'html',
                 data: $(this).serialize(),
-                type: 'POST',
+                type: $(this).attr('method'),
                 beforeSend: function(req) {
                     $('#body').fadeOut();
                 },
                 success: function(html, textStatus, request) {
+                    $('#body').fadeOut();
+                    $('#ajaxload').fadeOut();
                     $('#page_body').html(html);
                     $('#body').fadeIn();
                     postPageLoad();
