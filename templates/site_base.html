@@ -197,6 +197,8 @@ function onYouTubePlayerStateChange() {
 }
 function onYouTubePlayerReady() {
     player = document.getElementById("myytplayer");
+    player.addEventListener('onStateChange', onYouTubePlayerStateChange);
+    setInterval(updatePlayerInfo, 250);
 }
 </script>
 <div id="ytapiplayer" style="display:none">
@@ -309,12 +311,6 @@ $(document).ready(function() {
         $('.player_bttn_play').hide();
         $('.player_bttn_pause').show();
         $('.sidebar_Playing a').attr('href', track.attr('href'));
-
-        if ($('#player').css('display') == 'none') {
-            player.addEventListener('onStateChange', onYouTubePlayerStateChange);
-            setInterval(updatePlayerInfo, 250);
-            $('#player').show();
-        }
     });
     $('.player_bttn_stop').click(function() { 
         player.stopVideo(); 
