@@ -12,7 +12,6 @@ from django.utils import simplejson
 import gdata.youtube
 import gdata.youtube.service
 
-from lastfm_api import *
 from models import *
 #from forms import *
 
@@ -28,14 +27,24 @@ def return_json(data=None):
         mimetype='application/json'
     )
 
-def music_artist_details(request, name,
+def music_artist_details(request, name, tab='overview',
     template_name='music/artist_details.html', extra_context=None):
-    context = {}
+    context = {
+        'tab': tab,
+    }
 
     name = name.replace('-', ' ')
     context['object'] = Artist(name=name)
-    lastfm_get_info(context['object'], full=True)
-    context['object'].top_tracks = context['object'].top_tracks[:5]
+    context['object'].lastfm_get_info()
+
+    if tab == 'music':
+        context['object'].lastfm_get_tracks()
+    elif tab == 'similar':
+        context['object'].lastfm_get_similar()
+    elif tab == 'events':
+        context['object'].lastfm_get_events()
+    elif tab == 'overview':
+        context['object'].lastfm_get_tracks(5)
 
     context.update(extra_context or {})
     return shortcuts.render_to_response(template_name, context,
@@ -46,7 +55,6 @@ def music_album_details(request, name,
     context = {}
 
     context['object'] = Album(name=name)
-    lastfm_get_info(context['object'])
 
     context.update(extra_context or {})
     return shortcuts.render_to_response(template_name, context,

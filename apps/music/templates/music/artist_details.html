@@ -17,28 +17,38 @@
 {% block body %}
 <h1 class="left">{{ object.name }} <span class="artist_rank">Ranked:</span></h1>
 
-<ul id="tab_artist" class="tab_artist tabs">
-    <li class="first tab tab_overview">
+<ul id="tab_artist" class="tab_artist fake_tabs">
+    <li class="tab first {% if tab == 'overview' %}selected{% endif %}">
+        <a class="" href="{% url music_artist_details_tab object|slugify 'overview' %}">
         {% trans "overview" %}
+        </a>
     </li>
-    <li class="tab tab_music">
+    <li class="tab {% if tab == 'music' %}selected{% endif %}">
+        <a class="" href="{% url music_artist_details_tab object|slugify 'music' %}">
         {% trans "music" %}
+        </a>
     </li>
-    <li class="tab tab_fans">
+    <li class="tab {% if tab == 'fans' %}selected{% endif %}">
+        <a class="" href="{% url music_artist_details_tab object|slugify 'fans' %}">
         {% trans "fans" %}
+        </a>
     </li>
-    <li class="tab tab_similar_artists">
+    <li class="tab {% if tab == 'similar' %}selected{% endif %}">
+        <a class="" href="{% url music_artist_details_tab object|slugify 'similar' %}">
         {% trans "similar artists" %}
+        </a>
     </li>
-    <li class="tab last tab_events">
+    <li class="tab last {% if tab == 'events' %}selected{% endif %}">
+        <a class="" href="{% url music_artist_details_tab object|slugify 'events' %}">
         {% trans "events" %}
+        </a>
     </li>
 </ul>
 
 <div class="clear"></div>
 
-{% if object.image_large %}
-<img src="{{ object.image_large }}" alt="{{ object }}" class="avatar big left espace"/>
+{% if object.images.large %}
+<img src="{{ object.images.large }}" alt="{{ object }}" class="avatar big left espace"/>
 {% endif %}
 
 {% if object.description %}
@@ -48,36 +58,51 @@
 <div class="clear"></div>
 {% endif %}
 
-<div class="tab tab_overview">    
-    {% if object.top_tracks %}
-    <h2>{% trans "Top Tracks" %}</h2>
-    {% render_tracks object.top_tracks %}
+{% if tab == 'overview' %}
+    {% if object.tracks %}
+    <h2>{% trans "top tracks" %}</h2>
+    {% render_tracks object.tracks %}
     {% endif %}
 
-    <h2>{% trans "Similar Artists" %}</h2>
+    <h2>{% trans "similar artists" %}</h2>
     <ul class="similar-artists">
         {% for artist in object.similar %}
         <li>
             <a href="{{ artist.get_absolute_url }}" title="{{ artist.name }}">
-                <img src="{{ artist.image_medium }}" alt="{{ artist.name }}" class="avatar medium"/>
+                <img src="{{ artist.images.medium }}" alt="{{ artist.name }}" class="avatar medium"/>
                 {{ artist.name }}
             </a>
         </li>
         {% endfor %}
     </ul>
-</div>
+{% endif %}
 
-<div class="tab tab_music">
-    {% for album in object.albums %}
-        <h2>{{ album.name }}</h2>
-        {% with album.tracks as tracks %}
-        {% render_tracks tracks %}
-        {% endwith %}
-    {% endfor %}
-</div>
+{% if tab == 'music' %}
+<h2>{% trans 'music of artist' %} {{ object }}</h2>
+{% render_tracks object.tracks %}
+{% endif %}
 
-<div class="tab tab_similar_artists">
-test
-</div>
+{% if tab == 'fans' %}
+{% endif %}
+
+{% if tab == 'similar' %}
+<h2>{% trans 'artists similar to' %} {{ object }}</h2>
+<ul>
+{% for artist in object.similar %}
+    <li>
+        <a href="{{ artist.get_absolute_url }}" title="{% trans "details of artist" %} {{ artist }}">
+            <img src="{{ artist.images.medium }}" alt="{{ artist }}" />
+            {{ artist }}
+        </a>
+    </li>
+{% endfor %}
+</ul>
+{% endif %}
+
+{% if tab == 'events' %}
+{% for event in object.events %}
+{{ event }} <br />
+{% endfor %}
+{% endif %}
 
 {% endblock %}

@@ -24,6 +24,8 @@ class MusicalEntity(models.Model):
         self.tags = []
         self.similar = []
         self.images = {}
+        self.tracks = []
+        self.events = []
         super(MusicalEntity, self).__init__(*args, **kwargs)
 
     class Meta:
@@ -77,6 +79,23 @@ class MusicalEntity(models.Model):
             print "Did not work: "+url
             return None
 
+    def lastfm_get_info(self, tree=None):
+        if not tree:
+            tree = self.lastfm_get_tree(self.get_type() + '.getInfo').find(self.get_type())
+        
+        self.name = tree.find('name').text
+        for element in tree.findall('image'):
+            self.images[element.attrib['size']] = element.text
+       
+        # lastfm api is inconsistent, tags/tag/name is ok for artist.getInfo
+        for element in tree.findall('tags/tag/name'):
+            self.tags.append(element.text)
+        # lastfm api is inconsistent, toptags/tag/name is ok for track.getInfo
+        for element in tree.findall('toptags/tag/name'):
+            self.tags.append(element.text)
+
+        return tree
+
 class Artist(MusicalEntity):
     def get_type(self):
         return 'artist'
@@ -85,18 +104,58 @@ class Artist(MusicalEntity):
         return self.name
 
     def lastfm_get_info(self, tree=None):
-        if not tree:
-            tree = self.lastfm_get_tree('artist.getInfo').find('artist')
-        self.name = tree.find('name').text
-        for element in tree.findall('tags/tag/name'):
-            self.tags.append(element.text)
-        for element in tree.findall('image'):
-            self.images[element.attrib['size']] = element.text
+        tree = super(Artist, self).lastfm_get_info(tree)
+        
         self.description = getattr(tree.find('bio/summary'), 'text', None)
+
         for element in tree.findall('similar/artist'):
             similar = Artist()
             similar.lastfm_get_info(element)
             self.similar.append(similar)
+
+    def lastfm_get_tracks(self, count=99):
+        tree = self.lastfm_get_tree('artist.getTopTracks')
+        for element in tree.findall('toptracks/track'):
+            track = Track(name=element.find('name').text, artist=self)
+            track.lastfm_get_info(element)
+            self.tracks.append(track)
+
+            count -= 1
+            
+            if not count:
+                return True
+
+    def lastfm_get_similar(self):
+        tree = self.lastfm_get_tree('artist.getSimilar')
+        for element in tree.findall('similarartists/artist'):
+            artist = Artist(name=element.find('name').text)
+            artist.lastfm_get_info(element)
+            self.similar.append(artist)
+
+    def lastfm_get_events(self):
+        tree = self.lastfm_get_tree('artist.getEvents')
+        event = None
+        for element in tree.findall('events/event'):
+            name = element.find('venue/name').text
+            if event and event.name == name:
+                continue
+            event = Event(artist=self, name=name)
+            event.lastfm_get_info(element)
+            self.events.append(event)
+
+class Event(MusicalEntity):
+    artist = models.ForeignKey(Artist, verbose_name=_(u'artist'))
+
+    def lastfm_get_info(self, tree=None):
+        if not tree:
+            tree = self.lastfm_get_tree(self.get_type() + '.getInfo').find(self.get_type())
+        
+        self.name = tree.find('venue/name').text
+        for element in tree.findall('image'):
+            self.images[element.attrib['size']] = element.text
+
+    def get_type(self):
+        return 'event'
 
 class Album(MusicalEntity):
     artist = models.ForeignKey(Artist, verbose_name=_(u'artist'))
@@ -122,14 +181,10 @@ class Track(MusicalEntity):
     album = models.ForeignKey(Album, verbose_name=_(u'album'))
     artist = models.ForeignKey(Artist, verbose_name=_(u'artist'))
 
-    def lastfm_get_info(self):
-        tree = self.lastfm_get_tree('track.getInfo')
-        self.name = tree.find('track/name').text
-        for element in tree.findall('track/toptags/tag/name'):
-            self.tags.append(element.text)
-        for element in tree.findall('track/image'):
-            self.images[element.attrib['size']] = element.text
-        self.description = tree.find('track/wiki/summary').text
+
+    def lastfm_get_info(self, tree=None):
+        tree = super(Track, self).lastfm_get_info(tree)
+        self.description = getattr(tree.find('wiki/summary'), 'text', None)
 
     def youtube_get_term(self):
         return u'%s - %s' % (
