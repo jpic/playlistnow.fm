@@ -28,6 +28,13 @@
     <style type="text/css">
         div.tab {display:none;}
     </style>
+    
+    <title>{% endif %}
+    {% if request.is_ajax %}<span id="page_title" style="display:none">{% endif %}
+    {% block head_title_base %}{% if SITE_NAME %}{{ SITE_NAME }} : {% endif %}{% block head_title %}{% endblock %}{% endblock %}
+    {% if request.is_ajax %}</span>{% endif %}
+    {% if request.is_ajax %}{% else %}
+    </title>
 </head>
 <body class="{% block body_class %}{% endblock %}">
 
@@ -158,23 +165,78 @@ swfobject.embedSWF("http://www.youtube.com/apiplayer?enablejsapi=1&playerapiid=y
 function postPageLoad() {
     $('ul.tabs li.tab:first').addClass('selected');
     $('div.tab:first').fadeIn();
+    if (document.getElementById('page_title')) {
+        document.title = document.getElementById('page_title').innerHTML;
+    }
+
+    if ($('input#term').length) {
+        var autocompleteData = [];
+        var autocompleteRequest;
+        var autocompleteSettings = {
+            minCharacters: 1,
+            maxResults: undefined,
+            wildCard: "",
+            caseSensitive: false,
+            notCharacter: "!",
+            maxHeight: 350,
+            highlightMatches: false,
+            onSelect: function(item) {
+                $.history.load(item['url']);
+            },
+            ajaxResults: true,
+            width: undefined
+        
+        };
+        
+        $('input#term').jsonSuggest(function() {
+            if( autocompleteRequest ) {
+                autocompleteRequest.abort();
+            }
+        
+            autocompleteRequest = $.ajax({
+                url: '{% url music_search_autocomplete %}?term='+$('input#term').val(),
+                dataType: 'json',
+                success: function(data) {
+                    autocompleteData = data;
+                    autocompleteRequest = false;
+                },
+                async: false,
+            });
+        
+            return autocompleteData;
+        }, autocompleteSettings);
+
+    }
+
+    if ($('form').length) {
+        $('form').submit(function(e) {
+            e.preventDefault();
+
+            $.ajax({
+                url: $(this).attr('action'),
+                dataType: 'html',
+                data: $(this).serialize(),
+                type: 'POST',
+                beforeSend: function(req) {
+                    $('#body').fadeOut();
+                },
+                success: function(html, textStatus, request) {
+                    $('#page_body').html(html);
+                    $('#body').fadeIn();
+                    postPageLoad();
+                },
+            });
+        });
+    }
 }
+
+var isInit = true;
 
 $(document).ready(function() {
     $('a').live('click', function(e) {
         e.preventDefault();
         var url = $(this).attr('href');
-    
-        $.ajax({
-            url: url,
-            dataType: 'html',
-            success: function(html, textStatus, request) {
-                $('#body').fadeOut();
-                $('#page_body').html(html);
-                $('#body').fadeIn();
-                postPageLoad();
-            },
-        });
+        $.history.load(url);
     });
     $('li.song_play').live('click', function(e) {
         if( e.target != this ) {
@@ -230,12 +292,34 @@ $(document).ready(function() {
         }
     });
 
+    $.history.init(function(hash) {
+        if (hash && !isInit) {
+            var url = hash;
+            $.ajax({
+                url: url,
+                dataType: 'html',
+                beforeSend: function(req) {
+                    $('#ajaxload').fadeIn();
+                },
+                success: function(html, textStatus, request) {
+                    $('#body').fadeOut();
+                    $('#ajaxload').fadeOut();
+                    $('#page_body').html(html);
+                    $('#body').fadeIn();
+                    postPageLoad();
+                },
+            });
+        }
+    }, { unescape: ",/" });
+    isInit = false;
+
     postPageLoad();
 });
 
 </script>
 
 <script src="{{ STATIC_URL }}tipTip/jquery.tipTip.minified.js" type="text/javascript"></script>
+<script src="{{ STATIC_URL }}jquery.history.js" type="text/javascript"></script>
 <script type="text/javascript">
 $(document).ready(function() {
     $('.tiptip').tipTip();
