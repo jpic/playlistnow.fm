@@ -308,6 +308,7 @@ $(document).ready(function() {
         $('.player_current_track').attr('href', track.attr('href'));
         $('.player_bttn_play').hide();
         $('.player_bttn_pause').show();
+        $('.sidebar_Playing a').attr('href', track.attr('href'));
 
         if ($('#player').css('display') == 'none') {
             player.addEventListener('onStateChange', onYouTubePlayerStateChange);
