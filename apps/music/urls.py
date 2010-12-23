@@ -24,11 +24,6 @@ urlpatterns = patterns('music.views',
         name='music_artist_details'
     ),
     url(
-        r'find/$',
-        'music_find',
-        name='music_find'
-    ),
-    url(
         r'search/autocomplete/$',
         'music_search_autocomplete',
         name='music_search_autocomplete'

@@ -61,42 +61,11 @@ def music_track_details(request, name, artist, album=None,
 
     context['object'] = Track(name=name)
     context['object'].artist = Artist(name=artist)
-    lastfm_get_info(context['object'])
     context['object'].similar = context['object'].similar[:5]
 
     context.update(extra_context or {})
     return shortcuts.render_to_response(template_name, context,
         context_instance=template.RequestContext(request))
-
-def music_find(request, qname='term'):
-    if request.method != 'POST' or qname not in request.POST:
-        return http.HttpResponseBadRequest()
- 
-    term = request.POST[qname]
-
-    url = 'http://www.last.fm/search/autocomplete?q=%s&force=1' % urllib2.quote(term.encode('utf-8'))
-    #try:
-    upstream_response = urllib2.urlopen(url)
-    upstream_response = simplejson.loads(upstream_response.read())
-    doc = upstream_response['response']['docs'][0]
-
-    if 'track' in doc:
-        model_class = Track
-    elif 'album' in doc:
-        model_class = Album
-    elif 'artist' in doc:
-        model_class = Artist
-
-    model, created = model_class.objects.get_or_create(name=term)
-
-    if created:
-        Lastfm().resync(model).save()
-
-    url = model.get_absolute_url()
-    #except:
-        #url = request.META.get('HTTP_REFERER', '/')
-
-    return http.HttpResponseRedirect(url)
 
 def music_search_autocomplete(request, qname='term'):
     if not qname in request.GET:
