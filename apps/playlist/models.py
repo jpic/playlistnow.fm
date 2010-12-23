@@ -20,7 +20,7 @@ class PlaylistTrack(models.Model):
     creation_datetime = models.DateTimeField(verbose_name=_(u'published'), auto_now_add=True)
     play_counter = models.IntegerField(verbose_name=_(u'played'), default=0)
 
-    track = models.ForeignKey('music.track', verbose_name=_(u'track'), null=True, blank=True)
+    track = models.ForeignKey('music.Track', verbose_name=_(u'track'), null=True, blank=True)
     
     name = models.CharField(max_length=100, verbose_name=_(u'name'))
     source_url = models.URLField(verbose_name=_(u'URL of the track'), null=True, blank=True)
@@ -36,7 +36,7 @@ class Playlist(models.Model):
     category = models.ForeignKey(PlaylistCategory, verbose_name=_(u'category'), null=True, blank=True)
     play_counter = models.IntegerField(verbose_name=_(u'played'), default=0)
     
-    creation_user = models.ForeignKey('auth.user', verbose_name=_(u'creator'))
+    creation_user = models.ForeignKey('auth.User', verbose_name=_(u'creator'))
     creation_datetime = models.DateTimeField(verbose_name=_(u'published'), auto_now_add=True)
     modification_datetime = models.DateField(verbose_name=_(u'modified'), auto_now=True)
 
