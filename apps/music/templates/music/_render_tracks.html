@@ -1,5 +1,8 @@
+{% load cache %}
+
 <ul class="song_list">
 {% for track in tracks %}
+{% cache 3600 render_track track.name %}
 <li class="song_play song_info {% cycle "dd" "" %}">
     <a style="display:none" class="hidden artist" href="{{ track.artist.get_absolute_url }}">{{ track.artist.name }}</a>
     <a style="display:none" class="hidden track" href="{{ track.get_absolute_url }}">{{ track.name }}</a>
@@ -11,5 +14,6 @@
         <span class="label">{{ track.name }}</span>
     </a>
 </li>
+{% endcache %}
 {% endfor %}
 </ul>
