@@ -16,45 +16,6 @@ import gdata.youtube.service
 # Prevent: XMLSyntaxError: Attempt to load network entity
 etree.set_default_parser(etree.XMLParser(no_network=False))
 
-##
-# Removes HTML or XML character references and entities from a text string.
-#
-# @param text The HTML (or XML) source text.
-# @return The plain text, as a Unicode string, if necessary.
-
-def unescape(text):
-    def fixup(m):
-        text = m.group(0)
-        if text[:2] == "&#":
-            # character reference
-            try:
-                if text[:3] == "&#x":
-                    return unichr(int(text[3:-1], 16))
-                else:
-                    return unichr(int(text[2:-1]))
-            except ValueError:
-                pass
-        else:
-            # named entity
-            try:
-                text = unichr(htmlentitydefs.name2codepoint[text[1:-1]])
-            except KeyError:
-                pass
-        return text # leave as is
-    return re.sub("&#?\w+;", fixup, text)
-
-def strip_tags(text): 
-     finished = 0 
-     while not finished: 
-         finished = 1 
-         start = text.find("<") 
-         if start >= 0: 
-             stop = text[start:].find(">") 
-             if stop >= 0: 
-                 text = text[:start] + text[start+stop+1:] 
-                 finished = 0 
-     return text
-
 class MusicalEntity(models.Model):
     mbid = models.CharField(max_length=64, null=True, blank=True)
     name = models.CharField(max_length=255, verbose_name=_(u'name'), unique=True, blank=False)
