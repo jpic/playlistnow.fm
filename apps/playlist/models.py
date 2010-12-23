@@ -44,6 +44,8 @@ class Playlist(models.Model):
     slug = models.CharField(max_length=100, verbose_name=_(u'slug'), null=True, blank=True)
     image = models.ImageField(verbose_name=_(u'icon'), null=True, blank=True, upload_to='playlist_images')
 
+    unique_autoslug = False
+
     tags = TagField()
 
     def __unicode__(self):
@@ -58,11 +60,17 @@ class Playlist(models.Model):
 def autoslug(sender, instance, **kwargs):
     if not hasattr(instance, 'slug'):
         return True
+    
+    if not getattr(instance.__class__, 'autoslug', False):
+        return True
 
     if hasattr(instance, 'name'):
         instance.slug = defaultfilters.slugify(instance.name)
     elif hasattr(instance, 'name'):
         instance.slug = defaultfilters.slugify(instance.name)
+    
+    if not getattr(instance.__class__, 'unique_autoslug', False):
+        return True
 
     while instance.__class__.objects.filter(slug=instance.slug).count():
         instance.slug += '-'
