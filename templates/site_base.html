@@ -156,12 +156,12 @@ swfobject.embedSWF("http://www.youtube.com/apiplayer?enablejsapi=1&playerapiid=y
 
 <script type="text/javascript">
 function postPageLoad() {
-    $('li.tab:first').addClass('selected');
+    $('ul.tabs li.tab:first').addClass('selected');
     $('div.tab:first').fadeIn();
 }
 
 $(document).ready(function() {
-    $('a:not(".youtube_play")').live('click', function(e) {
+    $('a').live('click', function(e) {
         e.preventDefault();
         var url = $(this).attr('href');
     
@@ -169,20 +169,26 @@ $(document).ready(function() {
             url: url,
             dataType: 'html',
             success: function(html, textStatus, request) {
+                $('#body').fadeOut();
                 $('#page_body').html(html);
+                $('#body').fadeIn();
                 postPageLoad();
             },
         });
     });
-    $('a.youtube_play').live('click', function(e) {
+    $('li.song_play').live('click', function(e) {
+        if( e.target != this ) {
+            return true;
+        }
         e.preventDefault();
-        var url = $(this).attr('href');
+
+        var url = $(this).find('a.youtube_play').attr('href');
         var id = url.match(/v=([0-9A-Za-z]*)/)[1];
 
         player.loadVideoById(id);
 
-        var track = $(this).prev();
-        var artist = track.prev();
+        var track = $(this).find('a.hidden.track');
+        var artist = $(this).find('a.hidden.artist');
         $('.player_current_artist').html(artist.html());
         $('.player_current_artist').attr('href', artist.attr('href'));
         $('.player_current_track').html(track.html());
@@ -219,8 +225,8 @@ $(document).ready(function() {
         if ($('div.'+tab).css('display') == 'none') {
             $('div.tab').hide();
             $('div.'+tab).show();
-            $('li.tab').removeClass('selected');
-            $('li.'+tab).addClass('selected');
+            $('ul.tabs li.tab').removeClass('selected');
+            $('ul.tabs li.'+tab).addClass('selected');
         }
     });
 
