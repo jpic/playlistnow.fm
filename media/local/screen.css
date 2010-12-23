@@ -37,3 +37,10 @@ body, #page_body {
     min-height: 100%;
     padding: 15px;
 }
+
+#ajaxload {
+    cursor: pointer;
+    left: 45%;
+    position: fixed;
+    top: 12px;
+}

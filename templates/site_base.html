@@ -385,6 +385,12 @@ $(document).ready(function() {
 
 {% if request.is_ajax %}
 {% else %}
+
+<div id="ajaxload" style="display: none">
+    <img src="{{ STATIC_URL }}local/ajax-loader.gif" />
+    {% trans "loading" %}
+</div>
+
 </body>
 </html>
 {% endif %}
