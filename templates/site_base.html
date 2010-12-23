@@ -3,8 +3,59 @@
 {% else %}
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" >
-<head>
-    <title>{% block head_title_base %}{% if SITE_NAME %}{{ SITE_NAME }} : {% endif %}{% block head_title %}{% endblock %}{% endblock %}</title>
+<head><script type="text/javascript">
+var m = document.location.hash.match(/#(.*)/);
+if (!m) {
+    document.location = '/#' + document.location.pathname;
+} else {
+    function sendRequest(url,callback,postData) {
+        var req = createXMLHTTPObject();
+        if (!req) return;
+        var method = "GET";
+        req.open(method,url,true);
+        req.setRequestHeader('User-Agent','XMLHTTP/1.0');
+        req.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+    
+        req.onreadystatechange = function () {
+            if (req.readyState != 4) return;
+            if (req.status != 200 && req.status != 304) {
+    //          alert('HTTP error ' + req.status);
+                return;
+            }
+            callback(req);
+        }
+        if (req.readyState == 4) return;
+        req.send(postData);
+    }
+    
+    var XMLHttpFactories = [
+        function () {return new XMLHttpRequest()},
+        function () {return new ActiveXObject("Msxml2.XMLHTTP")},
+        function () {return new ActiveXObject("Msxml3.XMLHTTP")},
+        function () {return new ActiveXObject("Microsoft.XMLHTTP")}
+    ];
+    
+    function createXMLHTTPObject() {
+        var xmlhttp = false;
+        for (var i=0;i<XMLHttpFactories.length;i++) {
+            try {
+                xmlhttp = XMLHttpFactories[i]();
+            }
+            catch (e) {
+                continue;
+            }
+            break;
+        }
+        return xmlhttp;
+    }
+
+    var url = m[1];
+    sendRequest(url, function (req) {
+        document.getElementById('page_body').innerHTML = req.responseText;
+        document.title = document.getElementById('page_title').innerHTML;
+    });
+}
+    </script>
 	<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
     
     <link rel="stylesheet" href="{{ STATIC_URL }}JSONSuggestBox/jsonSuggest.css" />
