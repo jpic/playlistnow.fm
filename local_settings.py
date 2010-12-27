@@ -50,6 +50,20 @@ INSTALLED_APPS = [
     "music",
     "playlist",
     "django_extensions",
+    "pagination",
+]
+
+MIDDLEWARE_CLASSES = [
+    "django.middleware.common.CommonMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django_openid.consumer.SessionConsumer",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "pinax.apps.account.middleware.LocaleMiddleware",
+    "pinax.middleware.security.HideSensistiveFieldsMiddleware",
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
+    "pagination.middleware.PaginationMiddleware",
 ]
 
 ADMIN_TOOLS_MENU = 'menu.CustomMenu'
