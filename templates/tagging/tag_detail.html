@@ -3,7 +3,7 @@
 {% load i18n %}
 {% load pagination_tags %}
 
-{% block head_title %}{% trans "Tag details" %}: {{ object }}{% endblock %}
+{% block head_title %}{% trans "playlists tagged" %}: {{ object }}{% endblock %}
 
 {% block body %}
     <h1>{% trans "playlists tagged" %} {{ object }} ({{ object_list.count }})</h1>

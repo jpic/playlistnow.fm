@@ -4,7 +4,7 @@
 {% load pagination_tags %}
 {% load playlist_tags %}
 
-{% block head_title %}{% trans "User details" %}: {{ object }}{% endblock %}
+{% block head_title %}{% trans "playlists created by" %}: {{ object }}{% endblock %}
 
 {% block body %}
 <h1>{% trans "playlists created by" %} {{ object }} ({{ object_list.count }})</h1>

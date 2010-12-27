@@ -4,6 +4,13 @@
 {% load i18n %}
 {% load playlist_tags %}
 
+{% block extra_head %}
+<meta name="keywords" content="playlist,now,playlist list" />
+<meta name="description" content="{% trans "You can play and modify any of these playlists created by PlaylistNow staff and users" %}" />
+{% endblock %}
+
+{% block head_title %}{% trans "all playlists you can play" %} {{ object.name }}{% endblock %}
+
 {% block body %}
 
 <div class="list">
