@@ -7,6 +7,7 @@ admin.autodiscover()
 
 from pinax.apps.account.openid_consumer import PinaxConsumer
 
+import views
 
 handler500 = "pinax.views.server_error"
 
@@ -24,6 +25,16 @@ urlpatterns = patterns("",
     url(r'^admin_tools/', include('admin_tools.urls')),
     url(r'^playlist/', include('playlist.urls')),
     url(r'^music/', include('music.urls')),
+    url(
+        r'^tags/(?P<slug>[^/]+)/$', 
+        views.tag_details,
+        name='tag_details'
+    ),
+    url(
+        r'^(?P<slug>[^/]+)/$', 
+        views.user_details,
+        name='user_details'
+    ),
 )
 
 
