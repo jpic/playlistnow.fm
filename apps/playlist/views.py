@@ -2,6 +2,7 @@ from django import http
 from django import shortcuts
 from django import template
 from django.contrib.auth import decorators
+from django.db.models import Q
 
 from models import *
 from forms import *
@@ -11,7 +12,11 @@ def playlist_category_details(request, slug,
     context = {}
 
     context['object'] = shortcuts.get_object_or_404(PlaylistCategory, slug=slug)
-    context['object_list'] = context['object'].playlist_set.all()
+
+    context['object_list'] = Playlist.objects.filter(
+        Q(categories__slug=slug) |
+        Q(categories__parent__slug=slug)
+    ).select_related()
 
     context.update(extra_context or {})
     return shortcuts.render_to_response(template_name, context,
