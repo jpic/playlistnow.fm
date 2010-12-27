@@ -4,6 +4,12 @@
 
 {% block head_title %}{% if request.GET.term %}{% trans "Results for" %} {{ request.GET.term }}{% else %}{% trans "Search music" %}{% endif %}{% endblock %}
 
+{% block extra_head %}
+<meta name="keywords" content="music search,artist search,mp3 search,track search,search,music" />
+<meta name="description" content="{% trans "Search music for tracks to play or add to your playlists with PlaylistNow.Fm" %}" />
+{% endblock %}
+
+
 {% block body %}
 <form action="{% url music_search %}" method="get">
     <input type="text" name="term" id="term" />
