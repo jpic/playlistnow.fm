@@ -50,7 +50,9 @@ INSTALLED_APPS = [
     "music",
     "playlist",
     "django_extensions",
+    "jpic",
     "pagination",
+    "tagging_ext",
 ]
 
 MIDDLEWARE_CLASSES = [
