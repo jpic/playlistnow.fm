@@ -1,3 +1,4 @@
+{% load i18n %}
 <div class="container_inner_wrapper">
     <div class="container_inner">
     
@@ -11,10 +12,10 @@
             </li>
 
             <li class="sidebar_Allplaylists sidebar_info">
-                <a href="#">
+                <a href="{% url playlist_list %}" title="{% trans "all playlists you can listen to for free" %}">
 
                     <span class="icon"></span>
-                    <span class="label">All Playlists</span>
+                    <span class="label">{% trans "all playlists" %}</span>
                 </a>
             </li>
             <li class="sidebar_Topplaylists sidebar_info">
