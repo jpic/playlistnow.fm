@@ -1,18 +1,18 @@
 {% load cache %}
+{% load i18n %}
 
 <ul class="song_list">
 {% for track in tracks %}
 {% cache 3600 render_track track.name %}
 <li class="song_play song_info {% cycle "dd" "" %}">
-    <a style="display:none" class="hidden artist" href="{{ track.artist.get_absolute_url }}">{{ track.artist.name }}</a>
-    <a style="display:none" class="hidden track" href="{{ track.get_absolute_url }}">{{ track.name }}</a>
-    <a style="display:none" class="hidden youtube_play" href="{{ track.youtube_entries.0.link.0.href }}">
+    <span class="icon img play"></span>
+    <span class="number">{{ forloop.counter }}</span>
+
+    <a style="display:none" title="{{ track.artist.name }}" class="hidden artist" href="{{ track.artist.get_absolute_url }}">{{ track.artist.name }}</a>
+    <a style="display:none" title="{{ track.name }}" class="hidden track" href="{{ track.get_absolute_url }}">{{ track.name }}</a>
+    <a style="display:none" title="{{ track.youtube_entries.0.link.0.title }}" class="hidden youtube_play" href="{{ track.youtube_entries.0.link.0.href }}">
     </a>
-    <a href="{{ track.get_absolute_url }}">
-        <span class="number">{{ forloop.counter }}</span>
-        <span class="icon"></span>
-        <span class="label">{{ track.name }}</span>
-    </a>
+    <a title="{% trans "details of track" %} {{ track }}" href="{{ track.get_absolute_url }}" class="label">{{ track.name }}</a>
 </li>
 {% endcache %}
 {% endfor %}
