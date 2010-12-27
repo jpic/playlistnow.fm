@@ -289,6 +289,52 @@ li.tab:hover { color: #461b50 }
 
 .artiste_actions .buttons{float:right;font-size:0;}
 
+/* playlist list */
+
+div.playlist.line {
+    background: url("../images/line-off.png") no-repeat scroll left top transparent;
+    height: 62px;
+    width: 610px;
+    padding: 0;
+    font-size: 13px;
+    line-height: 18px;
+}
+
+div.playlist.line:hover {
+    background: url("../images/line-on.png") no-repeat scroll left top transparent;
+}
+
+div.playlist.line .icon {
+    float: left;
+    height: 60px;
+    width: 60px;
+}
+
+div.playlist.line .description {
+    float: left;
+    padding: 4px 0 0;
+    width: 490px;
+    height: 44px;
+}
+
+div.playlist.line .small_font {
+    font: 10px 'Trebuchet MS',Arial,Helvetica,sans-serif;
+}
+
+div.playlist.line .description .dTitle {
+    color: #491C53;
+}
+
+div.playlist.line .description .dValue {
+    color: #777777;
+}
+
+div.playlist.line .cTitle {
+    color: #777777;
+}
+
+
+
 /* Player  */	
 
 #player { position: fixed; left: 0; bottom: 0; width: 100%; height: 72px; background: url(../images/player/player_bg.png) top left; z-index:1000;}
@@ -361,6 +407,6 @@ li.tab:hover { color: #461b50 }
 /* Ads  */	
 div.ad {text-align: center;font-size: 12px;background: #EFE8ED;margin:10px 0;padding:5px 5px 7px 5px;}
 
-.capitalize, span.label {
+h1,h2,h3,h4,h5,h6,.capitalize, span.label {
     text-transform: capitalize;
 }

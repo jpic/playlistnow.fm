@@ -1,29 +1,31 @@
-{% load extra_tagging_tags %}
-{% load i18n %}
+{% load i18n cache extra_tagging_tags %}
 {% for object in object_list %}
-<div class="line">
+<div class="playlist line">
+    {% cache 3600 render_playlist object.pk %}
     <div class="icon">
         <a href="{{ object.get_absolute_url }}" title="{% trans "details of playlist" %} {{ object }}">
-            <img src="images/playlists/pl.png" alt="{% trans "play" %} {{ object }}" />
+            <img src="{{ STATIC_URL }}images/playlists/pl.png" alt="{% trans "play" %} {{ object }}" />
         </a>
     </div>
 
     <div class="description"> 
         <span class="dTitle">
-            <a href="{% trans "details of playlist" %} {{ object.get_absolute_url }}" title="{% trans "play" %} {{ object }}">{{ object }}</a>
+            <a href="{{ object.get_absolute_url }}" title="{% trans "play" %} {{ object }}">{{ object }}</a>
         </span>
-        <span class="dValue">({{ object.tracks.count }})</span>
+        <span class="dValue small_font">({{ object.tracks.count }})</span>
 
     {% if object.tags %}
-        <span class="cTitle">Tags: </span>
-        <span class="cValue">
+        <div style="display: block"></div>
+        <span class="cTitle small_font">Tags: </span>
+        <span class="cValue small_font">
         {% show_tags_for object %}
         </span>
     {% endif %}
 
         {% if object.categories.count %}
-        <span class="tTitle">Categories: </span>
-        <span class="tValue">
+        <br />
+        <span class="tTitle small_font">Categories: </span>
+        <span class="tValue small_font">
             {% for category in object.categories.all %}
                 {% if category.parent %}
                 <a href="{{ category.parent.get_absolute_url }}" title="{% trans "playlists for category" %} {{ category.parent }}">{{ category.parent }}</a>
@@ -44,9 +46,9 @@
     
     <div class="play">
         <a href="{{ object.get_absolute_url }}" title="{% trans "play playlist" %} {{ object }}">
-            <img src="images/spacer.png" alt="{% trans "play playlist" %} {{ object }}" height="60" width="60">
+            <img src="{{ STATIC_URL }}images/spacer.png" alt="{% trans "play playlist" %} {{ object }}" height="60" width="60">
         </a>
     </div>
+    {% endcache %}
 </div>
 {% endfor %}
-
