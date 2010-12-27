@@ -1,0 +1,22 @@
+{% extends "playlist/base.html" %}
+
+{% load i18n %}
+{% load pagination_tags %}
+{% load playlist_tags %}
+
+{% block head_title %}{% trans "Category details" %}: {{ object }}{% endblock %}
+
+{% block body %}
+<h1>{% trans "playlists in category" %} {{ object }} ({{ object.playlist_set.count }})</h1>
+
+{% autopaginate object_list %}
+{% paginate %}
+
+{% render_playlists object_list %}
+
+{% endblock %}
+
+{% block extra_head %}
+<meta name="keywords" content="{% for object in object_list %}{{ object.tags }}{% if not forloop.last %},{% endif %}{% endfor %}" />
+<meta name="description" content="{% trans "All free and legal playlists in category" %} {{ object }} {% trans "and how to create your own playlists" %}" />
+{% endblock %}

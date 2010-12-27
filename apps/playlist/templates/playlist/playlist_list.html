@@ -1,0 +1,20 @@
+{% extends "playlist/base.html" %}
+
+{% load pagination_tags %}
+{% load i18n %}
+{% load playlist_tags %}
+
+{% block body %}
+
+<div class="list">
+    <span class="capitalize" style="font-size: 16px; color: rgb(73, 28, 83);">
+        {% trans "playlists found for your search" %}
+        <b>({{ object_list.count }})</b>
+    </span>
+
+    {% autopaginate object_list %}
+    {% paginate %}
+
+    {% render_playlists object_list %}
+</div>
+{% endblock %}
