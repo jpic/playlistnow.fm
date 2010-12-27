@@ -203,9 +203,10 @@ swfobject.embedSWF("http://www.youtube.com/apiplayer?enablejsapi=1&playerapiid=y
 </script>
 
 <script type="text/javascript">
-function postPageLoad() {
+function postPageLoad(url) {
     $('ul.tabs li.tab:first').addClass('selected');
     $('div.tab:first').fadeIn();
+
     if (document.getElementById('page_title')) {
         document.title = document.getElementById('page_title').innerHTML;
     }
@@ -265,11 +266,39 @@ function postPageLoad() {
                     $('#ajaxload').fadeOut();
                     $('#page_body').html(html);
                     $('#body').fadeIn();
-                    postPageLoad();
+                    postPageLoad(url);
                 },
             });
         });
     }
+
+    if ($('div.pagination').length) {
+        $('div.pagination a').each(function() {
+            var href = $(this).attr('href');
+            if (href.match(/^\?/)) {
+                $(this).attr('href', url.replace(/\?page=.*$/, '') + href);
+            }
+        });
+    }
+}
+
+function playTrack(li) {
+    var url = li.find('a.youtube_play').attr('href');
+    var id = url.match(/v=([0-9A-Za-z]*)/)[1];
+
+    player.loadVideoById(id);
+
+    var track = li.find('a.hidden.track');
+    var artist = li.find('a.hidden.artist');
+    $('.player_current_artist').html(artist.html());
+    $('.player_current_artist').attr('href', artist.attr('href'));
+    $('.player_current_track').html(track.html());
+    $('.player_current_track').attr('href', track.attr('href'));
+    $('.player_bttn_play').hide();
+    $('.player_bttn_pause').show();
+    $('.sidebar_Playing a').attr('href', track.attr('href'));
+    $('li.song_play').removeClass('selected');
+    li.addClass('selected');
 }
 
 var isInit = true;
@@ -281,25 +310,16 @@ $(document).ready(function() {
         $.history.load(url);
     });
     $('li.song_play').live('click', function(e) {
+        /* use when li.click != a.clikc */
         if( e.target != this ) {
             return true;
         }
         e.preventDefault();
-
-        var url = $(this).find('a.youtube_play').attr('href');
-        var id = url.match(/v=([0-9A-Za-z]*)/)[1];
-
-        player.loadVideoById(id);
-
-        var track = $(this).find('a.hidden.track');
-        var artist = $(this).find('a.hidden.artist');
-        $('.player_current_artist').html(artist.html());
-        $('.player_current_artist').attr('href', artist.attr('href'));
-        $('.player_current_track').html(track.html());
-        $('.player_current_track').attr('href', track.attr('href'));
-        $('.player_bttn_play').hide();
-        $('.player_bttn_pause').show();
-        $('.sidebar_Playing a').attr('href', track.attr('href'));
+        playTrack($(this));
+    });
+    $('li.song_play span').live('click', function(e) {
+        e.preventDefault();
+        playTrack($(this).parent());
     });
     $('.player_bttn_stop').click(function() { 
         player.stopVideo(); 
@@ -343,14 +363,14 @@ $(document).ready(function() {
                     $('#ajaxload').fadeOut();
                     $('#page_body').html(html);
                     $('#body').fadeIn();
-                    postPageLoad();
+                    postPageLoad(url);
                 },
             });
         }
     }, { unescape: ",/" });
     isInit = false;
-
-    postPageLoad();
+    
+    postPageLoad(document.location.hash.replace(/^#/, ''));
 });
 
 </script>
