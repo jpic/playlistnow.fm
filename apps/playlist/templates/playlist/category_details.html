@@ -7,7 +7,7 @@
 {% block head_title %}{% trans "category details" %}: {{ object }}{% endblock %}
 
 {% block body %}
-<h1>{% trans "playlists in category" %} {{ object }} ({{ object.playlist_set.count }})</h1>
+<h1>{% trans "playlists in category" %} {{ object }} ({{ object_list|length }})</h1>
 
 {% autopaginate object_list %}
 {% paginate %}

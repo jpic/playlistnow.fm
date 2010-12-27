@@ -16,7 +16,7 @@
 <div class="list">
     <span class="capitalize" style="font-size: 16px; color: rgb(73, 28, 83);">
         {% trans "playlists found for your search" %}
-        <b>({{ object_list.count }})</b>
+        <b>({{ object_list|length }})</b>
     </span>
 
     {% autopaginate object_list %}
