@@ -4,6 +4,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" >
 <head><script type="text/javascript">
+var ajaxEnabled = true;
+if (ajaxEnabled) {
 var m = document.location.hash.match(/#(.*)/);
 if (!m) {
     document.location = '/#' + document.location.pathname;
@@ -55,6 +57,7 @@ if (!m) {
         document.title = document.getElementById('page_title').innerHTML;
     });
 }
+} /* end if(ajaxEnabled) */
     </script>
 	<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
     
@@ -304,11 +307,13 @@ function playTrack(li) {
 var isInit = true;
 
 $(document).ready(function() {
-    $('a').live('click', function(e) {
-        e.preventDefault();
-        var url = $(this).attr('href');
-        $.history.load(url);
-    });
+    if (ajaxEnabled) {
+        $('a').live('click', function(e) {
+            e.preventDefault();
+            var url = $(this).attr('href');
+            $.history.load(url);
+        });
+    }
     $('li.song_play').live('click', function(e) {
         /* use when li.click != a.clikc */
         if( e.target != this ) {
