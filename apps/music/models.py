@@ -18,7 +18,6 @@ etree.set_default_parser(etree.XMLParser(no_network=False))
 
 class MusicalEntity(models.Model):
     mbid = models.CharField(max_length=64, null=True, blank=True)
-    name = models.CharField(max_length=255, verbose_name=_(u'name'), unique=True, blank=False)
 
     def __init__(self, *args, **kwargs):
         self.tags = []
@@ -107,6 +106,8 @@ class MusicalEntity(models.Model):
             self.matches.append(match)
 
 class Artist(MusicalEntity):
+    name = models.CharField(max_length=255, verbose_name=_(u'name'), unique=True, blank=False)
+
     def get_type(self):
         return 'artist'
 
@@ -155,6 +156,7 @@ class Artist(MusicalEntity):
 
 class Event(MusicalEntity):
     artist = models.ForeignKey(Artist, verbose_name=_(u'artist'))
+    name = models.CharField(max_length=255, verbose_name=_(u'name'), unique=True, blank=False)
 
     def lastfm_get_info(self, tree=None):
         if not tree:
@@ -169,6 +171,7 @@ class Event(MusicalEntity):
 
 class Album(MusicalEntity):
     artist = models.ForeignKey(Artist, verbose_name=_(u'artist'))
+    name = models.CharField(max_length=255, verbose_name=_(u'name'), unique=True, blank=False)
     
     def get_type(self):
         return 'album'
@@ -188,8 +191,9 @@ class Album(MusicalEntity):
             self.images[element.attrib['size']] = element.text
 
 class Track(MusicalEntity):
-    album = models.ForeignKey(Album, verbose_name=_(u'album'))
     artist = models.ForeignKey(Artist, verbose_name=_(u'artist'))
+    album = models.ForeignKey(Album, verbose_name=_(u'album'), null=True, blank=True)
+    name = models.CharField(max_length=255, verbose_name=_(u'name'), unique=False)
 
 
     def lastfm_get_info(self, tree=None):
