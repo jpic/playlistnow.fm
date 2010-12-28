@@ -34,10 +34,19 @@ body, #page_body {
     margin-left: 184px;
     margin-bottom: 72px;
     margin-top: 41px;
+    margin-right: 170px;
     min-height: 100%;
     padding: 15px;
+    overflow: auto;
 }
-
+#body_right {
+    width: 165px;
+    position: absolute;
+    right: 0;
+    margin-top: 56px;
+    background-color: gray;
+    height: 100px;
+}
 #ajaxload {
     cursor: pointer;
     left: 45%;
