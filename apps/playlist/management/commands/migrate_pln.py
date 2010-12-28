@@ -20,11 +20,11 @@ class Command(BaseCommand):
         conn = backend.DatabaseWrapper({'NAME': 'pln', 'USER': 'root', 'PASSWORD': '', 'HOST': 'localhost', 'PORT': '3306', 'OPTIONS': ''})
         old = conn.cursor()
 
-        #self.sync_users(old)
+        self.sync_users(old)
         #self.sync_categories(old)
         #self.sync_tracks(old)
         
-        self.sync_playlists(old)
+        #self.sync_playlists(old)
 
     def count_table(self, old, table):
         old.execute('select count(*) from %s' % table)
@@ -67,6 +67,7 @@ class Command(BaseCommand):
                 user.username = '%s%s' % (slughifi(old_user[1])[:28], count)
                 count += 1
             user.email = old_user[2] or 'no@email.com'
+            user.first_name = old_user[1]
             user.save()
             
             prog.increment_amount()
