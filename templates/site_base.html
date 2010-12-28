@@ -5,10 +5,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" >
 <head><script type="text/javascript">
 var ajaxEnabled = true;
+var redirecting = false;
 if (ajaxEnabled) {
 var m = document.location.hash.match(/#(.*)/);
 if (!m) {
     document.location = '/#' + document.location.pathname;
+    redirecting = true;
 } else {
     function sendRequest(url,callback,postData) {
         var req = createXMLHTTPObject();
@@ -147,6 +149,7 @@ if (!m) {
 
 
 <script type="text/javascript">
+if (!redirecting) {
 var player;
 function updatePlayerInfo() {
     var all = player.getDuration();
@@ -194,21 +197,23 @@ function onYouTubePlayerReady() {
     player.addEventListener('onStateChange', onYouTubePlayerStateChange);
     setInterval(updatePlayerInfo, 250);
 }
+} /* end if(!redirecting) */
 </script>
 <div id="ytapiplayer" style="display:none">
     You need Flash player 8+ and JavaScript enabled to view this video.
 </div>
 
 <script type="text/javascript">
-
+if (!redirecting) {
 var params = { allowScriptAccess: "always" };
 var atts = { id: "myytplayer" };
 swfobject.embedSWF("http://www.youtube.com/apiplayer?enablejsapi=1&playerapiid=ytplayer", 
                    "ytapiplayer", "0", "0", "8", null, null, params, atts);
-
+}
 </script>
 
 <script type="text/javascript">
+if (!redirecting) {
 function postPageLoad(url) {
     $('ul.tabs li.tab:first').addClass('selected');
     $('div.tab:first').fadeIn();
@@ -380,7 +385,7 @@ $(document).ready(function() {
     
     postPageLoad(document.location.hash.replace(/^#/, ''));
 });
-
+} /* end if (!redirecting) */
 </script>
 
 <script src="{{ STATIC_URL }}tipTip/jquery.tipTip.minified.js" type="text/javascript"></script>
@@ -388,7 +393,9 @@ $(document).ready(function() {
 <script src="{{ STATIC_URL }}JSONSuggestBox/jquery.jsonSuggest-dev.js" type="text/javascript"></script>
 <script type="text/javascript">
 $(document).ready(function() {
-    $('.tiptip').tipTip();
+    if(!redirecting) {
+        $('.tiptip').tipTip();
+    } /* end if (!redirecting) */
 });
 </script>
 {% endif %}
