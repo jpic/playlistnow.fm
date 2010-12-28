@@ -9,6 +9,7 @@ from jpic.slughifi import slughifi
 from jpic.progressbar import ProgressBar
 
 from playlist.models import *
+from music.models import *
 
 class Command(BaseCommand):
     args = 'n/a'

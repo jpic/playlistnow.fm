@@ -195,6 +195,9 @@ class Track(MusicalEntity):
     album = models.ForeignKey(Album, verbose_name=_(u'album'), null=True, blank=True)
     name = models.CharField(max_length=255, verbose_name=_(u'name'), unique=False)
 
+    play_counter = models.IntegerField(verbose_name=_(u'played'), default=0)
+    youtube_id = models.CharField(max_length=11)
+    youtube_bugs = models.IntegerField(default=0)
 
     def lastfm_get_info(self, tree=None):
         tree = super(Track, self).lastfm_get_info(tree)
