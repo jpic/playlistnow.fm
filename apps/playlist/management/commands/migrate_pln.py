@@ -21,7 +21,9 @@ class Command(BaseCommand):
         old = conn.cursor()
 
         #self.sync_users(old)
-        self.sync_categories(old)
+        #self.sync_categories(old)
+        #self.sync_tracks(old)
+        
         self.sync_playlists(old)
 
     def count_table(self, old, table):
@@ -105,8 +107,6 @@ pc.playlistId = %s
                     continue
                 playlist.category = PlaylistCategory.objects.get(pk=old_cat[0])
 
-
-
             playlist.save()
 
             old.execute('''
@@ -119,6 +119,54 @@ pt.playlistId = %s
 ''' % int(playlist.pk))
             playlist.tags = ','.join([i[0] for i in old.fetchall()])
             playlist.save()
+
+
+            old.execute('select songId from playlists_songs where playlistId = %s' % int(playlist.pk))
+            for old_song in old.fetchall():
+                # skipping more dead relations weee
+                if not old_song[0]:
+                    continue
+                playlist.tracks.add(Track.objects.get(pk=old_song[0]))
+
+            prog.increment_amount()
+            print prog, '\r',
+            sys.stdout.flush()
+
+
+    def sync_tracks(self, old):
+        print "Migrating tracks ..."
+        prog = ProgressBar(0, self.count_table(old, 'songs'), 77, mode='fixed')
+
+        old.execute('''
+select
+    s.id,
+    s.title, 
+    s.played, 
+    ys.youtubeId, 
+    a.id as artist_id,
+    a.name,
+    ys.bugs
+from songs s 
+left join youtubeSongs ys on ys.songId = s.id 
+left join artists a on a.id = s.artistId
+        ''')
+        for old_track in old.fetchall():
+            artist, created = Artist.objects.get_or_create(pk=old_track[4])
+            artist.name = old_track[5]
+            artist.save()
+
+            try:
+                track = Track.objects.get(pk=old_track[0])
+            except Track.DoesNotExist:
+                track = Track(pk=old_track[0])
+
+            track.name = old_track[1]
+            track.play_counter = old_track[2]
+            track.youtube_id = old_track[3]
+            track.youtube_bugs = old_track[6]
+            track.artist = artist
+
+            track.save()
 
             prog.increment_amount()
             print prog, '\r',
