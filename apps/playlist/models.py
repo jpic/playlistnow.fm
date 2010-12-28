@@ -53,7 +53,7 @@ class PlaylistTrack(models.Model):
 
 class Playlist(models.Model):
     tracks = models.ManyToManyField(PlaylistTrack, verbose_name=_(u'tracks'), null=True, blank=True)
-    categories = models.ManyToManyField(PlaylistCategory, verbose_name=_(u'category'), null=True, blank=True)
+    category = models.ForeignKey(PlaylistCategory, verbose_name=_(u'category'), null=True, blank=True)
     play_counter = models.IntegerField(verbose_name=_(u'played'), default=0)
     
     creation_user = models.ForeignKey('auth.User', verbose_name=_(u'creator'))

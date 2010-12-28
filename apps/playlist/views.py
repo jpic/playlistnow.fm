@@ -14,8 +14,8 @@ def playlist_category_details(request, slug,
     context['object'] = shortcuts.get_object_or_404(PlaylistCategory, slug=slug)
 
     context['object_list'] = Playlist.objects.filter(
-        Q(categories__slug=slug) |
-        Q(categories__parent__slug=slug)
+        Q(category__slug=slug) |
+        Q(category__parent__slug=slug)
     ).select_related()
 
     context.update(extra_context or {})

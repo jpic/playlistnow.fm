@@ -89,18 +89,6 @@ class Command(BaseCommand):
             except User.DoesNotExist:
                 # assign orphin playlists to root
                 playlist.creation_user = User.objects.get(pk=1)
-            playlist.save()
-
-            old.execute('''
-select 
-    t.name 
-from playlists_tags pt
-left join tags t on t.id = pt.tagId 
-where
-pt.playlistId = %s
-''' % int(playlist.pk))
-            playlist.tags = ','.join([i[0] for i in old.fetchall()])
-            playlist.save()
 
             old.execute('''
 select 
@@ -114,10 +102,22 @@ pc.playlistId = %s
                 # skipping more dead relations weee
                 if not old_cat[0]:
                     continue
-                category = PlaylistCategory.objects.get(pk=old_cat[0])
-                playlist.categories.add(
-                    category
-                )
+                playlist.category = PlaylistCategory.objects.get(pk=old_cat[0])
+
+
+
+            playlist.save()
+
+            old.execute('''
+select 
+    t.name 
+from playlists_tags pt
+left join tags t on t.id = pt.tagId 
+where
+pt.playlistId = %s
+''' % int(playlist.pk))
+            playlist.tags = ','.join([i[0] for i in old.fetchall()])
+            playlist.save()
 
             prog.increment_amount()
             print prog, '\r',

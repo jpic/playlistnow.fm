@@ -22,20 +22,18 @@
         </span>
     {% endif %}
 
-        {% if object.categories.count %}
+        {% if object.category %}
         <br />
         <span class="tTitle small_font">Categories: </span>
         <span class="tValue small_font">
-            {% for category in object.categories.all %}
-                {% if category.parent %}
-                <a href="{{ category.parent.get_absolute_url }}" title="{% trans "playlists for category" %} {{ category.parent }}">{{ category.parent }}</a>
-                → 
-                {% endif %}
-                <a href="{{ category.get_absolute_url }}" title="{% trans "playlists for category" %} {{ category }}">{{ category }}</a>
-                {% if not forloop.last %}
-                ,
-                {% endif %}
-            {% endfor %}
+            {% if object.category.parent %}
+            <a href="{{ object.category.parent.get_absolute_url }}" title="{% trans "playlists for object.category" %} {{ object.category.parent }}">{{ object.category.parent }}</a>
+            → 
+            {% endif %}
+            <a href="{{ object.category.get_absolute_url }}" title="{% trans "playlists for object.category" %} {{ object.category }}">{{ object.category }}</a>
+            {% if not forloop.last %}
+            ,
+            {% endif %}
             - Created by 
             <a href="{% url user_details object.creation_user.username %}" title="{% trans "details of user" %} {{ object.creation_user }}">
             {{ object.creation_user }}
