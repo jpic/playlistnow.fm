@@ -81,8 +81,13 @@ class MusicalEntity(models.Model):
 
     def lastfm_get_info(self, tree=None):
         if not tree:
-            tree = self.lastfm_get_tree(self.get_type() + '.getInfo').find(self.get_type())
+            tree = self.lastfm_get_tree(self.get_type() + '.getInfo')
+            if tree:
+                tree = tree.find(self.get_type())
         
+        if not tree:
+            return None
+
         self.name = tree.find('name').text
         for element in tree.findall('image'):
             self.images[element.attrib['size']] = element.text
