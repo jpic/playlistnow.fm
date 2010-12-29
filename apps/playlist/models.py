@@ -33,8 +33,12 @@ class PlaylistCategory(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return urlresolvers.reverse('playlist_category_details', 
-            args=(self.slug,))
+        try:
+            return urlresolvers.reverse('playlist_category_details_with_parent', 
+                args=(self.parent.slug, self.slug,))
+        except PlaylistCategory.DoesNotExist:
+            return urlresolvers.reverse('playlist_category_details', 
+                args=(self.slug,))
 
 class Playlist(models.Model):
     tracks = models.ManyToManyField('music.Track', verbose_name=_(u'tracks'), null=True, blank=True)

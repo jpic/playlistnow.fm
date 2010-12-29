@@ -7,11 +7,14 @@ from django.db.models import Q
 from models import *
 from forms import *
 
-def playlist_category_details(request, slug,
+def playlist_category_details(request, slug, parent_slug=None,
     template_name='playlist/category_details.html', extra_context=None):
     context = {}
 
-    context['object'] = shortcuts.get_object_or_404(PlaylistCategory, slug=slug)
+    if parent_slug:
+        context['object'] = shortcuts.get_object_or_404(PlaylistCategory, parent__slug=parent_slug, slug=slug)
+    else:
+        context['object'] = shortcuts.get_object_or_404(PlaylistCategory, slug=slug)
 
     context['object_list'] = Playlist.objects.filter(
         Q(category__slug=slug) |

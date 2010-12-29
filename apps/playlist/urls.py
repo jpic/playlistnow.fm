@@ -12,6 +12,11 @@ urlpatterns = patterns('playlist.views',
         name='playlist_category_details'
     ),
     url(
+        r'category/(?P<parent_slug>[^/]+)/(?P<slug>[^/]+)/$',
+        'playlist_category_details',
+        name='playlist_category_details_with_parent'
+    ),
+    url(
         r'add/$',
         'playlist_add',
         name='playlist_add'
