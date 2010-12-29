@@ -1,96 +1,34 @@
 {% load i18n %}
-{% if request.is_ajax %}
-{% else %}
+{% if not request.is_ajax %}
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" >
-<head><script type="text/javascript">
-var ajaxEnabled = true;
-var redirecting = false;
-if (ajaxEnabled) {
-var m = document.location.hash.match(/#(.*)/);
-if (!m) {
-    document.location = '/#' + document.location.pathname;
-    redirecting = true;
-} else {
-    function sendRequest(url,callback,postData) {
-        var req = createXMLHTTPObject();
-        if (!req) return;
-        var method = "GET";
-        req.open(method,url,true);
-        req.setRequestHeader('User-Agent','XMLHTTP/1.0');
-        req.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-    
-        req.onreadystatechange = function () {
-            if (req.readyState != 4) return;
-            if (req.status != 200 && req.status != 304) {
-    //          alert('HTTP error ' + req.status);
-                return;
-            }
-            callback(req);
-        }
-        if (req.readyState == 4) return;
-        req.send(postData);
-    }
-    
-    var XMLHttpFactories = [
-        function () {return new XMLHttpRequest()},
-        function () {return new ActiveXObject("Msxml2.XMLHTTP")},
-        function () {return new ActiveXObject("Msxml3.XMLHTTP")},
-        function () {return new ActiveXObject("Microsoft.XMLHTTP")}
-    ];
-    
-    function createXMLHTTPObject() {
-        var xmlhttp = false;
-        for (var i=0;i<XMLHttpFactories.length;i++) {
-            try {
-                xmlhttp = XMLHttpFactories[i]();
-            }
-            catch (e) {
-                continue;
-            }
-            break;
-        }
-        return xmlhttp;
-    }
-
-    var url = m[1];
-    sendRequest(url, function (req) {
-        document.getElementById('page_body').innerHTML = req.responseText;
-        document.title = document.getElementById('page_title').innerHTML;
-    });
-}
-} /* end if(ajaxEnabled) */
-    </script>
-	<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
-    
-    <link rel="stylesheet" href="{{ STATIC_URL }}JSONSuggestBox/jsonSuggest.css" />
+<head>
+    <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
+    {% if empty %}
+    <!-- core css -->
     <link rel="stylesheet" href="{{ STATIC_URL }}local/reset.css" />
     <link rel="stylesheet" href="{{ STATIC_URL }}local/screen.css" />
     <link rel="stylesheet" href="{{ STATIC_URL }}local/prod.css" />
+    <!-- core js -->
+    <script src="{% block jquery_src %}{{ STATIC_URL }}jquery.min.js{% endblock %}" type="text/javascript"></script>
+    <script type="text/javascript">
+    var STATIC_URL = '{{ STATIC_URL }}';
+    var music_search_autocomplete = '{% url music_search_autocomplete %}';
+    </script>
+    <script type="text/javascript" src="{{ STATIC_URL }}local/core.js"></script>
+    <!-- fancy css -->
+    <link rel="stylesheet" href="{{ STATIC_URL }}JSONSuggestBox/jsonSuggest.css" />
     <link rel="stylesheet" href="{{ STATIC_URL }}local/tipTip.css" />
-  
-    <!--[if lt IE 7]>
-    <style media="screen" type="text/css">
-    .col1 {
-	    width:100%;
-	}
-    </style>
-    <![endif]-->
-
+    <!-- fancy js goes at the bottom (just before </body>) -->
+    {% endif %}
+    
     {% block extra_head_base %}
         {% block extra_head %}{% endblock %}
     {% endblock %}
 
-    <style type="text/css">
-        div.tab {display:none;}
-    </style>
-    
-    <title>{% endif %}
-    {% if request.is_ajax %}<span id="page_title" style="display:none">{% endif %}
+    <title>{% else %}<span id="page_title" style="display:none">{% endif %}
     {% block head_title_base %}{% if SITE_NAME %}{{ SITE_NAME }} : {% endif %}{% block head_title %}{% endblock %}{% endblock %}
-    {% if request.is_ajax %}</span>{% endif %}
-    {% if request.is_ajax %}{% else %}
-    </title>
+    {% if request.is_ajax %}</span>{% else %}</title>
 </head>
 <body class="{% block body_class %}{% endblock %}">
 
@@ -126,6 +64,10 @@ if (!m) {
 {% block body_outer %}
     <div id="body">
         {% block body %}
+        <div class="body ajaxload">
+        <img src="{{ STATIC_URL }}local/ajax-loader.gif" />
+        {% trans "please wait a couple of seconds" %} ...
+        </div>
         {% endblock %}
     </div>
     
@@ -140,280 +82,19 @@ if (!m) {
 {% endblock body_outer %}
 </div>
 
-{% if request.is_ajax %}
-{% else %}
-    <div id="player">
-    {% include 'player.html' %}
-    </div>
-
-<script src="{% block jquery_src %}{{ STATIC_URL }}jquery.min.js{% endblock %}" type="text/javascript"></script>
-<script src="{{ STATIC_URL }}swfobject/swfobject.js" type="text/javascript"></script>
-
-
-<script type="text/javascript">
-if (!redirecting) {
-var player;
-function updatePlayerInfo() {
-    var all = player.getDuration();
-    var part = player.getCurrentTime();
-    var partload = player.getVideoBytesLoaded();
-    var allload = player.getVideoBytesTotal();
-    var percent = getPercent(all, part);
-    var percentload = getPercent(allload, partload);
-    var timebarWidth = 548;
-    var plState = player.getPlayerState();
-
-    document.getElementById('player_progress_bar').style.width = percent * (timebarWidth / 100) + "px";
-    document.getElementById('player_loading_bar').style.width = percentload * (timebarWidth / 100) + "px";
-    t = Math.round(part);
-    var s = t % 60;
-    var m = (t - s) / 60;
-    if (s < 10)
-        s = '0' + s;
-    tt = Math.round(all);
-    var st = tt % 60;
-    var mt = (tt - st) / 60;
-    if (st < 10)
-        st = '0' + st;
-    // Si le player est en buffering on change le temps de lecture par le gif de chargement, sinon on affiche le temps écoulé
-    
-    
-    if(plState!=3)
-    {
-        document.getElementById('videoCurrentTime').innerHTML = m + ':' + s;
-    }else
-    {
-        document.getElementById('videoCurrentTime').innerHTML = '<img src="images/player_streamin.gif" alt=""  />';
-    }
-    document.getElementById('videoDuration').innerHTML = mt + ':' + st;// + " state :" + player.getPlayerState();
-}
-function getPercent(all, part)
-{
-    return (all > 0) ? (100 / all) * part : 0;
-}
-
-function onYouTubePlayerStateChange() {
-}
-function onYouTubePlayerReady() {
-    player = document.getElementById("myytplayer");
-    player.addEventListener('onStateChange', onYouTubePlayerStateChange);
-    setInterval(updatePlayerInfo, 250);
-}
-} /* end if(!redirecting) */
-</script>
-<div id="ytapiplayer" style="display:none">
-    You need Flash player 8+ and JavaScript enabled to view this video.
+{% if not request.is_ajax %}
+<div id="player">
+{% include 'player.html' %}
 </div>
 
-<script type="text/javascript">
-if (!redirecting) {
-var params = { allowScriptAccess: "always" };
-var atts = { id: "myytplayer" };
-swfobject.embedSWF("http://www.youtube.com/apiplayer?enablejsapi=1&playerapiid=ytplayer", 
-                   "ytapiplayer", "0", "0", "8", null, null, params, atts);
-}
-</script>
-
-<script type="text/javascript">
-if (!redirecting) {
-function postPageLoad(url) {
-    $('ul.tabs li.tab:first').addClass('selected');
-    $('div.tab:first').fadeIn();
-
-    if (document.getElementById('page_title')) {
-        document.title = document.getElementById('page_title').innerHTML;
-    }
-
-    if ($('input#term').length) {
-        var autocompleteData = [];
-        var autocompleteRequest;
-        var autocompleteSettings = {
-            minCharacters: 1,
-            maxResults: undefined,
-            wildCard: "",
-            caseSensitive: false,
-            notCharacter: "!",
-            maxHeight: 350,
-            highlightMatches: false,
-            onSelect: function(item) {
-                $.history.load(item['url']);
-            },
-            ajaxResults: true,
-            width: undefined
-        
-        };
-        
-        $('input#term').jsonSuggest(function() {
-            if( autocompleteRequest ) {
-                autocompleteRequest.abort();
-            }
-        
-            autocompleteRequest = $.ajax({
-                url: '{% url music_search_autocomplete %}?term='+$('input#term').val(),
-                dataType: 'json',
-                success: function(data) {
-                    autocompleteData = data;
-                    autocompleteRequest = false;
-                },
-                async: false,
-            });
-        
-            return autocompleteData;
-        }, autocompleteSettings);
-    }
-
-    if ($('form').length) {
-        $('form').submit(function(e) {
-            e.preventDefault();
-
-            $.ajax({
-                url: $(this).attr('action'),
-                dataType: 'html',
-                data: $(this).serialize(),
-                type: $(this).attr('method'),
-                beforeSend: function(req) {
-                    $('#body').fadeOut();
-                },
-                success: function(html, textStatus, request) {
-                    $('#body').fadeOut();
-                    $('#ajaxload').fadeOut();
-                    $('#page_body').html(html);
-                    $('#body').fadeIn();
-                    postPageLoad(url);
-                },
-            });
-        });
-    }
-
-    if ($('div.pagination').length) {
-        $('div.pagination a').each(function() {
-            var href = $(this).attr('href');
-            if (href.match(/^\?/)) {
-                $(this).attr('href', url.replace(/\?page=.*$/, '') + href);
-            }
-        });
-    }
-}
-
-function playTrack(li) {
-    var url = li.find('a.youtube_play').attr('href');
-    var id = url.match(/v=([0-9A-Za-z]*)/)[1];
-
-    player.loadVideoById(id);
-
-    var track = li.find('a.hidden.track');
-    var artist = li.find('a.hidden.artist');
-    $('.player_current_artist').html(artist.html());
-    $('.player_current_artist').attr('href', artist.attr('href'));
-    $('.player_current_track').html(track.html());
-    $('.player_current_track').attr('href', track.attr('href'));
-    $('.player_bttn_play').hide();
-    $('.player_bttn_pause').show();
-    $('.sidebar_Playing a').attr('href', track.attr('href'));
-    $('li.song_play').removeClass('selected');
-    li.addClass('selected');
-}
-
-var isInit = true;
-
-$(document).ready(function() {
-    if (ajaxEnabled) {
-        $('a').live('click', function(e) {
-            e.preventDefault();
-            var url = $(this).attr('href');
-            $.history.load(url);
-        });
-    }
-    $('li.song_play').live('click', function(e) {
-        /* use when li.click != a.clikc */
-        if( e.target != this ) {
-            return true;
-        }
-        e.preventDefault();
-        playTrack($(this));
-    });
-    $('li.song_play span').live('click', function(e) {
-        e.preventDefault();
-        playTrack($(this).parent());
-    });
-    $('.player_bttn_stop').click(function() { 
-        player.stopVideo(); 
-        $('.player_bttn_play').show();
-        $('.player_bttn_pause').hide();
-    });
-    $('.player_bttn_pause').click(function() { 
-        player.pauseVideo(); 
-        $('.player_bttn_pause').hide();
-        $('.player_bttn_play').show();
-    });
-    $('.player_bttn_play').click(function() { 
-        player.playVideo(); 
-        $('.player_bttn_play').hide();
-        $('.player_bttn_pause').show();
-    });
-    $('.player_bttn_mute').click(function() {
-        player.mute();
-    });
-    $('ul.tabs li.tab').live('click', function() {
-        var tab = $(this).attr('class').match(/tab_[^ ]*/);
-        if ($('div.'+tab).css('display') == 'none') {
-            $('div.tab').hide();
-            $('div.'+tab).show();
-            $('ul.tabs li.tab').removeClass('selected');
-            $('ul.tabs li.'+tab).addClass('selected');
-        }
-    });
-
-    $.history.init(function(hash) {
-        if (hash && !isInit) {
-            var url = hash;
-            $.ajax({
-                url: url,
-                dataType: 'html',
-                beforeSend: function(req) {
-                    $('#ajaxload').fadeIn();
-                },
-                success: function(html, textStatus, request) {
-                    $('#body').fadeOut();
-                    $('#ajaxload').fadeOut();
-                    $('#page_body').html(html);
-                    $('#body').fadeIn();
-                    postPageLoad(url);
-                },
-            });
-        }
-    }, { unescape: ",/?=" });
-    isInit = false;
-    
-    postPageLoad(document.location.hash.replace(/^#/, ''));
-});
-} /* end if (!redirecting) */
-</script>
-
-<script src="{{ STATIC_URL }}tipTip/jquery.tipTip.minified.js" type="text/javascript"></script>
-<script src="{{ STATIC_URL }}jquery.history.js" type="text/javascript"></script>
-<script src="{{ STATIC_URL }}JSONSuggestBox/jquery.jsonSuggest-dev.js" type="text/javascript"></script>
-<script type="text/javascript">
-$(document).ready(function() {
-    if(!redirecting) {
-        $('.tiptip').tipTip();
-    } /* end if (!redirecting) */
-});
-</script>
-{% endif %}
-
-{% block extra_body_base %}
-    {% block extra_body %}{% endblock %}
-{% endblock %}
-
-{% if request.is_ajax %}
-{% else %}
-
-<div id="ajaxload" style="display: none">
+<div id="ajaxload">
     <img src="{{ STATIC_URL }}local/ajax-loader.gif" />
     {% trans "loading" %}
 </div>
 
+{% block extra_body_base %}
+    {% block extra_body %}{% endblock %}
+{% endblock %}
 </body>
 </html>
 {% endif %}
