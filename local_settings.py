@@ -76,8 +76,9 @@ LASTFM_API_SECRET = 'c7970cc5b664b1b1e19a3f471ebc1b12'
 
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'LOCATION': 'unique-snowflake'
+
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': '/var/tmp/django_cache',
     }
 }
-
+CACHE_BACKEND = 'file:///var/tmp/django_cache'
