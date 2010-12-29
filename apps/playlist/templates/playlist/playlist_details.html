@@ -1,14 +1,55 @@
 {% extends "playlist/base.html" %}
 
 {% load i18n %}
+{% load music_tags %}
+{% load extra_tagging_tags %}
+
+{% block head_title %}{% trans "Playlist" %}: {{ object }}{% endblock %}
+
+{% block extra_head %}
+<meta name="keywords" content="{{ object.tags }}, {{ object.category }}, {{ object.category.parent }}" />
+<meta name="description" content="{% trans "You can listen to this playlist online, for free, and legally! check it out and create yours ..." %}" />
+{% endblock %}
 
 {% block body %}
-<h1>Details for {{ object }}</h1>
+<h1>{% trans "Playlist" %} {{ object }}</h1>
 
-<p>
-Hi, i'm the playlist details template. Later on, i'll be useful like to add or remove track.
-</p>
-<p>
-Right now i'm barely a placeholder that demonstrates the SEO agility of django.
-</p>
+{% render_tracks object.tracks.all %}
+
+{% endblock %}
+
+{% block body_right %}
+<h3 class="playcat">{% trans "about" %}</h3>
+<div class="details views sidebox">
+    <b>{{ object.play_counter }}</b> {% trans "times" %}
+</div>
+<div class="details count sidebox">
+    <b>{{ object.tracks.count }}</b> {% trans "tracks" %}
+</div>
+<div class="clear"></div>
+<div class="sidebox">
+    <div class="lined">
+        <b>{% trans 'Published by' %}</b>
+        <br />
+        <a href="{% url user_details object.creation_user.username %}" style="color: rgb(28, 155, 200);" title="{{ object.creation_user.first_name }}: {% trans "activities on playlistnow.fm" %}">{{ object.creation_user.first_name }}</a>
+    </div>
+
+    <div class="lined">
+        <b>{% trans 'Tags' %}:</b>
+        <br />
+        {% show_tags_for object %}
+    </div>
+    <div class="lined">
+        <b>{% trans 'Category' %}:</b> 
+        <br />
+        {% if object.category.parent %}
+        <a href="{{ object.category.parent.get_absolute_url }}" title="{% trans "playlists for object.category" %} {{ object.category.parent }}">{{ object.category.parent }}</a>
+        → 
+        {% endif %}
+        <a href="{{ object.category.get_absolute_url }}" title="{% trans "playlists for object.category" %} {{ object.category }}">{{ object.category }}</a>
+    </div>
+</div>
+<div class="clear"></div>
+<div class="sep"></div>
+
 {% endblock %}

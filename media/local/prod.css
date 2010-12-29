@@ -333,8 +333,41 @@ div.playlist.line .cTitle {
     color: #777777;
 }
 
+/* Playlist details side */
 
+#body_right h3 {
+    background: url("../images/icon-playlist.png") no-repeat scroll 0 -10px transparent;
+    margin-bottom: 8px;
+    padding-left: 34px;
+}
 
+div.sidebox {
+    -webkit-border-radius-bottomleft: 4px;
+    -webkit-border-radius-bottomright: 4px;
+    -moz-border-radius-bottomleft: 4px;
+    -moz-border-radius-bottomright: 4px;
+    background: url("../images/data-bg.gif") repeat-x scroll left bottom #FFFFFF;
+    border: 1px solid #DDDDDD;
+    color: #333333;
+    padding: 6px 8px;
+    margin-bottom: 8px;
+}
+
+div.details.count {
+     background: url("../images/count.png") no-repeat 8px 9px transparent;
+    padding-left: 28px;
+}
+div.details.views {
+    background: url("../images/views.png") no-repeat 8px 9px transparent;
+    padding-left: 28px;
+}
+div.lined {
+    background: url("../images/song-line.png") no-repeat scroll left bottom transparent;
+    clear: left;
+    color: #595959;
+    margin-bottom: 6px;
+    padding-bottom: 6px;
+}
 /* Player  */	
 
 #player { position: fixed; left: 0; bottom: 0; width: 100%; height: 72px; background: url(../images/player/player_bg.png) top left; z-index:1000;}
