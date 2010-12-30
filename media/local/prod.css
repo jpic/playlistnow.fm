@@ -335,7 +335,7 @@ div.playlist.line .cTitle {
 
 /* Playlist details side */
 
-#body_right h3 {
+#page_body_right h3 {
     background: url("../images/icon-playlist.png") no-repeat scroll 0 -10px transparent;
     margin-bottom: 8px;
     padding-left: 34px;

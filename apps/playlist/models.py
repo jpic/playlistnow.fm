@@ -67,6 +67,29 @@ class Playlist(models.Model):
         return urlresolvers.reverse('playlist_details', args=(
             self.creation_user.username, self.slug,))
 
+    def to_dict(self, with_tracks=True):
+        data = {}
+        data['object'] = {
+            'name': self.name,
+            'url': self.get_absolute_url(),
+            'pk': self.pk,
+        }
+        data['tracks'] = []
+        if with_tracks:
+            for track in self.tracks.select_related():
+                data['tracks'].append({
+                    'name': track.name,
+                    'url': track.get_absolute_url(),
+                    'pk': track.pk,
+                    'youtube_best_id': track.youtube_get_best(),
+                    'artist': {
+                        'name': track.artist.name,
+                        'url': track.artist.get_absolute_url(),
+                        'pk': track.artist.pk,
+                    }
+                })
+        return data
+
 def autoslug(sender, instance, **kwargs):
     if not hasattr(instance, 'slug'):
         return True

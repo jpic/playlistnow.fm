@@ -16,10 +16,7 @@ urlpatterns = patterns("",
     url(r"^$", direct_to_template, {
         "template": "homepage.html",
     }, name="home"),
-    url(r"^empty/$", direct_to_template, {
-        "template": "site_base.html",
-        "extra_context": { 'empty': True },
-    }, name="empty"),
+    url(r"^empty/$", views.empty, name="empty"),
     url(r"^admin/invite_user/$", "pinax.apps.signup_codes.views.admin_invite_user", name="admin_invite_user"),
     url(r"^admin/", include(admin.site.urls)),
     url(r"^about/", include("about.urls")),

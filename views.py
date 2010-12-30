@@ -30,3 +30,16 @@ def tag_details(request, slug,
     context.update(extra_context or {})
     return shortcuts.render_to_response(template_name, context,
         context_instance=template.RequestContext(request))
+
+def empty(request,
+    template_name='site_base.html', extra_context=None):
+    context = {
+        'empty': True,
+    }
+
+    if request.user.is_authenticated():
+        context['my_playlists'] = Playlist.objects.filter(creation_user=request.user)[:20]
+
+    context.update(extra_context or {})
+    return shortcuts.render_to_response(template_name, context,
+        context_instance=template.RequestContext(request))

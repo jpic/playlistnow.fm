@@ -56,11 +56,14 @@ def playlist_add(request, form_class=PlaylistAddForm,
     return shortcuts.render_to_response(template_name, context,
         context_instance=template.RequestContext(request))
 
-def playlist_details(request, user, slug,
+def playlist_details(request, user, slug, default_format=False,
     template_name='playlist/playlist_details.html', extra_context=None):
     context = {}
 
     object = shortcuts.get_object_or_404(Playlist, creation_user__username=user,slug=slug)
+    if request.GET.get('format', default_format) == 'json':
+        return http.HttpResponse(simplejson.dumps(object.to_dict()))
+
     context['object'] = object
 
     context.update(extra_context or {})

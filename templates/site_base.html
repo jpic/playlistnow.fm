@@ -16,6 +16,7 @@
     var music_search_autocomplete = '{% url music_search_autocomplete %}';
     </script>
     <script type="text/javascript" src="{{ STATIC_URL }}local/core.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}local/player.js"></script>
     <!-- fancy css -->
     <link rel="stylesheet" href="{{ STATIC_URL }}JSONSuggestBox/jsonSuggest.css" />
     <link rel="stylesheet" href="{{ STATIC_URL }}local/tipTip.css" />
@@ -32,8 +33,7 @@
 </head>
 <body class="{% block body_class %}{% endblock %}">
 
-<div id="page_body">
-{% endif %}
+<div id="html_body_wrapper">
 
     <div id="topheader">
         <h1>
@@ -60,29 +60,36 @@
         </ul>
     </div>
 
-
+{% endif %}
 {% block body_outer %}
-    <div id="body">
-        {% block body %}
-        <div class="body ajaxload">
-        <img src="{{ STATIC_URL }}local/ajax-loader.gif" />
-        {% trans "please wait a couple of seconds" %} ...
+    {% if not request.is_ajax %}
+    <div id="page_body_wrapper">
+    {% endif %}
+        {% csrf_token %}
+        <div id="page_body">
+            {% block body %}
+            <div class="body ajaxload">
+            <img src="{{ STATIC_URL }}local/ajax-loader.gif" />
+            {% trans "please wait a couple of seconds" %} ...
+            </div>
+            {% endblock %}
         </div>
-        {% endblock %}
-    </div>
-    
-    <div id="body_right">
-        {% block body_right %}
-        {% endblock %}
+        
+        <div id="page_body_right">
+            {% block body_right %}
+            {% endblock %}
+        </div>
+    {% if not request.is_ajax %}
     </div>
 
     <div id="sidebar">
         {% include "sidebar.html" %}
     </div>
+    {% endif %}
 {% endblock body_outer %}
+{% if not request.is_ajax %}
 </div>
 
-{% if not request.is_ajax %}
 <div id="player">
 {% include 'player.html' %}
 </div>
@@ -92,9 +99,27 @@
     {% trans "loading" %}
 </div>
 
+<script src="{{ STATIC_URL }}swfobject/swfobject.js" type="text/javascript"></script>
+<script type="text/javascript">
+function onYouTubePlayerReady() {
+    player.ytplayer = document.getElementById("myytplayer");
+    setInterval(player.update, 250);
+}
+
+var params = { allowScriptAccess: "always" };
+var atts = { id: "myytplayer" };
+swfobject.embedSWF("http://www.youtube.com/apiplayer?enablejsapi=1&playerapiid=ytplayer", 
+                   "ytapiplayer", "0", "0", "8", null, null, params, atts);
+</script>
+<div id="ytapiplayer" style="display:none">
+    You need Flash player 8+ and JavaScript enabled to enjoy PlaylistNow.Fm.
+</div>
+
+
 {% block extra_body_base %}
     {% block extra_body %}{% endblock %}
 {% endblock %}
+
 </body>
 </html>
 {% endif %}

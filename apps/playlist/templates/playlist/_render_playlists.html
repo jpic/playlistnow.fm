@@ -10,7 +10,7 @@
 
     <div class="description"> 
         <span class="dTitle">
-            <a href="{{ object.get_absolute_url }}" title="{% trans "play" %} {{ object }}">{{ object }}</a>
+            <a href="{{ object.get_absolute_url }}" title="{% trans "play" %} {{ object }}" class="playlist link">{{ object }}</a>
         </span>
         <span class="dValue small_font">({{ object.tracks.count }})</span>
 

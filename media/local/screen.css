@@ -1,5 +1,5 @@
 /* General styles */
-body, #page_body {
+body, #html_body_wrapper {
     margin:0;
     padding:0;
     border: 0;
@@ -29,7 +29,7 @@ body, #page_body {
     position: fixed;
     width: 184px;
 }
-#body {
+#page_body_wrapper {
     float: left;
     margin-left: 184px;
     margin-bottom: 72px;
@@ -39,7 +39,7 @@ body, #page_body {
     padding: 15px;
     overflow: auto;
 }
-#body_right {
+#page_body_right {
     width: 200px;
     position: absolute;
     right: 0;

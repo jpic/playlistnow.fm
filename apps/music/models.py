@@ -201,8 +201,14 @@ class Track(MusicalEntity):
     name = models.CharField(max_length=255, verbose_name=_(u'name'), unique=False)
 
     play_counter = models.IntegerField(verbose_name=_(u'played'), default=0)
-    youtube_id = models.CharField(max_length=11)
+    youtube_id = models.CharField(max_length=11, null=True, blank=True)
     youtube_bugs = models.IntegerField(default=0)
+
+    def youtube_get_best(self):
+        if self.youtube_id:
+            return self.youtube_id
+        else:
+            return re.match(r'.*/([0-9A-Za-z]*)/?$', self.youtube_entries[0].id.text).group(1)
 
     def lastfm_get_info(self, tree=None):
         tree = super(Track, self).lastfm_get_info(tree)

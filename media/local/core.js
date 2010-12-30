@@ -13,18 +13,13 @@ var ui = {
         STATIC_URL + "local/tipTip.css",
     ],
     'init': function() {
-        $.getScript(STATIC_URL + "swfobject/swfobject.js", function() {
-            var params = { allowScriptAccess: "always" };
-            var atts = { id: "myytplayer" };
-            swfobject.embedSWF("http://www.youtube.com/apiplayer?enablejsapi=1&playerapiid=ytplayer", 
-                               "ytapiplayer", "0", "0", "8", null, null, params, atts);
-        });
-
         $.getScript(STATIC_URL + "tipTip/jquery.tipTip.minified.js", function() {
             $('.tiptip').tipTip();
         });
 
+        // one time slots
         ui.setupLinks();
+        // slots to execute at each update
         $(document).bind('signalPageUpdate', function() {
             if (document.getElementById('page_title')) {
                 document.title = $('#page_title').html();
@@ -55,9 +50,9 @@ var ui = {
                     data: $(this).serialize(),
                     type: $(this).attr('method'),
                     success: function(html, textStatus, request) {
-                        $('#ajaxload').fadeOut();
-                        $('#page_body').html(html);
+                        $('#page_body_wrapper').html(html);
                         $(document).trigger('signalPageUpdate', [url]);
+                        $('#ajaxload').fadeOut();
                     },
                     beforeSend: ui.beforeSend,
                     error: ui.error,
@@ -133,7 +128,7 @@ var ui = {
     },
     'error': function(req, textStatus) {
         $('#ajaxload').fadeOut();
-        if (textStatus != 'error') {
+        if (textStatus == 'error') {
             $('#body').html('We are sorry but your request caused a bug');
         }
         ui.currentRequest = false;
@@ -154,7 +149,7 @@ $(document).ready(function() {
                     dataType: 'html',
                     success: function(html, textStatus, request) {
                         $('#ajaxload').fadeOut();
-                        $('#page_body').html(html);
+                        $('#page_body_wrapper').html(html);
                         $(document).trigger('signalPageUpdate', [hash]);
                     },
                     beforeSend: ui.beforeSend,

@@ -10,7 +10,7 @@
     {% cache 3600 render_track track.name %}
     <a style="display:none" title="{{ track.artist.name }}" class="hidden artist" href="{{ track.artist.get_absolute_url }}">{{ track.artist.name }}</a>
     <a style="display:none" title="{{ track.name }}" class="hidden track" href="{{ track.get_absolute_url }}">{{ track.name }}</a>
-    <a style="display:none" title="{{ track.youtube_entries.0.link.0.title }}" class="hidden youtube_play" href="{{ track.youtube_entries.0.link.0.href }}">
+    <a style="display:none" title="{{ track.youtube_get_best }}" class="hidden youtube_play" href="{{ track.youtube_get_best }}">
     </a>
     <a title="{% trans "details of track" %} {{ track }}" href="{{ track.get_absolute_url }}" class="label">{{ track.name }}</a>
     {% endcache %}
