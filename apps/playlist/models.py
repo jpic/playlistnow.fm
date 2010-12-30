@@ -8,6 +8,7 @@ from tagging.fields import TagField
 
 class PlaylistProfile(models.Model):
     user = models.OneToOneField('auth.User', verbose_name=_(u'user'))
+    favorite_playlist = models.ForeignKey('Playlist')
 
     def get_absolute_url(self):
         return urlresolvers.reverse('user_details', args=(self.user.username,))
@@ -15,11 +16,19 @@ class PlaylistProfile(models.Model):
 def autoprofile(sender, instance, **kwargs):
     try:
         instance.playlistprofile
-    except Exception:
-        instance.playlistprofile = PlaylistProfile(user=instance)
+    except PlaylistProfile.DoesNotExist:
+        favorite_playlist = Playlist(
+            name='virtual:favorite',
+            creation_user=instance
+        )
+        favorite_playlist.save()
+
+        instance.playlistprofile = PlaylistProfile(
+            user=instance,
+            favorite_playlist=favorite_playlist
+        )
         instance.playlistprofile.save()
-        instance.save()
-signals.post_save.connect(autoprofile, sender=models.get_model('auth','user'))
+signals.pre_save.connect(autoprofile, sender=models.get_model('auth','user'))
 
 class PlaylistCategory(models.Model):
     name = models.CharField(max_length=100, verbose_name=_(u'name'))
