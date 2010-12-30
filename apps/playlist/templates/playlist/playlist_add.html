@@ -2,13 +2,13 @@
 {% load i18n %}
 
 {% block body %}
-<form action="" method="post">
+<form action="{% url playlist_add %}" method="post">
     {{ form.non_field_errors }}
 
     {% csrf_token %}
 
-    {{ form.title.errors }}
-    {{ form.title.label_tag }}: {{ form.title }}
+    {{ form.name.errors }}
+    {{ form.name.label_tag }}: {{ form.name }}
 
     <br />
 
