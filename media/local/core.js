@@ -32,6 +32,10 @@ var ui = {
         this.ready = true;
     },
     'setupLinks': function() {
+        if (!ui.settings['ajaxEnable']) {
+            return undefined;
+        }
+
         $('a').live('click', function(e) {
             e.preventDefault();
             var url = $(this).attr('href');
@@ -61,7 +65,7 @@ var ui = {
         }
     },
     'setupPagination': function() {
-        if ($('div.pagination').length) {
+        if (ui.settings['ajaxEnable'] && $('div.pagination').length) {
             $('div.pagination a').each(function() {
                 var href = $(this).attr('href');
                 if (href.match(/^\?/)) {

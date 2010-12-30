@@ -1,14 +1,14 @@
 {% load i18n %}
-{% if not request.is_ajax %}
+{% if not request.ajax %}
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" >
 <head>
     <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
-    {% if empty %}
     <!-- core css -->
     <link rel="stylesheet" href="{{ STATIC_URL }}local/reset.css" />
     <link rel="stylesheet" href="{{ STATIC_URL }}local/screen.css" />
     <link rel="stylesheet" href="{{ STATIC_URL }}local/prod.css" />
+    {% if empty %}
     <!-- core js -->
     <script src="{% block jquery_src %}{{ STATIC_URL }}jquery.min.js{% endblock %}" type="text/javascript"></script>
     <script type="text/javascript">
@@ -29,7 +29,7 @@
 
     <title>{% else %}<span id="page_title" style="display:none">{% endif %}
     {% block head_title_base %}{% if SITE_NAME %}{{ SITE_NAME }} : {% endif %}{% block head_title %}{% endblock %}{% endblock %}
-    {% if request.is_ajax %}</span>{% else %}</title>
+    {% if request.ajax %}</span>{% else %}</title>
 </head>
 <body class="{% block body_class %}{% endblock %}">
 
@@ -62,7 +62,7 @@
 
 {% endif %}
 {% block body_outer %}
-    {% if not request.is_ajax %}
+    {% if not request.ajax %}
     <div id="page_body_wrapper">
     {% endif %}
         {% csrf_token %}
@@ -79,7 +79,7 @@
             {% block body_right %}
             {% endblock %}
         </div>
-    {% if not request.is_ajax %}
+    {% if not request.ajax %}
     </div>
 
     <div id="sidebar">
@@ -87,7 +87,7 @@
     </div>
     {% endif %}
 {% endblock body_outer %}
-{% if not request.is_ajax %}
+{% if not request.ajax %}
 </div>
 
 <div id="player">
