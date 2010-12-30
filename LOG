@@ -1,0 +1,136 @@
+Jeudi:
+installation du projet, design squelette, database de playlist, page de
+creation et details d'une playlist
+aamo
+
+Vendredi:
+installation d'un autocomplete, JSONSuggestBox a ete retenu parmis:
+- jquery-autocomplete
+- jquery-ui autocomplete
+- JSONSuggestBox
+- autres petits plugins
+aamo
+
+Tests de diveres manieres d'attaquer l'api de lastfm:
+- python-lastfm
+- pylast
+- lxml
+
+Lxml a ete retenu parce que le gain de performances vaut plus que le surcout en
+dev.
+
+Nous avons tente de nourrir l'api de lastfm comme eyeball il s'est revelé que
+eyeball n'utilise pas l'api de lastfm
+
+Weekend:
+development d'un script de synchronisation avec la database de lastfm. Ca
+pourrait aller si on utilisait une database avec un paradygme different (mongo,
+cassandra ...). Pour l'instant: poubelle
+
+Lundi:
+installation de l'autocomplete en utilisant directement le script
+d'autocomplete du site de lastfm
+configuration de l'autocomplete pour rediriger le click vers la page artiste
+aamo
+
+Mardi:
+pages artistes et tracks
+proto youtube
+0day fugbix des urls utf8
+aamo
+
+Thuesday 30-12-2010
+Impossible de sauver des playlists:
+
+    duplicate key value violates unique constraint "playlist_playlist_pkey"
+    DETAIL: Key (id)=(23) already exists.
+     
+    IntegrityError('duplicate key value violates unique constraint "playlist_playlist_pkey"\nDETAIL: Key (id)=(12) already exists.\n',)
+
+django/db/backends/postgresql_psycopg2/base.py in execute, line 46
+
+Avec la requette
+'INSERT INTO "playlist_playlist" ("category_id", "play_counter", "creation_user_id", "creation_datetime", "modification_datetime", "name", "slug", "image", "tags") VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)'
+
+Et FTR, le trackback:
+ 
+    Traceback:
+    File "/srv/pln.yourlabs.org/pln.yourlabs.org_env/lib/python2.6/site-packages/django/core/handlers/base.py" in get_response
+    100. response = callback(request, *callback_args, **callback_kwargs)
+    File "/srv/pln.yourlabs.org/pln.yourlabs.org_env/lib/python2.6/site-packages/django/contrib/auth/decorators.py" in _wrapped_view
+    25. return view_func(request, *args, **kwargs)
+    File "/srv/pln.yourlabs.org/main/apps/playlist/views.py" in playlist_add
+    48. object.save()
+    File "/srv/pln.yourlabs.org/pln.yourlabs.org_env/lib/python2.6/site-packages/django/db/models/base.py" in save
+    434. self.save_base(using=using, force_insert=force_insert, force_update=force_update)
+    File "/srv/pln.yourlabs.org/pln.yourlabs.org_env/lib/python2.6/site-packages/django/db/models/base.py" in save_base
+    527. result = manager._insert(values, return_id=update_pk, using=using)
+    File "/srv/pln.yourlabs.org/pln.yourlabs.org_env/lib/python2.6/site-packages/django/db/models/manager.py" in _insert
+    195. return insert_query(self.model, values, **kwargs)
+    File "/srv/pln.yourlabs.org/pln.yourlabs.org_env/lib/python2.6/site-packages/django/db/models/query.py" in insert_query
+    1479. return query.get_compiler(using=using).execute_sql(return_id)
+    File "/srv/pln.yourlabs.org/pln.yourlabs.org_env/lib/python2.6/site-packages/django/db/models/sql/compiler.py" in execute_sql
+    783. cursor = super(SQLInsertCompiler, self).execute_sql(None)
+    File "/srv/pln.yourlabs.org/pln.yourlabs.org_env/lib/python2.6/site-packages/django/db/models/sql/compiler.py" in execute_sql
+    727. cursor.execute(sql, params)
+    File "/srv/pln.yourlabs.org/pln.yourlabs.org_env/lib/python2.6/site-packages/django/db/backends/util.py" in execute
+    15. return self.cursor.execute(sql, params)
+    File "/srv/pln.yourlabs.org/pln.yourlabs.org_env/lib/python2.6/site-packages/django/db/backends/postgresql_psycopg2/base.py" in execute
+    46. return self.cursor.execute(query, args)
+     
+    Exception Type: IntegrityError at /playlist/add/
+    Exception Value: duplicate key value violates unique constraint "playlist_playlist_pkey"
+    DETAIL: Key (id)=(27) already exists.
+
+Solution SQL
+
+pln.yourlabs.org=# INSERT INTO "playlist_playlist" ("category_id", "play_counter", "creation_user_id", "creation_datetime", "modification_datetime", "name", "slug", "image", "tags") VALUES 
+(60, 0, 1, TIMESTAMP '2010-12-30 12:28:57', '2010-12-30', 'thn', 'thn', '', 'tn')
+;
+ERROR:  duplicate key value violates unique constraint "playlist_playlist_pkey"
+DETAIL:  Key (id)=(31) already exists.
+pln.yourlabs.org=# explain verbose INSERT INTO "playlist_playlist" ("category_id", "play_counter", "creation_user_id", "creation_datetime", "modification_datetime", "name", "slug", "image", "tags") VALUES 
+(60, 0, 1, TIMESTAMP '2010-12-30 12:28:57', '2010-12-30', 'thn', 'thn', '', 'tn')
+;
+                                                                                                                               QUERY PLAN                                                                                                                                
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Insert  (cost=0.00..0.02 rows=1 width=0)
+   ->  Result  (cost=0.00..0.02 rows=1 width=0)
+         Output: nextval('playlist_playlist_id_seq'::regclass), 60, 0, 1, '2010-12-30 12:28:57'::timestamp without time zone, '2010-12-30'::date, 'thn'::character varying(100), 'thn'::character varying(100), ''::character varying(100), 'tn'::character varying(255)
+(3 rows)
+
+pln.yourlabs.org=# select currval('playlist_playlist_id_seq'::regclass);
+ currval 
+---------
+      31
+(1 row)
+
+pln.yourlabs.org=# select id from playlist_playlist order by id desc limit 2;
+  id  
+------
+ 4002
+ 3618
+(2 rows)
+
+pln.yourlabs.org=# select setval('playlist_playlist_id_seq'::regclass, 10000);
+ setval 
+--------
+  10000
+(1 row)
+
+pln.yourlabs.org=# INSERT INTO "playlist_playlist" ("category_id", "play_counter", "creation_user_id", "creation_datetime", "modification_datetime", "name", "slug", "image", "tags") VALUES 
+(60, 0, 1, TIMESTAMP '2010-12-30 12:28:57', '2010-12-30', 'thn', 'thn', '', 'tn')
+;
+INSERT 0 1
+pln.yourlabs.org=# INSERT INTO "playlist_playlist" ("category_id", "play_counter", "creation_user_id", "creation_datetime", "modification_datetime", "name", "slug", "image", "tags") VALUES 
+(60, 0, 1, TIMESTAMP '2010-12-30 12:28:57', '2010-12-30', 'thn', 'thn', '', 'tn')
+;
+INSERT 0 1
+pln.yourlabs.org=# select currval('playlist_playlist_id_seq'::regclass);
+ currval 
+---------
+   10002
+(1 row)
+
+pln.yourlabs.org=# 
+
