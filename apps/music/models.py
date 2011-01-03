@@ -117,6 +117,14 @@ class MusicalEntity(models.Model):
             match.lastfm_get_info(element)
             self.matches.append(match)
 
+    def lastfm_get_similar(self):
+        cls = self.__class__
+        tree = self.lastfm_get_tree(self.get_type() + '.getSimilar')
+        for element in tree.findall('similar'+self.get_type()+'s/'+self.get_type()):
+            similar = cls(name=element.find('name').text)
+            similar.lastfm_get_info(element)
+            self.similar.append(similar)
+
 class Artist(MusicalEntity):
     name = models.CharField(max_length=255, verbose_name=_(u'name'), unique=True, blank=False)
 
@@ -147,13 +155,6 @@ class Artist(MusicalEntity):
             
             if not count:
                 return True
-
-    def lastfm_get_similar(self):
-        tree = self.lastfm_get_tree('artist.getSimilar')
-        for element in tree.findall('similarartists/artist'):
-            artist = Artist(name=element.find('name').text)
-            artist.lastfm_get_info(element)
-            self.similar.append(artist)
 
     def lastfm_get_events(self):
         tree = self.lastfm_get_tree('artist.getEvents')
@@ -235,6 +236,10 @@ class Track(MusicalEntity):
     def lastfm_get_info(self, tree=None):
         tree = super(Track, self).lastfm_get_info(tree)
         self.description = getattr(tree.find('wiki/summary'), 'text', None)
+        try:
+            self.artist
+        except Artist.DoesNotExist:
+            self.artist = Artist(name=tree.find('artist/name').text)
 
     def youtube_get_term(self):
         return u'%s - %s' % (
