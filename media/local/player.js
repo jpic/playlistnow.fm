@@ -95,11 +95,11 @@ var player = {
             $('li.song_play').removeClass('selected');
             $(this).addClass('selected');
         });
-        $('li.song_play span').live('click', function(e) {
+        $('li.song_play .play').live('click', function(e) {
             e.preventDefault();
             player.playTrack($(this).parent());
-        $('li.song_play').removeClass('selected');
-        li.addClass('selected');
+            $('li.song_play').removeClass('selected');
+            li.addClass('selected');
         });
         $('.player_bttn_stop').click(function() { 
             player.ytplayer.stopVideo(); 
@@ -127,13 +127,17 @@ var player = {
             e.preventDefault();
             player.playPrevious();
         });
-        $('div.playlist, div.playlist div.icon, div.playlist div.play, div.playlist div.description').live('click', function(e) {
+        $('div.playlist, div.playlist .play').live('click', function(e) {
             if( e.target != this ) {
                 return true;
             }
 
             e.preventDefault();
+
             var url = $(this).find('a').attr('href');
+            if (!url) {
+                url = $(this).parents('div.playlist').find('a').attr('href');
+            }
             player.playPlaylist(url);
         });
         $('.song_play .remove').live('click', function(e) {

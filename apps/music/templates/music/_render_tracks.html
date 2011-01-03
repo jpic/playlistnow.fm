@@ -3,17 +3,17 @@
 
 <ul class="song_list">
 {% for track in tracks %}
-<li class="song_play song_info {% cycle "dd" "" %}">
+<li class="song_play song_info {% cycle "dd" "" %} track_pk_{{ track.pk }}">
     <span class="icon img play"></span>
-    <span class="number">{{ forloop.counter }}</span>
+    <span class="number play">{{ forloop.counter }}</span>
 
-    {% cache 3600 render_track track.name %}
+    {# cache 3600 render_track track.name #}
     <a style="display:none" title="{{ track.artist.name }}" class="hidden artist" href="{{ track.artist.get_absolute_url }}">{{ track.artist.name }}</a>
     <a style="display:none" title="{{ track.name }}" class="hidden track" href="{{ track.get_absolute_url }}">{{ track.name }}</a>
     <a style="display:none" title="{{ track.youtube_get_best }}" class="hidden youtube_play" href="{{ track.youtube_get_best }}">
     </a>
     <a title="{% trans "details of track" %} {{ track }}" href="{{ track.get_absolute_url }}" class="label">{{ track.name }}</a>
-    {% endcache %}
+    {# endcache #}
     
     <span class="icon img add">Add</span>
     {% if track.playlist.creation_user == request.user %}
