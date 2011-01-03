@@ -60,9 +60,9 @@ var player = {
         this.playPlaylistTrack(indexes);
     },
     'parseRenderedTrack': function(trackTag) {
-        var hiddenTrackTag = trackTag.find('a.hidden.track');
-        var hiddenYoutubeTag = trackTag.find('a.hidden.youtube_play');
-        var hiddenArtistTag = trackTag.find('a.hidden.artist');
+        var hiddenTrackTag = trackTag.find('a.track');
+        var hiddenYoutubeTag = trackTag.find('a.youtube_play');
+        var hiddenArtistTag = trackTag.find('a.artist');
 
         track = {
             'name': hiddenTrackTag.html(),

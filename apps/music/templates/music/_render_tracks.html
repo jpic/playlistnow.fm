@@ -7,13 +7,12 @@
     <span class="icon img play"></span>
     <span class="number play">{{ forloop.counter }}</span>
 
-    {% cache 3600 render_track track.get_absolute_url %}
-    <a style="display:none" title="{{ track.artist.name }}" class="hidden artist" href="{{ track.artist.get_absolute_url }}">{{ track.artist.name }}</a>
-    <a style="display:none" title="{{ track.name }}" class="hidden track" href="{{ track.get_absolute_url }}">{{ track.name }}</a>
+    {# cache 3600 render_track track.get_absolute_url #}
     <a style="display:none" title="{{ track.youtube_get_best }}" class="hidden youtube_play" href="{{ track.youtube_get_best }}">
     </a>
-    <a title="{% trans "details of track" %} {{ track }}" href="{{ track.get_absolute_url }}" class="label">{{ track.name }}</a>
-    {% endcache %}
+    <a title="{{ track.artist.name }}" class="artist" href="{{ track.artist.get_absolute_url }}" {% if track.artist.name == 'YouTube' %}style="display: none"{% endif %}>{{ track.artist.name }}</a>
+    <a title="{% trans "details of track" %} {{ track }}" href="{{ track.get_absolute_url }}" class="label track">{{ track.name }}</a>
+    {# endcache #}
     
     <span class="icon img add authenticationRequired">Add</span>
     {% if track.playlist.creation_user == request.user %}
