@@ -154,6 +154,7 @@ $(document).ready(function() {
                     success: function(html, textStatus, request) {
                         $('#ajaxload').fadeOut();
                         $('#page_body_wrapper').html(html);
+                        ui.currentUrl = hash;
                         $(document).trigger('signalPageUpdate', [hash]);
                     },
                     beforeSend: ui.beforeSend,
