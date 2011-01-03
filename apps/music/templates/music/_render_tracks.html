@@ -14,6 +14,11 @@
     </a>
     <a title="{% trans "details of track" %} {{ track }}" href="{{ track.get_absolute_url }}" class="label">{{ track.name }}</a>
     {% endcache %}
+    
+    <span class="icon img add">Add</span>
+    {% if track.playlist.creation_user == request.user %}
+    <span class="icon img remove">Remove</span>
+    {% endif %}
 </li>
 {% endfor %}
 </ul>

@@ -28,6 +28,36 @@ var ui = {
         $(document).bind('signalPageUpdate', ui.setupForms);
         $(document).bind('signalPageUpdate', ui.setupPagination);
         $(document).bind('signalPageUpdate', ui.setupAutocomplete);
+        
+        $(document).bind('signalPlaylistTrackModificationRequest', function(e, track, playlist, action) {
+            /* read playlist_track_modify first */
+            var data = [playlist_track_modify, '?'];
+            
+            if (track.pk != undefined) {
+                data.push('&track_pk='+track.pk);
+            }
+            else if (track.name != undefined) {
+                data.push('&track_name='+encodeURIComponent(track.name));
+            }
+            
+            if (track.artist != undefined && track.artist.name != undefined) {
+                data.push('&artist_name=' + encodeURIComponent(track.artist.name));
+            }
+
+            if (playlist.pk != undefined) {
+                data.push('&playlist_pk=' + playlist.pk);
+            }
+            else if (playlist.name != undefined) {
+                data.push('&playlist_name=' + encodeURIComponent(playlist.name));
+            }
+
+            if (action != undefined) {
+                data.push('&action=' + action);
+            }
+        
+            var url = data.join('');
+            $.history.load(url);
+        });
 
         this.ready = true;
     },

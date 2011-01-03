@@ -127,10 +127,26 @@ var player = {
             e.preventDefault();
             player.playPrevious();
         });
-        $('div.playlist').live('click', function(e) {
+        $('div.playlist, div.playlist div.icon, div.playlist div.play, div.playlist div.description').live('click', function(e) {
+            if( e.target != this ) {
+                return true;
+            }
+
             e.preventDefault();
             var url = $(this).find('a').attr('href');
             player.playPlaylist(url);
+        });
+        $('.song_play .remove').live('click', function(e) {
+            e.preventDefault();
+            var track = player.parseRenderedTrack($(this).parent());
+            var playlist = false;
+            $(document).trigger('signalPlaylistTrackModificationRequest', [track, playlist, 'remove'])
+        });
+        $('.song_play .add').live('click', function(e) {
+            e.preventDefault();
+            var track = player.parseRenderedTrack($(this).parent());
+            var playlist = false;
+            $(document).trigger('signalPlaylistTrackModificationRequest', [track, playlist, 'add'])
         });
     }
 }

@@ -1,0 +1,62 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+
+{% block body %}
+{% if status = 'success' %}
+<p class="success message">
+    Thanks for adding track 
+    <a href="{{ track.get_absolute_url }}" title="{{ track }}">
+        '{{ track }}'
+    </a>
+
+    by 
+    <a href="{{ track.artist.get_absolute_url }}" title="{{ track.artist }}">
+        '{{ track.artist }}'
+    </a>
+
+    to playlist 
+    <a href="{{ playlist.get_absolute_url }}" title="{{ playlist }}">
+        '{{ playlist }}'
+    </a>
+</p>
+{% else %}
+<h1>{% trans "Confirmation Request" %}</h1>
+{% if playlist.pk and track.name %}
+<p>
+    {% trans "Do you want to" %} {% trans action %} {{ track.name }} {% if track.artist.name %} {% trans "by" %} {{ track.artist.name }}{% endif %} {% trans "to" %} {{ playlist.name }} ?
+</p>
+{% endif %}
+<form action="{{ request.path }}" method="post">
+
+    {% if playlist.pk %}
+    <input type="hidden" name="playlist_pk" value="{{ playlist.pk }}" />
+    {% else %}
+        {% if playlist.name %}
+        <input type="hidden" name="playlist_name" value="{{ playlist.name }}" />
+        {% else %}
+        <label for="playlist_pk">
+            {% trans "select one of your playlist" %}
+        </label>
+        <select name="playlist_pk">
+            {% for playlist in user_playlists %}
+            <option value="{{ playlist.pk }}">{{ playlist.name }}</option>
+            {% endfor %}
+        </select>
+        {% endif %}
+    {% endif %}
+    {% if track.pk %}
+    <input type="hidden" name="artist_pk" value="{{ track.artist.pk }}" />
+    {% else %}
+    <input type="hidden" name="artist_name" value="{{ track.artist.name }}" />
+    {% endif %}
+    {% if track.pk %}
+    <input type="hidden" name="track_pk" value="{{ track.pk }}" />
+    {% else %}
+    <input type="hidden" name="track_name" value="{{ track.name }}" />
+    {% endif %}
+    <input type="hidden" name="action" value="{{ action }}" />
+    <input type="submit" value="{% trans action %}" />
+</form>
+{% endif %}
+{% endblock %}

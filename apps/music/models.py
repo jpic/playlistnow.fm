@@ -31,6 +31,13 @@ class MusicalEntity(models.Model):
     class Meta:
         abstract = True
 
+    def to_dict(self):
+        return {
+            'name': self.name,
+            'url': self.get_absolute_url(),
+            'pk': self.pk or 0,
+        }
+
     def get_absolute_url(self):
         return urlresolvers.reverse('music_%s_details' % self.get_type(), 
             args=(defaultfilters.slugify(self.name),))
@@ -203,6 +210,21 @@ class Track(MusicalEntity):
     play_counter = models.IntegerField(verbose_name=_(u'played'), default=0)
     youtube_id = models.CharField(max_length=11, null=True, blank=True)
     youtube_bugs = models.IntegerField(default=0)
+
+    def to_dict(self, with_artist=True, with_youtube_best_id=True):
+        data = {
+            'name': self.name,
+            'url': self.get_absolute_url(),
+            'pk': self.pk or 0,
+        }
+
+        if with_artist:
+            data['artist'] = self.artist.to_dict()
+       
+        if with_youtube_best_id:
+            data['youtube_best_id'] = self.youtube_get_best()
+
+        return data
 
     def youtube_get_best(self):
         if self.youtube_id:
