@@ -69,6 +69,8 @@ def music_track_details(request, name, artist, album=None,
 
     context['object'] = Track(name=name)
     context['object'].artist = Artist(name=artist)
+    context['object'].lastfm_get_info()
+    context['object'].lastfm_get_similar()
     context['object'].similar = context['object'].similar[:5]
 
     context.update(extra_context or {})
