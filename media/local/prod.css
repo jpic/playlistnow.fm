@@ -13,6 +13,8 @@ h2{font-size: 16px; line-height: 22px;letter-spacing: -0.5px;color: #666;margin:
 h2 a{color:#461b50}
 .centered{text-align:center;}em{font-style:italic;}.left{float:left;}.right {float: right !important;}.clear{clear:both;}
 
+#page_body_right h3 {font-size: 16px; line-height: 22px;letter-spacing: -0.5px;color: #666;margin:0px 0 10px 0;font-weight: 300;}
+
 /* Boutons */
 .button{background:#222 url(../images/overlay-button.png) repeat-x 0 0;display:inline-block;padding:5px 15px 6px;font-size:12px;font-weight:500;line-height:1;text-decoration:none;-moz-border-radius:5px;border-bottom:1px solid rgba(0,0,0,0.25);position:relative;cursor:pointer;overflow:visible;width:auto;margin-top:3px;}
 .button::-moz-focus-inner{border:0;padding:0}

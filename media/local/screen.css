@@ -4,7 +4,7 @@ body, #html_body_wrapper {
     padding:0;
     border: 0;
     width:100%;
-    font-size:90%;
+    
 }
 .hidden, a.hidden, div.hidden { display: none; }
 
@@ -34,16 +34,20 @@ body, #html_body_wrapper {
     margin-left: 184px;
     margin-bottom: 72px;
     margin-top: 41px;
-    margin-right: 170px;
+    margin-right: 220px;
     min-height: 100%;
-    padding: 15px;
+    padding: 20px;
     overflow: auto;
 }
 #page_body_right {
-    width: 200px;
+    width: 195px;
     position: absolute;
     right: 0;
+    top: 0;
     margin-top: 56px;
+   border-left:1px solid #ddd;
+    min-height: 100%;
+    padding: 0 15px;
 }
 #ajaxload {
     cursor: pointer;
