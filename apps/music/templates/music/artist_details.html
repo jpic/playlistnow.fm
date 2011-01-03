@@ -87,11 +87,11 @@
 
 {% if tab == 'similar' %}
 <h2>{% trans 'artists similar to' %} {{ object }}</h2>
-<ul>
+ <ul class="similar-artists">
 {% for artist in object.similar %}
     <li>
         <a href="{{ artist.get_absolute_url }}" title="{% trans "details of artist" %} {{ artist }}">
-            <img src="{{ artist.images.medium }}" alt="{{ artist }}" />
+            <img src="{{ artist.images.medium }}" alt="{{ artist }}" class="avatar medium"/>
             {{ artist }}
         </a>
     </li>

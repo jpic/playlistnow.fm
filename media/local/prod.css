@@ -8,7 +8,7 @@ body {font:normal normal 13px/18px "Helvetica Neue",Helvetica,Arial,Verdana,sans
 a{outline:none;text-decoration:none;color:#461b50;border:none;}a:hover{color:#461b50;text-decoration:underline;}
 
 h1,h2,h3,h4,h5,h6,strong{font-weight:bold;}
-h1{line-height: 22px;letter-spacing: -0.5px;color: #148dc4;margin:0px 0 10px 0;font-size: 22px;}
+h1{line-height: 22px;letter-spacing: -0.5px;color: #148dc4;margin:0px 0 10px 0;font-size: 22px;font-style: italic;font-family: Georgia,serif;}
 h2{font-size: 16px; line-height: 22px;letter-spacing: -0.5px;color: #666;margin:10px 0 10px 0;font-weight: 300;}
 h2 a{color:#461b50}
 .centered{text-align:center;}em{font-style:italic;}.left{float:left;}.right {float: right !important;}.clear{clear:both;}
@@ -197,7 +197,8 @@ li.song_info.dd, .dd{background-color:#f4f4f4;}
 
 ul.similar-artists{display:inline;vertical-align: top;}
 ul.similar-artists li {position: relative;font-weight:500;text-align: center;float: left;display: inline;margin:0 9px 0px 0;overflow-x: hidden;overflow-y: hidden;}
-ul.similar-artists li a{display: block;width:70px}
+ul.similar-artists li a{display: block;width:75px;height:120px;}
+
 /* Artistes Specific Styles */
 .artist_rank{margin-left: 5px;font-size: 13px;font-weight: bold;}
 .artist_descr{padding:0px 2px;color: #666666;overflow:hidden;}
@@ -336,35 +337,25 @@ div.playlist.line .cTitle {
 }
 
 /* Playlist details side */
-
-#page_body_right h3 {
-    background: url("../images/icon-playlist.png") no-repeat scroll 0 -10px transparent;
-    margin-bottom: 8px;
-    padding-left: 34px;
-}
-
 div.sidebox {
-    -webkit-border-radius-bottomleft: 4px;
-    -webkit-border-radius-bottomright: 4px;
-    -moz-border-radius-bottomleft: 4px;
-    -moz-border-radius-bottomright: 4px;
-    background: url("../images/data-bg.gif") repeat-x scroll left bottom #FFFFFF;
-    border: 1px solid #DDDDDD;
+
+    background:#ddd;
     color: #333333;
-    padding: 6px 8px;
+    padding: 4px;
     margin-bottom: 8px;
+    -webkit-border-radius: 4px; -moz-border-radius: 4px; border-radius: 4px;
 }
 
 div.details.count {
-     background: url("../images/count.png") no-repeat 8px 9px transparent;
-    padding-left: 28px;
+     background: url("../images/count.png") no-repeat 8px 8px #eee;
+    padding-left: 35px;
 }
 div.details.views {
-    background: url("../images/views.png") no-repeat 8px 9px transparent;
-    padding-left: 28px;
+    background: url("../images/views.png") no-repeat 8px 9px #eee;
+    padding-left: 35px;
 }
 div.lined {
-    background: url("../images/song-line.png") no-repeat scroll left bottom transparent;
+    
     clear: left;
     color: #595959;
     margin-bottom: 6px;
@@ -440,8 +431,10 @@ div.lined {
 
 
 /* Ads  */	
-div.ad {text-align: center;font-size: 12px;background: #EFE8ED;margin:10px 0;padding:5px 5px 7px 5px;}
-
+div.ad {font-size: 12px;background: #EFE8ED;margin:10px 0;padding:7px;-webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;}
+    
 h1,h2,h3,h4,h5,h6,.capitalize, span.label {
     text-transform: capitalize;
 }
