@@ -54,3 +54,34 @@ body, #html_body_wrapper {
     position: fixed;
     top: 12px;
 }
+
+#simplemodal-overlay {
+    background: url("../images/dark.png") repeat scroll left top black;
+}
+
+#simplemodal-data {
+    -moz-border-radius: 5px 5px 5px 5px;
+    width: 510px;
+    background-color: white;
+    overflow: hidden;
+}
+
+#simplemodal-title {
+    display: block;
+    -moz-border-radius-topright: 5px;
+    background: url("../images/popupbg.png") no-repeat scroll left top transparent;
+    clear: both;
+    color: #FFFFFF;
+    font-size: 16px;
+    padding: 15px;
+    font-weight: bold;
+}
+
+img.simplemodal-close {
+    float: right;
+    margin-top: -2px;
+}
+
+#page_title {
+    display: none;
+}

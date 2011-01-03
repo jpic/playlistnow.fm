@@ -16,6 +16,8 @@ var ui = {
         $.getScript(STATIC_URL + "tipTip/jquery.tipTip.minified.js", function() {
             $('.tiptip').tipTip();
         });
+        $.getScript(STATIC_URL + "jquery.simplemodal.min.js", function() {
+        });
 
         // one time slots
         ui.setupLinks();
@@ -65,7 +67,11 @@ var ui = {
             }
         
             var url = data.join('');
-            $.history.load(url);
+            if (!user.is_authenticated) {
+                ui.authenticationPopup(url)
+            } else {
+                $.history.load(url);
+            }
         });
 
         this.ready = true;
@@ -78,7 +84,11 @@ var ui = {
         $('a').live('click', function(e) {
             e.preventDefault();
             var url = $(this).attr('href');
-            $.history.load(url);
+            if ($(this).hasClass('authenticationRequired') && !user.is_authenticated) {
+                ui.authenticationPopup(url);
+            } else {
+                $.history.load(url);
+            }
         });
     },
      'setupForms': function() {
@@ -175,6 +185,18 @@ var ui = {
             $('#body').html('We are sorry but your request caused a bug');
         }
         ui.currentRequest = false;
+    },
+    'authenticationPopup': function(url) {
+        $.ajax({
+            url: acct_login + '?modal=1&next=' + encodeURIComponent(url),
+            dataType: 'html',
+            success: function(html, textStatus, request) {
+                $('#ajaxload').fadeOut();
+                $.modal(html);
+            },
+            beforeSend: ui.beforeSend,
+            error: ui.error,
+        });
     }
 }
 

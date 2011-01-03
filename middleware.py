@@ -11,6 +11,8 @@ IGNORE = r'^(site_media)|(ajax)'
 
 class DynamicHtmlMiddleware(object):
     def process_request(self, request):
+        request.modal = request.GET.get('modal', False)
+        
         if request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
             # probably from javascript
             request.ajax = True
@@ -42,6 +44,9 @@ class DynamicHtmlMiddleware(object):
         new_url = False
 
         location = response.get('Location', '')
+        if location == '/account/login/':
+            response['Location'] = response['Location'] + '?modal=1'
+
         if location and location[0] == '/':
             # internal redirect, forward ajax
             if location.find('/?') > -1:

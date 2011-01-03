@@ -15,8 +15,14 @@
     var STATIC_URL = '{{ STATIC_URL }}';
     var music_search_autocomplete = '{% url music_search_autocomplete %}';
     var playlist_track_modify = '{% url playlist_track_modify %}';
+    var acct_login = '{% url acct_login %}';
     </script>
     <script type="text/javascript" src="{{ STATIC_URL }}local/core.js"></script>
+    <script type="text/javascript">
+    var user = {
+        'is_authenticated': {% if request.user.is_authenticated %}true{% else %}false{% endif %},
+    }
+    </script>
     <script type="text/javascript" src="{{ STATIC_URL }}local/player.js"></script>
     <!-- fancy css -->
     <link rel="stylesheet" href="{{ STATIC_URL }}JSONSuggestBox/jsonSuggest.css" />
@@ -28,9 +34,9 @@
         {% block extra_head %}{% endblock %}
     {% endblock %}
 
-    <title>{% else %}<span id="page_title" style="display:none">{% endif %}
+    <title>{% else %}<span id="{% if request.modal %}simplemodal-title{% else %}page_title" style"display:none{% endif %}">{% endif %}
     {% block head_title_base %}{% if SITE_NAME %}{{ SITE_NAME }} : {% endif %}{% block head_title %}{% endblock %}{% endblock %}
-    {% if request.ajax %}</span>{% else %}</title>
+    {% if request.ajax %}{% if request.modal %}<img src="{{ STATIC_URL }}images/bttn_closepp.png" class="simplemodal-close" />{% endif %}</span>{% else %}</title>
 </head>
 <body class="{% block body_class %}{% endblock %}">
 
