@@ -207,8 +207,8 @@ class Track(MusicalEntity):
     def youtube_get_best(self):
         if self.youtube_id:
             return self.youtube_id
-        else:
-            return re.match(r'.*/([0-9A-Za-z]*)/?$', self.youtube_entries[0].id.text).group(1)
+        elif len(self.youtube_entries) > 0:
+            return re.match(r'.*/([0-9A-Za-z-]*)/?$', self.youtube_entries[0].id.text).group(1)
 
     def lastfm_get_info(self, tree=None):
         tree = super(Track, self).lastfm_get_info(tree)
