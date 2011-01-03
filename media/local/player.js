@@ -74,8 +74,6 @@ var player = {
             'youtube_best_id': hiddenYoutubeTag.attr('href'),
         }
 
-        console.log(track);
-    
         return track;
     },
     'parseRenderedPlaylist': function(playlistTag) {
