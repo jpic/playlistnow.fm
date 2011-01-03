@@ -24,6 +24,15 @@ var ui = {
             if (document.getElementById('page_title')) {
                 document.title = $('#page_title').html();
             }
+
+            var right = $('#page_body_right');
+            if (right != undefined) {
+                if(!right.html().trim()) {
+                    right.hide();
+                } else {
+                    right.show();
+                }
+            }
         });
         $(document).bind('signalPageUpdate', ui.setupForms);
         $(document).bind('signalPageUpdate', ui.setupPagination);

@@ -66,20 +66,23 @@
     {% if not request.ajax %}
     <div id="page_body_wrapper">
     {% endif %}
-        {% csrf_token %}
+        {% if not request.modal %}
+        <div id="page_body_right">
+            {% block body_right %}
+            {% endblock %}
+        </div>
         <div id="page_body">
+        {% endif %}
+            {% csrf_token %}
             {% block body %}
             <div class="body ajaxload">
             <img src="{{ STATIC_URL }}local/ajax-loader.gif" />
             {% trans "please wait a couple of seconds" %} ...
             </div>
             {% endblock %}
+        {% if not request.modal %}
         </div>
-        
-        <div id="page_body_right">
-            {% block body_right %}
-            {% endblock %}
-        </div>
+        {% endif %}
     {% if not request.ajax %}
     </div>
 
