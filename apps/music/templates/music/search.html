@@ -1,6 +1,7 @@
 {% extends "music/base.html" %}
 
 {% load i18n %}
+{% load music_tags %}
 
 {% block head_title %}{% if request.GET.term %}{% trans "Results for" %} {{ request.GET.term }}{% else %}{% trans "Search music" %}{% endif %}{% endblock %}
 
@@ -31,15 +32,9 @@
 
 {% if tracks %}
 <h2>{% trans "tracks matching" %} '{{ request.GET.term }}'</h2>
-<ul>
-    {% for track in tracks %}
-    <li>
-        <a href="{{ track.get_absolute_url }}" title="{% trans "details for track" %} {{ track }}">
-            {{ track.name }}
-        </a>
-    </li>
-    {% endfor %}
-</ul>
+
+{% render_tracks tracks %}
+
 {% endif %}
 
 {% endblock %}
