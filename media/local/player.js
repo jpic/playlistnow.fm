@@ -11,6 +11,8 @@ var player = {
         $('.player_bttn_pause').show();
         $('.sidebar_Playing a').attr('href', track.url);
         $('.player_current_playlist').hide();
+
+        this.track_history.push(track);
     },
     'playPlaylistTrack': function(index) {
         if (typeof index == 'object') {
@@ -50,20 +52,29 @@ var player = {
         );
     },
     'playPrevious': function() {
-        indexes = [
-            player.currentTrackIndex - 1,
-            player.playlist.tracks.length - 1,
-        ];
-        
-        this.playPlaylistTrack(indexes);
+        var track = this.track_history.pop().pop();
+        if (track) {
+            this.playTrack(track);
+        } else {
+            indexes = [
+                player.currentTrackIndex - 1,
+                player.playlist.tracks.length - 1,
+            ];
+            
+            this.playPlaylistTrack(indexes);
+        }
     },
     'playNext': function() {
         indexes = [
             player.currentTrackIndex + 1,
             0,
         ];
+
+        do {
+            index = Math.floor(Math.random()*(player.playlist.tracks.length + 1))
+        } while (index == player.currentTrackIndex)
         
-        this.playPlaylistTrack(indexes);
+        this.playPlaylistTrack(index);
     },
     'parseRenderedTrack': function(trackTag) {
         var hiddenTrackTag = trackTag.find('a.track');
@@ -89,6 +100,8 @@ var player = {
         }
     },
     'init': function() {
+        this.track_history = [];
+        
         $('li.song_play').live('click', function(e) {
             /* use when li.click != a.clikc */
             if( e.target != this ) {
