@@ -78,6 +78,7 @@ def playlist_track_modify(request,
 
         if not getattr(context['track'].artist, 'pk', False):
             context['track'].artist.save()
+            context['track'].artist = context['track'].artist
             print 'saved artist', context['track'].artist, context['track'].artist.pk
         else:
             print 'got artist', context['track'].artist, context['track'].artist.pk
