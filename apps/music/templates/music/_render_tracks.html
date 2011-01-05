@@ -4,8 +4,8 @@
 <ul class="song_list">
 {% for track in tracks %}
 <li class="song_play song_info {% cycle "dd" "" %} track_pk_{{ track.pk }}">
-    <span class="icon img play"></span>
-    <span class="number play">{{ forloop.counter }}</span>
+    <span class="icon play"></span>
+    <span class="number">{{ forloop.counter }}</span>
 
     {# cache 3600 render_track track.get_absolute_url #}
     <a style="display:none" title="{{ track.youtube_get_best }}" class="hidden youtube_play" href="{{ track.youtube_get_best }}">
