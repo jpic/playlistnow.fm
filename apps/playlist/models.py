@@ -28,7 +28,7 @@ def autoprofile(sender, instance, **kwargs):
             favorite_playlist=favorite_playlist
         )
         instance.playlistprofile.save()
-signals.pre_save.connect(autoprofile, sender=models.get_model('auth','user'))
+signals.post_save.connect(autoprofile, sender=models.get_model('auth','user'))
 
 class PlaylistCategory(models.Model):
     name = models.CharField(max_length=100, verbose_name=_(u'name'))
