@@ -10,6 +10,7 @@ var player = {
         $('.player_bttn_play').hide();
         $('.player_bttn_pause').show();
         $('.sidebar_Playing a').attr('href', track.url);
+        $('.player_current_playlist').hide();
     },
     'playPlaylistTrack': function(index) {
         if (typeof index == 'object') {
@@ -26,6 +27,11 @@ var player = {
         }
         
         this.playTrack(this.playlist.tracks[this.currentTrackIndex]);
+
+        var currentPlaylist = $('.player_current_playlist');
+        currentPlaylist.html('- I am ' + this.playlist['object']['name']);
+        currentPlaylist.attr('href', this.playlist['object']['url']);
+        currentPlaylist.fadeIn();
     },
     'playPlaylist': function(url) {
         $.get(
