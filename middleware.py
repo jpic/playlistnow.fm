@@ -6,6 +6,8 @@ from django.conf import settings
 JS_AGENTS = [
     'gecko',
     'msie',
+    'vimprobable',
+    'vimpression',
 ]
 IGNORE = r'^(site_media)|(ajax)'
 
