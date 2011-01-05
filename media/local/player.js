@@ -156,6 +156,11 @@ var player = {
             e.preventDefault();
             var track = player.parseRenderedTrack($(this).parent());
             var playlist = false;
+            if ($('#playlist_pk').length > 0) {
+                playlist = {
+                    'pk': $('#playlist_pk').html(),
+                };
+            }
             $(document).trigger('signalPlaylistTrackModificationRequest', [track, playlist, 'add'])
         });
     }

@@ -150,7 +150,7 @@ def playlist_add(request, form_class=PlaylistAddForm,
     return shortcuts.render_to_response(template_name, context,
         context_instance=template.RequestContext(request))
 
-def playlist_details(request, user, slug, default_format=False,
+def playlist_details(request, user, slug, default_format=False, qname='term',
     template_name='playlist/playlist_details.html', extra_context=None):
     context = {}
 
@@ -159,6 +159,12 @@ def playlist_details(request, user, slug, default_format=False,
         return http.HttpResponse(simplejson.dumps(object.to_dict()))
 
     context['object'] = object
+
+    q = request.GET.get(qname, False)
+    if q:
+        track = Track(name=q)
+        track.lastfm_search()
+        context['tracks'] = track.matches[:5]
 
     context.update(extra_context or {})
     return shortcuts.render_to_response(template_name, context,

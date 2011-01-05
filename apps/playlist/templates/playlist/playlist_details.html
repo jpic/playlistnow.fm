@@ -14,6 +14,20 @@
 {% block body %}
 <h1>{% trans "Playlist" %} {{ object }}</h1>
 
+<h2>{% trans "add tracks" %}</h2>
+<form method="get" action="{{ request.path }}" class="ad">
+    <input type="text" name="term" id="term" />
+    <input type="hidden" name="search_artists" value="0" />
+    <input type="hidden" name="search_albums" value="0" />
+    <input type="submit" value="{% trans "Search" %}" />
+</form>
+
+{% if tracks %}
+<h2>{% trans "results matching" %} {{ request.GET.q }}</h2>
+{% render_tracks tracks %}
+{% endif %}
+
+<span id="playlist_pk" style="display:none">{{ object.pk }}</span>
 {% render_tracks object.tracks.all %}
 
 {% endblock %}
