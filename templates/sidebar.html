@@ -25,14 +25,16 @@
 
                 </a>
             </li>
+            {% if request.user.is_authenticated %}
               <li class="sidebar_Myplaylists sidebar_info">
                 
-                    <a class="#">
+                <a href="{% url user_details request.user.username %}">
                 
                     <span class="icon"></span>
                     <span class="label">My Playlists</span>
                 </a>
             </li>
+            {% endif %}
 
              <li class="sidebar_Tinyplaylist sidebar_info">
                 <a href="#">
