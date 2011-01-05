@@ -43,6 +43,11 @@ class DynamicHtmlMiddleware(object):
                     return http.HttpResponseRedirect('/empty/#' + request.path)
 
     def process_response(self, request, response):
+        if '/admin' in request.path:
+            return response
+        elif '/site_media' in request.path:
+            return response
+
         new_url = False
 
         location = response.get('Location', '')
