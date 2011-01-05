@@ -157,15 +157,21 @@ def music_search(request, qname='term',
         q = request.GET[qname]
         
         try:
-            artist = Artist(name=q)
-            artist.lastfm_search()
-            context['artists'] = artist.matches
-    
-            track = Track(name=q)
-            track.lastfm_search()
-            context['tracks'] = track.matches
+            if int(request.GET.get('search_artists', True)):
+                artist = Artist(name=q)
+                artist.lastfm_search()
+                context['artists'] = artist.matches
         except lxml.etree.XMLSyntaxError: # some utf8 char failed
             pass
+
+        try:
+            if request.GET.get('search_tracks', True):
+                track = Track(name=q)
+                track.lastfm_search()
+                context['tracks'] = track.matches
+        except lxml.etree.XMLSyntaxError: # some utf8 char failed
+            pass
+
 
     context.update(extra_context or {})
     return shortcuts.render_to_response(template_name, context,
