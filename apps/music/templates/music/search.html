@@ -12,7 +12,7 @@
 
 {% block body %}
 <form action="{% url music_search %}" method="get">
-    <input type="text" name="term" id="term" />
+    <input type="text" name="term" id="term" class="autocomplete" />
     <input type="submit" value="{% trans "Search" %}" />
 </form>
 

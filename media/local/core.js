@@ -125,7 +125,7 @@ var ui = {
 
     },
     'setupAutocomplete': function() {
-        if ($('input#term').length == 0) {
+        if ($('input.autocomplete#term').length == 0) {
             return true;
         }
 
@@ -148,7 +148,7 @@ var ui = {
                 width: undefined
             };
             
-            $('input#term').jsonSuggest(function() {
+            $('input.autocomplete#term').jsonSuggest(function() {
                 $.ajax({
                     url: music_search_autocomplete + '?term=' + $('input#term').val(),
                     dataType: 'json',
