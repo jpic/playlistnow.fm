@@ -39,7 +39,7 @@ class DynamicHtmlMiddleware(object):
             # automatic redirect to container for chrome user agents
             test = request.META['HTTP_USER_AGENT'].lower()
             for agent in JS_AGENTS:
-                if test.find(agent) > 0:
+                if test.find(agent) > -1:
                     return http.HttpResponseRedirect('/empty/#' + request.path)
 
     def process_response(self, request, response):
