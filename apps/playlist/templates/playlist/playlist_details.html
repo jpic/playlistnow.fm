@@ -49,9 +49,11 @@
     </div>
 
     <div class="lined">
-        <b>{% trans 'Tags' %}:</b>
+     <div id="playlist-tags">
+        {% trans 'Tags' %}:
         <br />
         {% show_tags_for object %}
+          </div>
     </div>
     <div class="lined">
         <b>{% trans 'Category' %}:</b> 

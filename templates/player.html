@@ -3,6 +3,7 @@
     <div id="player_mzname">
         <a href="" class="player_current_track">
         </a> 
+        -
         <a href="" class="player_current_artist">
         </a>
         <a href="" class="player_current_playlist">
@@ -11,11 +12,11 @@
     
     <div id="right_action">
             <div id="player_bottomsep"></div>
-            <a href="javascript:void(0);" class="fav tiptip" onclick="return use('iLikeThisSongFromPlayer', mzAr[nbMz], mzInf[nbMz]);" title="I Like" fade=[on]"></a>
+            <a  class="fav tiptip" onclick="return use('iLikeThisSongFromPlayer', mzAr[nbMz], mzInf[nbMz]);" title="I Like" fade=[on]"></a>
         
-            <a href="javascript:void(0);" class="add tiptip" onclick="use('addThisSongFromPlayer', mzAr[nbMz], mzInf[nbMz]);" title="Add this song" fade=[on]"></a>
+            <a  class="add tiptip" onclick="use('addThisSongFromPlayer', mzAr[nbMz], mzInf[nbMz]);" title="Add this song" fade=[on]"></a>
 
-                                    <a href="javascript:void(0);" class="share tiptip" onclick="return shareSongFromPlayer(mzAr[nbMz]);" title="Share"></a>
+                                    <a  class="share tiptip" onclick="return shareSongFromPlayer(mzAr[nbMz]);" title="Share"></a>
             <div id="player_bottomsep"></div>
 
     </div>
@@ -23,11 +24,11 @@
 
 <div id="player_bottom">
     <ul>
-        <li><a href="javascript:void(0);" onclick="nbMz--; nbMz = getTrack(nbMz, mzAr, mzInf, true);" class="player_bttn_prev"></a></li>
-        <li><a style="background-image: url({{ STATIC_URL }}images/player/player_bttn_play.png);" href="javascript:void(0);" id="player_playpause_bttn" class="player_bttn_play"></a></li>
-        <li><a style="background-image: url({{ STATIC_URL }}images/player/player_bttn_pause.png);display:none;" href="javascript:void(0);" id="player_playpause_bttn" class="player_bttn_pause"></a></li>
-        <li><a href="javascript:void(0);" onclick="nbMz++; nbMz = getTrack(nbMz, mzAr, mzInf, true);" class="player_bttn_forw"></a></li>
-        <li><a href="javascript:void(0);" class="player_bttn_stop"></a></li>
+        <li><a  onclick="nbMz--; nbMz = getTrack(nbMz, mzAr, mzInf, true);" class="player_bttn_prev"></a></li>
+        <li><a style="background-image: url({{ STATIC_URL }}images/player/player_bttn_play.png);"  id="player_playpause_bttn" class="player_bttn_play"></a></li>
+        <li><a style="background-image: url({{ STATIC_URL }}images/player/player_bttn_pause.png);display:none;"  id="player_playpause_bttn" class="player_bttn_pause"></a></li>
+        <li><a  onclick="nbMz++; nbMz = getTrack(nbMz, mzAr, mzInf, true);" class="player_bttn_forw"></a></li>
+        <li><a  class="player_bttn_stop"></a></li>
 
     </ul>
     <div id="player_bar">
@@ -37,22 +38,22 @@
         </div>
         <span id="videoDuration">3:12</span>
     </div>
-    <div id="player_flag"><a href="javascript:void(0);" onclick="return use('flagSong', mzAr[nbMz]);"><img src="images/remove.png" alt="" title=""></a></div>
+    <div id="player_flag"><a  onclick="return use('flagSong', mzAr[nbMz]);"><img src="images/remove.png" alt="" title=""></a></div>
                 <div id="player_bottomseparator"></div>
     <ul>
     
-        <li><a href="javascript:void(0);" class="player_bttn_mute" id="player_mute_bttn" onclick="playerMute = playerMuteStat(playerMute);" title="header=[] body=[Mute] fade=[on]"></a>
-        </li><li><a style="background-position: left top;" href="javascript:void(0);" class="player_bttn_sound" id="player_sound1" onmouseover="updateVolumeStatus(20);" onmouseout="updateVolumeStatus(ytplayer.getVolume());" onclick="playerVolume(20);"></a>
-        </li><li><a style="background-position: left top;" href="javascript:void(0);" class="player_bttn_sound" id="player_sound2" onmouseover="updateVolumeStatus(40);" onmouseout="updateVolumeStatus(ytplayer.getVolume());" onclick="playerVolume(40);"></a>
-        </li><li><a style="background-position: left top;" href="javascript:void(0);" class="player_bttn_sound" id="player_sound3" onmouseover="updateVolumeStatus(60);" onmouseout="updateVolumeStatus(ytplayer.getVolume());" onclick="playerVolume(60);"></a>
-        </li><li><a style="background-position: left bottom;" href="javascript:void(0);" class="player_bttn_sound" id="player_sound4" onmouseover="updateVolumeStatus(80);" onmouseout="updateVolumeStatus(ytplayer.getVolume());" onclick="playerVolume(80);"></a>
-        </li><li><a style="background-position: left bottom;" href="javascript:void(0);" class="player_bttn_sound" id="player_sound5" onmouseover="updateVolumeStatus(100);" onmouseout="updateVolumeStatus(ytplayer.getVolume());" onclick="playerVolume(100);"></a>
+        <li><a  class="player_bttn_mute" id="player_mute_bttn" onclick="playerMute = playerMuteStat(playerMute);" title="header=[] body=[Mute] fade=[on]"></a>
+        </li><li><a style="background-position: left top;"  class="player_bttn_sound" id="player_sound1" onmouseover="updateVolumeStatus(20);" onmouseout="updateVolumeStatus(ytplayer.getVolume());" onclick="playerVolume(20);"></a>
+        </li><li><a style="background-position: left top;"  class="player_bttn_sound" id="player_sound2" onmouseover="updateVolumeStatus(40);" onmouseout="updateVolumeStatus(ytplayer.getVolume());" onclick="playerVolume(40);"></a>
+        </li><li><a style="background-position: left top;"  class="player_bttn_sound" id="player_sound3" onmouseover="updateVolumeStatus(60);" onmouseout="updateVolumeStatus(ytplayer.getVolume());" onclick="playerVolume(60);"></a>
+        </li><li><a style="background-position: left bottom;"  class="player_bttn_sound" id="player_sound4" onmouseover="updateVolumeStatus(80);" onmouseout="updateVolumeStatus(ytplayer.getVolume());" onclick="playerVolume(80);"></a>
+        </li><li><a style="background-position: left bottom;"  class="player_bttn_sound" id="player_sound5" onmouseover="updateVolumeStatus(100);" onmouseout="updateVolumeStatus(ytplayer.getVolume());" onclick="playerVolume(100);"></a>
         </li>
         <div id="player_bottomseparator"></div>
-        <li><a style="background-position: left bottom;" href="javascript:void(0);" class="player_bttn_rand" id="player_rand_bttn" onclick="playerRand = playerRandStat(playerRand);" title="header=[] body=[Toggle Random Mode] fade=[on]"></a>
+        <li><a style="background-position: left bottom;"  class="player_bttn_rand" id="player_rand_bttn" onclick="playerRand = playerRandStat(playerRand);" title="header=[] body=[Toggle Random Mode] fade=[on]"></a>
 
         </li>
-        <li><a href="javascript:void(0);" class="player_bttn_repeat" id="player_rep_bttn" onclick="playerRepeat = playerRepeatStat(playerRepeat);" title="header=[] body=[Toggle Repeat Mode] fade=[on]"></a>
+        <li><a  class="player_bttn_repeat" id="player_rep_bttn" onclick="playerRepeat = playerRepeatStat(playerRepeat);" title="header=[] body=[Toggle Repeat Mode] fade=[on]"></a>
         </li>
         
     </ul>	<div id="player_bottomseparator"></div>

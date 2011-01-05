@@ -182,13 +182,19 @@ li.song_info.selected.dd, li.song_info.selected { background-color: #e5ecf3 }
 
 
 .song_info .icon {
-    background: url(../images/allpl.png) no-repeat 0 0 transparent;
     width: 16px;
     height: 18px;
     vertical-align: bottom;
     display: inline-block;
 }
-.song_info .icon:hover { background-position: bottom left }
+.song_info .play {background: url(../images/allpl.png) no-repeat 0 0 transparent;}
+.song_info .play:hover {background-position: bottom left}
+
+.song_info  .add {background: url(../images/adpl.png) no-repeat 0 0 transparent;}
+.song_info  .add:hover {background-position: bottom left}
+
+.song_info  .love{background: url(../images/love.png) no-repeat 0 0 transparent;}
+.song_info  .love:hover {background-position: bottom left}
 
 li.song_info.dd, .dd{background-color:#f4f4f4;}
 
@@ -361,6 +367,22 @@ div.lined {
     margin-bottom: 6px;
     padding-bottom: 6px;
 }
+
+#playlist-tags{font-weight:bold;line-height:24px;}
+#playlist-tags a{font-size:12px;color:#492D3D;background:rgba(70,27,80,0.2);padding:4px;-webkit-border-radius:2px;-moz-border-radius:2px;border-radius:2px;}
+#playlist-tags a:hover{background:#492D3D;color:#fff;text-decoration:none;}
+
+ 
+/* Pagination */	
+.pagination {margin:8px 0 15px 0;clear:both;}
+
+.pagination a.page {-moz-border-radius: 2px;-webkit-border-radius: 2px; background-color: #e8e8e8; color: #999; display:block; padding:3px 5px; height: 18px;text-align: center; margin-left:2px;float:left; font-size: 11px; text-decoration: none;}
+.pagination a.page:hover{background-color: #1c9bc8; color: #fff; display:block; text-align: center;}
+.pagination .current {-moz-border-radius: 2px;-webkit-border-radius: 2px;background-color: #1c9bc8; color: #fff; display:block; display:block;padding:3px 5px; height: 18px; text-align: center; margin-left:2px;float:left; font-size: 11px; text-decoration: none;}
+
+.pagination a.prev, .pagination a.next {-moz-border-radius: 2px;-webkit-border-radius: 2px; background-color: #e8e8e8; color: #999; display:block; padding:3px 6px; height: 18px;text-align: center; margin-left:2px;float:left; font-size: 11px; text-decoration: none;}
+.pagination a.prev:hover, .pagination a.next:hover {background-color: #1c9bc8; color: #fff;}
+
 /* Player  */	
 
 #player { position: fixed; left: 0; bottom: 0; width: 100%; height: 72px; background: url(../images/player/player_bg.png) top left; z-index:1000;}
