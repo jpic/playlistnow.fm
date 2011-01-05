@@ -90,9 +90,26 @@ def playlist_track_modify(request,
 
         try:
             if context['action'] == 'add':
-                context['playlist'].tracks.add(context['track'])
+                if context['playlist'].creation_user == request.user:
+                    context['playlist'].tracks.add(context['track'])
+                else:
+                    PlaylistModification(
+                        playlist=context['playlist'],
+                        creation_user=request.user,
+                        track=context['track'],
+                        action='add'
+                    ).save()
             elif context['action'] == 'remove':
-                context['playlist'].tracks.remove(context['track'])
+                if context['playlist'].creation_user == request.user:
+                    context['playlist'].tracks.remove(context['track'])
+                else:
+                    PlaylistModification(
+                        playlist=context['playlist'],
+                        creation_user=request.user,
+                        track=context['track'],
+                        action='remove'
+                    ).save()
+
             context['status'] = 'success'
         except Exception:
             context['status'] = 'error'
@@ -155,10 +172,19 @@ def playlist_details(request, user, slug, default_format=False, qname='term',
     context = {}
 
     object = shortcuts.get_object_or_404(Playlist, creation_user__username=user,slug=slug)
+    if request.user.is_authenticated():
+        serialized = object.to_dict(for_user=request.user)
+    else:
+        serialized = object.to_dict()
+
     if request.GET.get('format', default_format) == 'json':
-        return http.HttpResponse(simplejson.dumps(object.to_dict()))
+        return http.HttpResponse(simplejson.dumps(serialized))
 
     context['object'] = object
+    if request.user.is_authenticated():
+        context['user_tracks'] = object.all_user_tracks(request.user)
+    else:
+        context['user_tracks'] = object.tracks.all()
 
     q = request.GET.get(qname, False)
     if q:

@@ -28,7 +28,7 @@
 {% endif %}
 
 <span id="playlist_pk" style="display:none">{{ object.pk }}</span>
-{% render_tracks object.tracks.all %}
+{% render_tracks user_tracks %}
 
 {% endblock %}
 
