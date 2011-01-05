@@ -451,6 +451,15 @@ div.lined {
 
 #player .player_current_track {font-weight: bold;margin-right: 1em;color:#fff;}
 
+#player_bottom .player_bttn_play {
+    background-image: url(../images/player/player_bttn_play.png);
+}
+#player_bottom .player_bttn_pause {
+    background-image: url(../images/player/player_bttn_pause.png);
+}
+#player_bottom .player_bttn_sound {
+    background-position: left top:
+}
 
 /* Ads  */	
 div.ad {font-size: 12px;background: #EFE8ED;margin:10px 0;padding:7px;-webkit-border-radius: 4px;

@@ -136,7 +136,13 @@ var player = {
             $('.player_bttn_pause').show();
         });
         $('.player_bttn_mute').click(function() {
-            player.ytplayer.mute();
+            if (player.ytplayer.isMuted()) {
+                player.ytplayer.unMute();
+                $(this).css('background-position', 'top left');
+            } else {
+                player.ytplayer.mute();
+                $(this).css('background-position', 'bottom left');
+            }
         });
         $('.player_bttn_forw').click(function(e) {
             e.preventDefault();
@@ -146,6 +152,45 @@ var player = {
             e.preventDefault();
             player.playPrevious();
         });
+        $('.player_bttn_sound').click(function(e) {
+            e.preventDefault();
+            var level = $(this).attr('class').match(/level_([0-9]+)/)[1];
+            player.ytplayer.setVolume(level);
+        });
+        $('.player_bttn_sound').hover(
+            function(e) { /* mouseover */
+                var level = $(this).attr('class').match(/level_([0-9]+)/)[1];
+                for (var i=0; i < 101; i+=20) {
+                    if (i<=level) {
+                        $('.player_bttn_sound.level_'+i).css(
+                            'background-position',
+                            'top left'
+                        );
+                    } else {
+                        $('.player_bttn_sound.level_'+i).css(
+                            'background-position',
+                            'bottom left'
+                        );
+                    }
+                }
+            },
+            function(e) { /* mouseout */
+                var level = player.ytplayer.getVolume();
+                for (var i=0; i < 101; i+=20) {
+                    if (i<=level) {
+                        $('.player_bttn_sound.level_'+i).css(
+                            'background-position',
+                            'top left'
+                        );
+                    } else {
+                        $('.player_bttn_sound.level_'+i).css(
+                            'background-position',
+                            'bottom left'
+                        );
+                    }
+                }
+            }
+        );
         $('div.playlist, div.playlist .play').live('click', function(e) {
             if( e.target != this ) {
                 return true;

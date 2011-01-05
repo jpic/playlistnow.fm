@@ -81,7 +81,7 @@ var ui = {
             return undefined;
         }
 
-        $('a').live('click', function(e) {
+        $('a:not(a.ui_ignore)').live('click', function(e) {
             e.preventDefault();
             var url = $(this).attr('href');
             if ($(this).hasClass('authenticationRequired') && !user.is_authenticated) {
