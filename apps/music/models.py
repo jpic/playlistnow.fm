@@ -14,7 +14,7 @@ import gdata.youtube
 import gdata.youtube.service
 
 # Prevent: XMLSyntaxError: Attempt to load network entity
-etree.set_default_parser(etree.XMLParser(no_network=False))
+etree.set_default_parser(etree.XMLParser(no_network=False, recover=True))
 
 class MusicalEntity(models.Model):
     mbid = models.CharField(max_length=64, null=True, blank=True)
