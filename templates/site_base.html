@@ -70,25 +70,27 @@
 {% endif %}
 {% block body_outer %}
     {% if not request.ajax %}
-    <div id="page_body_wrapper">
+    <div id="page_body_container">
     {% endif %}
-        {% if not request.modal %}
-        <div id="page_body_right">
-            {% block body_right %}
-            {% endblock %}
-        </div>
-        <div id="page_body">
-        {% endif %}
-            {% csrf_token %}
-            {% block body %}
-            <div class="body ajaxload">
-            <img src="{{ STATIC_URL }}local/ajax-loader.gif" />
-            {% trans "please wait a couple of seconds" %} ...
+        <div id="page_body_wrapper" class="{% block page_body_wrapper_class %}{% endblock %}">
+            {% if not request.modal %}
+            <div id="page_body_right" class="{% block page_body_right_class %}{% endblock %}">
+                {% block body_right %}
+                {% endblock %}
             </div>
-            {% endblock %}
-        {% if not request.modal %}
+            <div id="page_body" class="{% block page_body_class %}{% endblock %}">
+            {% endif %}
+                {% csrf_token %}
+                {% block body %}
+                <div class="body ajaxload">
+                <img src="{{ STATIC_URL }}local/ajax-loader.gif" />
+                {% trans "please wait a couple of seconds" %} ...
+                </div>
+                {% endblock %}
+            {% if not request.modal %}
+            </div>
+            {% endif %}
         </div>
-        {% endif %}
     {% if not request.ajax %}
     </div>
 

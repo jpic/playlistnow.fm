@@ -103,7 +103,7 @@ var ui = {
                     data: $(this).serialize(),
                     type: $(this).attr('method'),
                     success: function(html, textStatus, request) {
-                        $('#page_body_wrapper').html(html);
+                        $('#page_body_container').html(html);
                         $(document).trigger('signalPageUpdate', [url]);
                         $('#ajaxload').fadeOut();
                     },
@@ -214,7 +214,7 @@ $(document).ready(function() {
                     dataType: 'html',
                     success: function(html, textStatus, request) {
                         $('#ajaxload').fadeOut();
-                        $('#page_body_wrapper').html(html);
+                        $('#page_body_container').html(html);
                         ui.currentUrl = hash;
                         $(document).trigger('signalPageUpdate', [hash]);
                     },

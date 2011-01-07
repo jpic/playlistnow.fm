@@ -29,24 +29,28 @@ body, #html_body_wrapper {
     position: fixed;
     width: 184px;
 }
-#page_body_wrapper {
+
+#page_body_container {
     left: 184px;
     bottom: 72px;
     top: 41px;
     right: 0;
-    padding: 20px;
     overflow: auto;
     position: fixed;
+}
+#page_body_wrapper {
+    min-height: 100%;
 }
 #page_body_right {
     width: 195px;
     border-left:1px solid #ddd;
-    padding-left:15px;
     float: right;
-    margin-left: 15px;
+    padding: 15px;
 }
 #page_body {
+    min-height: 100%;
     overflow: hidden;
+    padding: 15px;
 }
 #ajaxload {
     cursor: pointer;
