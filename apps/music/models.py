@@ -9,6 +9,7 @@ from django.utils.translation import ugettext as _
 from django.core import urlresolvers
 from django.template import defaultfilters
 from django.conf import settings
+from django.core.cache import cache
 
 import gdata.youtube
 import gdata.youtube.service
@@ -47,10 +48,17 @@ class MusicalEntity(models.Model):
 
     @property
     def youtube_entries(self):
+        term = self.youtube_get_term()
+        key = 'youtube_entries for ' + term
+        entry = cache.get(term)
+
+        if entry:
+            return entry
+
         client = gdata.youtube.service.YouTubeService()
         query = gdata.youtube.service.YouTubeVideoQuery()
         
-        query.vq = self.youtube_get_term().encode('utf-8')
+        query.vq = term.encode('utf-8')
         query.max_results = 1
         query.start_index = 1
         query.racy = 'exclude'
@@ -59,6 +67,8 @@ class MusicalEntity(models.Model):
         #query.restriction = 'fr'
         feed = client.YouTubeQuery(query)
         
+        cache.set(key, feed.entry, 24*3600)
+
         return feed.entry
 
     def lastfm_get_tree(self, method):
