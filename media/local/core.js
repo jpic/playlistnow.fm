@@ -114,7 +114,11 @@ var ui = {
         }
     },
     'setupPagination': function() {
-        if (ui.settings['ajaxEnable'] && $('div.pagination').length) {
+        if (!ui.settings['ajaxEnable']) {
+            return false;
+        }
+
+        if ($('div.pagination:not(.virtual)').length) {
             $('div.pagination a').each(function() {
                 var href = $(this).attr('href');
                 if (href.match(/^\?/)) {
@@ -123,6 +127,14 @@ var ui = {
             });
         }
 
+        // todo: move to live()
+        if ($('div.pagination.virtual').length) {
+            $('div.pagination a.page.ui_ignore').click(function() {
+                var page = $(this).attr('class').match(/page_([0-9]+)/)[1];
+                $('.page_item').hide();
+                $('.page_item.page_'+ page).show();
+            });
+        }
     },
     'setupAutocomplete': function() {
         if ($('input.autocomplete#term').length == 0) {
