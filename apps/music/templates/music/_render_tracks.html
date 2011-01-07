@@ -9,13 +9,15 @@
 
     <a style="display:none" title="{{ track.youtube_get_best }}" class="hidden youtube_play" href="{{ track.youtube_get_best }}">
     </a>
-    <a title="{{ track.artist.name }}" class="artist" href="{{ track.artist.get_absolute_url }}" style="{% if track.artist.name == 'YouTube' %}display: none{% endif %}">{{ track.artist.name }}</a>
+    <a title="{{ track.artist.name }}" class="artist" href="{{ track.artist.get_absolute_url }}" 
+        style="{% if track.artist.name == 'YouTube' %}display: none;{% endif %}font-weight:bold">{{ track.artist.name }}</a>
     {% if track.artist.name != 'YouTube' %}
     <span style="color:#bebdbd">-</span> 
     {% endif %}
     <a title="{% trans "details of track" %} {{ track }}" href="{{ track.get_absolute_url }}" class="label track">{{ track.name }}</a>
     
-    <span class="icon add authenticationRequired right tiptip" title="Add this song to a Playlist"></span>
+    <span class="icon add authenticationRequired right tiptip {% if playlist %}direct_to_playlist playlist_pk_{{ playlist.pk }}{% endif %}" 
+        title="Add this song to {% if not playlist %}a Playlist{% else %}playlist {{ playlist }}{% endif %}"></span>
     {% if track.playlist.creation_user == request.user %}
     <span class="icon love authenticationRequired right tiptip" title="Like and add to your Tiny Playlist"></span>
     {% endif %}

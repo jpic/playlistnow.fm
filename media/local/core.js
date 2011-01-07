@@ -40,37 +40,64 @@ var ui = {
         $(document).bind('signalPageUpdate', ui.setupPagination);
         $(document).bind('signalPageUpdate', ui.setupAutocomplete);
         
-        $(document).bind('signalPlaylistTrackModificationRequest', function(e, track, playlist, action) {
+        $(document).bind('signalPlaylistTrackModificationRequest', function(e, track, playlist, action, element) {
             /* read playlist_track_modify first */
-            var data = [playlist_track_modify, '?'];
+            var data = {}
             
             if (track.pk != undefined) {
-                data.push('&track_pk='+track.pk);
+                data['track_pk'] = track.pk;
             }
             else if (track.name != undefined) {
-                data.push('&track_name='+encodeURIComponent(track.name));
+                data['track_name'] = track.name;
             }
             
             if (track.artist != undefined && track.artist.name != undefined) {
-                data.push('&artist_name=' + encodeURIComponent(track.artist.name));
+                data['artist_name'] = track.artist.name;
             }
 
             if (playlist.pk != undefined) {
-                data.push('&playlist_pk=' + playlist.pk);
+                data['playlist_pk'] = playlist.pk;
             }
             else if (playlist.name != undefined) {
-                data.push('&playlist_name=' + encodeURIComponent(playlist.name));
+                data['playlist_name'] = playlist.name;
             }
 
             if (action != undefined) {
-                data.push('&action=' + action);
+                data['action'] = action;
             }
         
-            var url = data.join('');
             if (!user.is_authenticated) {
                 ui.authenticationPopup(url)
+            } else if (element && element.hasClass('direct_to_playlist')) {
+                data['direct_to_playlist'] = 1;
+                //var song_info = element.parents('li.song_info');
+                // faster, less resistent to changes in apps/music/templates/music/_render_tracks.html
+                var song_info = element.parent().clone();
+
+                $.ajax({
+                    url: playlist_track_modify,
+                    dataType: 'html',
+                    data: data,
+                    type: 'post',
+                    success: function(html, textStatus, request) {
+                        var ul = $('div.playlist_track_list ul.song_list');
+                        var last = ul.find('li.song_info:last');
+                        if (last) {
+                            if (last.hasClass('dd') && song_info.hasClass('dd')) {
+                                song_info.removeClass('dd');
+                            } else if (last.hasClass('dd') == false && song_info.hasClass('dd') == false) {
+                                song_info.addClass('dd');
+                            }
+                            song_info.find('span.number').html(parseInt(last.find('span.number').html()) + 1);
+                        }
+                        ul.append(song_info);
+                        $('#ajaxload').fadeOut();
+                    },
+                    beforeSend: ui.beforeSend,
+                    error: ui.error,
+                });
             } else {
-                $.history.load(url);
+                ui.popup(playlist_track_modify + '?' + $.param(data));
             }
         });
 

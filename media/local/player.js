@@ -326,18 +326,19 @@ var player = {
             e.preventDefault();
             var track = player.parseRenderedTrack($(this).parent());
             var playlist = false;
-            $(document).trigger('signalPlaylistTrackModificationRequest', [track, playlist, 'remove'])
+            $(document).trigger('signalPlaylistTrackModificationRequest', [track, playlist, 'remove', $(this)])
         });
         $('.song_play .add').live('click', function(e) {
             e.preventDefault();
             var track = player.parseRenderedTrack($(this).parent());
             var playlist = false;
-            if ($('#playlist_pk').length > 0) {
+            /* @todo improve signalPlaylistTrackModificationRequest sig */
+            if ($('#playlist_pk').length > 0 && $(this).hasClass('direct_to_playlist')) {
                 playlist = {
                     'pk': $('#playlist_pk').html(),
                 };
             }
-            $(document).trigger('signalPlaylistTrackModificationRequest', [track, playlist, 'add'])
+            $(document).trigger('signalPlaylistTrackModificationRequest', [track, playlist, 'add', $(this)])
         });
         $('#player_bar_control').click(function(e) {
             e = e || window.event;

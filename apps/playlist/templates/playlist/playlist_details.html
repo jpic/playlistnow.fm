@@ -13,22 +13,32 @@
 
 {% block body %}
 <h1>{% trans "Playlist" %} {{ object }}</h1>
+<div class="ad_song" style="margin-top:-3px;"><span style="display:none;">{% trans "add tracks" %}</span>
 
-<h2>{% trans "add tracks" %}</h2>
-<form method="get" action="{{ request.path }}" class="ad">
-    <input type="text" name="term" id="term" />
+<form method="get" action="{{ request.path }}">
+    <input type="text" name="term" value="Search by artist name and / or song name" 
+    onfocus="if(this.value=='Search by artist name and / or song name'){this.value='';}" id="term"  style="width:412px;"/>
     <input type="hidden" name="search_artists" value="0" />
     <input type="hidden" name="search_albums" value="0" />
-    <input type="submit" value="{% trans "Search" %}" />
+    <input type="submit" value="{% trans "Search" %}"/>
 </form>
+<div class="clear"></div>
+</div>
+
 
 {% if tracks %}
+<div class="direct_add to_playlist_{{ object.pk }}">
 <h2>{% trans "results matching" %} {{ request.GET.q }}</h2>
-{% render_tracks tracks %}
+<div class="clear"></div>
+{% render_tracks tracks object 5 %}
+</div>
 {% endif %}
 
 <span id="playlist_pk" style="display:none">{{ object.pk }}</span>
+<hr style="height:2px; background:#ddd;">
+<div class="playlist_track_list">
 {% render_tracks user_tracks %}
+</div>
 
 {% endblock %}
 
