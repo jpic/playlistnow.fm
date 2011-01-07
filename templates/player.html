@@ -1,12 +1,8 @@
 <div id="player_content">
 <div id="player_top">
     <div id="player_mzname">
-        <a href="" class="player_current_track">
-        </a> 
-        -
-        <a href="" class="player_current_artist">
-        </a>
-        <a href="" class="player_current_playlist">
+        <a class="player_current_track"></a> - <a class="player_current_artist"></a>
+        <a class="player_current_playlist">
         </a>
     </div>
     
@@ -24,19 +20,19 @@
 <div id="player_bottom">
     <ul>
         <li>
-            <a class="player_bttn_prev"></a>
+            <a class="player_bttn_prev ui_ignore"></a>
         </li>
         <li>
-            <a class="player_bttn_play"></a>
+            <a class="player_bttn_play ui_ignore"></a>
         </li>
         <li>
-            <a style="display:none;" class="player_bttn_pause"></a>
+            <a style="display:none;" class="player_bttn_pause ui_ignore"></a>
         </li>
         <li>
-            <a class="player_bttn_forw"></a>
+            <a class="player_bttn_forw ui_ignore"></a>
         </li>
         <li>
-            <a class="player_bttn_stop"></a>
+            <a class="player_bttn_stop ui_ignore"></a>
         </li>
     </ul>
 
@@ -62,13 +58,13 @@
             <a class="player_bttn_mute ui_ignore" id="player_mute_bttn"></a>
         </li>
         <li>
-            <a class="player_bttn_sound ui_ignore level_20"></a>
+            <a class="player_bttn_sound ui_ignore level_20" style="background-position: top left"></a>
         </li>
         <li>
-            <a class="player_bttn_sound ui_ignore level_40"></a>
+            <a class="player_bttn_sound ui_ignore level_40" style="background-position: top left"></a>
         </li>
         <li>
-            <a class="player_bttn_sound ui_ignore level_60"></a>
+            <a class="player_bttn_sound ui_ignore level_60" style="background-position: top left"></a>
         </li>
         <li>
             <a class="player_bttn_sound ui_ignore level_80"></a>
@@ -78,13 +74,15 @@
         </li>
 
         <div id="player_bottomseparator"></div>
-        <li>
-            <a style="background-position: left bottom;"  class="player_bttn_rand" id="player_rand_bttn" onclick="playerRand = playerRandStat(playerRand);" title="header=[] body=[Toggle Random Mode] fade=[on]"></a>
 
+        <li>
+            <a class="player_bttn_rand ui_ignore" style="background-position:bottom left"></a>
         </li>
-        <li><a  class="player_bttn_repeat" id="player_rep_bttn" onclick="playerRepeat = playerRepeatStat(playerRepeat);" title="header=[] body=[Toggle Repeat Mode] fade=[on]"></a>
+        <li>
+            <a  class="player_bttn_repeat ui_ignore"></a>
         </li>
-        
-    </ul>	<div id="player_bottomseparator"></div>
+    </ul>	
+
+    <div id="player_bottomseparator"></div>
 </div>
 

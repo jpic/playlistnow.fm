@@ -1,6 +1,11 @@
+function getPercent(all, part)
+{
+    return (all > 0) ? (100 / all) * part : 0;
+}
+
 var player = {
     'ytplayer': false,
-    'playTrack': function(track) {
+    'playTrack': function(track, playlist, fromHistory /* new in history ? (bool) */) {
         player.ytplayer.loadVideoById(track.youtube_best_id);
     
         $('.player_current_artist').html(track.artist.name);
@@ -12,28 +17,50 @@ var player = {
         $('.sidebar_Playing a').attr('href', track.url);
         $('.player_current_playlist').hide();
 
-        this.track_history.push(track);
+        if (!fromHistory) {
+            this.state.trackHistory.push(track);
+            this.state.currentTrackHistoryIndex = this.state.trackHistory.length - 1;
+        }
+
+        if (track.playlist) {
+            var currentPlaylist = $('.player_current_playlist');
+            currentPlaylist.html(
+                '- I am ' + track.playlist['object']['name']
+            );
+            currentPlaylist.attr(
+                'href',
+                track.playlist['object']['url']
+            );
+            currentPlaylist.show();
+        }
     },
-    'playPlaylistTrack': function(index) {
+    'playPlaylistTrack': function(index, fromHistory) {
         if (typeof index == 'object') {
             for(i in index) {
-                if (this.playlist.tracks[index[i]] == undefined) {
+                if (this.state.currentPlaylist.tracks[index[i]] == undefined) {
                     continue;
                 }
     
-                this.currentTrackIndex = index[i];
+                this.state.currentPlaylistTrackIndex = index[i];
                 break;
             }
+        } else if (typeof index == 'number' && 
+            this.state.currentPlaylist.tracks[index]) {
+            this.state.currentPlaylistTrackIndex = index;
         } else {
-            this.currentTrackIndex =  index;
+            this.state.currentPlaylistTrackIndex = 0;
         }
         
-        this.playTrack(this.playlist.tracks[this.currentTrackIndex]);
+        var track = this.state.currentPlaylist.tracks[this.state.currentPlaylistTrackIndex]
+        track.playlist = this.state.currentPlaylist;
+        track.playlistTrackIndex = this.state.currentPlaylistTrackIndex;
 
-        var currentPlaylist = $('.player_current_playlist');
-        currentPlaylist.html('- I am ' + this.playlist['object']['name']);
-        currentPlaylist.attr('href', this.playlist['object']['url']);
-        currentPlaylist.fadeIn();
+        if (track == undefined) {
+            console.log('broken track index');
+            return true;
+        }
+
+        this.playTrack(track, this.state.currentPlaylist, fromHistory);
     },
     'playPlaylist': function(url) {
         $.get(
@@ -42,39 +69,64 @@ var player = {
                 'format': 'json',
             },
             function(data, textStatus, req) {
-                player.playlist = data;
-                if (!data.tracks.length) {
-                    return true;
+                player.state.currentPlaylist = data;
+                if (player.state.currentPlaylist.tracks.length) {
+                    player.playPlaylistTrack();
                 }
-                player.playPlaylistTrack(0);
             },
             'json'
         );
     },
     'playPrevious': function() {
-        var track = this.track_history.pop().pop();
+        if (player.state.currentTrackHistoryIndex <= 0) {
+            return true;
+        }
+
+        var track = player.state.trackHistory[player.state.currentTrackHistoryIndex-1];
+        
         if (track) {
-            this.playTrack(track);
+            player.state.currentTrackHistoryIndex -= 1;
+            player.playTrack(track, false, true);
         } else {
-            indexes = [
-                player.currentTrackIndex - 1,
-                player.playlist.tracks.length - 1,
-            ];
-            
-            this.playPlaylistTrack(indexes);
+            return true;
         }
     },
     'playNext': function() {
-        indexes = [
-            player.currentTrackIndex + 1,
-            0,
-        ];
+        if (player.state.repeatMode && player.state.trackHistory.length >= 1) {
+            player.playTrack(player.state.trackHistory[player.state.currentTrackHistoryIndex], false, true);
+        } else if (player.state.currentPlaylist && player.state.currentTrackHistoryIndex == player.state.trackHistory.length - 1) {
+            /* if nothing pending in history: */
+            /* if only one track in playlist: plain fail */
+            if (player.state.currentPlaylist.tracks.length <= 1) {
+                player.playPlaylistTrack(player.state.currentPlaylistTrackIndex, true);
+            }
+            /* else use playlist */
+            else if (player.state.randomMode) {
+                do {
+                    var index = Math.floor(
+                        Math.random()*(player.state.currentPlaylist.tracks.length)
+                    )
+                } while (index == player.state.currentPlaylistTrackIndex)
+                player.playPlaylistTrack(index);
+            } else {
+                var nextIndex = player.state.currentPlaylistTrackIndex + 1;
+                if (player.state.currentPlaylist.tracks[nextIndex] != undefined) {
+                    player.playPlaylistTrack(nextIndex);
+                } else {
+                    player.playPlaylistTrack(0);
+                }
+            }
+        } else {
+            if(player.state.trackHistory[player.state.currentTrackHistoryIndex+1]) {
+                player.state.currentTrackHistoryIndex += 1;
+                player.playTrack(player.state.trackHistory[player.state.currentTrackHistoryIndex], false, true);
+            } else {
+                player.state.currentTrackHistoryIndex = 0;
+                player.playTrack(player.state.trackHistory[0], false, true);
+            }
+        }
 
-        do {
-            index = Math.floor(Math.random()*(player.playlist.tracks.length + 1))
-        } while (index == player.currentTrackIndex)
-        
-        this.playPlaylistTrack(index);
+        return true;
     },
     'parseRenderedTrack': function(trackTag) {
         var hiddenTrackTag = trackTag.find('a.track');
@@ -100,8 +152,17 @@ var player = {
         }
     },
     'init': function() {
-        this.track_history = [];
-        
+        this.state = {
+            'randomMode': true,
+            'repeatMode': false,
+            'trackHistory': [],
+            'currentPlaylist': false,
+            'currentPlaylistTrackIndex': 0,
+            'currentTrackHistoryIndex': 0,
+        }
+        this.initBinds();
+    },
+    'initBinds': function() {
         $('li.song_play').live('click', function(e) {
             /* use when li.click != a.clikc */
             if( e.target != this ) {
@@ -110,6 +171,9 @@ var player = {
             e.preventDefault();
             track = player.parseRenderedTrack($(this));
             player.playTrack(track);
+
+            player.state.currentPlaylist = false;
+            player.state.currentPlaylistTrackIndex = false;
 
             $('li.song_play').removeClass('selected');
             $(this).addClass('selected');
@@ -191,6 +255,60 @@ var player = {
                 }
             }
         );
+        $('.player_bttn_repeat').hover(
+            function(e) {
+                if (player.state.repeatMode) {
+                    $(this).css('background-position', 'top left');
+                } else {
+                    $(this).css('background-position', 'bottom left');
+                }
+            },
+            function(e) {
+                if (player.state.repeatMode) {
+                    $(this).css('background-position', 'bottom left');
+                } else {
+                    $(this).css('background-position', 'top left');
+                }
+            }
+        );
+        $('.player_bttn_repeat').click(function(e) {
+            e.preventDefault();
+
+            if (player.state.repeatMode) {
+                $(this).css('background-position', 'bottom left');
+            } else {
+                $(this).css('background-position', 'top left');
+            }
+            
+            player.state.repeatMode = !player.state.repeatMode;
+        });
+        $('.player_bttn_rand').hover(
+            function(e) {
+                if (player.state.randomMode) {
+                    $(this).css('background-position', 'top left');
+                } else {
+                    $(this).css('background-position', 'bottom left');
+                }
+            },
+            function(e) {
+                if (player.state.randomMode) {
+                    $(this).css('background-position', 'bottom left');
+                } else {
+                    $(this).css('background-position', 'top left');
+                }
+            }
+        );
+        $('.player_bttn_rand').click(function(e) {
+            e.preventDefault();
+
+            if (player.state.randomMode) {
+                $(this).css('background-position', 'bottom left');
+            } else {
+                $(this).css('background-position', 'top left');
+            }
+            
+            player.state.randomMode = !player.state.randomMode;
+        });
         $('div.playlist, div.playlist .play').live('click', function(e) {
             if( e.target != this ) {
                 return true;
@@ -221,6 +339,46 @@ var player = {
             }
             $(document).trigger('signalPlaylistTrackModificationRequest', [track, playlist, 'add'])
         });
+        $('#player_bar_control').click(function(e) {
+            e = e || window.event;
+            
+            var divLeft; 
+            var obj = document.getElementById('player_bar_control'); 
+            
+            if(obj.offsetTop){divLeft=obj.offsetLeft;} 
+            else if(obj.style.pixelLeft){divLeft=obj.style.pixelLeft;}
+            
+            //alert(e.clientX - divLeft);
+            
+            var percent = getPercent(548, e.clientX - divLeft);
+            var seconds = player.ytplayer.getDuration() / 100 * percent;
+            
+            player.ytplayer.seekTo(seconds, true);
+        });
+    },
+    'update': function() {
+        if (!player.ytplayer) {
+            return false;
+        }
+
+        var all = player.ytplayer.getDuration();
+        var part = player.ytplayer.getCurrentTime();
+        var percent = getPercent(all, part);
+
+        var partload = player.ytplayer.getVideoBytesLoaded();
+        var allload = player.ytplayer.getVideoBytesTotal();
+        var percentload = getPercent(allload, partload);
+
+        var timebarWidth = 548;
+        var plState = player.ytplayer.getPlayerState();
+
+        document.getElementById('player_progress_bar').style.width = percent * (timebarWidth / 100) + "px";
+        document.getElementById('player_loading_bar').style.width = percentload * (timebarWidth / 100) + "px";
+
+        if(plState==0)
+        {
+            player.playNext();
+        }
     }
 }
 
