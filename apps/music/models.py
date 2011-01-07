@@ -106,6 +106,7 @@ class MusicalEntity(models.Model):
             return None
 
         self.name = tree.find('name').text
+        self.mbid = getattr(tree.find('mbid'), 'text', None)
         for element in tree.findall('image'):
             self.images[element.attrib['size']] = element.text
        
