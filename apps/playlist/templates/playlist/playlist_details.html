@@ -28,6 +28,7 @@
 
 {% if tracks %}
 <div class="direct_add to_playlist_{{ object.pk }}">
+<div class="delete parent" style="float:right"></div>
 <h2>{% trans "results matching" %} {{ request.GET.q }}</h2>
 <div class="clear"></div>
 {% render_tracks tracks object 5 %}

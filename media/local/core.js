@@ -117,6 +117,11 @@ var ui = {
                 $.history.load(url);
             }
         });
+
+        $('.delete.parent').live('click', function(e) {
+            e.preventDefault();
+            $(this).parent().remove();
+        });
     },
      'setupForms': function() {
         if (ui.settings['ajaxEnable'] && $('form').length) {

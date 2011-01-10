@@ -469,3 +469,5 @@ div.ad {font-size: 12px;background: #EFE8ED;margin:10px 0;padding:7px;-webkit-bo
 h1,h2,h3,h4,h5,h6,.capitalize, span.label {
     text-transform: capitalize;
 }
+    
+.delete{display:block;background:url(../images/remove.png) no-repeat bottom left;height:16px;width:16px;padding:6px 0 0 0;}
