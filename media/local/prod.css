@@ -8,8 +8,8 @@ body {font:normal normal 13px/18px "Helvetica Neue",Helvetica,Arial,Verdana,sans
 a{outline:none;text-decoration:none;color:#461b50;border:none;}a:hover{color:#461b50;text-decoration:underline;}
 
 h1,h2,h3,h4,h5,h6,strong{font-weight:bold;}
-h1{line-height: 22px;letter-spacing: -0.5px;color: #148dc4;margin:0px 0 10px 0;font-size: 22px;font-style: italic;font-family: Georgia,serif;}
-h2{font-size: 16px; line-height: 22px;letter-spacing: -0.5px;color: #666;margin:10px 0 10px 0;font-weight: 300;}
+h1{line-height: 22px;letter-spacing: -0.5px;color: #148dc4;margin:0px 0 10px 0;font-size: 22px;}
+h2{font-size: 16px; line-height: 22px;letter-spacing: -0.5px;color: #666;margin:12px 0 10px 0;font-weight: 300;}
 h2 a{color:#461b50}
 .centered{text-align:center;}em{font-style:italic;}.left{float:left;}.right {float: right !important;}.clear{clear:both;}
 
@@ -175,10 +175,10 @@ li.song_info span, li.song_info a {
 }
 .song_info .number { color: #BEBDBD }
 li.song_info:hover, li.song_info.dd:hover {
-    background-color: rgba(70,27,80,0.2);
+    background-color: #e5ecf3;
     text-decoration: none;
 }
-li.song_info.selected.dd, li.song_info.selected { background-color: #e5ecf3 }
+li.song_info.selected.dd, li.song_info.selected { background-color: rgba(70,27,80,0.2) }
 
 
 .song_info .icon {
@@ -203,7 +203,7 @@ li.song_info.dd, .dd{background-color:#f4f4f4;}
 
 ul.similar-artists{display:inline;vertical-align: top;}
 ul.similar-artists li {position: relative;font-weight:500;text-align: center;float: left;display: inline;margin:0 9px 0px 0;overflow-x: hidden;overflow-y: hidden;}
-ul.similar-artists li a{display: block;width:75px;height:120px;}
+ul.similar-artists li a{display: block;width:70px;height:120px;}
 
 /* Artistes Specific Styles */
 .artist_rank{margin-left: 5px;font-size: 13px;font-weight: bold;}
@@ -301,16 +301,22 @@ li.tab:hover { color: #461b50 }
 /* playlist list */
 
 div.playlist.line {
-    background: url("../images/line-off.png") no-repeat scroll left top transparent;
+   background:url(../images/line_bg.png) repeat-x top left #E1E1E1;
     height: 62px;
-    width: 610px;
+    width: 100%;
     padding: 0;
     font-size: 13px;
     line-height: 18px;
+     -webkit-box-shadow: 0 1px 0 #fff;
+    -moz-box-shadow: 0 1px 0 #fff;
+    border-radius: 4px;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    margin-bottom:5px;
 }
 
 div.playlist.line:hover {
-    background: url("../images/line-on.png") no-repeat scroll left top transparent;
+ background:#F0F0F0;  
 }
 
 div.playlist.line .icon {
@@ -331,14 +337,26 @@ div.playlist.line .small_font {
 }
 
 div.playlist.line .description .dTitle {
-    color: #491C53;
+ font: bold 15px 'Trebuchet MS', Arial, Helvetica, sans-serif;
 }
+div.playlist.line .description .dTitle a{
+color: #491c53;}
 
 div.playlist.line .description .dValue {
     color: #777777;
 }
 
+div.playlist.line .description .cValue a{
+    color: #4c92e9;
+}
+div.playlist.line .description .tValue a{
+    color: #4c92e9;
+}
 div.playlist.line .cTitle {
+    color: #777777;
+}
+
+div.playlist.line .tTitle {
     color: #777777;
 }
 
@@ -382,6 +400,7 @@ div.lined {
 
 .pagination a.prev, .pagination a.next {-moz-border-radius: 2px;-webkit-border-radius: 2px; background-color: #e8e8e8; color: #999; display:block; padding:3px 6px; height: 18px;text-align: center; margin-left:2px;float:left; font-size: 11px; text-decoration: none;}
 .pagination a.prev:hover, .pagination a.next:hover {background-color: #1c9bc8; color: #fff;}
+.pagination .disabled {-moz-border-radius: 2px;-webkit-border-radius: 2px; background-color: #e8e8e8; color: #999; display:block; padding:3px 6px; height: 18px;text-align: center; margin-left:2px;float:left; font-size: 11px; text-decoration: none;}
 
 /* Player  */	
 
@@ -395,19 +414,19 @@ div.lined {
 #player_bottom ul li a { float:left; display: block; }
 #player_bottom ul li a.player_bttn_prev { width:30px; height:30px; background: url(../images/player/player_bttn_prev.png) top left no-repeat; }
 #player_bottom ul li a.player_bttn_play { width:30px; height:30px; background: url(../images/player/player_bttn_play.png) top left no-repeat; }
-#player_bottom ul li a.player_bttn_pause { width:30px; height:30px; background: url(../images/player/player_bttn_pause.png) top left no-repeat; }
-#player_bottom ul li a.player_bttn_forw { width:30px; height:30px; background: url(../images/player/player_bttn_forw.png) top left no-repeat; }
-#player_bottom ul li a.player_bttn_stop { width:30px; height:30px; background: url(../images/player/player_bttn_stop.png) top left no-repeat; }
+#player_bottom ul li a.player_bttn_pause { width:30px; height:30px; background: url(../images/player/player_bttn_pause.png) top left no-repeat;}
+#player_bottom ul li a.player_bttn_forw { width:30px; height:30px; background: url(../images/player/player_bttn_forw.png) top left no-repeat;}
+#player_bottom ul li a.player_bttn_stop { width:30px; height:30px; background: url(../images/player/player_bttn_stop.png) top left no-repeat;}
+#player_bottom ul li a.player_bttn_stop:hover {width:30px; height:30px; background-position: bottom left;}
 #player_bottom ul li a.player_bttn_rand { width:30px; height:21px; background: url(../images/player/player_random.png) top left no-repeat; margin: 5px 0px 0 6px;}
 #player_bottom ul li a.player_bttn_repeat { width:25px; height:21px; background: url(../images/player/player_repeat.png) top left no-repeat; margin: 5px 0 0 3px;}
 #player_bottom ul li a.player_bttn_mute { width:21px; height:21px; background: url(../images/player/player_mute.png) top left no-repeat; margin: 5px 8px 0 6px;}
 #player_bottom ul li a.player_bttn_sound { width:9px; height:21px; background: url(../images/player/player_volume.png) bottom left no-repeat; margin: 5px 0 0 0;}
 #player_bottom ul li a.player_bttn_reduce { width:37px; height:39px; background: url(../images/player/player_reduce.png) top left no-repeat;margin-left: 15px;}
 #player_bottom ul li a.player_bttn_prev:hover { width:30px; height:30px;background-position: bottom left; }
+#player_bottom ul li a.player_bttn_forw:hover { width:30px; height:30px; background-position: bottom left; }
 #player_bottom ul li a.player_bttn_play:hover { width:30px; height:30px; background-position: bottom left; }
 #player_bottom ul li a.player_bttn_pause:hover width:30px; height:30px; background-position: bottom left; }
-#player_bottom ul li a.player_bttn_forw:hover { width:30px; height:30px; background-position: bottom left; }
-#player_bottom ul li a.player_bttn_stop:hover {width:30px; height:30px; background-position: bottom left;}
 #player_bottom ul li a.player_bttn_rand:hover { background-position: bottom left; }
 #player_bottom ul li a.player_bttn_repeat:hover { background-position: bottom left; }
 #player_bottom ul li a.player_bttn_reduce:hover { background-position: bottom left; }
@@ -424,7 +443,7 @@ div.lined {
 #ytapiplayer_c .close_signbox {float: right; margin: -25px 50px 0 0;}
 #ytapiplayer_c .ytp_content {margin: 28px 0 0 50px; clear:both;}
 
-#player_plname {font-size:11px; color: #999; padding-left:18px;float: left; background: url('../images/player_plicon.png') top left no-repeat; height:20px;}
+#player_plname {font-size:11px; color: #999; padding-left:18px;float: left; background: url('../images/player_plicon.png') top left no-repeat; height:20px;padding:1px;}
 #player_plname b a {color:#fff; font-weight:bold; font-size:12px; text-decoration: none;}
 #player_plname b a:hover {color:#1c9bc8; font-weight:bold; font-size:12px; text-decoration: underline;}
 #player_bottomsep {float:left; width:2px; background: url(../images/player/player_separator.png) top left no-repeat; height:15px;margin: 2px 8px 0 12px;}
@@ -435,7 +454,7 @@ div.lined {
 #player_flag{float:left; margin-left:5px;margin-top:8px;}
 
 #xparm {display:none;}
-#player_top #right_action {float: left; width: 271px; height: 22px;margin-left:10px; }
+#player_top #right_action {float: left; width: 138px; height: 22px;margin-left:10px; }
 #player_top #right_action a.share{float: left; display:block; width: 24px; height: 17px;  background: url(../images/player/player_share.png) top left no-repeat;}
 #player_top #right_action a.share:hover{background-position: bottom left;}
 #player_top #right_action a.fav{float: left; margin-right: 8px; display:block; width: 24px; height: 17px;  background: url(../images/player/player_fav.png) top left no-repeat;}
@@ -449,7 +468,12 @@ div.lined {
 #player_bottom #right_action #player_bottomsep {float:left; width:2px; background: url(../images/player/player_separator.png) top left repeat-y; height:15px;margin: 12px 8px 0 12px;}
 #player_bottomseparator {float:left; width:2px; background: url(../images/player/player_separator.png) top left repeat-y; height:20px;margin: 6px 8px 0 12px;}
 
-#player .player_current_track {font-weight: bold;margin-right: 1em;color:#fff;}
+#player .player_current_track {font-weight: bold;color:#fff;}
+
+#player_pzname {font-size:13px; color: #999; padding-left:24px;  float: left; background: url(../images/player/player_plicon.png) 4px 2px no-repeat;height:20px;padding-top:2px;}
+#player_pzname a {font-size: 13px; color: #ffffff;font-weight: bold; text-decoration:none;}
+#player_pzname a:hover {border-bottom: 1px solid #929999; color:#929999;}
+#player_pzname b {font-size: 13px; color:#fff;}
 
 #player_bottom .player_bttn_play {
     background-image: url(../images/player/player_bttn_play.png);
@@ -469,5 +493,22 @@ div.ad {font-size: 12px;background: #EFE8ED;margin:10px 0;padding:7px;-webkit-bo
 h1,h2,h3,h4,h5,h6,.capitalize, span.label {
     text-transform: capitalize;
 }
+
+div.ad_song {font-size: 12px;background: #EFE8ED url(../images/magnify.png) no-repeat 6px 8px;margin:10px 0;padding:7px 3px 7px 45px;-webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;}
     
 .delete{display:block;background:url(../images/remove.png) no-repeat bottom left;height:16px;width:16px;padding:6px 0 0 0;}
+
+/* homepage */
+.homepage {
+    background:url(../images/content_bg2.jpg) no-repeat;
+    text-align: center;
+}
+
+.trail_title {
+    font-size: 85%;
+    padding-left: 1em;
+    text-transform: capitalize;
+    font-weight: bold;
+}

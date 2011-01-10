@@ -15,7 +15,9 @@ handler500 = "pinax.views.server_error"
 urlpatterns = patterns("",
     url(
         r'^$',
-        'music.views.music_search',
+        'music.views.music_search', {
+            'template_name': 'homepage.html',
+        },
         name='music_search'
     ),
     url(r"^empty/$", views.empty, name="empty"),

@@ -1,55 +1,27 @@
 {% extends "site_base.html" %}
 
 {% load i18n %}
-{% load ifsetting_tag %}
+{% load music_tags %}
 
-{% block head_title %}{% trans "Welcome" %}{% endblock %}
+{% block head_title %}{% if request.GET.term %}{% trans "Results for" %} {{ request.GET.term }}{% else %}{% trans "Search music" %}{% endif %}{% endblock %}
 
-{% block body_class %}home{% endblock %}
+{% block extra_head %}
+<meta name="keywords" content="music search,artist search,mp3 search,track search,search,music" />
+<meta name="description" content="{% trans "Search music for tracks to play or add to your playlists with PlaylistNow.Fm" %}" />
+{% endblock %}
+
+{% block page_body_wrapper_class %}homepage{% endblock %}
 
 {% block body %}
-    
-    <h1>{% trans "Welcome to Pinax" %}</h1>
-    
-    <p>
-        {% blocktrans %}
-        <b>Pinax</b> is a <a href="http://djangoproject.com/">Django</a>
-        project intended to provide a starting point for websites. By
-        integrating numerous reusable Django apps to take care of the
-        things that many sites have in common, it lets you focus on what
-        makes your site different.
-        {% endblocktrans %}
-    </p>
-    
-    <p>
-        {% blocktrans %}
-        For more information about Pinax, see
-        <a href="http://pinaxproject.com/">http://pinaxproject.com/</a>.
-        {% endblocktrans %}
-    </p>
-    
-    <h2>{% trans "About this project" %}</h2>
-    
-    <p>
-        {% blocktrans %}
-        This project lays the foundation for all other Pinax starter projects. It
-        provides the project directory layout and some key infrastructure apps on
-        which the other starter projects are based.
-        {% endblocktrans %}
-    </p>
-    
-    <hr />
-    {% if user.is_authenticated %}
-        {% url what_next as what_next_url %}
-        <p class="what_next">{% blocktrans %}Wondering <a href="{{ what_next_url }}">What Next</a>?{% endblocktrans %}</p>
-    {% else %}
-        {% url acct_login as login_url %}
-        {% ifsetting ACCOUNT_OPEN_SIGNUP %}
-            {% url acct_signup as signup_url %}
-            <p>{% blocktrans %}You can <a href="{{ signup_url }}">Sign up</a> and <a href="{{ login_url }}">Log in</a> to try out the site.{% endblocktrans %}</p>
-        {% else %}
-            <p>{% blocktrans %}You can <a href="{{ login_url }}">Log in</a> to try out the site.{% endblocktrans %}</p>
-        {% endifsetting %}
-    {% endif %}
-    
+<form action="{% url music_search %}" method="get">
+    <input type="text" name="term" id="term" class="autocomplete" />
+    <input type="submit" value="{% trans "Search" %}" />
+</form>
+{% endblock %}
+
+{% block extra_body %}
+<div id="csrf_token" style="display:none">
+{% csrf_token %}
+</div>
+
 {% endblock %}
