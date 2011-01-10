@@ -3,7 +3,7 @@
 
 <ul class="song_list">
 {% for track in tracks %}
-<li class="song_play song_info {% cycle "dd" "" %} track_pk_{{ track.pk }} {% if track.page %}page_{{ track.page }} page_item{% endif %}" style="{% if track.page > 1 %}display:none{% endif %}">
+<li class="song_play song_info {% cycle "dd" "" %} track_pk_{{ track.pk }}">
     <span class="icon play"></span>
     <span class="number play">{{ forloop.counter }}</span>
 
@@ -24,15 +24,3 @@
 </li>
 {% endfor %}
 </ul>
-
-
-{% if paginateBy and totalPages > 1 %}
-<div class="virtual pagination">
-    {% for page in allPages %}
-    <a class="ui_ignore page page_{{ page }}">{{ page }}</a>
-    {% endfor %}
-</div>
-<div class="clear"></div>
-{% endif %}
-
-

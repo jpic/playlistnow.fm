@@ -1,4 +1,5 @@
 import simplejson
+import math
 
 from django import http
 from django import shortcuts
@@ -169,6 +170,7 @@ def playlist_add(request, form_class=PlaylistAddForm,
         context_instance=template.RequestContext(request))
 
 def playlist_details(request, user, slug, default_format=False, qname='term',
+    paginate_by=5, 
     template_name='playlist/playlist_details.html', extra_context=None):
     context = {}
 
@@ -188,10 +190,14 @@ def playlist_details(request, user, slug, default_format=False, qname='term',
         context['user_tracks'] = object.tracks.all()
 
     q = request.GET.get(qname, False)
+    page = int(request.GET.get('page', 1))
     if q:
         track = Track(name=q)
         track.lastfm_search()
-        context['tracks'] = track.matches[:5]
+        context['tracks'] = track.matches[(page*paginate_by)-1:(page*paginate_by)-1+paginate_by]
+        context['totalPages'] = int(math.ceil(len(track.matches) / paginate_by))
+        context['allPages'] = range(1, context['totalPages'] + 1)
+        context['currentPage'] = page
 
     context.update(extra_context or {})
     return shortcuts.render_to_response(template_name, context,

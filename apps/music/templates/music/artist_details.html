@@ -91,7 +91,13 @@
 
 {% if tab == 'music' %}
 <h2>{% trans 'music of artist' %} {{ object }}</h2>
-{% render_tracks object.tracks %}
+{% render_tracks tracks %}
+<div class="virtual pagination">
+    {% for page in allPages %}
+    <a class="page {% if page == currentPage %}selected ui_prevent ui_ignore{% endif %}" href="{{ request.path_info }}?page={{ page }}">{{ page }}</a>
+    {% endfor %}
+</div>
+
 {% endif %}
 
 {% if tab == 'fans' %}

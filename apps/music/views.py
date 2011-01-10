@@ -1,4 +1,5 @@
 import urllib2
+import math
 
 from django import http
 from django import shortcuts
@@ -27,7 +28,7 @@ def return_json(data=None):
         mimetype='application/json'
     )
 
-def music_artist_details(request, name, tab='overview',
+def music_artist_details(request, name, tab='overview', paginate_by=10,
     template_name='music/artist_details.html', extra_context=None):
     context = {
         'tab': tab,
@@ -39,6 +40,12 @@ def music_artist_details(request, name, tab='overview',
 
     if tab == 'music':
         context['object'].lastfm_get_tracks()
+
+        page = int(request.GET.get('page', 1))
+        context['tracks'] = context['object'].tracks[(page*paginate_by)-1:(page*paginate_by)-1+paginate_by]
+        context['totalPages'] = int(math.ceil(len(context['object'].tracks) / paginate_by))
+        context['allPages'] = range(1, context['totalPages'] + 1)
+        context['currentPage'] = page
     elif tab == 'similar':
         context['object'].lastfm_get_similar()
     elif tab == 'events':

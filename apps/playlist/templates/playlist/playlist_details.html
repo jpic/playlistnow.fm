@@ -31,7 +31,13 @@
 <div class="delete parent" style="float:right"></div>
 <h2>{% trans "results matching" %} {{ request.GET.q }}</h2>
 <div class="clear"></div>
-{% render_tracks tracks object 5 %}
+{% render_tracks tracks object %}
+<div class="virtual pagination">
+    {% for page in allPages %}
+    <a class="page {% if page == currentPage %}selected ui_prevent ui_ignore{% endif %}" href="{{ request.path_info }}?term={{ request.GET.term }}&search_artists=0&search_albums=0&page={{ page }}">{{ page }}</a>
+    {% endfor %}
+</div>
+<div class="clear"></div>
 </div>
 {% endif %}
 
