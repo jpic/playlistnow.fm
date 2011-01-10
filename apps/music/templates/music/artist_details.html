@@ -60,11 +60,23 @@
 
 {% if tab == 'overview' %}
     {% if object.tracks %}
-    <h2>{% trans "top tracks" %}</h2>
+    <h2 style="display:inline-block">{% trans "top tracks" %}</h2>
+    <a class="trail_title" href="{% url music_artist_details_tab object|slugify 'music' %}" title="{% trans 'more tracks' %}">
+        {% trans 'more tracks' %}
+    </a>
+    
+    <div style="clear:both"></div>
+    
     {% render_tracks object.tracks %}
     {% endif %}
+    
+    <h2 style="display:inline-block">{% trans "similar artists" %}</h2>
+    <a class="trail_title" href="{% url music_artist_details_tab object|slugify 'similar' %}" title="{% trans 'all similar artists' %}">
+        {% trans 'all similar artists' %}
+    </a>
 
-    <h2>{% trans "similar artists" %}</h2>
+    <div style="clear:both"></div>
+
     <ul class="similar-artists">
         {% for artist in object.similar %}
         <li>
