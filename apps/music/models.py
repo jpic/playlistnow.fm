@@ -50,7 +50,7 @@ class MusicalEntity(models.Model):
     def youtube_entries(self):
         term = self.youtube_get_term()
         key = 'youtube_entries for ' + term
-        entry = cache.get(term)
+        entry = cache.get(key)
 
         if entry:
             return entry
