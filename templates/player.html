@@ -1,20 +1,22 @@
 <div id="player_content">
 <div id="player_top">
     <div id="player_mzname">
-        <a class="player_current_track"></a> - <a class="player_current_artist"></a>
-        <a class="player_current_playlist">
-        </a>
+        <a class="player_current_track"></a>
+        <a class="player_current_artist"></a>
+      
     </div>
     
     <div id="right_action">
         <div id="player_bottomsep"></div>
         <a class="fav tiptip" 
-            onclick="return use('iLikeThisSongFromPlayer', mzAr[nbMz], mzInf[nbMz]);" title="I Like" fade=[on]"></a>
+            onclick="return use('iLikeThisSongFromPlayer', mzAr[nbMz], mzInf[nbMz]);" title="I Like"></a>
         <a class="add tiptip" 
-            onclick="use('addThisSongFromPlayer', mzAr[nbMz], mzInf[nbMz]);" title="Add this song" fade=[on]"></a>
+            onclick="use('addThisSongFromPlayer', mzAr[nbMz], mzInf[nbMz]);" title="Add this song"></a>
         <a  class="share tiptip" 
             onclick="return shareSongFromPlayer(mzAr[nbMz]);" title="Share"></a>
+               <div id="player_bottomsep"></div>
     </div>
+    <div id="player_pzname">Playlist: <a class="player_current_playlist"></a></div>
 </div>
 
 <div id="player_bottom">

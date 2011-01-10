@@ -7,10 +7,12 @@ var player = {
     'ytplayer': false,
     'playTrack': function(track, playlist, fromHistory /* new in history ? (bool) */) {
         player.ytplayer.loadVideoById(track.youtube_best_id);
-    
+        this.state.currentTrack = track;
+        this.hiliteCurrentTrack(); 
+
         $('.player_current_artist').html(track.artist.name);
         $('.player_current_artist').attr('href', track.artist.url);
-        $('.player_current_track').html(track.name);
+        $('.player_current_track').html(track.name + ' - ');
         $('.player_current_track').attr('href', track.url);
         $('.player_bttn_play').hide();
         $('.player_bttn_pause').show();
@@ -20,18 +22,6 @@ var player = {
         if (!fromHistory) {
             this.state.trackHistory.push(track);
             this.state.currentTrackHistoryIndex = this.state.trackHistory.length - 1;
-        }
-
-        if (track.playlist) {
-            var currentPlaylist = $('.player_current_playlist');
-            currentPlaylist.html(
-                '- I am ' + track.playlist['object']['name']
-            );
-            currentPlaylist.attr(
-                'href',
-                track.playlist['object']['url']
-            );
-            currentPlaylist.show();
         }
     },
     'playPlaylistTrack': function(index, fromHistory) {
@@ -56,26 +46,47 @@ var player = {
         track.playlistTrackIndex = this.state.currentPlaylistTrackIndex;
 
         if (track == undefined) {
-            console.log('broken track index');
             return true;
         }
 
         this.playTrack(track, this.state.currentPlaylist, fromHistory);
+
+        var currentPlaylist = $('.player_current_playlist');
+
+        if (this.state.currentPlaylist['object']['name']) {
+            currentPlaylist.html(
+                ' - I am ' + track.playlist['object']['name']
+            );
+            currentPlaylist.attr(
+                'href',
+                track.playlist['object']['url']
+            );
+            currentPlaylist.show();
+        } else {
+            currentPlaylist.hide();
+        }
     },
-    'playPlaylist': function(url) {
-        $.get(
-            url,
-            {
-                'format': 'json',
-            },
-            function(data, textStatus, req) {
-                player.state.currentPlaylist = data;
-                if (player.state.currentPlaylist.tracks.length) {
-                    player.playPlaylistTrack();
-                }
-            },
-            'json'
-        );
+    'playPlaylist': function(playlist, offset) {
+        if (typeof playlist == 'object') {
+            player.state.currentPlaylist = playlist;
+            if (player.state.currentPlaylist.tracks.length) {
+                player.playPlaylistTrack(offset);
+            }
+        } else {
+            $.get(
+                playlist,
+                {
+                    'format': 'json',
+                },
+                function(data, textStatus, req) {
+                    player.state.currentPlaylist = data;
+                    if (player.state.currentPlaylist.tracks.length) {
+                        player.playPlaylistTrack(offset);
+                    }
+                },
+                'json'
+            );
+        }
     },
     'playPrevious': function() {
         if (player.state.currentTrackHistoryIndex <= 0) {
@@ -128,6 +139,20 @@ var player = {
 
         return true;
     },
+    'parseTrackList': function(ul) {
+        var playlist = {
+            'object': {},
+            'tracks': [],
+        };
+
+        ul.find('li.song_info').each(function() {
+            var track = player.parseRenderedTrack($(this));
+            track.playlist = playlist;
+            playlist.tracks.push(track);
+        });
+
+        return playlist;
+    },
     'parseRenderedTrack': function(trackTag) {
         var hiddenTrackTag = trackTag.find('a.track');
         var hiddenYoutubeTag = trackTag.find('a.youtube_play');
@@ -141,6 +166,7 @@ var player = {
                 'url': hiddenArtistTag.attr('href'),
             },
             'youtube_best_id': hiddenYoutubeTag.attr('href'),
+            'li': trackTag,
         }
 
         return track;
@@ -162,7 +188,24 @@ var player = {
         }
         this.initBinds();
     },
+    'hiliteCurrentTrack': function() {
+        if (player.state.currentTrack == undefined) {
+            return true;
+        }
+
+        $('li.song_info.selected').removeClass('selected');
+        $('li.song_info a.track[href=' + player.state.currentTrack.url + ']').each(function() {
+            $(this).parent().addClass('selected');
+        });
+    },
     'initBinds': function() {
+        $(document).bind('signalPageUpdate', function() {
+            if (!player.state.currentTrack) {
+                return true;
+            }
+
+            player.hiliteCurrentTrack();
+        });
         $('li.song_play').live('click', function(e) {
             /* use when li.click != a.clikc */
             if( e.target != this ) {
@@ -170,19 +213,20 @@ var player = {
             }
             e.preventDefault();
             track = player.parseRenderedTrack($(this));
-            player.playTrack(track);
+            var li = $(this);
+            
+            if (li.parents('div.playlist_track_list').find('#playlist_pk').length) {
+                player.playPlaylist(ui.currentUrl, $(this).prevAll().length);
+            } else {
+                var playlist = player.parseTrackList($(this).parent());
+                player.playPlaylist(playlist, $(this).prevAll().length);
+            }
 
-            player.state.currentPlaylist = false;
-            player.state.currentPlaylistTrackIndex = false;
-
-            $('li.song_play').removeClass('selected');
-            $(this).addClass('selected');
+            player.hiliteCurrentTrack();
         });
         $('li.song_play .play').live('click', function(e) {
             e.preventDefault();
-            player.playTrack($(this).parent());
-            $('li.song_play').removeClass('selected');
-            li.addClass('selected');
+            $(this).parents('li.song_play').trigger('click');
         });
         $('.player_bttn_stop').click(function() { 
             player.ytplayer.stopVideo(); 

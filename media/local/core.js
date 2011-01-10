@@ -88,7 +88,11 @@ var ui = {
                             } else if (last.hasClass('dd') == false && song_info.hasClass('dd') == false) {
                                 song_info.addClass('dd');
                             }
-                            song_info.find('span.number').html(parseInt(last.find('span.number').html()) + 1);
+                            var n = parseInt(last.find('span.number').html()) + 1;
+                            if (!n) {
+                                n = 1;
+                            }
+                            song_info.find('span.number').html(n);
                         }
                         ul.append(song_info);
                         $('#ajaxload').fadeOut();
