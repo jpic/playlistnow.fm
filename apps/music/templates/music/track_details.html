@@ -23,15 +23,6 @@
 
 {% render_track object %}
 
-{% if object.artist %}
-<p>
-Artist: 
-    <a href="{{ object.artist.get_absolute_url }}" title="{{ object.artist }}">
-        {{ object.artist }}
-    </a>
-</p>
-{% endif %}
-
 {% if object.description %}
 <p>{{ object.description|striptags|safe }}</p>
 {% endif %}
