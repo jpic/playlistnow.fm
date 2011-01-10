@@ -13,8 +13,17 @@ IGNORE = r'^(site_media)|(ajax)'
 
 class DynamicHtmlMiddleware(object):
     def process_request(self, request):
-        request.modal = request.GET.get('modal', False)
+        # attempt to fix winetricks ie7
+        #offset = request.path_info.find('#')
+        #if offset:
+            #request.path_info = request.path_info[0:offset]
+
+        #offset = request.path.find('#')
+        #if offset:
+            #request.path = request.path[0:offset]
         
+        request.modal = request.GET.get('modal', False)
+
         if request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
             # probably from javascript
             request.ajax = True
