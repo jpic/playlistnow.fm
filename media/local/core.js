@@ -222,25 +222,32 @@ var ui = {
         if (loader.css('display') == 'none') {
             loader.fadeIn();
         }
-        if (ui.currentRequest) {
-            ui.currentRequest.abort()
-        }
+        var currentRequest = ui.currentRequest;
         ui.currentRequest = req;
+        if (currentRequest && currentRequest != req) {
+            currentRequest.abort()
+        }
     },
     'error': function(req, textStatus) {
-        $('#ajaxload').fadeOut();
-        if (textStatus == 'error') {
-            $('#body').html('We are sorry but your request caused a bug');
+        if (ui.currentRequest == req) { 
+            /* failed */
+            ui.currentUrl = false;
+            $('#ajaxload').fadeOut();
+            alert('Sorry but your request failed. Our techies have been notified by mail and will take care of it');
+        } else { 
+            /* aborted */
         }
-        ui.currentRequest = false;
     },
     'authenticationPopup': function(url) {
         $.ajax({
-            url: acct_login + '?modal=1&next=' + encodeURIComponent(url),
+            url: url,
             dataType: 'html',
+            type: method,
             success: function(html, textStatus, request) {
-                $('#ajaxload').fadeOut();
                 $.modal(html);
+                $('#simplemodal-data').before($('#page_title').clone().attr('id', 'simplemodal-title'));
+                $(document).trigger('signalPopupOpen');
+                $('#ajaxload').fadeOut();
             },
             beforeSend: ui.beforeSend,
             error: ui.error,
