@@ -5,7 +5,7 @@
 {% for track in tracks %}
 <li class="song_play song_info {% cycle "dd" "" %} track_pk_{{ track.pk }} {% if track.page %}page_{{ track.page }} page_item{% endif %}" style="{% if track.page > 1 %}display:none{% endif %}">
     <span class="icon play"></span>
-    <span class="number">{{ forloop.counter }}</span>
+    <span class="number play">{{ forloop.counter }}</span>
 
     <a style="display:none" title="{{ track.youtube_get_best }}" class="hidden youtube_play" href="{{ track.youtube_get_best }}">
     </a>

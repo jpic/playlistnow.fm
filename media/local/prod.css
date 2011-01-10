@@ -187,8 +187,8 @@ li.song_info.selected.dd, li.song_info.selected { background-color: #e5ecf3 }
     vertical-align: bottom;
     display: inline-block;
 }
-.song_info .play {background: url(../images/allpl.png) no-repeat 0 0 transparent;}
-.song_info .play:hover {background-position: bottom left}
+.song_info .icon.play {background: url(../images/allpl.png) no-repeat 0 0 transparent;}
+.song_info .icon.play:hover {background-position: bottom left}
 
 .song_info  .add {background: url(../images/adpl.png) no-repeat 0 0 transparent;}
 .song_info  .add:hover {background-position: bottom left}
