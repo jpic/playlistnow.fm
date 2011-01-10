@@ -74,7 +74,7 @@
     {% endif %}
         <div id="page_body_wrapper" class="{% block page_body_wrapper_class %}{% endblock %} page_body_wrapper">
             {% if not request.modal %}
-            <div id="page_body_right" class="{% block page_body_right_class %}{% endblock %}">
+            <div id="page_body_right" class="{% block page_body_right_class %}hidden{% endblock %}">
                 {% block body_right %}
                 {% endblock %}
             </div>

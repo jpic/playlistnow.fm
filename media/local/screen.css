@@ -96,6 +96,9 @@ img.simplemodal-close {
     margin-top: -2px;
 }
 
-#page_title {
+#page_title, .hidden {
     display: none;
+}
+.block {
+    display: block;
 }
