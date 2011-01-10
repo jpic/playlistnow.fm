@@ -5,9 +5,10 @@ from django import template
 register = template.Library()
 
 @register.inclusion_tag('music/_render_tracks.html')
-def render_tracks(tracks, paginateBy=None):
+def render_tracks(tracks, playlist=None, paginateBy=None):
     context = {
         'tracks': tracks,
+        'playlist': playlist,
         'paginateBy': paginateBy,
     }
 
@@ -29,7 +30,8 @@ def render_tracks(tracks, paginateBy=None):
     return context
 
 @register.inclusion_tag('music/_render_tracks.html')
-def render_track(track):
+def render_track(track, playlist=None):
     return {
-        'tracks': (track,)
+        'tracks': (track,),
+        'playlist': playlist,
     }
