@@ -44,7 +44,7 @@ class DynamicHtmlMiddleware(object):
            # local redirects to ajax (see process_response())
            request.ajax = True
 
-        else:
+        elif request.path != '/empty/':
             # automatic redirect to container for chrome user agents
             test = request.META['HTTP_USER_AGENT'].lower()
             for agent in JS_AGENTS:
