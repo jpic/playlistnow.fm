@@ -53,6 +53,8 @@ INSTALLED_APPS = [
     "jpic",
     "pagination",
     "tagging_ext",
+    "socialregistration",
+    "gfc",
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -67,12 +69,8 @@ MIDDLEWARE_CLASSES = [
     "pinax.middleware.security.HideSensistiveFieldsMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",
     "pagination.middleware.PaginationMiddleware",
+    "socialregistration.middleware.FacebookMiddleware",
 ]
-
-ADMIN_TOOLS_MENU = 'menu.CustomMenu'
-
-LASTFM_API_KEY = 'a67b55859d8b3cf1ed3bb2c9a5c59898'
-LASTFM_API_SECRET = 'c7970cc5b664b1b1e19a3f471ebc1b12'
 
 CACHES = {
     'default': {
@@ -82,3 +80,125 @@ CACHES = {
     }
 }
 CACHE_BACKEND = 'file:///var/tmp/django_cache'
+
+
+OPENID_REDIRECT_NEXT = '/accounts/openid/done/'
+
+OPENID_SREG = {"requred": "nickname, email, fullname",
+               "optional":"postcode, country",
+               "policy_url": ""}
+
+#example should be something more like the real thing, i think
+OPENID_AX = [{"type_uri": "http://axschema.org/contact/email",
+              "count": 1,
+              "required": True,
+              "alias": "email"},
+             {"type_uri": "http://axschema.org/schema/fullname",
+              "count":1 ,
+              "required": False,
+              "alias": "fname"}]
+
+OPENID_AX_PROVIDER_MAP = {'Google': {'email': 'http://axschema.org/contact/email',
+                                     'firstname': 'http://axschema.org/namePerson/first',
+                                     'lastname': 'http://axschema.org/namePerson/last'},
+                          'Default': {'email': 'http://axschema.org/contact/email',
+                                      'fullname': 'http://axschema.org/namePerson',
+                                      'nickname': 'http://axschema.org/namePerson/friendly'}
+                          }
+
+
+ADMIN_TOOLS_MENU = 'menu.CustomMenu'
+
+LASTFM_API_KEY = 'a67b55859d8b3cf1ed3bb2c9a5c59898'
+LASTFM_API_SECRET = 'c7970cc5b664b1b1e19a3f471ebc1b12'
+
+TWITTER_CONSUMER_KEY = 'CmjacxzweBzBy1w1Rr1Q5g'
+TWITTER_CONSUMER_SECRET_KEY = 'j2Jx2Iz0JQn0WASJFPfifijVBewC1D2h3vbQI25zc'
+TWITTER_REQUEST_TOKEN_URL = 'http://api.twitter.com/oauth/request_token'
+TWITTER_ACCESS_TOKEN_URL = 'https://api.twitter.com/oauth/access_token'
+TWITTER_AUTHORIZATION_URL = 'https://api.twitter.com/oauth/authorize'
+
+
+FACEBOOK_APP_ID = '117753378295717'
+FACEBOOK_API_KEY = '738ca1d67fa0e795c8a5604278278e8e'
+FACEBOOK_SECRET_KEY = '5068add1ba6569c0ed1ecbba4e8f6f56'
+
+GOOGLE_SITE_ID = '09173394585243409353'
+
+## if any of this information is desired for your app
+FACEBOOK_EXTENDED_PERMISSIONS = (
+    #'publish_stream',
+    #'create_event',
+    #'rsvp_event',
+    #'sms',
+    #'offline_access',
+    #'email',
+    #'read_stream',
+    #'user_about_me',
+    #'user_activites',
+    #'user_birthday',
+    #'user_education_history',
+    #'user_events',
+    #'user_groups',
+    #'user_hometown',
+    #'user_interests',
+    #'user_likes',
+    #'user_location',
+    #'user_notes',
+    #'user_online_presence',
+    #'user_photo_video_tags',
+    #'user_photos',
+    #'user_relationships',
+    #'user_religion_politics',
+    #'user_status',
+    #'user_videos',
+    #'user_website',
+    #'user_work_history',
+    #'read_friendlists',
+    #'read_requests',
+    #'friend_about_me',
+    #'friend_activites',
+    #'friend_birthday',
+    #'friend_education_history',
+    #'friend_events',
+    #'friend_groups',
+    #'friend_hometown',
+    #'friend_interests',
+    #'friend_likes',
+    #'friend_location',
+    #'friend_notes',
+    #'friend_online_presence',
+    #'friend_photo_video_tags',
+    #'friend_photos',
+    #'friend_relationships',
+    #'friend_religion_politics',
+    #'friend_status',
+    #'friend_videos',
+    #'friend_website',
+    #'friend_work_history',
+)
+
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'socialregistration.auth.FacebookAuth',
+    'socialregistration.auth.TwitterAuth',
+    'socialregistration.auth.OpenIDAuth',
+    'gfc.auth.GfcAuth',
+)
+
+UI_IGNORE_URLS = (
+    '/socialregistration/facebook/login/',
+    '/admin',
+    '/site_media',
+    '/socialregistration/twitter',
+    '/socialregistration/setup/',
+    '/gfc/redirect',
+    '/socialregistration/facebook/connect',
+)
+
+GENERATE_USERNAME = True
+SOCIALREGISTRATION_GENERATE_USERNAME = True
+
+AJAX_NAVIGATION = True
+LOGIN_REDIRECT_URL = '/postlogin'

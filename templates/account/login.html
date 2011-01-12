@@ -4,16 +4,66 @@
 {% load uni_form_tags %}
 {% load ifsetting_tag %}
 {% load account_tags %}
+{% load facebook_tags %}
+{% load twitter_tags %}
 
 {% block head_title %}{% trans "Login" %}{% endblock %}
 
 {% block body %}
-    Facebook Twitter Google
-    Connect your Facebook account to Playlistnow to sign up or sign in by clicking the button Connect with Facebook.
-{% endblock %}
+    {% if user.is_authenticated %}
+        {% user_display user as user_display %}
+        <p><span class="warning">{% trans "Note" %}</span>: 
+        {% blocktrans %}you are already logged in as {{ user_display }}.{% endblocktrans %}</p>
+    {% else %}
+        {% ifsetting ACCOUNT_OPEN_SIGNUP %}
+        {% url acct_signup as signup_url %}
+        <p>{% blocktrans %}Don't have an account? <a href="{{ signup_url }}">Sign up</a>!{% endblocktrans %}</p>
+        {% endifsetting %}
+    {% endif %}
 
-{% block extra_body %}
-<script>
-    $("#id_username").focus();
+<script type="text/javascript" src="http://www.google.com/friendconnect/script/friendconnect.js?key=notsupplied&v=0.8"></script>
+<script type="text/javascript">
+      function onFriendConnectInitialized(st) {
+        if (!window.friendconnect_times_loaded) {
+          window.friendconnect_times_loaded = 1;
+        } else {
+          window.friendconnect_times_loaded++;
+        }
+        init(window.friendconnect_times_loaded);
+      };
+          
+      $(document).ready(function () {
+        google.friendconnect.container.setParentUrl('/');
+        google.friendconnect.container.loadOpenSocialApi({
+           site: '09173394585243409353',
+          onload: onFriendConnectInitialized
+        });
+      });
+      
+      function init(times) { };
+
 </script>
+
+        <script type="text/javascript">
+          google.friendconnect.renderSignInButton({
+            "id" : "login-fcbutton",
+            "text" : "Sign in with Google Friend Connect",
+            "style" : "long"
+          });
+          window.init = function(times) {
+            if (times > 1) {
+              window.top.location.href = "{% url gfc_callback %}";
+            }
+          };
+        </script>
+    <div id="login-fcbutton"></div>
+    {% facebook_button %}
+    {% facebook_js %}
+
+    {% twitter_button %}
+
+    <p>
+    {% blocktrans %}If you have any trouble logging in to your account, contact us at 
+    <a href="mailto:{{ CONTACT_EMAIL }}">{{ CONTACT_EMAIL}}</a>.{% endblocktrans %}
+    </p>
 {% endblock %}

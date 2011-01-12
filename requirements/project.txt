@@ -5,5 +5,6 @@
 django-admin-tools
 -e svn+http://python-lastfm.googlecode.com/svn/trunk/#egg=lastfm
 gdata
+-e git+https://github.com/flashingpumpkin/django-socialregistration.git#egg=socialregistration
 # Put project-specific requirements here.
 # See http://pip-installer.org/requirement-format.html for more information.

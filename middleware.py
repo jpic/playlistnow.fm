@@ -13,6 +13,9 @@ IGNORE = r'^(site_media)|(ajax)'
 
 class DynamicHtmlMiddleware(object):
     def process_request(self, request):
+        if not getattr(settings, 'AJAX_NAVIGATION', False):
+            return None
+
         # attempt to fix winetricks ie7
         #offset = request.path_info.find('#')
         #if offset:
@@ -24,20 +27,17 @@ class DynamicHtmlMiddleware(object):
         
         request.modal = request.GET.get('modal', False)
 
+        for url in settings.UI_IGNORE_URLS:
+            if url in request.path_info:
+                request.ajax = False
+                return None
+
         if request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
             # probably from javascript
             request.ajax = True
         
         elif request.path == '/empty/':
             # this response should be the ajax container
-            request.ajax = False
-
-        elif '/admin' in request.path:
-            # isolate django.contrib.admin
-            request.ajax = False
-        
-        elif '/site_media' in request.path:
-            # isolate django-static
             request.ajax = False
 
         elif request.GET.get('ajax', False):
@@ -52,10 +52,9 @@ class DynamicHtmlMiddleware(object):
                     return http.HttpResponseRedirect('/empty/#' + request.path)
 
     def process_response(self, request, response):
-        if '/admin' in request.path:
-            return response
-        elif '/site_media' in request.path:
-            return response
+        for url in settings.UI_IGNORE_URLS:
+            if url in request.path_info:
+                return response
 
         new_url = False
 

@@ -1,0 +1,14 @@
+{% extends 'site_base.html' %}
+{% load uni_form_tags %}
+{% load i18n %}
+
+{% block head_title %}{% trans "Complete your registration" %}{% endblock %}
+
+{% block body %}
+<form action="{% url postregistration %}" method="post" class="uniForm">
+    {{ form.non_field_errors|as_uni_errors }}
+    {% csrf_token %}
+    {{ form|as_uni_form }}
+    <div class="buttonHolder"><button class="primaryAction" type="submit">{% trans "Complete my registration" %}</button></div>
+</form>
+{% endblock %}

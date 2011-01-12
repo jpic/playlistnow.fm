@@ -24,12 +24,24 @@ urlpatterns = patterns("",
     url(r"^admin/invite_user/$", "pinax.apps.signup_codes.views.admin_invite_user", name="admin_invite_user"),
     url(r"^admin/", include(admin.site.urls)),
     url(r"^about/", include("about.urls")),
+    url(r"^gfc/", include("gfc.urls")),
+    url(r"^socialregistration/", include("socialregistration.urls")),
     url(r"^account/", include("pinax.apps.account.urls")),
     url(r"^openid/(.*)", PinaxConsumer()),
 
     url(r'^admin_tools/', include('admin_tools.urls')),
     url(r'^playlist/', include('playlist.urls')),
     url(r'^music/', include('music.urls')),
+    url(
+        r'^postlogin/$', 
+        views.postlogin,
+        name='postlogin'
+    ),
+    url(
+        r'^postregistration/$', 
+        views.postregistration,
+        name='postregistration'
+    ),
     url(
         r'^tags/(?P<slug>[^/]+)/$', 
         views.tag_details,

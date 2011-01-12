@@ -58,7 +58,7 @@ var ui = {
             }
         
             if (!user.is_authenticated) {
-                ui.authenticationPopup(url)
+                ui.authenticationPopup()
             } else if (element && element.hasClass('direct_to_playlist')) {
                 data['direct_to_playlist'] = 1;
                 //var song_info = element.parents('li.song_info');
@@ -108,6 +108,20 @@ var ui = {
             var url = $(this).attr('href');
             if ($(this).hasClass('authenticationRequired') && !user.is_authenticated) {
                 ui.authenticationPopup(url);
+            } else if ($(this).hasClass('simplemodal-contain')) {
+                $.ajax({
+                    url: url,
+                    dataType: 'html',
+                    success: function(html, textStatus, request) {
+                        $('#simplemodal-data').html(html);
+                        $(document).trigger('signalPageUpdate', [url]);
+                        $('#ajaxload').fadeOut();
+                    },
+                    beforeSend: ui.beforeSend,
+                    error: ui.error,
+                });               
+            } else if ($(this).hasClass('popup')) {
+                ui.popup(url);
             } else {
                 $.history.load(url);
             }
@@ -120,7 +134,7 @@ var ui = {
     },
      'setupForms': function() {
         if (ui.settings['ajaxEnable'] && $('form').length) {
-            $('form').submit(function(e) {
+            $('form:not(.ui_ignore)').submit(function(e) {
                 e.preventDefault();
                 var url = $(this).attr('action');
     
@@ -230,6 +244,24 @@ var ui = {
         }
     },
     'authenticationPopup': function(url) {
+        var next = '';
+        if (url) {
+            next = '&next=' + encodeURIComponent(url);
+        }
+        this.popup(popup_auth + '?modal=1' + next);
+    },
+    'popup': function(url, method, data) {
+        if (method == undefined) {
+            method = 'get';
+        }
+
+        if (!url.match(/modal/)) {
+            if (!url.match(/\?/)) {
+                url += '?'
+            }
+            url += '&modal=1';
+        }
+
         $.ajax({
             url: url,
             dataType: 'html',

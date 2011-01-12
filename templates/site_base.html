@@ -1,7 +1,9 @@
 {% load i18n %}
 {% if not request.ajax %}
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+{% block html_declare %}
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" >
+{% endblock %}
 <head>
     <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
     <!-- core css -->
@@ -15,7 +17,7 @@
     var STATIC_URL = '{{ STATIC_URL }}';
     var music_search_autocomplete = '{% url music_search_autocomplete %}';
     var playlist_track_modify = '{% url playlist_track_modify %}';
-    var acct_login = '{% url acct_login %}';
+    var popup_auth = '{% url acct_login %}';
     </script>
     <script type="text/javascript" src="{{ STATIC_URL }}local/core.js"></script>
     <script type="text/javascript">
@@ -54,8 +56,9 @@
             </li>
         </ul>
         <ul id="menu_right" class="right">
+            {% if not request.user.is_authenticated %}
             <li> 
-                <a class="button super violet" href="{% url acct_login %}">
+                <a class="button super violet popup" href="{% url acct_login %}">
                   <span class="bigger">Login</span>
                 </a>
             </li>
@@ -64,6 +67,9 @@
                    <span class="bigger">Become Member</span>
                 </a>
             </li>
+            {% else %}
+            You are {{ request.user }}
+            {% endif %}
         </ul>
     </div>
 
@@ -86,6 +92,13 @@
                 <img src="{{ STATIC_URL }}local/ajax-loader.gif" />
                 {% trans "please wait a couple of seconds" %} ...
                 </div>
+
+                {% block main_content %}
+                {% endblock %}
+                
+                {% block content %}
+                {% endblock %}
+
                 {% endblock %}
             {% if not request.modal %}
             </div>
@@ -123,6 +136,31 @@ var params = { allowScriptAccess: "always" };
 var atts = { id: "myytplayer" };
 swfobject.embedSWF("http://www.youtube.com/apiplayer?enablejsapi=1&playerapiid=ytplayer", 
                    "ytapiplayer", "0", "0", "8", null, null, params, atts);
+
+
+    {% if FACEBOOK_APP_ID %}
+      <div id="fb-root"></div>
+      <script>
+      window.fbAsyncInit = function() {
+        FB.init({appId: '{{ FACEBOOK_APP_ID }}', status: true, cookie: true, xfbml: true});
+        FB.Event.subscribe('auth.sessionChange', function(response) {
+          if (response.session) {
+              window.location = '{% url socialauth_facebook_login_done %}';
+          } else {
+              //window.location = '{% url socialauth_social_logout %}';
+          }
+        });
+      };
+      (function() {
+        var e = document.createElement('script');
+        e.type = 'text/javascript';
+        e.src = document.location.protocol +
+          '//connect.facebook.net/en_US/all.js';
+        e.async = true;
+        document.getElementById('fb-root').appendChild(e);
+      }());
+      </script>    
+    {% endif %}    
 </script>
 <div id="ytapiplayer" style="display:none">
     You need Flash player 8+ and JavaScript enabled to enjoy PlaylistNow.Fm.
