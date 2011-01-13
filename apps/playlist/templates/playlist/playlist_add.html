@@ -1,24 +1,27 @@
 {% extends "playlist/base.html" %}
 {% load i18n %}
+{% load uni_form_tags %}
 
 {% block body %}
+<h1>create a new playlist</h1>
+
 <form action="{% url playlist_add %}" method="post">
     {{ form.non_field_errors }}
 
     {% csrf_token %}
 
-    {{ form.name.errors }}
-    {{ form.name.label_tag }}: {{ form.name }}
+    {{ form.name.errors|as_uni_errors }}
+    {{ form.name.label_tag }} {{ form.name }}
 
     <br />
 
-    {{ form.tags.errors }}
-    {{ form.tags.label_tag }}: {{ form.tags }}
+    {{ form.tags.errors|as_uni_errors }}
+    {{ form.tags.label_tag }} {{ form.tags }}
 
     <br />
 
     {{ form.category.errors }}
-    {{ form.category.label_tag }}:
+    {{ form.category.label_tag }}
     <select name="category">
     {% for category in form.playlist_categories %}
         <optgroup label="{{ category }}">
@@ -30,8 +33,32 @@
         </optgroup>
     {% endfor %}
     </select>
-
-    <input type="submit" value="{% trans "Create playlist" %}" />
+<div class="clear"></div>
+    <input type="submit" class="inputed super violet  button bigger" value="{% trans "Create playlist" %}" />
 </form>
 
+<div class="ad">Please you need to fill in all the fields to create your playlist.</div>
+
+
+<script type="text/javascript">
+$(document).ready(function() {
+    var name_def = 'working, eating, chilling ...';
+    $('#id_name').val(name_def).click(function() {
+      if ($(this).val() == name_def) {
+         $(this).val('');
+      }   
+    });
+
+    var tags_def = 'work, office, home...';
+    $('input[name=tags]').val(tags_def).click(function() {
+      if ($(this).val() == tags_def) {
+         $(this).val('');
+      }   
+    });
+});
+
+</script>
+
 {% endblock %}
+
+
