@@ -155,17 +155,12 @@ class Artist(MusicalEntity):
             similar.lastfm_get_info(element)
             self.similar.append(similar)
 
-    def lastfm_get_tracks(self, count=99):
+    def lastfm_get_tracks(self):
         tree = self.lastfm_get_tree('artist.getTopTracks')
         for element in tree.findall('toptracks/track'):
             track = Track(name=element.find('name').text, artist=self)
             track.lastfm_get_info(element)
             self.tracks.append(track)
-
-            count -= 1
-            
-            if not count:
-                return True
 
     def lastfm_get_events(self):
         tree = self.lastfm_get_tree('artist.getEvents')
