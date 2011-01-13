@@ -69,6 +69,13 @@
             </li>
             {% else %}
             You are {{ request.user }}
+
+            <li>
+                <a class="button super blue ui_ignore" href="{% url acct_logout %}">
+                   <span class="bigger">Logout</span>
+                </a>
+            </li>
+
             {% endif %}
         </ul>
     </div>
