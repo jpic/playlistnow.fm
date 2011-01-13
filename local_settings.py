@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     "tagging_ext",
     "socialregistration",
     "gfc",
+    "actstream",
 ]
 
 MIDDLEWARE_CLASSES = [

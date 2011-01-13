@@ -2,14 +2,52 @@ from django.core import urlresolvers
 from django import http
 from django import shortcuts
 from django import template
+from django.db.models import get_model
 from django.contrib.auth import decorators
+from django.contrib.auth.models import User
 
 from tagging.models import Tag, TaggedItem
-from django.contrib.auth.models import User
+from actstream.models import actor_stream, user_stream, model_stream
+from actstream import action
 
 from playlist.models import Playlist
 
 from forms import PostRegistrationForm
+
+def add_activity(request):
+    if not request.method == 'POST':
+        return http.HttpResponseForbidden()
+
+    if 'action_object_pk' in request.POST.keys():
+        action_object = shortcuts.get_object_or_404(
+            get_model(
+                request.POST['action_object_app'],
+                request.POST['action_object_class']
+            ),
+            pk=request.POST['action_object_pk']
+        )
+    else:
+        action_object = None
+    
+    if 'target_object_pk' in request.POST.keys():
+        target_object = shortcuts.get_object_or_404(
+            get_model(
+                request.POST['target_object_app'],
+                request.POST['target_object_class']
+            ),
+            pk=request.POST['target_object_pk']
+        )
+    else:
+        target_object = None
+
+    action.send(
+        request.user,
+        request.POST['verb'],
+        action_object=action_object,
+        target=target_object
+    )
+
+    return http.HttpResponse('success')
 
 def user_details(request, slug, tab='activities',
     template_name='auth/user_detail.html', extra_context=None):
@@ -22,6 +60,8 @@ def user_details(request, slug, tab='activities',
 
     if tab == 'playlists':
         context['playlists'] = user.playlist_set.all()
+    elif tab == 'activities':
+        context['activities'] = actor_stream(user)
 
     context.update(extra_context or {})
     return shortcuts.render_to_response(template_name, context,

@@ -13,22 +13,22 @@
 
 <ul id="tab_artist" class="tab_artist fake_tabs">
     <li class="tab first {% if tab == 'activities' %}selected{% endif %}">
-        <a class="" href="{% url user_details_tab user|slugify 'activities' %}">
+        <a class="" href="{% url user_details_tab user.username|slugify 'activities' %}">
         {% trans "activities" %}
         </a>
     </li>
     <li class="tab {% if tab == 'playlists' %}selected{% endif %}">
-        <a class="" href="{% url user_details_tab user|slugify 'playlists' %}">
+        <a class="" href="{% url user_details_tab user.username|slugify 'playlists' %}">
         {% trans "playlists" %}
         </a>
     </li>
     <li class="tab {% if tab == 'artists' %}selected{% endif %}">
-        <a class="" href="{% url user_details_tab user|slugify 'artists' %}">
+        <a class="" href="{% url user_details_tab user.username|slugify 'artists' %}">
         {% trans "artists" %}
         </a>
     </li>
     <li class="last tab {% if tab == 'recommendations' %}selected{% endif %}">
-        <a class="" href="{% url user_details_tab user|slugify 'recommendations' %}">
+        <a class="" href="{% url user_details_tab user.username|slugify 'recommendations' %}">
         {% trans "recommended songs" %}
         </a>
     </li>
@@ -37,6 +37,17 @@
 <div class="clear"></div>
 
 {% if tab == 'activities' %}
+    {% for activity in activities %}
+        <a href="{% url user_details activity.actor|slugify %}" title="{% trans "see details of user" %} {{ activity.actor }}">
+            {{ activity.actor }}
+        </a>
+        {{ activity.verb }}
+        {% if activity.target %}
+        <a href="{{ activity.target.get_absolute_url }}" title="{% trans "details of" %} {{ activity.target }}">
+            {{ activity.target }}
+        </a>
+        {% endif %}
+    {% endfor %}
 {% endif %}
 
 {% if tab == 'playlists' %}

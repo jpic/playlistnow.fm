@@ -4,6 +4,7 @@ from django.db.models import Q
 from django.utils.translation import ugettext as _
 from django.core import urlresolvers
 from django.template import defaultfilters
+from django.conf import settings
 
 from tagging.fields import TagField
 
@@ -167,3 +168,14 @@ def autoslug(sender, instance, **kwargs):
         instance.slug += '-'
 
 signals.pre_save.connect(autoslug)
+
+
+if "actstream" in settings.INSTALLED_APPS:
+    from actstream import action
+
+    def playlist_create_activity(sender, instance, created, **kwargs):
+        if created:
+            action.send(instance.creation_user, verb=_(u'created'), target=instance)
+        else:
+            action.send(instance.creation_user, verb=_(u'modified'), target=instance)
+    signals.post_save.connect(playlist_create_activity, sender=Playlist)
