@@ -20,6 +20,21 @@ urlpatterns = patterns("",
         },
         name='music_search'
     ),
+# deprecating
+#    url(
+#        r'^socialregistration/google/friendconnect/do/$',
+#        direct_to_template, {
+#            'template': 'google_friendconnect/do.html',
+#        },
+#        name='google_friendconnect_do'
+#    ),
+#    url(
+#        r'^popup/auth/$',
+#        direct_to_template, {
+#            'template': 'popup/auth.html',
+#        },
+#        name='popup_auth'
+#    ),
     url(r"^empty/$", views.empty, name="empty"),
     url(r"^admin/invite_user/$", "pinax.apps.signup_codes.views.admin_invite_user", name="admin_invite_user"),
     url(r"^admin/", include(admin.site.urls)),
