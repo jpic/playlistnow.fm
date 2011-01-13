@@ -131,6 +131,7 @@ class MusicalEntity(models.Model):
     def lastfm_get_similar(self):
         cls = self.__class__
         tree = self.lastfm_get_tree(self.get_type() + '.getSimilar')
+        self.similar = []
         for element in tree.findall('similar'+self.get_type()+'s/'+self.get_type()):
             similar = cls(name=element.find('name').text)
             similar.lastfm_get_info(element)
