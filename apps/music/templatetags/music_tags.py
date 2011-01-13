@@ -4,6 +4,20 @@ from django import template
 
 register = template.Library()
 
+@register.inclusion_tag('music/_render_artists.html')
+def render_artists(artists, playlist=None):
+    context = {
+        'artists': artists,
+    }
+
+    return context
+
+@register.inclusion_tag('music/_render_artists.html')
+def render_artist(artist, playlist=None):
+    return {
+        'artists': (artist,),
+    }
+
 @register.inclusion_tag('music/_render_tracks.html')
 def render_tracks(tracks, playlist=None):
     context = {

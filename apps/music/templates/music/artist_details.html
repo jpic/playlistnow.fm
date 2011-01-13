@@ -79,22 +79,14 @@
     </h2>
     <div style="clear:both"></div>
 
-    <ul class="similar-artists">
-        {% for artist in object.similar %}
-        <li>
-            <a href="{{ artist.get_absolute_url }}" class="tiptip" title="{{ artist.name }}">
-                <img src="{{ artist.images.medium }}" alt="{{ artist.name }}" class="avatar medium"/>
-                {{ artist.name }}
-            </a>
-        </li>
-        {% endfor %}
-    </ul>
+    {% render_artists object.similar %}
 {% endif %}
 
 {% if tab == 'music' %}
 <h2>{% trans 'music of artist' %} {{ object }}</h2>
 {% render_tracks tracks %}
-<hr style="background: rgb(221, 221, 221) none repeat scroll 0% 0%; height: 1px; -moz-background-clip: border; -moz-background-origin: padding; -moz-background-inline-policy: continuous;">
+<hr style="background: rgb(221, 221, 221) none repeat scroll 0% 0%; 
+height: 1px; -moz-background-clip: border; -moz-background-origin: padding; -moz-background-inline-policy: continuous;">
 <div class="virtual pagination">
     {% for page in allPages %}
     <a class="page {% if page == currentPage %}selected ui_prevent ui_ignore{% endif %}" href="{{ request.path_info }}?page={{ page }}">{{ page }}</a>
@@ -108,16 +100,7 @@
 
 {% if tab == 'similar' %}
 <h2>{% trans 'artists similar to' %} {{ object }}</h2>
- <ul class="similar-artists">
-{% for artist in object.similar %}
-    <li>
-        <a href="{{ artist.get_absolute_url }}" class="tiptip" title="{% trans "details of artist" %} {{ artist }}">
-            <img src="{{ artist.images.medium }}" alt="{{ artist }}" class="avatar medium"/>
-            {{ artist }}
-        </a>
-    </li>
-{% endfor %}
-</ul>
+{% render_artists object.similar %}
 {% endif %}
 
 {% if tab == 'events' %}
