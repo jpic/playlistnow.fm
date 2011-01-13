@@ -13,13 +13,14 @@ class PostRegistrationForm(forms.ModelForm):
         instance = kwargs['instance']
         if getattr(request, 'facebook', False):
             upstream = request.facebook.graph.request(request.facebook.user['uid'])
-            upstream = request.facebook.graph.request(request.facebook.user['uid'])
-            for k,v in upstream.items():
-                print k, v
             initial = {
                 'first_name': upstream['first_name'],
                 'last_name': upstream['last_name'],
+                'location': upstream['location']['name'],
+                'email': upstream['email'],
             }
+            kwargs['initial'].update(initial)
+
         if instance.gfcprofile_set.count() >= 1:
             pass
         if instance.twitterprofile_set.count() >= 1:
