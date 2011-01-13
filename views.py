@@ -52,12 +52,12 @@ def postregistration(request, form_class=PostRegistrationForm,
     context = {}
 
     if request.method == 'POST':
-        form = form_class(request.POST, instance=request.user)
+        form = form_class(request.POST, instance=request.user, request=request)
         if form.is_valid():
             form.save()
             return http.HttpResponseRedirect(urlresolvers.reverse('postlogin'))
     else:
-        form = form_class(instance=request.user)
+        form = form_class(instance=request.user, request=request)
     
     context['form'] = form
     context.update(extra_context or {})
