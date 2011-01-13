@@ -11,12 +11,17 @@ from playlist.models import Playlist
 
 from forms import PostRegistrationForm
 
-def user_details(request, slug,
+def user_details(request, slug, tab='activities',
     template_name='auth/user_detail.html', extra_context=None):
-    context = {}
+    context = {
+        'tab': tab,
+    }
 
-    context['object'] = shortcuts.get_object_or_404(User, username=slug)
-    context['object_list'] = context['object'].playlist_set.all()
+    user = shortcuts.get_object_or_404(User, username=slug)
+    context['user'] = user
+
+    if tab == 'playlists':
+        context['playlists'] = user.playlist_set.all()
 
     context.update(extra_context or {})
     return shortcuts.render_to_response(template_name, context,

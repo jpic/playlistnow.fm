@@ -4,19 +4,59 @@
 {% load pagination_tags %}
 {% load playlist_tags %}
 
-{% block head_title %}{% trans "playlists created by" %}: {{ object }}{% endblock %}
+{% block head_title %}{% trans "playlists created by" %}: {{ user }}{% endblock %}
 
 {% block body %}
-<h1>{% trans "playlists created by" %} {{ object }} ({{ object_list|length }})</h1>
+<h1>{{ user.first_name }} {{ user.last_name }}</h1> 
 
-{% autopaginate object_list %}
-{% paginate %}
+<div class="clear"></div>
 
-{% render_playlists object_list %}
+<ul id="tab_artist" class="tab_artist fake_tabs">
+    <li class="tab first {% if tab == 'activities' %}selected{% endif %}">
+        <a class="" href="{% url user_details_tab user|slugify 'activities' %}">
+        {% trans "activities" %}
+        </a>
+    </li>
+    <li class="tab {% if tab == 'playlists' %}selected{% endif %}">
+        <a class="" href="{% url user_details_tab user|slugify 'playlists' %}">
+        {% trans "playlists" %}
+        </a>
+    </li>
+    <li class="tab {% if tab == 'artists' %}selected{% endif %}">
+        <a class="" href="{% url user_details_tab user|slugify 'artists' %}">
+        {% trans "artists" %}
+        </a>
+    </li>
+    <li class="last tab {% if tab == 'recommendations' %}selected{% endif %}">
+        <a class="" href="{% url user_details_tab user|slugify 'recommendations' %}">
+        {% trans "recommended songs" %}
+        </a>
+    </li>
+</ul>
+
+<div class="clear"></div>
+
+{% if tab == 'activities' %}
+{% endif %}
+
+{% if tab == 'playlists' %}
+    {% autopaginate playlists %}
+    {% paginate %}
+    {% render_playlists playlists %}
+{% endif %}
+
+{% if tab == 'artists' %}
+{% endif %}
+
+{% if tab == 'messages' %}
+{% endif %}
+
+{% if tab == 'recommendations' %}
+{% endif %}
 
 {% endblock %}
 
 {% block extra_head %}
-<meta name="keywords" content="{% for object in object_list %}{{ object.tags }}{% if not forloop.last %},{% endif %}{% endfor %}" />
-<meta name="description" content="{% trans "All free and legal playlists created by" %} {{ object }} {% trans "and how to create your own playlists" %}" />
+<meta name="keywords" content="{% for object in user.playlist_set.all %}{{ object.tags }}{% if not forloop.last %},{% endif %}{% endfor %}" />
+<meta name="description" content="{% trans "All free and legal playlists created by" %} {{ user }} {% trans "and how to create your own playlists" %}" />
 {% endblock %}
