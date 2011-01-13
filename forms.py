@@ -1,4 +1,5 @@
 from django import forms
+from django.template import defaultfilters
 from django.contrib.auth.models import User
 
 class PostRegistrationForm(forms.ModelForm):
@@ -35,13 +36,22 @@ class PostRegistrationForm(forms.ModelForm):
             field.required = True
 
     def save(self, commit=True):
-        self.instance.username = '%s %s' % (
+        self.instance.playlistprofile.user_location = self.cleaned_data['location']
+        self.instance.playlistprofile.save()
+        object = super(PostRegistrationForm, self).save(commit=commit)
+
+        proposed_username = '%s %s' % (
             self.cleaned_data['first_name'],
             self.cleaned_data['last_name']
         )
-        self.instance.playlistprofile.user_location = self.cleaned_data['location']
-        self.instance.playlistprofile.save()
-        return super(PostRegistrationForm, self).save(commit=commit)
+        proposed_username = defaultfilters.slugify(proposed_username)
+        while User.objects.filter(username=proposed_username).count():
+            if object in User.objects.filter(username=proposed_username):
+                break
+            proposed_username += '-'
+        object.username = proposed_username
+        object.save()
+        return object
 
     class Meta:
         model = User
