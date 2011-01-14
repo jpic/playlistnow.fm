@@ -69,6 +69,30 @@ class Command(BaseCommand):
             user.email = old_user[2] or 'no@email.com'
             user.first_name = old_user[1]
             user.save()
+
+    def sync_artists(self, old):
+        print "Migrating artists ..."
+        prog = ProgressBar(0, self.count_table(old, 'artists_fans'), 77, mode='fixed')
+
+        old.execute('select userId, artistId, name from artists_fans af left join artists a on a.id = af.artistId')
+        for old_activity in old.fetchall():
+            # skip empty artist names
+            if not old_activity[2]: continue
+
+            artist, created = Artist.objects.get_or_create(pk=old_activity[1], name=old_activity[2])
+            if created or not artist.image_small:
+                # set the name for lastfm to find
+                artist.name = old_activity[2]
+                artist.lastfm_get_info()
+                # override the lastfm corrected name in favor of pln validated
+                # name
+                artist.name = old_activity[2]
+                artist.save()
+            
+            try:
+                user = User.objects.get(pk=old_activity[0])
+            except User.DoesNotExist:
+                continue
             
             prog.increment_amount()
             print prog, '\r',

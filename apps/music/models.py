@@ -19,6 +19,9 @@ etree.set_default_parser(etree.XMLParser(no_network=False, recover=True))
 
 class MusicalEntity(models.Model):
     mbid = models.CharField(max_length=64, null=True, blank=True)
+    image_small = models.CharField(max_length=100, null=True, blank=True)
+    image_medium = models.CharField(max_length=100, null=True, blank=True)
+    image_large =  models.CharField(max_length=100, null=True, blank=True)
 
     def __init__(self, *args, **kwargs):
         self.tags = []
@@ -110,6 +113,10 @@ class MusicalEntity(models.Model):
         for element in tree.findall('image'):
             self.images[element.attrib['size']] = element.text
        
+            attr = 'image_' + element.attrib['size']
+            if hasattr(self, attr):
+                setattr(self, attr, element.text)
+
         # lastfm api is inconsistent, tags/tag/name is ok for artist.getInfo
         for element in tree.findall('tags/tag/name'):
             self.tags.append(element.text)
@@ -186,6 +193,10 @@ class Event(MusicalEntity):
         for element in tree.findall('image'):
             self.images[element.attrib['size']] = element.text
 
+            attr = 'image_' + element.attrib['size']
+            if hasattr(self, attr):
+                setattr(self, attr, element.text)
+
     def get_type(self):
         return 'event'
 
@@ -209,6 +220,10 @@ class Album(MusicalEntity):
             self.tags.append(element.text)
         for element in tree.findall('album/image'):
             self.images[element.attrib['size']] = element.text
+
+            attr = 'image_' + element.attrib['size']
+            if hasattr(self, attr):
+                setattr(self, attr, element.text)
 
 class Track(MusicalEntity):
     artist = models.ForeignKey(Artist, verbose_name=_(u'artist'))

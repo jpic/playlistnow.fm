@@ -4,7 +4,11 @@
 {% for artist in artists %}
     <li>
         <a href="{{ artist.get_absolute_url }}" class="tiptip" title="{% trans "details of artist" %} {{ artist }}">
-            <img src="{{ artist.images.medium }}" alt="{{ artist }}" class="avatar medium"/>
+            {% if artist.image_medium %}
+            <img src="{{ artist.image_medium }}" alt="{{ artist }}" class="avatar small"/>
+            {% else %}
+            <img src="{{ artist.images.medium }}" alt="{{ artist }}" class="avatar small"/>
+            {% endif %}
             {{ artist }}
         </a>
     </li>
