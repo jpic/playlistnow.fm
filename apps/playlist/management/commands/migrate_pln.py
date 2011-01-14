@@ -10,6 +10,8 @@ from jpic.progressbar import ProgressBar
 
 from playlist.models import *
 from music.models import *
+from gfc.models import *
+from socialregistration.models import *
 
 class Command(BaseCommand):
     args = 'n/a'
@@ -51,11 +53,17 @@ class Command(BaseCommand):
             print prog, '\r',
             sys.stdout.flush()
 
-    def sync_users(self, old):
-        print "Migrating users ..."
+    def sync_users_accounts(self, old):
+        print "Migrating users accounts ..."
         prog = ProgressBar(0, self.count_table(old, 'users'), 77, mode='fixed')
 
-        old.execute('select id, name, email from users u left join users_emails ue on ue.userId = u.id')
+        old.execute('''
+            select 
+                u.id, 
+                u.name,
+                ue.email
+            from users u left join users_emails ue on ue.userId = u.id
+        ''')
         for old_user in old.fetchall():
             # skipping the couple of nonames
             if not old_user[1]: continue
@@ -69,6 +77,24 @@ class Command(BaseCommand):
             user.email = old_user[2] or 'no@email.com'
             user.first_name = old_user[1]
             user.save()
+           
+            old.execute('select * from users_accounts where userId = ' + str(old_user[0]))
+            for old_account in old.fetchall():
+                if old_account[1] == 'FACEBOOK':
+                    p, created=FacebookProfile.objects.get_or_create(uid=old_account[2], user=user)
+                    p.save()
+                
+                elif old_account[1] == 'TWITTER':
+                    p, created=TwitterProfile.objects.get_or_create(twitter_id=old_account[2],user=user)
+                    p.save()
+                
+                elif old_account[1] == 'GOOGLE':
+                    p, created=GfcProfile.objects.get_or_create(uid=old_account[2],user=user)
+                    p.save()   
+
+            prog.increment_amount()
+            print prog, '\r',
+            sys.stdout.flush()
 
     def sync_tiny_playlist(self,old):
         print "Migrating tiny playlist ..."
