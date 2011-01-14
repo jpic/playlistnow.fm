@@ -253,7 +253,14 @@ class Track(MusicalEntity):
         if self.youtube_id:
             return self.youtube_id
         elif len(self.youtube_entries) > 0:
-            return re.match(r'.*/([0-9A-Za-z-]*)/?$', self.youtube_entries[0].id.text).group(1)
+            m = re.match(r'.*/([0-9A-Za-z_-]*)/?$', self.youtube_entries[0].id.text)
+            if m:
+                return m.group(1)
+            else:
+                print "failed to find youtube in", self.youtube_entries
+                print "failed to find youtube in", self.youtube_entries[0]
+                print "failed to find youtube in", self.youtube_entries[0].id
+                print "failed to find youtube in", self.youtube_entries[0].id.text
 
     def lastfm_get_info(self, tree=None):
         tree = super(Track, self).lastfm_get_info(tree)
