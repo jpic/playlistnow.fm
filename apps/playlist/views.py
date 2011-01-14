@@ -34,7 +34,7 @@ def playlist_track_modify(request,
 
     if context['playlist']['pk']:
         try:
-            context['playlist'] = Playlist.objects.get(pk=context['playlist']['pk'])
+            context['playlist'] = Playlist.objects.all_with_hidden().get(pk=context['playlist']['pk'])
         except Playlist.DoesNotExist:
             pass
     elif context['playlist']['name']:
@@ -69,9 +69,15 @@ def playlist_track_modify(request,
         context['user_playlists'] = Playlist.objects.filter(
             creation_user=request.user, tracks__name=context['track'].name)
 
-    # select only choice if possible
-    if context['user_playlists'].count() == 1:
-        context['playlist'] = context['user_playlists'][0]
+    plname = False
+    if isinstance(context['playlist'], dict):
+        plname = context['playlist'].get('name', False)
+    elif isinstance(context['playlist'], Playlist):
+        plname = context['playlist'].name
+    if plname and plname.find('hidden:') == 0:
+        # select only choice if possible 
+        if context['user_playlists'].count() == 1:
+            context['playlist'] = context['user_playlists'][0]
 
     if getattr(context['playlist'], 'name', False) and \
         getattr(context['track'], 'name', False) and \
@@ -174,7 +180,14 @@ def playlist_details(request, user, slug, default_format=False, qname='term',
     template_name='playlist/playlist_details.html', extra_context=None):
     context = {}
 
-    object = shortcuts.get_object_or_404(Playlist, creation_user__username=user,slug=slug)
+    try:
+        object = Playlist.objects.all_with_hidden().get(
+            creation_user__username=user,
+            slug=slug
+        )
+    except Playlist.DoesNotExist:
+        return http.Http404()
+
     if request.user.is_authenticated():
         serialized = object.to_dict(for_user=request.user)
     else:

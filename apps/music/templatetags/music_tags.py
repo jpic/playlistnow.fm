@@ -19,7 +19,7 @@ def render_artist(artist, playlist=None):
     }
 
 @register.inclusion_tag('music/_render_tracks.html')
-def render_tracks(tracks, playlist=None):
+def render_tracks(tracks, playlist=None, request=None):
     context = {
         'tracks': tracks,
         'playlist': playlist,
@@ -28,8 +28,9 @@ def render_tracks(tracks, playlist=None):
     return context
 
 @register.inclusion_tag('music/_render_tracks.html')
-def render_track(track, playlist=None):
+def render_track(track, playlist=None, request=None):
     return {
         'tracks': (track,),
         'playlist': playlist,
+        'request': request,
     }

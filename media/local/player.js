@@ -5,6 +5,7 @@ function getPercent(all, part)
 
 var player = {
     'ytplayer': false,
+    'tiny_playlist': {},
     'playTrack': function(track, playlist, fromHistory /* new in history ? (bool) */) {
         player.ytplayer.loadVideoById(track.youtube_best_id);
         this.state.currentTrack = track;
@@ -55,7 +56,7 @@ var player = {
 
         if (this.state.currentPlaylist['object']['name']) {
             currentPlaylist.html(
-                ' - I am ' + track.playlist['object']['name']
+                track.playlist['object']['name']
             );
             currentPlaylist.attr(
                 'href',
@@ -377,7 +378,11 @@ var player = {
             var track = player.parseRenderedTrack($(this).parent());
             var playlist = false;
             /* @todo improve signalPlaylistTrackModificationRequest sig */
-            if ($('#playlist_pk').length > 0 && $(this).hasClass('direct_to_playlist')) {
+            if ($(this).hasClass('tiny_playlist')) {
+                playlist = {
+                    'pk': tiny_playlist_pk,
+                }
+            } else if ($('#playlist_pk').length > 0 && $(this).hasClass('noconfirm')) {
                 playlist = {
                     'pk': $('#playlist_pk').html(),
                 };

@@ -19,6 +19,7 @@
     var playlist_track_modify = '{% url playlist_track_modify %}';
     var popup_auth = '{% url acct_login %}';
     var music_artist_fanship = '{% url music_artist_fanship %}';
+    var tiny_playlist_pk = {% if request.user.is_authenticated %}{{ request.user.playlistprofile.tiny_playlist.pk }}{% else %}0{% endif %};
     </script>
     <script type="text/javascript" src="{{ STATIC_URL }}local/core.js"></script>
     <script type="text/javascript">
@@ -27,6 +28,11 @@
     }
     </script>
     <script type="text/javascript" src="{{ STATIC_URL }}local/player.js"></script>
+    {% if request.user.is_authenticated %}
+    <script type="text/javascript">
+        player.tiny_playlist = {{ request.user.playlistprofile.tiny_playlist.to_json_dict|safe }};
+    </script>
+    {% endif %}
     <!-- fancy css -->
     <link rel="stylesheet" href="{{ STATIC_URL }}JSONSuggestBox/jsonSuggest.css" />
     <link rel="stylesheet" href="{{ STATIC_URL }}local/tipTip.css" />

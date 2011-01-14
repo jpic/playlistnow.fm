@@ -59,7 +59,7 @@ var ui = {
         
             if (!user.is_authenticated) {
                 ui.authenticationPopup()
-            } else if (element && element.hasClass('direct_to_playlist')) {
+            } else if (element && element.hasClass('noconfirm')) {
                 data['direct_to_playlist'] = 1;
                 //var song_info = element.parents('li.song_info');
                 // faster, less resistent to changes in apps/music/templates/music/_render_tracks.html
@@ -71,19 +71,21 @@ var ui = {
                     data: data,
                     type: 'post',
                     success: function(html, textStatus, request) {
-                        var ul = $('div.playlist_track_list ul.song_list');
-                        var last = ul.find('li.song_info:last');
-                        if (last) {
-                            if (last.hasClass('dd') && song_info.hasClass('dd')) {
-                                song_info.removeClass('dd');
-                            } else if (last.hasClass('dd') == false && song_info.hasClass('dd') == false) {
-                                song_info.addClass('dd');
+                        if (element.hasClass('copy_track_row')) {
+                            var ul = $('div.playlist_track_list ul.song_list');
+                            var last = ul.find('li.song_info:last');
+                            if (last) {
+                                if (last.hasClass('dd') && song_info.hasClass('dd')) {
+                                    song_info.removeClass('dd');
+                                } else if (last.hasClass('dd') == false && song_info.hasClass('dd') == false) {
+                                    song_info.addClass('dd');
+                                }
+                                var n = parseInt(last.find('span.number').html()) + 1;
+                                if (!n) {
+                                    n = 1;
+                                }
+                                song_info.find('span.number').html(n);
                             }
-                            var n = parseInt(last.find('span.number').html()) + 1;
-                            if (!n) {
-                                n = 1;
-                            }
-                            song_info.find('span.number').html(n);
                         }
                         ul.append(song_info);
                         $('#ajaxload').fadeOut();

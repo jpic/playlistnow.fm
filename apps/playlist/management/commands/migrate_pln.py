@@ -70,6 +70,25 @@ class Command(BaseCommand):
             user.first_name = old_user[1]
             user.save()
 
+    def sync_tiny_playlist(self,old):
+        print "Migrating tiny playlist ..."
+        prog = ProgressBar(0, self.count_table(old, 'users_likedSongs'), 77, mode='fixed')
+
+        old.execute('select * from users_likedSongs')
+        for old_liked in old.fetchall():
+            try:
+                user = User.objects.get(pk=old_liked[0])
+                track = Track.objects.get(pk=old_liked[1])
+                user.playlistprofile.tiny_playlist.tracks.add(track)
+
+                # todo: user old_liked[2] timestamp to correct the action
+
+                prog.increment_amount()
+                print prog, '\r',
+                sys.stdout.flush()
+            except:
+                pass
+
     def sync_users_fans(self,old):
         print "Migrating users activities ..."
         prog = ProgressBar(0, self.count_table(old, 'users'), 77, mode='fixed')
@@ -136,7 +155,7 @@ class Command(BaseCommand):
                 playlist.creation_user = User.objects.get(pk=old_playlist[4])
             except User.DoesNotExist:
                 # assign orphin playlists to root
-                playlist.creation_user = User.objects.get(pk=1)
+                playlist.creation_user = User.objects.get(username='root')
 
             old.execute('''
 select 

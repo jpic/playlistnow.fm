@@ -1,0 +1,14 @@
+{% load humanize %}
+<dl id="comments">
+  {% for comment in comment_list %}
+  <div class="comment">
+    <dt  id="c{{ comment.id }}">
+    <a href=""><img src="{{ STATIC_URL }}images/avatar-logged.jpg" class="avatar verysmall left espace"></a>
+        {{ comment.submit_date|naturalday }} - {{ comment.name }}
+    </dt>
+    <dd>
+        <p>{{ comment.comment }}</p>
+    </dd>
+    </div>
+  {% endfor %}
+</dl>

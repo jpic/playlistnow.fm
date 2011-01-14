@@ -1,3 +1,5 @@
+import simplejson
+
 from django.db import models
 from django.db.models import signals
 from django.db.models import Q
@@ -11,7 +13,7 @@ from tagging.fields import TagField
 class PlaylistProfile(models.Model):
     user = models.OneToOneField('auth.User', verbose_name=_(u'user'))
     user_location = models.CharField(max_length=100, verbose_name=_(u'location'), null=True, blank=True)
-    favorite_playlist = models.ForeignKey('Playlist')
+    tiny_playlist = models.ForeignKey('Playlist', related_name='favorite_of')
     fanof_artists = models.ManyToManyField('music.Artist', verbose_name=_(u'fav artists'), null=True, blank=True, related_name='fans')
 
     def get_absolute_url(self):
@@ -21,15 +23,16 @@ def autoprofile(sender, instance, **kwargs):
     try:
         instance.playlistprofile
     except PlaylistProfile.DoesNotExist:
-        favorite_playlist = Playlist(
-            name='virtual:favorite',
-            creation_user=instance
+        tiny_playlist = Playlist(
+            name='hidden:tiny',
+            creation_user=instance,
+            slug='tiny'
         )
-        favorite_playlist.save()
+        tiny_playlist.save()
 
         instance.playlistprofile = PlaylistProfile(
             user=instance,
-            favorite_playlist=favorite_playlist
+            tiny_playlist=tiny_playlist
         )
         instance.playlistprofile.save()
 signals.post_save.connect(autoprofile, sender=models.get_model('auth','user'))
@@ -76,6 +79,13 @@ class PlaylistModification(models.Model):
             self.creation_user
         )
 
+class PlaylistManager(models.Manager):
+    def get_query_set(self):
+        return super(PlaylistManager, self).get_query_set().exclude(name__istartswith='hidden:')
+
+    def all_with_hidden(self):
+        return super(PlaylistManager, self).get_query_set()
+
 class Playlist(models.Model):
     tracks = models.ManyToManyField('music.Track', verbose_name=_(u'tracks'), null=True, blank=True)
     category = models.ForeignKey(PlaylistCategory, verbose_name=_(u'category'), null=True, blank=True)
@@ -93,7 +103,11 @@ class Playlist(models.Model):
 
     tags = TagField()
 
+    objects = PlaylistManager()
+
     def __unicode__(self):
+        if self.name == 'hidden:tiny':
+            return "%s %s" % (self.creation_user.first_name, self.creation_user.last_name)
         return u'I am %s' % self.name
 
     class Meta:
@@ -103,11 +117,14 @@ class Playlist(models.Model):
         return urlresolvers.reverse('playlist_details', args=(
             self.creation_user.username, self.slug,))
 
+    def to_json_dict(self, **kwargs):
+        return simplejson.dumps(self.to_dict(**kwargs))
+
     def to_dict(self, with_tracks=True, with_tracks_artist=True,
         with_tracks_youtube_best_id=True, for_user=None):
         data = {}
         data['object'] = {
-            'name': self.name,
+            'name': unicode(self),
             'url': self.get_absolute_url(),
             'pk': self.pk,
         }
@@ -154,8 +171,8 @@ def autoslug(sender, instance, **kwargs):
     if not getattr(instance.__class__, 'autoslug', True):
         return True
 
-    if hasattr(instance, 'name'):
-        instance.slug = defaultfilters.slugify(instance.name)
+    if getattr(instance, 'name') == 'hidden:tiny' and instance.creation_user.username:
+        instance.slug = instance.creation_user.username
     elif hasattr(instance, 'name'):
         instance.slug = defaultfilters.slugify(instance.name)
     

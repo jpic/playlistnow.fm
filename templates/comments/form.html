@@ -1,0 +1,16 @@
+{% load comments i18n %}
+<form action="{% comment_form_target %}" method="post" class="authenticationRequired">
+    {% if request.user.is_authenticated %}
+    {% csrf_token %}
+    {{ form.content_type }}
+    {{ form.object_pk }}
+    {{ form.timestamp }}
+    {{ form.security_hash }}
+    {% endif %}
+    <input type="hidden" name="next" value="{{ request.path }}" />
+
+    {{ form.comment }}
+
+    <input type="submit" class="submit-post" value="Post">
+    <input type="submit" class="submit-post" value="Preview" name="preview">
+</form>
