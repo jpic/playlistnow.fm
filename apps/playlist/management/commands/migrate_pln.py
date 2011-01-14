@@ -70,6 +70,24 @@ class Command(BaseCommand):
             user.first_name = old_user[1]
             user.save()
 
+    def sync_users_fans(self,old):
+        print "Migrating users activities ..."
+        prog = ProgressBar(0, self.count_table(old, 'users'), 77, mode='fixed')
+
+        old.execute('select * from users_activities where type=9')
+        for old_activity in old.fetchall():
+            user = User.objects.get(pk=old_activity[1])
+
+            if old_activity[5] == 9:
+                artist = Artist.objects.get(pk=old_activity[6])
+                artist.fans.add(user.playlistprofile)
+            else:
+                print 'fail'
+
+            prog.increment_amount()
+            print prog, '\r',
+            sys.stdout.flush()
+
     def sync_artists(self, old):
         print "Migrating artists ..."
         prog = ProgressBar(0, self.count_table(old, 'artists_fans'), 77, mode='fixed')
@@ -94,6 +112,8 @@ class Command(BaseCommand):
             except User.DoesNotExist:
                 continue
             
+            artist.fans.add(user.playlistprofile)
+
             prog.increment_amount()
             print prog, '\r',
             sys.stdout.flush()

@@ -132,10 +132,20 @@ var ui = {
             $(this).parent().remove();
         });
     },
+    'notifyUser': function(message) {
+        console.log(message);
+    },
      'setupForms': function() {
         if (ui.settings['ajaxEnable'] && $('form').length) {
             $('form:not(.ui_ignore)').submit(function(e) {
                 e.preventDefault();
+
+
+                if ($(this).hasClass('authenticationRequired') && !user.is_authenticated) {
+                    ui.authenticationPopup();
+                    return false;
+                }
+
                 var url = $(this).attr('action');
     
                 $.ajax({

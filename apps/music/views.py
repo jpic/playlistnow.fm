@@ -28,15 +28,45 @@ def return_json(data=None):
         mimetype='application/json'
     )
 
+def music_artist_fanship(request):
+    if not request.method == 'POST':
+        return http.HttpResponseForbidden()
+
+    if not request.user.is_authenticated():
+        return http.HttpResponseForbidden()
+
+    if request.POST.get('artist_pk', False):
+        artist = Artist.objects.get(pk=request.POST['artist_pk'])
+    else:
+        artist = Artist(name=request.POST.get('artist_name'))
+        artist.lastfm_get_info()
+        artist.save()
+    
+    if request.POST.get('action') == 'add':
+        artist.fans.add(request.user.playlistprofile)
+        action.send(request.user, verb='becomes fan of artist', target=artist)
+    else:
+        artist.fans.remove(request.user.playlistprofile)
+        action.send(request.user, verb='is not anymore a fan of artist', target=artist)
+
+    return http.HttpResponseRedirect(request.POST['next'])
+
 def music_artist_details(request, name, tab='overview', paginate_by=10,
     template_name='music/artist_details.html', extra_context=None):
     context = {
         'tab': tab,
+        'is_fan': False,
     }
 
     name = name.replace('-', ' ')
     context['object'] = Artist(name=name)
     context['object'].lastfm_get_info()
+    try:
+        context['object'].local_artist = Artist.objects.get(name__iexact=name)
+        if request.user.is_authenticated():
+            context['is_fan'] = context['object'].local_artist.fans.filter(user__pk=request.user.pk).count()
+    except Artist.DoesNotExist:
+        pass
 
     if tab == 'music':
         context['object'].lastfm_get_tracks()

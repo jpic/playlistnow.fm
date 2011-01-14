@@ -57,6 +57,7 @@
 {% endif %}
 
 {% if tab == 'artists' %}
+    {% render_artists user.playlistprofile.fanof_artists.all %}
 {% endif %}
 
 {% if tab == 'messages' %}

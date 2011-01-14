@@ -12,6 +12,7 @@ class PlaylistProfile(models.Model):
     user = models.OneToOneField('auth.User', verbose_name=_(u'user'))
     user_location = models.CharField(max_length=100, verbose_name=_(u'location'), null=True, blank=True)
     favorite_playlist = models.ForeignKey('Playlist')
+    fanof_artists = models.ManyToManyField('music.Artist', verbose_name=_(u'fav artists'), null=True, blank=True, related_name='fans')
 
     def get_absolute_url(self):
         return urlresolvers.reverse('user_details', args=(self.user.username,))

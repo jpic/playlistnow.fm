@@ -19,6 +19,11 @@ urlpatterns = patterns('music.views',
         name='music_track_details'
     ),
     url(
+        r'fanship/artist/$',
+        'music_artist_fanship',
+        name='music_artist_fanship'
+    ),
+    url(
         r'artist/(?P<name>[^/]+)/$',
         'music_artist_details',
         {

@@ -15,7 +15,17 @@
 {% block head_title %}{% trans "Details of artist" %} {{ object.name }}{% endblock %}
 
 {% block body %}
-<h1>{{ object.name }} <span class="artist_rank">Ranked</span></h1> 
+<h1 class="left">{{ object.name }} <span class="artist_rank">Ranked</span></h1> 
+<form action="{% url music_artist_fanship %}" class="authenticationRequired" method="post">
+    {% if object.local_artist.pk %}
+    <input type="hidden" name="artist_pk" value="{{ object.local_artist.pk }}" />
+    {% else %}
+    <input type="hidden" name="artist_name" value="{{ object.name }}" />
+    {% endif %}
+    <input type="hidden" name="action" value="{% if is_fan %}remove{% else %}add{% endif %}" />
+    <input type="hidden" name="next" value="{{ request.path }}" />
+    <input type="submit" class="button super grey right top" value="{% if is_fan %}{% trans "stop being fan" %}{% else %}become fan{% endif %}" />
+</form>
 <div class="clear"></div>
 <ul id="tab_artist" class="tab_artist fake_tabs">
     <li class="tab first {% if tab == 'overview' %}selected{% endif %}">
@@ -96,6 +106,15 @@ height: 1px; -moz-background-clip: border; -moz-background-origin: padding; -moz
 {% endif %}
 
 {% if tab == 'fans' %}
+<ul class="fans">
+    {% for fan in object.local_artist.fans.all %}
+    <li class="user">
+        <a href="{% url user_details fan.user.username|slugify %}" title="{% trans "click to see the complete profile of" %} {{ fan.user }}">
+            {{ fan.user }}
+        </a>
+    </li>
+    {% endfor %}
+</ul>
 {% endif %}
 
 {% if tab == 'similar' %}
