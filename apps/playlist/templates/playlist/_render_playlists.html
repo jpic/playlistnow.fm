@@ -1,9 +1,8 @@
 {% load i18n cache extra_tagging_tags %}
 {% for object in object_list %}
 <div class="playlist line play">
-    {% cache 3600 render_playlist object.pk %}
-    <div class="icon" class="play">
-        <img src="{{ STATIC_URL }}images/playlists/pl.png" alt="{% trans "play" %} {{ object }}" class="play" />
+    <div class="icon" class="play" style="margin:4px 6px 0 6px;">
+        <img src="{{ STATIC_URL }}images/avatar-logged.jpg" style="background:#fff;border:1px solid #ddd;padding:2px;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px;" alt="{% trans "play" %} {{ object }}" class="play" />
     </div>
 
     <div class="description play"> 
@@ -40,9 +39,10 @@
         {% endif %}
     </div>
     
-    <div class="play">
-        <img src="{{ STATIC_URL }}images/spacer.png" alt="{% trans "play playlist" %} {{ object }}" height="60" width="60" class="play">
+    <div class="play right">
+        <a href="{{ object.get_absolute_url }}" title="{% trans "play playlist" %} {{ object }}" class="play">
+            <img src="{{ STATIC_URL }}images/play_line.png" alt="{% trans "play playlist" %} {{ object }}" height="60" width="60" class="play">
+        </a>
     </div>
-    {% endcache %}
 </div>
 {% endfor %}
