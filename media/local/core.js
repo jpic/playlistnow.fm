@@ -214,39 +214,25 @@ var ui = {
 
         // we'll just use it for autoload
         function doSetupAutocomplete() {
-            var autocompleteData = [];
-            var autocompleteRequest;
-            var autocompleteSettings = {
-                minCharacters: 1,
-                maxResults: undefined,
-                wildCard: "",
-                caseSensitive: false,
-                notCharacter: "!",
-                maxHeight: 350,
-                highlightMatches: false,
-                onSelect: function(item) {
-                    $.history.load(item['url']);
+            $('input.autocomplete#term').autocomplete({
+                'serviceUrl': music_search_autocomplete + '?term=' + $('input#term').val(),
+                'onSelect': function(value, data){
+                    $.history.load(data['url']); 
                 },
-                ajaxResults: true,
-                width: undefined
-            };
-            
-            $('input.autocomplete#term').jsonSuggest(function() {
-                $.ajax({
-                    url: music_search_autocomplete + '?term=' + $('input#term').val(),
-                    dataType: 'json',
-                    success: function(data) {
-                        autocompleteData = data;
-                    },
-                    async: false,
-                });
-            
-                return autocompleteData;
-            }, autocompleteSettings);
+                'fnFormatResult': function(value, data, currentValue) {
+                    console.log('please format', value, data, currentValue);
+                    html = '<img src="http://userserve-ak.last.fm/serve/34s/'+data['image']+'" />';
+                    html+= ' ' + data['artist'];
+                    if (data['track'] != undefined) {
+                        html += ' / ' + data['track'];
+                    }
+                    return html;
+                },
+            });
         }
 
-        if ($('input#term').jsonSuggest == undefined) {
-            $.getScript(STATIC_URL + 'JSONSuggestBox/jquery.jsonSuggest-dev.js', doSetupAutocomplete);
+        if ($('input#term').autocomplete == undefined) {
+            $.getScript(STATIC_URL + 'jquery.autocomplete/jquery.autocomplete.js', doSetupAutocomplete);
         } else {
             doSetupAutocomplete();
         }

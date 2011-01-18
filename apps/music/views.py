@@ -132,7 +132,7 @@ def music_track_details(request, name, artist, album=None,
     return shortcuts.render_to_response(template_name, context,
         context_instance=template.RequestContext(request))
 
-def music_search_autocomplete(request, qname='term'):
+def music_search_autocomplete(request, qname='query'):
     if not qname in request.GET:
         return return_json()
 
@@ -143,64 +143,33 @@ def music_search_autocomplete(request, qname='term'):
     try:
         upstream_response = urllib2.urlopen(url)
         upstream_response = simplejson.loads(upstream_response.read())
+        print upstream_response
     except:
         return return_json()
 
-    id = 1
-    response = []
+    response = {
+        'query': request.GET[qname].encode('utf-8'),
+        'suggestions': [],
+        'data': [],
+    }
+
     for doc in upstream_response['response']['docs']:
-        doc = dict(**doc)
+        if 'track' in doc.keys():
+            doc['url'] = urlresolvers.reverse('music_track_details', args=(
+                defaultfilters.slugify(doc['artist']),
+                defaultfilters.slugify(doc['track']),
+            ))
+            suggestion = doc['track']
+        elif 'album' in doc.keys():
+            pass
+        elif 'artist' in doc.keys():
+            doc['url'] =  urlresolvers.reverse('music_artist_details', args=(
+                defaultfilters.slugify(doc['artist']),
+            ))
+            suggestion = doc['artist']
 
-        if 'track' in doc:
-            doc['text'] = doc['track']
-
-            if 'album' in doc and 'artist' in doc:
-                doc['extra'] = "%s / %s" % (doc['album'], doc['artist'])
-            elif 'artist' in doc:
-                doc['extra'] = doc['artist']
-
-            if 'artist' in doc:
-                doc['url'] = urlresolvers.reverse('music_track_details', args=(
-                    defaultfilters.slugify(doc['artist']),
-                    defaultfilters.slugify(doc['track']),
-                ))
-            else:
-                continue
-
-            doc['image'] = 'http://ws.audioscrobbler.com/2.0/?api_key=%s&amp;track=%s&amp;method=track.getImageRedirect&amp;size=smallsquare' % (
-                doc['track'],
-                settings.LASTFM_API_KEY
-            )
-
-        elif 'album' in doc:
-            doc['text'] = doc['album']
-            doc['extra'] = doc['artist']
-
-            doc['image'] = 'http://ws.audioscrobbler.com/2.0/?api_key=%s&amp;album=%s&amp;method=album.getImageRedirect&amp;size=smallsquare' % (
-                doc['album'],
-                settings.LASTFM_API_KEY
-            )
-            doc['url'] = urlresolvers.reverse('music_artist_details', args=(
-                defaultfilters.slugify(doc['artist'])
-            ,))
-
-        elif 'artist' in doc:
-            doc['text'] = doc['artist']
-            doc['image'] = 'http://ws.audioscrobbler.com/2.0/?api_key=%s&amp;artist=%s&amp;method=artist.getImageRedirect&amp;size=smallsquare' % (
-                doc['artist'],
-                settings.LASTFM_API_KEY
-            )
-            doc['url'] = urlresolvers.reverse('music_artist_details', args=(
-                defaultfilters.slugify(doc['artist'])
-            ,))
-        else:
-            continue
-
-        doc['id'] = id
-        doc['image'] = 'http://userserve-ak.last.fm/serve/34s/%s.jpg' % doc['resid']
-
-        response.append(doc)
-        id += 1
+        response['suggestions'].append(suggestion)
+        response['data'].append(doc)
 
     return return_json(response)
 
