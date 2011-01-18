@@ -11,6 +11,7 @@
     <div class="lineFeedContent">
 {% endif %}
         <div class="lineFeedContentWhat">
+        {% block what %}
             <a href="{% url user_details activity.actor.username %}" title="{% trans "see details of user" %} {{ activity.actor }}" class="bold">
                 {{ user.first_name }} {{ user.last_name }}
             </a>
@@ -22,6 +23,7 @@
                 {{ activity.target }}
             </a>
             {% endif %}
+        {% endblock %}
         </div>
 {% if activity.close %}
         {% get_comment_count for activity as comment_count %}

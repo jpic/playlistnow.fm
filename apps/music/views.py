@@ -42,14 +42,15 @@ def music_artist_fanship(request):
     else:
         artist = Artist(name=request.POST.get('artist_name'))
         artist.lastfm_get_info()
+        print artist.image_small, artist.images
         artist.save()
     
     if request.POST.get('action') == 'add':
         artist.fans.add(request.user.playlistprofile)
-        action.send(request.user, verb='becomes fan of artist', target=artist)
+        action.send(request.user, verb='becomes fan of artist', action_object=artist)
     else:
         artist.fans.remove(request.user.playlistprofile)
-        action.send(request.user, verb='is not anymore a fan of artist', target=artist)
+        action.send(request.user, verb='is not anymore a fan of artist', action_object=artist)
 
     return http.HttpResponseRedirect(request.POST['next'])
 

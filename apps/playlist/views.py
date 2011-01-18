@@ -129,7 +129,7 @@ def playlist_track_modify(request,
                 )
                 if request.user.is_authenticated():
                     if context['playlist'].pk == request.user.playlistprofile.tiny_playlist.pk:
-                        action.send(request.user, verb='liked track', target=context['track'])
+                        action.send(request.user, verb='liked track', action_object=context['track'])
                     else:
                         action.send(request.user, verb='added track to playlist', action_object=context['track'], target=context['playlist'])
             else:
@@ -141,7 +141,7 @@ def playlist_track_modify(request,
                 )
                 if request.user.is_authenticated():
                     if context['playlist'].pk == request.user.playlistprofile.tiny_playlist.pk:
-                        action.send(request.user, verb='unliked track', target=context['track'])
+                        action.send(request.user, verb='unliked track', action_object=context['track'])
                     else:
                         action.send(request.user, verb='removed track from playlist', action_object=context['track'], target=context['playlist'])
             messages.add_message(request, messages.INFO, msg)

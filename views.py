@@ -11,6 +11,7 @@ from actstream.models import actor_stream, user_stream, model_stream
 from actstream import action
 
 from playlist.models import Playlist
+from music.models import Track
 
 from forms import PostRegistrationForm
 
@@ -29,22 +30,22 @@ def add_activity(request):
     else:
         action_object = None
     
-    if 'target_object_pk' in request.POST.keys():
-        target_object = shortcuts.get_object_or_404(
+    if 'action_object_pk' in request.POST.keys():
+        action_object = shortcuts.get_object_or_404(
             get_model(
-                request.POST['target_object_app'],
-                request.POST['target_object_class']
+                request.POST['action_object_app'],
+                request.POST['action_object_class']
             ),
-            pk=request.POST['target_object_pk']
+            pk=request.POST['action_object_pk']
         )
     else:
-        target_object = None
+        action_object = None
 
     action.send(
         request.user,
         request.POST['verb'],
         action_object=action_object,
-        target=target_object
+        target=action_object
     )
 
     return http.HttpResponse('success')
@@ -64,14 +65,23 @@ def user_details(request, slug, tab='activities',
         activities = actor_stream(user)
         previous = None
         for activity in activities:
+            if hasattr(activity, 'action_object'):
+                if hasattr(previous, 'action_object') and previous.action_object.__class__ == activity.action_object.__class__ and activity.verb == previous.verb:
+                    activity.action_object_group = previous.action_object_group
+                else:
+                    activity.action_object_group = [activity.action_object]
+                
             if previous and activity.verb == previous.verb:
                 activity.open = False
-                if previous:
-                    previous.close = False
+                previous.close = False
+                if hasattr(activity, 'action_object') and activity.action_object.__class__ == previous.action_object.__class__:
+                    if activity.action_object not in activity.action_object_group:
+                        activity.action_object_group.append(activity.action_object)
             else:
                 activity.open = True
                 if previous:
                     previous.close = True
+            
             previous = activity
         activities[0].open = True
         activities[len(activities)-1].close = True

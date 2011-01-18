@@ -228,7 +228,7 @@ li.song_info.dd, .dd{background-color:#f4f4f4;}
 /* Similar Artists */
 
 ul.artists{display:inline;vertical-align: top;}
-ul.artists li {position: relative;float: left;display: inline;overflow-x: hidden;overflow-y: hidden;height:105px}
+ul.artists li {position: relative;float: left;display: inline;overflow-x: hidden;overflow-y: hidden;}
 ul.artists li a{display: block;;
 margin:2px 0 0 5px;font-weight:700;font-size:11px;
 width: 63px;height:86px;overflow:hidden;
