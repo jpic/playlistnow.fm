@@ -224,6 +224,7 @@ var ui = {
                     html = '<img src="http://userserve-ak.last.fm/serve/34s/'+data['image']+'" />';
                     html+= ' ' + data['artist'];
                     if (data['track'] != undefined) {
+                        console.log('got track nam', data['track']);
                         html += ' / ' + data['track'];
                     }
                     return html;
