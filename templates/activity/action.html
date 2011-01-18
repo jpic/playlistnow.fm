@@ -4,7 +4,7 @@
 {% if activity.open %}
 <div class="lineFeed">
     <div class="lineFeedAvatar">
-        <a href="{% url user_details action.actor.username %}" title="{% trans "details of user" %} {{ action.user }}">
+        <a href="{% url user_details activity.actor.username %}" title="{% trans "details of user" %} {{ activity.actor }}">
             <img src="{{ STATIC_URL }}images/avatar-logged.jpg" class="avatar small left espace" />
         </a>
     </div>
@@ -13,7 +13,7 @@
         <div class="lineFeedContentWhat">
         {% block what %}
             <a href="{% url user_details activity.actor.username %}" title="{% trans "see details of user" %} {{ activity.actor }}" class="bold">
-                {{ user.first_name }} {{ user.last_name }}
+                {{ activity.actor.first_name }} {{ activity.actor.last_name }}
             </a>
 
             {{ activity.verb }}

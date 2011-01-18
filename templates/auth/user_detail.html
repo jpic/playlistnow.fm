@@ -51,8 +51,21 @@
 			<a href="twitter" class="gfc">google gfc</a>
 					</li>
 			</ul>
-	<div class="follow"><a href="" class="button super grey"><span>Follow</span></a></div>
-
+{% ifequal request.user user %}{% else %}
+	<div class="follow">
+        <a href="{% url actstream_unfollow content_type_id=ctype.id  object_id=user.id %}" id="unfollow_button" style="display:none" class="button super grey">UNFOLLOW</a>
+        <a href="{% url actstream_follow content_type_id=ctype.id  object_id=user.id %}" id="follow_button" class="button super grey">FOLLOW</a>
+    </div>
+{% endifequal %}
+<script>
+$(function () {
+    $("#follow_button, #unfollow_button").click(function () {
+        $.post($(this).attr("href"), {});
+        $(this).parent().find("#follow_button, #unfollow_button").toggle();
+        return false
+    });
+});
+</script>
 
 </div>
 <div class="clear"></div>
@@ -93,12 +106,14 @@
     {% for activity in activities %}
         {% display_action activity %}
     {% endfor %}
+    
     <script type="text/javascript">
     $('.comment_form_toggle').click(function(e) {
         e.preventDefault();
         $(this).parent().find('.comment_form_contents').toggle('slow');
     });
     </script>
+</div>
 {% endif %}
 
 {% if tab == 'playlists' %}

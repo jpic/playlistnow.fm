@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'site_base.html' %}
 {% load activity_tags %}
 {% block extra_head %}
 <script>
@@ -27,7 +27,7 @@ $(function () {
 {% endifequal %}
 {% endblock %}
 
-{% block content %}
+{% block body %}
 {% get_user_contenttype as user_ctype %}
 <p><b><a href="{% url actstream_actor content_type_id=user_ctype.id object_id=request.user.id %}">View my actions</a></b></p>
 <ul>

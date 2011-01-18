@@ -5,6 +5,7 @@ from django import template
 from django.db.models import get_model
 from django.contrib.auth import decorators
 from django.contrib.auth.models import User
+from django.contrib.contenttypes.models import ContentType
 
 from tagging.models import Tag, TaggedItem
 from actstream.models import actor_stream, user_stream, model_stream
@@ -14,6 +15,35 @@ from playlist.models import Playlist
 from music.models import Track
 
 from forms import PostRegistrationForm
+
+def group_activities(activities):
+    if not activities:
+        return activities
+
+    previous = None
+    for activity in activities:
+        if hasattr(activity, 'action_object'):
+            if hasattr(previous, 'action_object') and previous.action_object.__class__ == activity.action_object.__class__ and activity.verb == previous.verb:
+                activity.action_object_group = previous.action_object_group
+            else:
+                activity.action_object_group = [activity.action_object]
+            
+        if previous and activity.verb == previous.verb:
+            activity.open = False
+            previous.close = False
+            if hasattr(activity, 'action_object') and activity.action_object.__class__ == previous.action_object.__class__:
+                if activity.action_object not in activity.action_object_group:
+                    activity.action_object_group.append(activity.action_object)
+        else:
+            activity.open = True
+            if previous:
+                previous.close = True
+        
+        previous = activity
+
+    activities[0].open = True
+    activities[len(activities)-1].close = True
+    return activities
 
 def add_activity(request):
     if not request.method == 'POST':
@@ -63,30 +93,9 @@ def user_details(request, slug, tab='activities',
         context['playlists'] = user.playlist_set.all()
     elif tab == 'activities':
         activities = actor_stream(user)
-        previous = None
-        for activity in activities:
-            if hasattr(activity, 'action_object'):
-                if hasattr(previous, 'action_object') and previous.action_object.__class__ == activity.action_object.__class__ and activity.verb == previous.verb:
-                    activity.action_object_group = previous.action_object_group
-                else:
-                    activity.action_object_group = [activity.action_object]
-                
-            if previous and activity.verb == previous.verb:
-                activity.open = False
-                previous.close = False
-                if hasattr(activity, 'action_object') and activity.action_object.__class__ == previous.action_object.__class__:
-                    if activity.action_object not in activity.action_object_group:
-                        activity.action_object_group.append(activity.action_object)
-            else:
-                activity.open = True
-                if previous:
-                    previous.close = True
-            
-            previous = activity
-        activities[0].open = True
-        activities[len(activities)-1].close = True
-        context['activities'] = activities
+        context['activities'] = group_activities(activities)
 
+    context['ctype'] = ContentType.objects.get_for_model(User)
     context.update(extra_context or {})
     return shortcuts.render_to_response(template_name, context,
         context_instance=template.RequestContext(request))
@@ -143,6 +152,9 @@ def postlogin(request,
     if not request.user.first_name:
         return http.HttpResponseRedirect(urlresolvers.reverse('postregistration'))
     
+    activities = user_stream(request.user)
+    context['activities'] = group_activities(activities)
+
     context.update(extra_context or {})
     return shortcuts.render_to_response(template_name, context,
         context_instance=template.RequestContext(request))

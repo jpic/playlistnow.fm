@@ -1,5 +1,19 @@
 {% extends "site_base.html" %}
+{% load activity_tags %}
 
 {% block body %}
-postlogin template: templates/postlogin.html
+<div class="list">
+
+    {% for activity in activities %}
+        {% display_action activity %}
+    {% endfor %}
+    
+    <script type="text/javascript">
+    $('.comment_form_toggle').click(function(e) {
+        e.preventDefault();
+        $(this).parent().find('.comment_form_contents').toggle('slow');
+    });
+    </script>
+</div>
+
 {% endblock %}

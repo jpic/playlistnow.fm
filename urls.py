@@ -65,7 +65,7 @@ urlpatterns = patterns("",
         name='tag_details'
     ),
     url(
-        r'^(?P<slug>[^/]+)/$', 
+        r'^users/(?P<slug>[^/]+)/$', 
         views.user_details,
         {
             'tab': 'activities',
@@ -73,7 +73,7 @@ urlpatterns = patterns("",
         name='user_details'
     ),
     url(
-        r'^(?P<slug>[^/]+)/(?P<tab>\w+)/$', 
+        r'^users/(?P<slug>[^/]+)/(?P<tab>\w+)/$', 
         views.user_details,
         name='user_details_tab'
     ),
