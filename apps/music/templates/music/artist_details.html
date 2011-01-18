@@ -14,8 +14,38 @@
 
 {% block head_title %}{% trans "Details of artist" %} {{ object.name }}{% endblock %}
 
+{# enable right column #}
+{% block page_body_right_class %}block{% endblock %}
+{% block body_right %}
+<h3>Share and Recommend</h3>
+<div class="profile">
+
+<div class="ad"><a href="website" class="facebook"><strong>Facebook</strong></a></div>
+<div class="ad"><a href="twitter" class="twitter"><strong>Twitter</strong></a></div>
+<div class="ad"><a href="google" class="gfc"><strong>Google Buzz</strong></a></div>
+</div>
+<div class="dividerin"></div>
+<div class="clear"></div>
+<div class="ads centered">
+<img src="{{ STATIC_URL }}images/pub.png">
+</div>
+<div class="sep"></div>
+
+{% endblock %}
 {% block body %}
-<h1 class="left">{{ object.name }} <span class="artist_rank">Ranked</span></h1> 
+<div class="profile">
+{% if object.images.large %}
+<img src="{{ object.images.large }}" alt="{{ object }}" class="avatar big left espace" style="display: block;position: relative;vertical-align: middle;"/>
+{% endif %}
+<h1 style="line-height:16px">{{ object.name }} {% if object.local_artist.rank %}<span class="artist_rank">Ranked {{ object.local_artist.rank }}</span>{% endif %}</h1> 
+<ul style="margin:-2px 0 2px 0;">
+				<li>
+			<span class="statut"><strong>{% if playlists_including_artist.count %}{{ playlists_including_artist.count }}{% endif %}</strong> playlist</span> 
+			<span class="sep">|</span> <a href="fan" class="fan"><strong>{% if object.local_artist.fans.count %}{{ object.local_artist.fans.count }}{% else %}0{% endif %}</strong> fans</a>
+
+					</li>
+			</ul>
+<div class="follow">
 <form action="{% url music_artist_fanship %}" class="authenticationRequired" method="post">
     {% if object.local_artist.pk %}
     <input type="hidden" name="artist_pk" value="{{ object.local_artist.pk }}" />
@@ -24,8 +54,10 @@
     {% endif %}
     <input type="hidden" name="action" value="{% if is_fan %}remove{% else %}add{% endif %}" />
     <input type="hidden" name="next" value="{{ request.path }}" />
-    <input type="submit" class="button super grey right top" value="{% if is_fan %}{% trans "stop being fan" %}{% else %}become fan{% endif %}" />
+    <input type="submit" class="button super grey" value="{% if is_fan %}{% trans "stop being fan" %}{% else %}become fan{% endif %}" />
 </form>
+</div>
+</div>
 <div class="clear"></div>
 <ul id="tab_artist" class="tab_artist fake_tabs">
     <li class="tab first {% if tab == 'overview' %}selected{% endif %}">
@@ -56,32 +88,34 @@
 </ul>
 
 <div class="clear"></div>
-
-{% if object.images.large %}
-<img src="{{ object.images.large }}" alt="{{ object }}" class="avatar big left espace"/>
-{% endif %}
-
-{% if object.description %}
-<p class="artist_descr">
-{{ object.description|striptags|safe }}
-</p>
-<div class="clear"></div>
+{% if object.local_artist.last_playlist %}
+<div class="ad"><span class="statut">Last playlist with {{ object.name }}:</span> 
+<a href="{{ object.local_artist.last_playlist.get_absolute_url }}"><strong>{{ object.local_artist.last_playlist }}</strong></a>
+</div>
 {% endif %}
 
 {% if tab == 'overview' %}
+
+    {% if object.description %}
+    <p class="artist_descr">
+    {{ object.description|striptags|safe }}
+    </p>
+    <div class="clear"></div>
+    {% endif %}
+
     {% if object.tracks %}
-    <h2 style="display:inline-block"> 
+    <h2 class="top_tracks" style="display:inline-block"> 
     <a href="{% url music_artist_details_tab object|slugify 'music' %}" title="{% trans 'more tracks' %}">
         {% trans "top tracks" %}
         <span class="trail_title">{% trans 'all tracks' %}</span>
     </a>
     </h2>
-    <div style="clear:both"></div>
-    
-    {% render_tracks object.tracks %}
+    <div class="clear"></div>
+
+    {% render_tracks object.tracks '' request %}
     {% endif %}
     
-    <h2 style="display:inline-block">
+    <h2 class="similar_art" style="display:inline-block">
         <a href="{% url music_artist_details_tab object|slugify 'similar' %}" title="{% trans 'all similar artists' %}">
             {% trans "similar artists" %}
             <span class="trail_title">{% trans 'all similar artists' %}</span>
@@ -92,11 +126,12 @@
     {% render_artists object.similar %}
 {% endif %}
 
+
+
 {% if tab == 'music' %}
-<h2>{% trans 'music of artist' %} {{ object }}</h2>
-{% render_tracks tracks %}
-<hr style="background: rgb(221, 221, 221) none repeat scroll 0% 0%; 
-height: 1px; -moz-background-clip: border; -moz-background-origin: padding; -moz-background-inline-policy: continuous;">
+<h2 class="all_tr">{% trans 'music of artist' %} {{ object }}</h2>
+{% render_tracks tracks '' request %}
+<div class="dividerin"></div>
 <div class="virtual pagination">
     {% for page in allPages %}
     <a class="page {% if page == currentPage %}selected ui_prevent ui_ignore{% endif %}" href="{{ request.path_info }}?page={{ page }}">{{ page }}</a>
@@ -107,10 +142,12 @@ height: 1px; -moz-background-clip: border; -moz-background-origin: padding; -moz
 
 {% if tab == 'fans' %}
 <ul class="fans">
+ <h2 class="fan" style="display:inline-block">{{ object }}'s {% trans "fans" %}</h2>
     {% for fan in object.local_artist.fans.all %}
     <li class="user">
         <a href="{% url user_details fan.user.username|slugify %}" title="{% trans "click to see the complete profile of" %} {{ fan.user }}">
-            {{ fan.user }}
+            <img src="{{ STATIC_URL }}images/avatar-logged.jpg" class="avatar espace medium"/>
+            <br/>{{ fan.user }}
         </a>
     </li>
     {% endfor %}
@@ -118,15 +155,19 @@ height: 1px; -moz-background-clip: border; -moz-background-origin: padding; -moz
 {% endif %}
 
 {% if tab == 'similar' %}
-<h2>{% trans 'artists similar to' %} {{ object }}</h2>
+<h2 class="similar_art">{% trans 'artists similar to' %} {{ object }}</h2>
 {% render_artists object.similar %}
 {% endif %}
 
 {% if tab == 'events' %}
-<h2>{% trans 'events of artist' %} {{ object }}</h2>
+<h2 class="event">{% trans 'events of artist' %} {{ object }}</h2>
+<div class="list">
 {% for event in object.events %}
-{{ event }} <br />
+<div class="lineFeed">
+{{ event }}
+</div>
 {% endfor %}
+</div>
 {% endif %}
 
 {% endblock %}

@@ -45,7 +45,8 @@ body, #html_body_wrapper {
     width: 195px;
     border-left:1px solid #ddd;
     float: right;
-    padding: 15px;
+    padding: 0 15px 15px 15px;
+    margin: 15px 0 0 0 ;
 }
 #page_body {
     min-height: 100%;
@@ -101,4 +102,7 @@ img.simplemodal-close {
 }
 .block {
     display: block;
+}
+.bold {
+    font-weight: bold;
 }

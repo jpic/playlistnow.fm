@@ -1,0 +1,40 @@
+{% load i18n %}
+{% load comments %}
+
+{% if activity.open %}
+<div class="lineFeed">
+    <div class="lineFeedAvatar">
+        <a href="{% url user_details action.actor.username %}" title="{% trans "details of user" %} {{ action.user }}">
+            <img src="{{ STATIC_URL }}images/avatar-logged.jpg" class="avatar small left espace" />
+        </a>
+    </div>
+    <div class="lineFeedContent">
+{% endif %}
+        <div class="lineFeedContentWhat">
+            <a href="{% url user_details activity.actor.username %}" title="{% trans "see details of user" %} {{ activity.actor }}" class="bold">
+                {{ user.first_name }} {{ user.last_name }}
+            </a>
+
+            {{ activity.verb }}
+
+            {% if activity.target %}
+            <a href="{{ activity.target.get_absolute_url }}" title="{% trans "details of" %} {{ activity.target }}" class="bold">
+                {{ activity.target }}
+            </a>
+            {% endif %}
+        </div>
+{% if activity.close %}
+        {% get_comment_count for activity as comment_count %}
+        <div class="lineFeedContentWhen"> 
+            {{ action.timestamp|timesince }} ago -
+            <a href="">I Like</a> - <a class="ui_ignore comment_form_toggle" href="">Comment (<strong>{{ comment_count }}</strong>)</a>
+            {% render_comment_list for activity %}
+        
+            <div style="{% if not comment_count %}display: none{% endif %}" class="comment_form_contents" >
+            {% render_comment_form for activity %}
+            </div>
+        </div>
+    </div>
+    <div class="clear"></div>
+</div>
+{% endif %}

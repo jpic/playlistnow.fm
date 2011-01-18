@@ -12,8 +12,10 @@ from django.utils import simplejson
 
 import gdata.youtube
 import gdata.youtube.service
+from actstream import action
 
 from models import *
+from playlist.models import *
 #from forms import *
 
 def return_json(data=None):
@@ -63,6 +65,9 @@ def music_artist_details(request, name, tab='overview', paginate_by=10,
     context['object'].lastfm_get_info()
     try:
         context['object'].local_artist = Artist.objects.get(name__iexact=name)
+
+        context['playlists_including_artist'] = Playlist.objects.filter(tracks__artist=context['object'].local_artist)
+
         if request.user.is_authenticated():
             context['is_fan'] = context['object'].local_artist.fans.filter(user__pk=request.user.pk).count()
     except Artist.DoesNotExist:

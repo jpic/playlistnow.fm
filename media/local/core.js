@@ -73,21 +73,25 @@ var ui = {
                     success: function(html, textStatus, request) {
                         if (element.hasClass('copy_track_row')) {
                             var ul = $('div.playlist_track_list ul.song_list');
-                            var last = ul.find('li.song_info:last');
-                            if (last) {
-                                if (last.hasClass('dd') && song_info.hasClass('dd')) {
-                                    song_info.removeClass('dd');
-                                } else if (last.hasClass('dd') == false && song_info.hasClass('dd') == false) {
-                                    song_info.addClass('dd');
+                            if (ul != undefined) {
+                                var last = ul.find('li.song_info:last');
+                                if (last != undefined) {
+                                    if (last.hasClass('dd') && song_info.hasClass('dd')) {
+                                        song_info.removeClass('dd');
+                                    } else if (last.hasClass('dd') == false && song_info.hasClass('dd') == false) {
+                                        song_info.addClass('dd');
+                                    }
+                                    var n = parseInt(last.find('span.number').html()) + 1;
+                                    if (!n) {
+                                        n = 1;
+                                    }
+                                    song_info.find('span.number').html(n);
+                                    ul.append(song_info);
                                 }
-                                var n = parseInt(last.find('span.number').html()) + 1;
-                                if (!n) {
-                                    n = 1;
-                                }
-                                song_info.find('span.number').html(n);
                             }
                         }
-                        ul.append(song_info);
+                        $('#user_notifications').append($(html).find('#user_notifications').html());
+                        $(document).trigger('signalPlaylistUpdate', [data.playlist_pk]);
                         $('#ajaxload').fadeOut();
                     },
                     beforeSend: ui.beforeSend,
@@ -97,6 +101,15 @@ var ui = {
                 ui.popup(playlist_track_modify + '?' + $.param(data));
             }
         });
+
+        window.setInterval(function() {
+            if ($('#user_notifications li').length > 0) {
+                var lis = $('#user_notifications li');
+                window.setTimeout(function() {
+                    lis.fadeOut();
+                }, 3000);
+            }
+        }, 1000);
 
         this.ready = true;
     },
@@ -129,13 +142,18 @@ var ui = {
             }
         });
 
+        $('.delete_self').live('click', function(e) {
+            e.preventDefault();
+            $(this).remove();
+        });
+
         $('.delete.parent').live('click', function(e) {
             e.preventDefault();
             $(this).parent().remove();
         });
     },
     'notifyUser': function(message) {
-        console.log(message);
+        $('#user_notifications').append($('<li class="delete_self">'+message+' (click to close)</li>'));
     },
      'setupForms': function() {
         if (ui.settings['ajaxEnable'] && $('form').length) {

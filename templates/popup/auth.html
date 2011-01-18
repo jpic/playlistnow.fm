@@ -1,0 +1,39 @@
+{% comment %}
+{% extends "site_base.html" %}
+
+{% load i18n %}
+{% load uni_form_tags %}
+{% load ifsetting_tag %}
+{% load account_tags %}
+
+{% block head_title %}{% trans "Login" %}{% endblock %}
+
+{% block body %}
+{% endcomment %}
+<h3>What will I get when I join <span style="color: rgb(223, 64, 144);">Playlistnow</span> ?</h3>
+
+<p style="text-align: justify; margin-right: 10px; padding: 0pt 18px 0pt 0px;">
+    You get the innovative way to listen to music according to your
+    situation, to create and share your own playlists and to discover music
+    according to your friend's tastes.
+</p>    
+
+<a href="{% url acct_signup %}" class="button violet super simplemodal-close" alt="join now !">
+    <span>Join Now</span>
+</a>
+
+<div class="clear"></div>
+
+<div class="sep"></div>
+
+<h3>You're already a <span style="color: rgb(25, 147, 194);">Playlistnow</span> member !</h3>
+
+<p style="text-align: justify; padding: 0pt 10px 0pt 0pt;">
+    So login through your favorite social network to see what your
+    friends are listening, and to get to discover new music thanks to
+    their recomandations.
+</p>
+
+<a href="{% url acct_login %}" class="button blue super simplemodal-contain" alt="Login !" style="float: left; margin-right: 10px;">
+    <span>Login</span>
+</a>

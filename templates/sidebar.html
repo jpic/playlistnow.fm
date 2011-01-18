@@ -28,7 +28,7 @@
             {% if request.user.is_authenticated %}
               <li class="sidebar_Myplaylists sidebar_info">
                 
-                <a href="{% url user_details request.user.username %}">
+                <a href="{% url user_details_tab request.user.username 'playlists' %}">
                 
                     <span class="icon"></span>
                     <span class="label">My Playlists</span>

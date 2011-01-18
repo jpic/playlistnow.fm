@@ -146,6 +146,8 @@ class MusicalEntity(models.Model):
 
 class Artist(MusicalEntity):
     name = models.CharField(max_length=255, verbose_name=_(u'name'), unique=True, blank=False)
+    rank = models.IntegerField(verbose_name=_(u'rank'), null=True, blank=True)
+    last_playlist = models.ForeignKey('playlist.Playlist', verbose_name=_(u'last playlist'), null=True, blank=True)
 
     def get_type(self):
         return 'artist'
@@ -300,7 +302,3 @@ class Track(MusicalEntity):
                 artist=Artist(name=element.find('artist').text))
             match.lastfm_get_info(element)
             self.matches.append(match)
-
-#signals.pre_save.connect(resync, sender=Track)
-#signals.pre_save.connect(resync, sender=Artist)
-#signals.pre_save.connect(resync, sender=Album)

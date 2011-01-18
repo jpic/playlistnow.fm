@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     "socialregistration",
     "gfc",
     "actstream",
+    "django.contrib.comments",
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -149,4 +150,3 @@ SOCIALREGISTRATION_GENERATE_USERNAME = True
 
 AJAX_NAVIGATION = True
 LOGIN_REDIRECT_URL = '/postlogin'
-

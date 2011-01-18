@@ -17,7 +17,7 @@
     {% else %}
         {% ifsetting ACCOUNT_OPEN_SIGNUP %}
         {% url acct_signup as signup_url %}
-        <p>{% blocktrans %}Don't have an account? <a href="{{ signup_url }}">Sign up</a>!{% endblocktrans %}</p>
+        <h1>{% blocktrans %}Don't have an account?</h1> <h2>One-click sign up to Playlistnow</h2>{% endblocktrans %}
         {% endifsetting %}
     {% endif %}
 
@@ -61,9 +61,9 @@
     {% facebook_js %}
 
     {% twitter_button %}
-
-    <p>
+<div class="clear"></div>
+    <div class="ad">
     {% blocktrans %}If you have any trouble logging in to your account, contact us at 
     <a href="mailto:{{ CONTACT_EMAIL }}">{{ CONTACT_EMAIL}}</a>.{% endblocktrans %}
-    </p>
+    </div>
 {% endblock %}

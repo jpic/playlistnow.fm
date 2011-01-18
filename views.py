@@ -61,7 +61,21 @@ def user_details(request, slug, tab='activities',
     if tab == 'playlists':
         context['playlists'] = user.playlist_set.all()
     elif tab == 'activities':
-        context['activities'] = actor_stream(user)
+        activities = actor_stream(user)
+        previous = None
+        for activity in activities:
+            if previous and activity.verb == previous.verb:
+                activity.open = False
+                if previous:
+                    previous.close = False
+            else:
+                activity.open = True
+                if previous:
+                    previous.close = True
+            previous = activity
+        activities[0].open = True
+        activities[len(activities)-1].close = True
+        context['activities'] = activities
 
     context.update(extra_context or {})
     return shortcuts.render_to_response(template_name, context,

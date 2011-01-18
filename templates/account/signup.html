@@ -1,0 +1,62 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+{% load uni_form_tags %}
+
+{% block head_title %}{% trans "Signup" %}{% endblock %}
+
+{% block body %}
+    <h1>{% trans "New to Playlistnow ?" %}</h1>
+    
+    {% if user.is_authenticated %}
+        <p>{% trans "You are already logged in." %}</p>
+    {% else %}
+        <h3>{% trans "Easy, free and social. Discover a new way to listen to and share music." %}!</h3>
+        
+        
+        {# @@@ currently OpenID signup is not supported via signup codes #}
+        {% if not code %}
+     
+            {# @@@ why isn't this just does as a form object ? #}
+
+
+<ul class="signin">
+<li style="width:30%;float:left;" class="selected"><div class="connect">Connect your account</div><div class="connect_text">Use one of your network to create your account in one-clik.</div></li>
+<li style="width:30%;float:left;"><div class="fill_form">Complete your registration</div><div class="connect_text">Verify and fill the form to complete your registration and create your account.</div></li>
+<li style="width:30%;float:left;"><div class="find_friends">Find friends</div><div class="connect_text">Playlistnow is more fun when you follow your friends.</div></li>
+</ul>
+
+<div style="margin:26px 0;padding:10px;">
+<ul>
+<li style="width:30%;float:left;padding:2px 10px 0 10px;"><a  href="" class="super button fbblue large"><span class="facebook"><strong>Connect with facebook</strong></span></a><p style="color: #999999;font-size:12px;margin-top:10px;"><strong>Connect your Facebook</strong> to sign in by clicking the button Connect with Facebook.</p></li>
+<li style="width:30%;float:left;padding:2px 10px 0 17px;"><a  href="" class="super button twblue large"><span class="twitter"><strong>Connect with twitter</strong></span></a><p style="color: #999999;font-size:12px;margin-top:10px;"><strong>Connect to Twitter</strong> to sign in by clicking the button Connect with Twitter.</p></li>
+<li style="width:30%;float:left;padding:2px 10px 0 17px;"><a  href="" class="super button grey large"><span class="google"><strong>Connect with google</strong></span></a><p style="color: #999999;font-size:12px;margin-top:10px;"><strong>Connect to Google</strong> to sign in by clicking the button Connect with Google.</p></li>
+</ul>
+<div class="clear"></div>
+
+
+            {% if request.user.is_authenticated %}
+                <div><a href="{% url acct_logout %}?next={{ request.path }}&amp;sm={{ split_test }}&amp;sn=logout">logout</a></div>
+            {% endif %}
+            </div>
+        {% endif %}
+        
+        {% url terms as terms_url %}
+        {% url privacy as privacy_url %}
+        <div class="dividerin"></div>
+        <div class="ad">{% blocktrans %}By clicking "Sign Up", you are indicating that you have read and agree to the <a href="{{ terms_url }}">Terms of Use</a> and <a href="{{ privacy_url }}">Privacy Policy</a>.{% endblocktrans %}
+        <br/>{% blocktrans %}If you have any trouble creating your account, contact us at <a href="mailto:{{ CONTACT_EMAIL }}">{{ CONTACT_EMAIL }}</a>.{% endblocktrans %}</div>
+        
+    {% endif %}
+{% endblock %}
+
+{% block extra_body %}
+    {% load jquery_validation %}
+    {% include_validation %}
+    <script type="text/javascript">
+        $(function(){
+            $('#signup_form').validate('{% url signup_form_validate %}', {type: 'table', fields: ['username'], dom: $('#id_username'), event: 'change'});
+            $("#id_username").focus();
+        });
+    </script>
+{% endblock %}

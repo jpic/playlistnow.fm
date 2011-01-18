@@ -1,5 +1,6 @@
 {% load comments i18n %}
-<form action="{% comment_form_target %}" method="post" class="authenticationRequired">
+  <div class="comment">
+<form action="{% comment_form_target %}" method="post" class="authenticationRequired" style="margin-top:2px;">
     {% if request.user.is_authenticated %}
     {% csrf_token %}
     {{ form.content_type }}
@@ -7,10 +8,14 @@
     {{ form.timestamp }}
     {{ form.security_hash }}
     {% endif %}
+      <a href=""><img src="{{ STATIC_URL }}images/avatar-logged.jpg" class="avatar verysmall left espace"></a>
     <input type="hidden" name="next" value="{{ request.path }}" />
-
+<div style="margin-left:50px" style="color:#77777;font-size:11px;">
     {{ form.comment }}
-
-    <input type="submit" class="submit-post" value="Post">
-    <input type="submit" class="submit-post" value="Preview" name="preview">
+<div class="clear"></div>
+    <input type="submit" class="submit-post super button blue" value="Comment">
+    </div>
+    <div class="clear"></div>
+   
 </form>
+</div>

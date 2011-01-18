@@ -2,7 +2,7 @@
 
 <ul class="song_list">
 {% for track in tracks %}
-<li class="song_play song_info {% cycle "dd" "" %} track_pk_{{ track.pk }}">
+<li class="song_play song_info {% cycle "dd" "" %} {% if track.pk %}track_pk_{{ track.pk }}{% else %}external_track{% endif %}">
     <span class="icon play"></span>
     <span class="number play">{{ forloop.counter }}</span>
 
@@ -15,11 +15,9 @@
     {% endif %}
     <a title="{% trans "details of track" %} {{ track }}" href="{{ track.get_absolute_url }}" class="label track">{{ track.name }}</a>
     
-    <span class="icon add authenticationRequired right tiptip {% if playlist %}noconfirm copy_track_row playlist_pk_{{ playlist.pk }}{% endif %}" 
+    <span class="icon track_modify add add_track authenticationRequired right tiptip {% if playlist %}noconfirm copy_track_row playlist_pk_{{ playlist.pk }}{% endif %}" 
         title="Add this song to {% if not playlist %}a Playlist{% else %}playlist {{ playlist }}{% endif %}"></span>
-    {% if track.playlist.creation_user == request.user %}
-    <span class="icon love tiny_playlist add authenticationRequired right tiptip noconfirm {% if playlist.name == 'hidden:tiny' %}copy_track_row playlist_pk_{{ playlist.pk }}{% endif %}" title="Like and add to your Tiny Playlist" style="{% if user and track in request.user.playlistprofile.tiny_playlist.tracks.all %}background-align: top;{% endif %}"></span>
-    {% endif %}
+    <span class="icon love tiny_playlist {% if track in request.user.playlistprofile.tiny_playlist.tracks.all %}remove_track {% if request.user.playlistprofile.tiny_playlist == playlist %}delete parent{% endif %}{% else %}add_track{% endif %} track_modify authenticationRequired right tiptip noconfirm {% if playlist and playlist == request.user.playlistprofile.tiny_playlist %}copy_track_row{% endif %} {% if request.user.is_authenticated %}playlist_pk_{{ request.user.playlistprofile.tiny_playlist.pk }}{% endif %}" title="{% if track in request.user.playlistprofile.tiny_playlist.tracks.all %}Unlike and remove from your Tiny Playlist{% else %}Like and add to your tiny Playlist{% endif %}" style="{% if track in request.user.playlistprofile.tiny_playlist.tracks.all %}background-position: left bottom;{% endif %}"></span>
 </li>
 {% endfor %}
 </ul>

@@ -31,7 +31,7 @@
 <div class="delete parent" style="float:right"></div>
 <h2>{% trans "results matching" %} {{ request.GET.q }}</h2>
 <div class="clear"></div>
-{% render_tracks tracks object %}
+{% render_tracks tracks object request %}
 <div class="virtual pagination">
     {% for page in allPages %}
     <a class="page {% if page == currentPage %}selected ui_prevent ui_ignore{% endif %}" href="{{ request.path_info }}?term={{ request.GET.term }}&search_artists=0&search_albums=0&page={{ page }}">{{ page }}</a>
@@ -44,7 +44,7 @@
 <hr style="height:2px; background:#ddd;">
 <div class="playlist_track_list">
 <span id="playlist_pk" style="display:none">{{ object.pk }}</span>
-{% render_tracks user_tracks %}
+{% render_tracks user_tracks '' request %}
 </div>
 
 {% endblock %}
@@ -52,7 +52,7 @@
 {# enable right column #}
 {% block page_body_right_class %}block{% endblock %}
 {% block body_right %}
-<h3 class="playcat">{% trans "about" %}</h3>
+<h3 class="about">{% trans "about" %}</h3>
 <div class="details views sidebox">
     <b>{{ object.play_counter }}</b> {% trans "times" %}
 </div>
@@ -64,27 +64,28 @@
     <div class="lined">
         <b>{% trans 'Published by' %}</b>
         <br />
-        <a href="{% url user_details object.creation_user.username %}" style="color: rgb(28, 155, 200);" title="{{ object.creation_user.first_name }}: {% trans "activities on playlistnow.fm" %}">{{ object.creation_user.first_name }}</a>
+        <a href="{% url user_details object.creation_user.username %}" style="color: rgb(28, 155, 200);" 
+        title="{{ object.creation_user.first_name }}: {% trans "activities on playlistnow.fm" %}">{{ object.creation_user.first_name }}</a>
     </div>
 
-    <div class="lined">
-     <div id="playlist-tags">
-        {% trans 'Tags' %}:
-        <br />
-        {% show_tags_for object %}
-          </div>
-    </div>
+   
     <div class="lined">
         <b>{% trans 'Category' %}:</b> 
         <br />
         {% if object.category.parent %}
-        <a href="{{ object.category.parent.get_absolute_url }}" title="{% trans "playlists for object.category" %} {{ object.category.parent }}">{{ object.category.parent }}</a>
+        <a href="{{ object.category.parent.get_absolute_url }}" 
+        title="{% trans "playlists for object.category" %} {{ object.category.parent }}">{{ object.category.parent }}</a>
         → 
         {% endif %}
         <a href="{{ object.category.get_absolute_url }}" title="{% trans "playlists for object.category" %} {{ object.category }}">{{ object.category }}</a>
     </div>
 </div>
 <div class="clear"></div>
-<div class="sep"></div>
+<div class="dividerin "></div>
+<ul id="playlist-tags">
+    
+     
+        <li>{% show_tags_for object %}</li>
+          </ul>
 
 {% endblock %}

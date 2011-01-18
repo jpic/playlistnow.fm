@@ -3,51 +3,102 @@
 {% load i18n %}
 {% load pagination_tags %}
 {% load playlist_tags %}
+{% load music_tags %}
+{% load comments %}
+{% load activity_tags %}
 
 {% block head_title %}{% trans "playlists created by" %}: {{ user }}{% endblock %}
 
-{% block body %}
-<h1>{{ user.first_name }} {{ user.last_name }}</h1> 
+{# enable right column #}
+{% block page_body_right_class %}block{% endblock %}
+{% block body_right %}
+<div class="ads centered" style="width:150px;"><strong>Ads</strong><br>
+<img src="{{ STATIC_URL }}images/pub.png">
+</div>
+<div class="sep"></div>
+<div class="dividerin"></div>
+<h2>social network</h2>
+<div class="friends" style="line-height:22px;">
+<a href="" class="tiptip" title="John Do"><img src="{{ STATIC_URL }}images/avatar-logged.jpg" class="avatar left espace verysmall sc"></a>
+<a href="" class="tiptip" title="John Do"><img src="{{ STATIC_URL }}images/avatar-logged.jpg" class="avatar left espace verysmall sc"></a>
+<a href="" class="tiptip" title="John Do"><img src="{{ STATIC_URL }}images/avatar-logged.jpg" class="avatar left espace verysmall sc"></a>
+<a href="" class="tiptip" title="John Do"><img src="{{ STATIC_URL }}images/avatar-logged.jpg" class="avatar left espace verysmall sc"></a>
+<a href="" class="tiptip" title="John Do"><img src="{{ STATIC_URL }}images/avatar-logged.jpg" class="avatar left espace verysmall sc"></a>
+<a href="" class="tiptip" title="John Do"><img src="{{ STATIC_URL }}images/avatar-logged.jpg" class="avatar left espace verysmall sc"></a>
+<a href="" class="tiptip" title="John Do"><img src="{{ STATIC_URL }}images/avatar-logged.jpg" class="avatar left espace verysmall sc"></a>
+<a href="" class="tiptip" title="John Do"><img src="{{ STATIC_URL }}images/avatar-logged.jpg" class="avatar left espace verysmall sc"></a>
+<a href="" class="tiptip" title="John Do"><img src="{{ STATIC_URL }}images/avatar-logged.jpg" class="avatar left espace verysmall sc"></a>
+<a href="" class="tiptip" title="John Do"><img src="{{ STATIC_URL }}images/avatar-logged.jpg" class="avatar left espace verysmall sc"></a>
+<a href="" class="tiptip" title="John Do"><img src="{{ STATIC_URL }}images/avatar-logged.jpg" class="avatar left espace verysmall sc"></a>
+<a href="" class="tiptip" title="John Do"><img src="{{ STATIC_URL }}images/avatar-logged.jpg" class="avatar left espace verysmall sc"></a>
 
+
+</div>
+{% endblock %}
+{% block body %}
+<div class="profile"><img src="{{ STATIC_URL }}images/avatar-logged.jpg" class="avatar left espace big" style="display: block;position: relative;vertical-align: middle;">
+
+<h1 style="line-height:16px">{{ user.first_name }} {{ user.last_name }} <span class="artist_rank">Rookie</span></h1> 
+
+	<ul>
+				<li>
+			<span class="location">{{ user.playlistprofile.user_location }}</span> 
+			<span class="sep">|</span>
+                <a href="website" class="facebook">jonathan.y</a>
+	        <span class="sep">|</span>
+			<a href="twitter" class="twitter">jonyou</a>
+			<span class="sep">|</span>
+			<a href="twitter" class="gfc">google gfc</a>
+					</li>
+			</ul>
+	<div class="follow"><a href="" class="button super grey"><span>Follow</span></a></div>
+
+
+</div>
 <div class="clear"></div>
 
 <ul id="tab_artist" class="tab_artist fake_tabs">
     <li class="tab first {% if tab == 'activities' %}selected{% endif %}">
-        <a class="" href="{% url user_details_tab user.username|slugify 'activities' %}">
+        <a class="" href="{% url user_details_tab user.username 'activities' %}">
         {% trans "activities" %}
         </a>
     </li>
     <li class="tab {% if tab == 'playlists' %}selected{% endif %}">
-        <a class="" href="{% url user_details_tab user.username|slugify 'playlists' %}">
+        <a class="" href="{% url user_details_tab user.username 'playlists' %}">
         {% trans "playlists" %}
         </a>
     </li>
     <li class="tab {% if tab == 'artists' %}selected{% endif %}">
-        <a class="" href="{% url user_details_tab user.username|slugify 'artists' %}">
+        <a class="" href="{% url user_details_tab user.username 'artists' %}">
         {% trans "artists" %}
         </a>
     </li>
     <li class="last tab {% if tab == 'recommendations' %}selected{% endif %}">
-        <a class="" href="{% url user_details_tab user.username|slugify 'recommendations' %}">
+        <a class="" href="{% url user_details_tab user.username 'recommendations' %}">
         {% trans "recommended songs" %}
         </a>
     </li>
 </ul>
 
 <div class="clear"></div>
+{% if user.playlistprofile.last_playlist %}
+<div class="ad"><span class="statut">Last mood:</span> <a href="{{ user.playlistprofile.last_playlist.get_absolute_url }}" title="{% trans "details of" %} {{ user.playlistprofile.last_playlist }}"><strong>{{ user.playlistprofile.last_playlist }}</strong></a>
+</div>
+{% endif %}
+
 
 {% if tab == 'activities' %}
+<div class="list">
+
     {% for activity in activities %}
-        <a href="{% url user_details activity.actor|slugify %}" title="{% trans "see details of user" %} {{ activity.actor }}">
-            {{ activity.actor }}
-        </a>
-        {{ activity.verb }}
-        {% if activity.target %}
-        <a href="{{ activity.target.get_absolute_url }}" title="{% trans "details of" %} {{ activity.target }}">
-            {{ activity.target }}
-        </a>
-        {% endif %}
+        {% display_action activity %}
     {% endfor %}
+    <script type="text/javascript">
+    $('.comment_form_toggle').click(function(e) {
+        e.preventDefault();
+        $(this).parent().find('.comment_form_contents').toggle('slow');
+    });
+    </script>
 {% endif %}
 
 {% if tab == 'playlists' %}

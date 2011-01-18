@@ -3,6 +3,7 @@
 {% load pagination_tags %}
 {% load i18n %}
 {% load playlist_tags %}
+{% load tagging_tags %}
 
 {% block extra_head %}
 <meta name="keywords" content="playlist,now,playlist list" />
@@ -27,10 +28,21 @@
 {% endblock %}
 
 {% block body_right %}
-<h2>Tags</h2>
+<h3>Tags</h3>
+<ul id="playlist-tags">
+{% for tag in best_tags %}
+<li><a title="{{ tag }}" href="/tags/{{ tag }}">{{ tag }}</a></li>
+{% endfor %}
+</ul>
+
 <h2>Categories</h2>
+<div class="dividerin"></div>
 <div class="ad">
-Create a new playlist bla bla bla bla and bla bla</div>
+<p>Create a new playlist for your own situation</p>
+<a href="{% url playlist_add %}" class="button super blue" title="{% trans "create your playlist now for free" %}">
+<span>{% trans "create your playlist" %}</span>
+</a>
+</div>
 {% endblock %}
 
 {# enable right column #}

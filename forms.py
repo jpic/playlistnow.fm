@@ -12,7 +12,7 @@ class PostRegistrationForm(forms.ModelForm):
         request = kwargs.pop('request')
         
         instance = kwargs['instance']
-        if getattr(request, 'facebook', False):
+        if getattr(getattr(request, 'facebook', False), 'uid', False):
             upstream = request.facebook.graph.request(request.facebook.user['uid'])
             initial = {
                 'first_name': upstream['first_name'],

@@ -14,7 +14,11 @@ class PlaylistProfile(models.Model):
     user = models.OneToOneField('auth.User', verbose_name=_(u'user'))
     user_location = models.CharField(max_length=100, verbose_name=_(u'location'), null=True, blank=True)
     tiny_playlist = models.ForeignKey('Playlist', related_name='favorite_of')
+    fanof_playlists = models.ManyToManyField('playlist.Playlist', verbose_name=_(u'fav playlists'), null=True, blank=True, related_name='fans')
     fanof_artists = models.ManyToManyField('music.Artist', verbose_name=_(u'fav artists'), null=True, blank=True, related_name='fans')
+    fanof_tracks = models.ManyToManyField('music.Track', verbose_name=_(u'fav tracks'), null=True, blank=True, related_name='fans')
+    
+    last_playlist = models.ForeignKey('playlist.Playlist', verbose_name=_(u'last playlist'), null=True, blank=True)
 
     def get_absolute_url(self):
         return urlresolvers.reverse('user_details', args=(self.user.username,))
@@ -107,7 +111,7 @@ class Playlist(models.Model):
 
     def __unicode__(self):
         if self.name == 'hidden:tiny':
-            return "%s %s" % (self.creation_user.first_name, self.creation_user.last_name)
+            return "Tiny playlist: I am %s %s" % (self.creation_user.first_name, self.creation_user.last_name)
         return u'I am %s' % self.name
 
     class Meta:
@@ -188,12 +192,17 @@ def autoslug(sender, instance, **kwargs):
 signals.pre_save.connect(autoslug)
 
 
-if "actstream" in settings.INSTALLED_APPS:
-    from actstream import action
+from actstream import action
 
-    def playlist_create_activity(sender, instance, created, **kwargs):
-        if created:
-            action.send(instance.creation_user, verb=_(u'created'), target=instance)
-        else:
-            action.send(instance.creation_user, verb=_(u'modified'), target=instance)
-    signals.post_save.connect(playlist_create_activity, sender=Playlist)
+def playlist_create_activity(sender, instance, created, **kwargs):
+    if created and not 'hidden:' in instance.name:
+        action.send(instance.creation_user, verb=u'created playlist', target=instance)
+signals.post_save.connect(playlist_create_activity, sender=Playlist)
+
+def last_playlist(sender, instance, action, **kwargs):
+    if action == 'post_add':
+        for pk in kwargs.pop('pk_set'):
+            a = Playlist.tracks.field.rel.to.objects.get(pk=pk).artist
+            a.last_playlist = instance
+            a.save()
+signals.m2m_changed.connect(last_playlist, sender=Playlist.tracks.through)

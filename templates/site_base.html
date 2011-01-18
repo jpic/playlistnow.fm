@@ -66,20 +66,20 @@
             {% if not request.user.is_authenticated %}
             <li> 
                 <a class="button super violet popup" href="{% url acct_login %}">
-                  <span class="bigger">Login</span>
+                  <span>Login</span>
                 </a>
             </li>
             <li>
-                <a class="button super blue" href="#">
-                   <span class="bigger">Become Member</span>
+                <a class="button super blue" href="">
+                   <span>Become Member</span>
                 </a>
             </li>
             {% else %}
-            You are {{ request.user }}
+            
 
-            <li>
+            <li> <span style="color:#fff;">{{ request.user }}</span>
                 <a class="button super blue ui_ignore" href="{% url acct_logout %}">
-                   <span class="bigger">Logout</span>
+                   <span>Logout</span>
                 </a>
             </li>
 
@@ -88,10 +88,19 @@
     </div>
 
 {% endif %}
-{% block body_outer %}
+{% block body_outer %}    
     {% if not request.ajax %}
     <div id="page_body_container">
     {% endif %}
+        <div id="user_notifications_container">
+        <ul id="user_notifications">
+            {% for message in messages %}
+            <li class="{{ message.tags }} delete_self">
+                {{ message|safe }} ({% trans "click to close" %})
+            </li>
+            {% endfor %}
+        </ul>
+        </div>
         <div id="page_body_wrapper" class="{% block page_body_wrapper_class %}{% endblock %} page_body_wrapper">
             {% if not request.modal %}
             <div id="page_body_right" class="{% block page_body_right_class %}hidden{% endblock %}">

@@ -4,8 +4,11 @@ import math
 from django import http
 from django import shortcuts
 from django import template
+from django.contrib import messages
 from django.contrib.auth import decorators
 from django.db.models import Q
+from tagging.models import Tag
+from actstream import action
 
 from music.models import *
 from models import *
@@ -63,10 +66,10 @@ def playlist_track_modify(request,
                 artist=artist)
 
     if context['action'] == 'add':
-        context['user_playlists'] = Playlist.objects.filter(
+        context['user_playlists'] = Playlist.objects.all_with_hidden().filter(
             creation_user=request.user)
     elif context['action'] == 'remove':
-        context['user_playlists'] = Playlist.objects.filter(
+        context['user_playlists'] = Playlist.objects.all_with_hidden().filter(
             creation_user=request.user, tracks__name=context['track'].name)
 
     plname = False
@@ -94,8 +97,6 @@ def playlist_track_modify(request,
             context['track'].youtube_id = context['track'].youtube_get_best()
             context['track'].save()
 
-        print context['playlist'].pk, context['track'].pk
-
         try:
             if context['action'] == 'add':
                 if context['playlist'].creation_user == request.user:
@@ -119,8 +120,34 @@ def playlist_track_modify(request,
                     ).save()
 
             context['status'] = 'success'
+            if context['action'] == 'add':
+                msg = 'thanks for adding <a href="%s">%s</a> to playlist <a href="%s">%s</a>' % (
+                    context['track'].get_absolute_url(),
+                    unicode(context['track']),
+                    context['playlist'].get_absolute_url(),
+                    unicode(context['playlist']),
+                )
+                if request.user.is_authenticated():
+                    if context['playlist'].pk == request.user.playlistprofile.tiny_playlist.pk:
+                        action.send(request.user, verb='liked track', target=context['track'])
+                    else:
+                        action.send(request.user, verb='added track to playlist', action_object=context['track'], target=context['playlist'])
+            else:
+                msg = 'thanks for removing <a href="%s">%s</a> to playlist <a href="%s">%s</a>' % (
+                    context['track'].get_absolute_url(),
+                    unicode(context['track']),
+                    context['playlist'].get_absolute_url(),
+                    unicode(context['playlist']),
+                )
+                if request.user.is_authenticated():
+                    if context['playlist'].pk == request.user.playlistprofile.tiny_playlist.pk:
+                        action.send(request.user, verb='unliked track', target=context['track'])
+                    else:
+                        action.send(request.user, verb='removed track from playlist', action_object=context['track'], target=context['playlist'])
+            messages.add_message(request, messages.INFO, msg)
         except Exception:
             context['status'] = 'error'
+            messages.add_message(request, messages.INFO, msg)
 
     context.update(extra_context or {})
     return shortcuts.render_to_response(template_name, context,
@@ -149,6 +176,17 @@ def playlist_list(request, qs=Playlist.objects.all(),
     context = {}
     
     context['object_list'] = qs
+    s = '''
+    select 
+        t.id,
+        t.name 
+    from tagging_taggeditem ti 
+    left join tagging_tag t on t.id=ti.tag_id 
+    group by t.id, t.name 
+    order by count(ti.object_id) desc 
+    limit 15
+    '''
+    context['best_tags'] = Tag.objects.raw(s)
 
     context.update(extra_context or {})
     return shortcuts.render_to_response(template_name, context,
@@ -194,6 +232,9 @@ def playlist_details(request, user, slug, default_format=False, qname='term',
         serialized = object.to_dict()
 
     if request.GET.get('format', default_format) == 'json':
+        if object.name[0:7] != 'hidden:' and request.user.is_authenticated():
+            request.user.playlistprofile.last_playlist = object
+            request.user.playlistprofile.save()
         return http.HttpResponse(simplejson.dumps(serialized))
 
     context['object'] = object

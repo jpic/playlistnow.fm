@@ -24,7 +24,7 @@
 <h1>{% trans "Confirmation Request" %}</h1>
 {% if playlist.pk and track.name %}
 <p>
-    {% trans "Do you want to" %} {% trans action %} {{ track.name }} {% if track.artist.name %} {% trans "by" %} {{ track.artist.name }}{% endif %} {% trans "to" %} {{ playlist.name }} ?
+    {% trans "Do you want to" %} {% trans action %} {{ track.name }} {% if track.artist.name %} {% trans "by" %} {{ track.artist.name }}{% endif %} {% trans "to" %} {{ playlist }} ?
 </p>
 {% endif %}
 <form action="{{ request.path }}" method="post">
@@ -32,15 +32,15 @@
     {% if playlist.pk %}
     <input type="hidden" name="playlist_pk" value="{{ playlist.pk }}" />
     {% else %}
-        {% if playlist.name %}
-        <input type="hidden" name="playlist_name" value="{{ playlist.name }}" />
+        {% if playlist %}
+        <input type="hidden" name="playlist_name" value="{{ playlist }}" />
         {% else %}
         <label for="playlist_pk">
             {% trans "select one of your playlist" %}
         </label>
         <select name="playlist_pk">
             {% for playlist in user_playlists %}
-            <option value="{{ playlist.pk }}">{{ playlist.name }}</option>
+            <option value="{{ playlist.pk }}">{{ playlist }}</option>
             {% endfor %}
         </select>
         {% endif %}

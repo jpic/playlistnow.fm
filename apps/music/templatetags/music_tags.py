@@ -23,6 +23,7 @@ def render_tracks(tracks, playlist=None, request=None):
     context = {
         'tracks': tracks,
         'playlist': playlist,
+        'request': request,
     }
 
     return context
