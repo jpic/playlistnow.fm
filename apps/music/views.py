@@ -9,6 +9,7 @@ from django.template import defaultfilters
 from django.contrib.auth import decorators
 from django.conf import settings
 from django.utils import simplejson
+from django.contrib import messages
 
 import gdata.youtube
 import gdata.youtube.service
@@ -42,15 +43,25 @@ def music_artist_fanship(request):
     else:
         artist = Artist(name=request.POST.get('artist_name'))
         artist.lastfm_get_info()
-        print artist.image_small, artist.images
         artist.save()
     
     if request.POST.get('action') == 'add':
         artist.fans.add(request.user.playlistprofile)
         action.send(request.user, verb='becomes fan of artist', action_object=artist)
+        msg = 'thanks for becoming fan of <a href="%s">%s</a>' % (
+            artist.get_absolute_url(),
+            unicode(artist)
+        )
+        messages.add_message(request, messages.INFO, msg)
+
     else:
         artist.fans.remove(request.user.playlistprofile)
         action.send(request.user, verb='is not anymore a fan of artist', action_object=artist)
+        msg = 'thanks for quiting the fanclub of artist <a href="%s">%s</a>' % (
+            artist.get_absolute_url(),
+            unicode(artist)
+        )
+        messages.add_message(request, messages.INFO, msg)
 
     return http.HttpResponseRedirect(request.POST['next'])
 
