@@ -142,7 +142,9 @@ UI_IGNORE_URLS = (
     '/socialregistration/twitter',
     '/socialregistration/setup/',
     '/gfc/redirect',
+    '/gfc/callback',
     '/socialregistration/facebook/connect',
+    '/account/logout/',
 )
 
 GENERATE_USERNAME = True

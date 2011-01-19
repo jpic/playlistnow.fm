@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="{{ STATIC_URL }}local/reset.css" />
     <link rel="stylesheet" href="{{ STATIC_URL }}local/screen.css" />
     <link rel="stylesheet" href="{{ STATIC_URL }}local/prod.css" />
-    {% if empty %}
+    {% if empty or request.path == '/account/logout/' %}
     <!-- core js -->
     <script src="{% block jquery_src %}{{ STATIC_URL }}jquery.min.js{% endblock %}" type="text/javascript"></script>
     <script type="text/javascript">
@@ -70,7 +70,7 @@
                 </a>
             </li>
             <li>
-                <a class="button super blue" href="">
+                <a class="button super blue popup" href="{% url acct_signup %}">
                    <span>Become Member</span>
                 </a>
             </li>

@@ -220,15 +220,15 @@ var ui = {
                     $.history.load(data['url']); 
                 },
                 'fnFormatResult': function(value, data, currentValue) {
-                    console.log('please format', value, data, currentValue);
-                    html = '<img src="http://userserve-ak.last.fm/serve/34s/'+data['image']+'" />';
+                    html = '<a><img src="http://userserve-ak.last.fm/serve/34s/'+data['image']+'" />';
                     html+= ' ' + data['artist'];
                     if (data['track'] != undefined) {
-                        console.log('got track nam', data['track']);
                         html += ' / ' + data['track'];
                     }
+                    html += '</a>';
                     return html;
                 },
+                'deferRequestBy': 0,
             });
         }
 

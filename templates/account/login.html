@@ -17,9 +17,16 @@
     {% else %}
         {% ifsetting ACCOUNT_OPEN_SIGNUP %}
         {% url acct_signup as signup_url %}
-        <h1>{% blocktrans %}Don't have an account?</h1> <h2>One-click sign up to Playlistnow</h2>{% endblocktrans %}
+      
         {% endifsetting %}
     {% endif %}
+    
+<div class="network_tabs">
+		<a href="" class="selected"><span class="facebook">Facebook</span></a>
+		<a href=""><span class="twitter">Twitter<span></a>
+		<a href=""><span class="google">Google</span></a>
+		<div class="clear"></div>
+	</div>
 
 <script type="text/javascript" src="http://www.google.com/friendconnect/script/friendconnect.js?key=notsupplied&v=0.8"></script>
 <script type="text/javascript">

@@ -13,9 +13,25 @@
 {% block page_body_wrapper_class %}homepage{% endblock %}
 
 {% block body %}
-<form action="{% url music_search %}" method="get">
-    <input type="text" name="term" id="term" class="autocomplete" />
-    <input type="submit" value="{% trans "Search" %}" />
+
+<form action="{% url music_search %}" method="get" id="search_form">
+
+				<div class="avatar"><span><a href="home" onclick="return wind(this.href);"><img title="" src="{{ STATIC_URL }}images/avatar-logged.jpg" alt="Avatar" height="50px" width="50px"></a></span></div>
+				<div class="input">
+					<div class="iam" id="typeOfSearch">I am</div>
+					<div class="inputiam">
+						
+						<input  value="chilling, working, eating..." type="text" name="term" id="term" class="autocomplete">
+						
+					</div>
+
+				</div>
+
+
+ <div class="submit">
+					<button type="submit" class="form-search">{% trans "Search" %}</button>
+				</div>
+
 </form>
 {% endblock %}
 
