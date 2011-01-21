@@ -10,6 +10,13 @@ from django.conf import settings
 
 from tagging.fields import TagField
 
+from socialregistration.models import TwitterProfile, FacebookProfile
+
+TwitterProfile.add_to_class('avatar_url', models.TextField(null=True, blank=True))
+FacebookProfile.add_to_class('avatar_url', models.TextField(null=True, blank=True))
+TwitterProfile.add_to_class('url', models.TextField(null=True, blank=True))
+FacebookProfile.add_to_class('url', models.TextField(null=True, blank=True))
+
 class PlaylistProfile(models.Model):
     user = models.OneToOneField('auth.User', verbose_name=_(u'user'))
     user_location = models.CharField(max_length=100, verbose_name=_(u'location'), null=True, blank=True)
@@ -19,6 +26,7 @@ class PlaylistProfile(models.Model):
     fanof_tracks = models.ManyToManyField('music.Track', verbose_name=_(u'fav tracks'), null=True, blank=True, related_name='fans')
     
     last_playlist = models.ForeignKey('playlist.Playlist', verbose_name=_(u'last playlist'), null=True, blank=True)
+    avatar_url = models.TextField(null=True, blank=True, default='/site_media/static/images/avatar-logged.jpg')
 
     def get_absolute_url(self):
         return urlresolvers.reverse('user_details', args=(self.user.username,))

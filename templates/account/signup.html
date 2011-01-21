@@ -66,12 +66,16 @@
                         }
                     }
                 });
+                google.friendconnect.renderSignInButton({
+                    "id" : "connect_with_google",
+                    "text" : "Connect with google",
+                    "style" : "text"
+                });
             });
             </script>
 
-            <a onclick="google.friendconnect.requestSignIn();return false;" class="super button grey large ui_ignore" target="_blank">
-                <span class="google bold">Connect with google</span>
-            </a>
+            <div id="connect_with_google" onclick="return google.friendconnect.requestSignIn();return false;" class="button super grey">
+            </div>
             <p style="color: #999999;font-size:12px;margin-top:10px;">
                 <span class="bold">Connect to Google</span>
                 to sign in by clicking the button Connect with Google.

@@ -106,3 +106,6 @@ img.simplemodal-close {
 .bold {
     font-weight: bold;
 }
+.tab_content {
+    display: none;
+}

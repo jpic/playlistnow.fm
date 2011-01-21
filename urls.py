@@ -50,7 +50,7 @@ urlpatterns = patterns("",
     url(r'^music/', include('music.urls')),
     url('^activity/', include('actstream.urls')),
     url(
-        r'^postlogin/$', 
+        r'^me/$', 
         views.postlogin,
         name='postlogin'
     ),
@@ -58,6 +58,11 @@ urlpatterns = patterns("",
         r'^postregistration/$', 
         views.postregistration,
         name='postregistration'
+    ),
+    url(
+        r'^importfriends/$', 
+        views.importfriends,
+        name='importfriends'
     ),
     url(
         r'^tags/(?P<slug>[^/]+)/$', 

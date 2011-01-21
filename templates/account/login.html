@@ -21,54 +21,69 @@
         {% endifsetting %}
     {% endif %}
     
-<div class="network_tabs">
-		<a href="" class="selected"><span class="facebook">Facebook</span></a>
-		<a href=""><span class="twitter">Twitter<span></a>
-		<a href=""><span class="google">Google</span></a>
+    <div class="network_tabs">
+		<a class="tab_link tab_id_facebook"><span class="facebook">Facebook</span></a>
+		<a class="tab_link tab_id_twitter"><span class="twitter">Twitter</span></a>
+		<a class="tab_link tab_id_google"><span class="google">Google</span></a>
 		<div class="clear"></div>
 	</div>
 
-<script type="text/javascript" src="http://www.google.com/friendconnect/script/friendconnect.js?key=notsupplied&v=0.8"></script>
-<script type="text/javascript">
-      function onFriendConnectInitialized(st) {
-        if (!window.friendconnect_times_loaded) {
-          window.friendconnect_times_loaded = 1;
-        } else {
-          window.friendconnect_times_loaded++;
-        }
-        init(window.friendconnect_times_loaded);
-      };
-          
-      $(document).ready(function () {
-        google.friendconnect.container.setParentUrl('/');
-        google.friendconnect.container.loadOpenSocialApi({
-           site: '09173394585243409353',
-          onload: onFriendConnectInitialized
-        });
-      });
-      
-      function init(times) { };
-
-</script>
-
-        <script type="text/javascript">
-          google.friendconnect.renderSignInButton({
-            "id" : "login-fcbutton",
-            "text" : "Sign in with Google Friend Connect",
-            "style" : "long"
-          });
-          window.init = function(times) {
-            if (times > 1) {
-              window.top.location.href = "{% url gfc_callback %}";
+    <script type="text/javascript" src="http://www.google.com/friendconnect/script/friendconnect.js?key=notsupplied&v=0.8"></script>
+    <script type="text/javascript">
+          function onFriendConnectInitialized(st) {
+            if (!window.friendconnect_times_loaded) {
+              window.friendconnect_times_loaded = 1;
+            } else {
+              window.friendconnect_times_loaded++;
             }
+            init(window.friendconnect_times_loaded);
           };
-        </script>
-    <div id="login-fcbutton"></div>
-    {% facebook_button %}
+              
+          $(document).ready(function () {
+            google.friendconnect.container.setParentUrl('/');
+            google.friendconnect.container.loadOpenSocialApi({
+               site: '09173394585243409353',
+              onload: onFriendConnectInitialized
+            });
+          });
+          
+          function init(times) { };
+
+    </script>
+
+    <script type="text/javascript">
+      google.friendconnect.renderSignInButton({
+        "id" : "login-fcbutton",
+        "text" : "Sign in with Google Friend Connect",
+        "style" : "long"
+      });
+      window.init = function(times) {
+        if (times > 1) {
+          window.top.location.href = "{% url gfc_callback %}";
+        }
+      };
+    </script>
+    <div class="tab_content tab_id_google">
+            <div class="tabscontentL">Connect your Google account to Playlistnow to sign up or sign in by clicking the button Sign in with Google Friend Connect.</div>
+<div class="clear"></div>
+        <div id="login-fcbutton"></div>
+    </div>
+
+    <div class="tab_content tab_id_facebook">
+    <div class="tabscontentL">Connect your Facebook account to Playlistnow to sign up or sign in by clicking the button Connect with Facebook.</div>
+   <div class="clear"></div>
+   {% facebook_button %}
+    </div>
     {% facebook_js %}
 
-    {% twitter_button %}
+    <div class="tab_content tab_id_twitter">
+        <div class="tabscontentL">Connect your Twitter account to Playlistnow to sign up or sign in by clicking the button Sign in with Twitter.</div>
 <div class="clear"></div>
+    {% twitter_button %}
+    </div>
+
+    <div class="clear"></div>
+<div class="dividerin"></div>
     <div class="ad">
     {% blocktrans %}If you have any trouble logging in to your account, contact us at 
     <a href="mailto:{{ CONTACT_EMAIL }}">{{ CONTACT_EMAIL}}</a>.{% endblocktrans %}

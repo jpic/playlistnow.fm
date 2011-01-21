@@ -76,7 +76,7 @@
       if (!this.options.width) { this.options.width = this.el.width(); }
       this.mainContainerId = 'AutocompleteContainter_' + uid;
 
-      $('<div id="' + this.mainContainerId + '" style="position:absolute;z-index:9999;"><div class="autocomplete-w1"><div class="autocomplete" id="' + autocompleteElId + '" style="display:none; width:300px;"></div></div></div>').appendTo('body');
+      $('<div id="' + this.mainContainerId + '" style="position:absolute;z-index:9999;"><div class="autocomplete-w1"><ul class="auto"><div class="autocomplete" id="' + autocompleteElId + '" style="display:none; width:300px;"></div></div></div></ul>').appendTo('body');
 
       this.container = $('#' + autocompleteElId);
       this.fixPosition();
@@ -273,7 +273,7 @@
       this.container.hide().empty();
       for (i = 0; i < len; i++) {
         s = this.suggestions[i];
-        div = $((me.selectedIndex === i ? '<div class="selected"' : '<div') + ' title="' + s + '">' + f(s, this.data[i], v) + '</div>');
+        div = $((me.selectedIndex === i ? '<li class="selected"' : '<li') + ' title="' + s + '">' + f(s, this.data[i], v) + '</li>');
         div.mouseover(mOver(i));
         div.click(mClick(i));
         this.container.append(div);

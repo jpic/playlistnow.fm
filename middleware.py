@@ -14,6 +14,7 @@ IGNORE = r'^(site_media)|(ajax)'
 class DynamicHtmlMiddleware(object):
     def process_request(self, request):
         if not getattr(settings, 'AJAX_NAVIGATION', False):
+            request.noreload = True
             return None
 
         # attempt to fix winetricks ie7
@@ -29,6 +30,7 @@ class DynamicHtmlMiddleware(object):
 
         for url in settings.UI_IGNORE_URLS:
             if url in request.path_info:
+                request.noreload = True
                 request.ajax = False
                 return None
 

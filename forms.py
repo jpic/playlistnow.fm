@@ -1,6 +1,8 @@
 from django import forms
 from django.template import defaultfilters
 from django.contrib.auth.models import User
+from django.conf import settings
+from socialregistration.utils import OAuthTwitter
 
 class PostRegistrationForm(forms.ModelForm):
     location = forms.CharField(required=True)
@@ -12,6 +14,25 @@ class PostRegistrationForm(forms.ModelForm):
         request = kwargs.pop('request')
         
         instance = kwargs['instance']
+        if instance.gfcprofile_set.count() >= 1:
+            pass
+        if instance.twitterprofile_set.count() >= 1:
+            print "HAS TWITTER"
+            client = OAuthTwitter(
+                request, settings.TWITTER_CONSUMER_KEY,
+                settings.TWITTER_CONSUMER_SECRET_KEY,
+                settings.TWITTER_REQUEST_TOKEN_URL,
+            )
+        
+            user_info = client.get_user_info()
+            initial = {
+                'last_name': user_info['name'],
+                'first_name': user_info['name'],
+                'location': user_info['location'],
+            }
+            if not kwargs['instance'].playlistprofile.avatar_url:
+                kwargs['instance'].playlistprofile.avatar_url = user_info['profile_image_url']
+            kwargs['initial'].update(initial)
         if getattr(getattr(request, 'facebook', False), 'uid', False):
             upstream = request.facebook.graph.request(request.facebook.user['uid'])
             initial = {
@@ -22,10 +43,6 @@ class PostRegistrationForm(forms.ModelForm):
             }
             kwargs['initial'].update(initial)
 
-        if instance.gfcprofile_set.count() >= 1:
-            pass
-        if instance.twitterprofile_set.count() >= 1:
-            pass
 
         if instance.playlistprofile.user_location:
             kwargs['initial']['location'] = instance.playlistprofile.user_location

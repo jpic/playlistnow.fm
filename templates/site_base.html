@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="{{ STATIC_URL }}local/reset.css" />
     <link rel="stylesheet" href="{{ STATIC_URL }}local/screen.css" />
     <link rel="stylesheet" href="{{ STATIC_URL }}local/prod.css" />
-    {% if empty or request.path == '/account/logout/' %}
+    {% if empty or request.noreload %}
     <!-- core js -->
     <script src="{% block jquery_src %}{{ STATIC_URL }}jquery.min.js{% endblock %}" type="text/javascript"></script>
     <script type="text/javascript">
@@ -70,14 +70,14 @@
                 </a>
             </li>
             <li>
-                <a class="button super blue popup" href="{% url acct_signup %}">
+                <a class="button super blue" href="{% url acct_signup %}">
                    <span>Become Member</span>
                 </a>
             </li>
             {% else %}
             
 
-            <li> <span style="color:#fff;">{{ request.user }}</span>
+            <li> <span style="color:#fff;">{{ request.user.first_name }}</span>
                 <a class="button super blue ui_ignore" href="{% url acct_logout %}">
                    <span>Logout</span>
                 </a>
@@ -146,6 +146,13 @@
     <img src="{{ STATIC_URL }}local/ajax-loader.gif" />
     {% trans "loading" %}
 </div>
+{% if request.noreload %}
+<script type="text/javascript">
+$(document).ready(function(){ 
+    $('#ajaxload').fadeOut();
+});
+</script>
+{% endif %}
 
 <script src="{{ STATIC_URL }}swfobject/swfobject.js" type="text/javascript"></script>
 <script type="text/javascript">

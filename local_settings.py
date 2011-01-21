@@ -136,19 +136,22 @@ AUTHENTICATION_BACKENDS = (
 )
 
 UI_IGNORE_URLS = (
-    '/socialregistration/facebook/login/',
     '/admin',
     '/site_media',
-    '/socialregistration/twitter',
-    '/socialregistration/setup/',
+    
     '/gfc/redirect',
     '/gfc/callback',
-    '/socialregistration/facebook/connect',
+    
     '/account/logout/',
+
+    '/socialregistration/facebook/login/',
+    '/socialregistration/facebook/connect',
+    '/socialregistration/twitter',
+    '/socialregistration/setup',
 )
 
 GENERATE_USERNAME = True
 SOCIALREGISTRATION_GENERATE_USERNAME = True
 
 AJAX_NAVIGATION = True
-LOGIN_REDIRECT_URL = '/postlogin'
+LOGIN_REDIRECT_URL = '/me/'

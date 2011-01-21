@@ -2,30 +2,43 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"> 
 <html xmlns="http://www.w3.org/1999/xhtml"> 
 <head> 
-    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" /> 
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" /> 
+<script type="text/javascript" src="http://www.google.com/jsapi"></script> 
+<script type="text/javascript"> 
+google.load('friendconnect', '0.8');
+</script> 
+<script type="text/javascript"> 
+google.friendconnect.container.setParentUrl('/' /* location of rpc_relay.html and canvas.html */);
+google.friendconnect.container.initOpenSocialApi({
+site: '09173394585243409353',
+onload: function(securityToken) { initAllData(); }
+});
+</script> 
 
-    <script type="text/javascript" src="http://www.google.com/jsapi"></script> 
-    <script type="text/javascript"> 
-    google.load('friendconnect', '0.8');
-    </script> 
-    <script type="text/javascript"> 
-    google.friendconnect.container.setParentUrl('/');
-    google.friendconnect.container.initOpenSocialApi({
-        site: '09173394585243409353',
-        onload: function(securityToken) {
-            var req = opensocial.newDataRequest();
-            req.add(req.newFetchPersonRequest("VIEWER"), "viewer_data");
-            req.send(function(data) {
-                if (data.get("viewer_data").hadError()) {
-                    google.friendconnect.requestSignIn();
-                } else {
-                    window.location='{% url gfc_callback %}';
-                }
-            });
-        }
-    });
-    </script> 
-</head>
+</head> 
 <body>
+
+<script type="text/javascript"> 
+function initAllData()
+{
+    var req = opensocial.newDataRequest();
+    req.add(req.newFetchPersonRequest("VIEWER"), "viewer_data");
+    req.send(onData);
+};
+
+function onData(data)
+{
+    if (data.get("viewer_data").hadError())
+    {
+        
+        google.friendconnect.requestSignIn();
+    }else
+    {
+        window.location='{% url gfc_callback %}';
+    }
+}
+</script>
+
 </body>
+
 </html>

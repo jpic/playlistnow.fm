@@ -26,6 +26,11 @@ var ui = {
             if (document.getElementById('page_title')) {
                 document.title = $('#page_title').html();
             }
+
+            $('.tab_link:first').trigger('click');
+        });
+        $(document).bind('signalPopupOpen', function() {
+            $('.tab_link:first').trigger('click');
         });
         $(document).bind('signalPageUpdate', ui.setupForms);
         $(document).bind('signalPageUpdate', ui.setupPagination);
@@ -118,7 +123,17 @@ var ui = {
             return undefined;
         }
 
-        $('a:not(a.ui_ignore)').live('click', function(e) {
+        $('.tab_link').live('click', function(e) {
+            var tabid = $(this).attr('class').match(/tab_id_([a-z]*)/)[1];
+            $('.tab_content').hide().removeClass('selected');
+            $('.tab_content.tab_id_'+tabid).show().addClass('selected');
+        });
+
+        $('a:not(a.ui_ignore):not(a.tab_link)').live('click', function(e) {
+            // fugbix google.friendconnect.renderSignInButton
+            if ($(this).attr('href') == 'javascript:void(0);')
+                return true;
+
             e.preventDefault();
             var url = $(this).attr('href');
             if ($(this).hasClass('authenticationRequired') && !user.is_authenticated) {
@@ -220,12 +235,11 @@ var ui = {
                     $.history.load(data['url']); 
                 },
                 'fnFormatResult': function(value, data, currentValue) {
-                    html = '<a><img src="http://userserve-ak.last.fm/serve/34s/'+data['image']+'" />';
+                    html = '<img src="http://userserve-ak.last.fm/serve/34s/'+data['image']+'" />';
                     html+= ' ' + data['artist'];
                     if (data['track'] != undefined) {
                         html += ' / ' + data['track'];
                     }
-                    html += '</a>';
                     return html;
                 },
                 'deferRequestBy': 0,

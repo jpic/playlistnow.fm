@@ -133,6 +133,23 @@ def postregistration(request, form_class=PostRegistrationForm,
         form = form_class(request.POST, instance=request.user, request=request)
         if form.is_valid():
             form.save()
+            return http.HttpResponseRedirect(urlresolvers.reverse('importfriends'))
+    else:
+        form = form_class(instance=request.user, request=request)
+    
+    context['form'] = form
+    context.update(extra_context or {})
+    return shortcuts.render_to_response(template_name, context,
+        context_instance=template.RequestContext(request))
+
+def importfriends(request, form_class=PostRegistrationForm,
+    template_name='importfriends.html', extra_context=None):
+    context = {}
+
+    if request.method == 'POST':
+        form = form_class(request.POST, instance=request.user, request=request)
+        if form.is_valid():
+            form.save()
             return http.HttpResponseRedirect(urlresolvers.reverse('postlogin'))
     else:
         form = form_class(instance=request.user, request=request)

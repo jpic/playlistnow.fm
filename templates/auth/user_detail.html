@@ -36,7 +36,7 @@
 </div>
 {% endblock %}
 {% block body %}
-<div class="profile"><img src="{{ STATIC_URL }}images/avatar-logged.jpg" class="avatar left espace big" style="display: block;position: relative;vertical-align: middle;">
+<div class="profile"><img src="{{ user.playlistprofile.avatar_url }}" class="avatar left espace big" style="display: block;position: relative;vertical-align: middle;">
 
 <h1 style="line-height:16px">{{ user.first_name }} {{ user.last_name }} <span class="artist_rank">Rookie</span></h1> 
 
@@ -45,10 +45,16 @@
 			<span class="location">{{ user.playlistprofile.user_location }}</span> 
 			<span class="sep">|</span>
                 <a href="website" class="facebook">jonathan.y</a>
+
+            {% if user.twitterprofile_set.all.0 %}
 	        <span class="sep">|</span>
 			<a href="twitter" class="twitter">jonyou</a>
+            {% endif %}
+
+            {% if user.gfcprofile_set.all.0.url %}
 			<span class="sep">|</span>
-			<a href="twitter" class="gfc">google gfc</a>
+			<a href="{{ user.gfcprofile_set.all.0.url }}" class="gfc ui_ignore" target="_blank">google gfc</a>
+            {% endif %}
 					</li>
 			</ul>
 {% ifequal request.user user %}{% else %}

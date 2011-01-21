@@ -1,3 +1,4 @@
+import uuid
 import urllib2
 import simplejson
 import opensocial
@@ -10,6 +11,7 @@ from django.conf import settings
 from django.contrib import auth
 from django.contrib.auth.models import User
 from socialregistration.views import _get_next
+from django.template import defaultfilters
 
 from models import GfcProfile
 import gfc
@@ -46,14 +48,23 @@ def gfc_callback(request,
     user = auth.authenticate(uid=uid)
 
     container = gfc.my_opensocial_container(request)
-    crash
-    print container.fetch_person()
+    req = opensocial.FetchPersonRequest(uid, ['@all'])
+    result = container.send_request(req)
 
     if user is None:
-        request.session['socialregistration_user'] = User()
-        request.session['socialregistration_profile'] = GfcProfile(uid=uid)
-        request.session['next'] = _get_next(request)
-        return http.HttpResponseRedirect(urlresolvers.reverse('socialregistration_setup'))
+        user = User(
+            first_name=result['displayName'],
+            last_name=result['displayName'],
+            username=str(uuid.uuid4())[:30]
+        )
+        user.save()
+        user.playlistprofile.avatar_url = result['thumbnailUrl']
+        user.playlistprofile.save()
+        profile = GfcProfile(uid=uid, url=result['urls'][0]['value'], user=user)
+        profile.save()
+        user = auth.authenticate(uid=profile.uid)
+        auth.login(request, user)
+        return http.HttpResponseRedirect(urlresolvers.reverse('postregistration'))
 
     if not user.is_active:
         return shortcuts.render_to_response(account_inactive_template, context,
@@ -62,10 +73,6 @@ def gfc_callback(request,
     auth.login(request, user)
 
     return http.HttpResponseRedirect(_get_next(request))
-
-    context.update(extra_context or {})
-    return shortcuts.render_to_response(template_name, context,
-        context_instance=template.RequestContext(request))
 
 def gfc_redirect(request,
     template_name='gfc/redirect.html', extra_context=None):
