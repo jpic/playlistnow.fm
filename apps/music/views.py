@@ -167,6 +167,8 @@ def music_search_autocomplete(request, qname='query'):
                 defaultfilters.slugify(doc['artist']),
             ))
             suggestion = doc['artist']
+        else:
+            continue
 
         response['suggestions'].append(suggestion)
         response['data'].append(doc)

@@ -269,7 +269,7 @@ var ui = {
             /* failed */
             ui.currentUrl = false;
             $('#ajaxload').fadeOut();
-            alert('Sorry but your request failed. Our techies have been notified by mail and will take care of it');
+            ui.notifyUser('Sorry but your request failed. Our techies have been notified by mail and will take care of it');
         } else { 
             /* aborted */
         }

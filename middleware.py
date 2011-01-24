@@ -2,6 +2,7 @@ import re
 
 from django import http
 from django.conf import settings
+from django.core import urlresolvers
 
 JS_AGENTS = [
     'gecko',
@@ -46,7 +47,7 @@ class DynamicHtmlMiddleware(object):
            # local redirects to ajax (see process_response())
            request.ajax = True
 
-        elif request.path != '/empty/':
+        elif request.path != '/empty/' and request.method != 'POST':
             # automatic redirect to container for chrome user agents
             test = request.META['HTTP_USER_AGENT'].lower()
             for agent in JS_AGENTS:

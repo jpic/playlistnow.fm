@@ -1,5 +1,17 @@
 # -*- coding: utf-8 -*-
 
+import logging
+import os.path
+LOG_FILE=os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'log', 'django.log'))
+hdlr = logging.FileHandler(LOG_FILE)
+formatter = logging.Formatter('[%(asctime)s]%(levelname)-8s"%(message)s"','%Y-%m-%d %a %H:%M:%S') 
+
+hdlr.setFormatter(formatter)
+logger = logging.getLogger()
+logger.addHandler(hdlr)
+logger.setLevel(logging.NOTSET)
+
+
 DATABASES = {
     "default": {
         "ENGINE": "postgresql_psycopg2", # Add "postgresql_psycopg2", "postgresql", "mysql", "sqlite3" or "oracle".
@@ -76,7 +88,6 @@ MIDDLEWARE_CLASSES = [
 
 CACHES = {
     'default': {
-
         'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
         'LOCATION': '/var/tmp/django_cache',
     }
@@ -147,11 +158,12 @@ UI_IGNORE_URLS = (
     '/socialregistration/facebook/login/',
     '/socialregistration/facebook/connect',
     '/socialregistration/twitter',
-    '/socialregistration/setup',
+    #'/socialregistration/setup',
+    '/registration/userdata',
 )
 
-GENERATE_USERNAME = True
-SOCIALREGISTRATION_GENERATE_USERNAME = True
+GENERATE_USERNAME = False
+SOCIALREGISTRATION_GENERATE_USERNAME = GENERATE_USERNAME
 
 AJAX_NAVIGATION = True
 LOGIN_REDIRECT_URL = '/me/'

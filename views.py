@@ -14,8 +14,6 @@ from actstream import action
 from playlist.models import Playlist
 from music.models import Track
 
-from forms import PostRegistrationForm
-
 def group_activities(activities):
     if not activities:
         return activities
@@ -125,50 +123,24 @@ def empty(request,
     return shortcuts.render_to_response(template_name, context,
         context_instance=template.RequestContext(request))
 
-def postregistration(request, form_class=PostRegistrationForm,
-    template_name='postregistration.html', extra_context=None):
-    context = {}
-
-    if request.method == 'POST':
-        form = form_class(request.POST, instance=request.user, request=request)
-        if form.is_valid():
-            form.save()
-            return http.HttpResponseRedirect(urlresolvers.reverse('importfriends'))
-    else:
-        form = form_class(instance=request.user, request=request)
-    
-    context['form'] = form
-    context.update(extra_context or {})
-    return shortcuts.render_to_response(template_name, context,
-        context_instance=template.RequestContext(request))
-
-def importfriends(request, form_class=PostRegistrationForm,
-    template_name='importfriends.html', extra_context=None):
-    context = {}
-
-    if request.method == 'POST':
-        form = form_class(request.POST, instance=request.user, request=request)
-        if form.is_valid():
-            form.save()
-            return http.HttpResponseRedirect(urlresolvers.reverse('postlogin'))
-    else:
-        form = form_class(instance=request.user, request=request)
-    
-    context['form'] = form
-    context.update(extra_context or {})
-    return shortcuts.render_to_response(template_name, context,
-        context_instance=template.RequestContext(request))
-
-def postlogin(request,
-    template_name='postlogin.html', extra_context=None):
+def me(request,
+    template_name='me.html', extra_context=None):
     context = {}
 
     if not request.user.is_authenticated():
-        return http.HttpResponseForbidden()
-    
-    if not request.user.first_name:
-        return http.HttpResponseRedirect(urlresolvers.reverse('postregistration'))
-    
+        if not 'socialregistration_profile' in request.session:
+            return http.HttpResponseRedirect(urlresolvers.reverse(
+                'acct_signup'))
+        elif not 'socialregistration_userdata' in request.session:
+            return http.HttpResponseRedirect(urlresolvers.reverse(
+                'socialregistration_userdata'))
+        elif not 'socialregistration_friends' in request.session:
+            return http.HttpResponseRedirect(urlresolvers.reverse(
+                'socialregistration_friends'))
+        else:
+            return http.HttpResponseRedirect(urlresolvers.reverse(
+                'socialregistration_complete'))
+
     activities = user_stream(request.user)
     context['activities'] = group_activities(activities)
 

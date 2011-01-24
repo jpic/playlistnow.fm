@@ -63,26 +63,31 @@
             </li>
         </ul>
         <ul id="menu_right" class="right">
-            {% if not request.user.is_authenticated %}
-            <li> 
-                <a class="button super violet popup" href="{% url acct_login %}">
-                  <span>Login</span>
-                </a>
-            </li>
-            <li>
-                <a class="button super blue" href="{% url acct_signup %}">
-                   <span>Become Member</span>
-                </a>
-            </li>
+            {% if request.session.socialregistration_user %}
+                <li>
+                    <a class="button super blue" href="{% url socialregistration_setup %}">
+                       <span>Complete registration process</span>
+                    </a>
+                </li>
             {% else %}
-            
-
-            <li> <span style="color:#fff;">{{ request.user.first_name }}</span>
-                <a class="button super blue ui_ignore" href="{% url acct_logout %}">
-                   <span>Logout</span>
-                </a>
-            </li>
-
+                {% if not request.user.is_authenticated %}
+                <li> 
+                    <a class="button super violet popup" href="{% url acct_login %}">
+                      <span>Login</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="button super blue" href="{% url acct_signup %}">
+                       <span>Become Member</span>
+                    </a>
+                </li>
+                {% else %}
+                <li> <span style="color:#fff;">{{ request.user.first_name }}</span>
+                    <a class="button super blue ui_ignore" href="{% url acct_logout %}">
+                       <span>Logout</span>
+                    </a>
+                </li>
+                {% endif %}
             {% endif %}
         </ul>
     </div>

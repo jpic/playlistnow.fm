@@ -1,0 +1,45 @@
+{% extends 'site_base.html' %}
+
+{% load i18n %}
+
+{% block body %}
+
+    {% blocktrans %}
+    Advantages of registration: ...
+    {% endblocktrans %}
+
+    {% if request.user.is_authenticated %}
+        {% blocktrans %}
+        You are already authenticated, your registration was not canceled.
+        {% endblocktrans %}
+    {% else %}
+        {% if not request.session.socialregistration_user %}
+
+            {% blocktrans %}
+            Your registration was canceled.
+            {% endblocktrans %}
+
+        {% else %}
+            {% blocktrans %}
+            All you have to do to complete your registration:
+            {% endblocktrans %}
+
+            {% if not request.session.socialregistration_userdata %}
+            <a href="{% url socialregistration_userdata %}">{% trans "fill your profile" %}</a>
+            {% endif %}
+            {% if not request.session.socialregistration_friends %}
+            <a href="{% url socialregistration_friends %}">{% trans "find your friends" %}</a>
+            {% endif %}
+
+            {% blocktrans %}
+            Are you sure you want to cancel your registration ?
+            {% endblocktrans %}
+
+            <form action="{{ request.path }}" method="post" class="ui_ignore">
+                {% csrf_token %}
+                <input type="hidden" name="confirm" value="1" />
+                <input type="submit" value="{% trans 'I am sure i want to cancel anyway' %}" />
+            </form>
+        {% endif %}
+    {% endif %}
+{% endblock %}

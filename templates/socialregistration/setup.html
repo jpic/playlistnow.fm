@@ -1,15 +1,23 @@
+{% extends 'site_base.html' %}
+
 {% load socialregistration_tags %}
-<h1>Setup</h1>
+{% load uni_form_tags %}
+{% load i18n %}
+
+{% block body %}
+{% with 'userdata' as step %}
+{% include 'socialregistration/_steps.html' %}
+{% endwith %}
 
 {% if error %}
 	<p>Your session timed out. Please try again.</p>
 {% else %}
-	<form action="{% url socialregistration_setup %}" method="post">
-	    <table>
-	        {{ form }}
-	    </table>
+	<form action="{% url socialregistration_setup %}" method="post" class="ui_ignore">
+        {{ form.non_field_errors|as_uni_errors }}
+        {{ form|as_uni_form }}
+
 	    {% social_csrf_token %}
-	    <input type="submit" value="save" />
+        <div class="buttonHolder"><button class="primaryAction" type="submit">{% trans "Complete my registration" %}</button></div>
 	</form>
 {% endif %}
-
+{% endblock %}

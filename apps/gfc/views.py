@@ -54,17 +54,12 @@ def gfc_callback(request,
     if user is None:
         user = User(
             first_name=result['displayName'],
-            last_name=result['displayName'],
-            username=str(uuid.uuid4())[:30]
+            last_name=result['displayName']
         )
-        user.save()
-        user.playlistprofile.avatar_url = result['thumbnailUrl']
-        user.playlistprofile.save()
         profile = GfcProfile(uid=uid, url=result['urls'][0]['value'], user=user)
-        profile.save()
-        user = auth.authenticate(uid=profile.uid)
-        auth.login(request, user)
-        return http.HttpResponseRedirect(urlresolvers.reverse('postregistration'))
+        request.session['socialregistration_user'] = user
+        request.session['socialregistration_profile'] = profile
+        return http.HttpResponseRedirect(urlresolvers.reverse('socialregistration_setup'))
 
     if not user.is_active:
         return shortcuts.render_to_response(account_inactive_template, context,

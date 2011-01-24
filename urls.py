@@ -8,9 +8,10 @@ admin.autodiscover()
 from pinax.apps.account.openid_consumer import PinaxConsumer
 
 import views
+import registration
+import forms
 
 handler500 = "pinax.views.server_error"
-
 
 urlpatterns = patterns("",
     url(
@@ -49,20 +50,11 @@ urlpatterns = patterns("",
     url(r'^playlist/', include('playlist.urls')),
     url(r'^music/', include('music.urls')),
     url('^activity/', include('actstream.urls')),
+    url('^registration/', include(registration.urls)),
     url(
         r'^me/$', 
-        views.postlogin,
-        name='postlogin'
-    ),
-    url(
-        r'^postregistration/$', 
-        views.postregistration,
-        name='postregistration'
-    ),
-    url(
-        r'^importfriends/$', 
-        views.importfriends,
-        name='importfriends'
+        views.me,
+        name='me'
     ),
     url(
         r'^tags/(?P<slug>[^/]+)/$', 
@@ -82,7 +74,6 @@ urlpatterns = patterns("",
         views.user_details,
         name='user_details_tab'
     ),
-
 )
 
 

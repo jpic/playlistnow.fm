@@ -9,25 +9,14 @@
 {% block body %}
     <h1>{% trans "New to Playlistnow ?" %}</h1>
     
-    {% if user.is_authenticated %}
+    {% if request.user.is_authenticated %}
         <p>{% trans "You are already logged in." %}</p>
     {% else %}
         <h3>{% trans "Easy, free and social. Discover a new way to listen to and share music." %}!</h3>
-        
-<ul class="signin">
-    <li style="width:30%;float:left;" class="selected">
-        <div class="connect">Connect your account</div>
-        <div class="connect_text">Use one of your network to create your account in one-clik.</div>
-    </li>
-    <li style="width:30%;float:left;">
-        <div class="fill_form">Complete your registration</div>
-        <div class="connect_text">Verify and fill the form to complete your registration and create your account.</div>
-    </li>
-    <li style="width:30%;float:left;">
-        <div class="find_friends">Find friends</div>
-        <div class="connect_text">Playlistnow is more fun when you follow your friends.</div>
-    </li>
-</ul>
+    
+    {% with 'signup' as step %}
+    {% include 'socialregistration/_steps.html' %}
+    {% endwith %}
 
 <div style="margin:26px 0;padding:10px;">
     <ul>

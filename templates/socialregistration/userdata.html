@@ -5,7 +5,10 @@
 {% block head_title %}{% trans "Complete your registration" %}{% endblock %}
 
 {% block body %}
-<form action="{% url postregistration %}" method="post" class="uniForm">
+
+{% include 'socialregistration/_steps.html' %}
+
+<form action="{% url socialregistration_userdata %}" method="post" class="uniForm ui_ignore">
     {{ form.non_field_errors|as_uni_errors }}
     {% csrf_token %}
     {{ form|as_uni_form }}
