@@ -133,17 +133,18 @@ def playlist_track_modify(request,
                     else:
                         action.send(request.user, verb='added track to playlist', action_object=context['track'], target=context['playlist'])
             else:
-                msg = 'thanks for removing <a href="%s">%s</a> to playlist <a href="%s">%s</a>' % (
+                msg = 'thanks for removing <a href="%s">%s</a> from playlist <a href="%s">%s</a>' % (
                     context['track'].get_absolute_url(),
                     unicode(context['track']),
                     context['playlist'].get_absolute_url(),
                     unicode(context['playlist']),
                 )
-                if request.user.is_authenticated():
-                    if context['playlist'].pk == request.user.playlistprofile.tiny_playlist.pk:
-                        action.send(request.user, verb='unliked track', action_object=context['track'])
-                    else:
-                        action.send(request.user, verb='removed track from playlist', action_object=context['track'], target=context['playlist'])
+                # disabled negative actions
+#                if request.user.is_authenticated():
+#                    if context['playlist'].pk == request.user.playlistprofile.tiny_playlist.pk:
+#                        action.send(request.user, verb='unliked track', action_object=context['track'])
+#                    else:
+#                        action.send(request.user, verb='removed track from playlist', action_object=context['track'], target=context['playlist'])
             messages.add_message(request, messages.INFO, msg)
         except Exception:
             context['status'] = 'error'

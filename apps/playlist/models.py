@@ -7,8 +7,10 @@ from django.utils.translation import ugettext as _
 from django.core import urlresolvers
 from django.template import defaultfilters
 from django.conf import settings
+from django.contrib.comments.managers import CommentManager
 
 from tagging.fields import TagField
+from notification import models as notification
 
 from socialregistration.models import TwitterProfile, FacebookProfile
 
@@ -18,6 +20,48 @@ TwitterProfile.add_to_class('nick', models.TextField(null=True, blank=True))
 FacebookProfile.add_to_class('nick', models.TextField(null=True, blank=True))
 TwitterProfile.add_to_class('url', models.TextField(null=True, blank=True))
 FacebookProfile.add_to_class('url', models.TextField(null=True, blank=True))
+
+def create_notice_types(app, created_models, verbosity, **kwargs):
+    notification.create_notice_type("new_comment", "Comment posted", "Another member comments one of your actions")
+    notification.create_notice_type("new_follower", "New follower", "Another member follows you")
+    notification.create_notice_type("yourplaylist_bookmarked", "Bookmarked your playlist", "Another member bookmarks your playlist")
+    notification.create_notice_type("new_message", "New message", "Another member posted on your wall")
+    notification.create_notice_type("new_recomandation", "New recomandation", "A friend recomands you a particular song")
+    notification.create_notice_type("new_thanks", "You were thanked", "Another member thanked you for your contribution")
+signals.post_syncdb.connect(create_notice_types, sender=notification)
+
+def new_comment(sender, instance, created, **kwargs):
+    context = {}
+    recipients = []
+
+    # notify all users who commented the same object
+    for comment in instance._default_manager.for_model(instance.content_object):
+        if comment.user not in recipients and comment.user != instance.user:
+            recipients.append(comment.user)
+
+    # if the object is a user action then also notify the actor
+    if instance.content_object.__class__.__name__ == 'Action':
+        if instance.content_object.actor.__class__.__name__ == 'User' and \
+            instance.content_object.actor not in recipients and \
+            instance.content_object.actor != instance.user:
+            recipients.append(instance.content_object.actor)
+        if instance.content_object.action_object.__class__.__name__ == 'User' and \
+            instance.content_object.action_object not in recipients and \
+            instance.content_object.action_object != instance.user:
+            recipients.append(instance.content_object.action_object)
+            context['url'] = urlresolvers.reverse(
+                'user_details', args=(instance.content_object.action_object.username,))
+        if instance.content_object.target.__class__.__name__ == 'User' and \
+            instance.content_object.target not in recipients and \
+            instance.content_object.target != instance.user:
+            recipients.append(instance.content_object.target)
+            context['url'] = urlresolvers.reverse(
+                'user_details', args=(instance.content_object.target.username,))
+
+    context['comment'] = instance
+
+    notification.send(recipients, 'new_comment', context)
+signals.post_save.connect(new_comment, sender=models.get_model('comments', 'Comment'))
 
 class PlaylistProfile(models.Model):
     user = models.OneToOneField('auth.User', verbose_name=_(u'user'))

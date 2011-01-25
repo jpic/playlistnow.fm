@@ -119,36 +119,36 @@ def socialregistration_userdata(request, form_class=UserDataForm,
 
             user = profile.authenticate()
             auth.login(request, user)
-            request.user = user
+            #request.user = user
 
-            friends = []
-            conditions = []
-            user = request.user
+            #friends = []
+            #conditions = []
+            #user = request.user
             
-            for facebookprofile in user.facebookprofile_set.all():
-                friendlist = request.facebook.graph.request(request.facebook.user['uid'] + '/friends')
-                facebook_ids = [x['id'] for x in friendlist['data']]
-                conditions.append(Q(facebookprofile__uid__in=facebook_ids))
+            #for facebookprofile in user.facebookprofile_set.all():
+                #friendlist = request.facebook.graph.request(request.facebook.user['uid'] + '/friends')
+                #facebook_ids = [x['id'] for x in friendlist['data']]
+                #conditions.append(Q(facebookprofile__uid__in=facebook_ids))
         
-            if user.twitterprofile_set.count():
-                client = OAuthTwitter(
-                    request, settings.TWITTER_CONSUMER_KEY,
-                    settings.TWITTER_CONSUMER_SECRET_KEY,
-                    settings.TWITTER_REQUEST_TOKEN_URL,
-                )
-            for twitterprofile in user.twitterprofile_set.all():
-                res = client.query('http://api.twitter.com/1/statuses/friends.json')
-                twitter_ids = [x['id'] for x in res]
-                conditions.append(Q(twitterprofile__twitter_id__in=twitter_ids))
+            #if user.twitterprofile_set.count():
+                #client = OAuthTwitter(
+                    #request, settings.TWITTER_CONSUMER_KEY,
+                    #settings.TWITTER_CONSUMER_SECRET_KEY,
+                    #settings.TWITTER_REQUEST_TOKEN_URL,
+                #)
+            #for twitterprofile in user.twitterprofile_set.all():
+                #res = client.query('http://api.twitter.com/1/statuses/friends.json')
+                #twitter_ids = [x['id'] for x in res]
+                #conditions.append(Q(twitterprofile__twitter_id__in=twitter_ids))
         
-            for gfcprofile in user.gfcprofile_set.all():
-                container = gfc.my_opensocial_container(request)
-                res = container.fetch_friends()
-                gfc_ids = [x['id'] for x in res]
-                conditions.append(Q(gfcprofile__uid__in=gfc_ids))
+            #for gfcprofile in user.gfcprofile_set.all():
+                #container = gfc.my_opensocial_container(request)
+                #res = container.fetch_friends()
+                #gfc_ids = [x['id'] for x in res]
+                #conditions.append(Q(gfcprofile__uid__in=gfc_ids))
         
-            for u in User.objects.filter(reduce(operator.or_,conditions)):
-                follow(user, u)
+            #for u in User.objects.filter(reduce(operator.or_,conditions)):
+                #follow(user, u)
 
             return http.HttpResponseRedirect(urlresolvers.reverse('socialregistration_friends'))
         else:

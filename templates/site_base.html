@@ -61,6 +61,9 @@
             <li id="topheader_search">
                 <a href="{% url music_search %}" class="tiptip" title="Search songs or playlists"></a>
             </li>
+            <li id="topheader_feed">
+                <a href="{% url me %}" class="tiptip" title="Friend Feed"></a>
+            </li>
         </ul>
         <ul id="menu_right" class="right">
             {% if request.session.socialregistration_user %}
@@ -82,26 +85,30 @@
                     </a>
                 </li>
                 {% else %}
-                <li> <span style="color:#fff;">{{ request.user.first_name }}</span>
-                    <a class="button super blue ui_ignore" href="{% url acct_logout %}">
+               <li class="spacing">
+                    <a class="ui_ignore" href="{% url acct_logout %}">
                        <span>Logout</span>
                     </a>
                 </li>
-                <li> 
-                    <a class="button super violet" href="{% url notification_notice_settings %}">
+                <li class="spacing">
+                    <a href="{% url notification_notice_settings %}">
                       <span>Settings</span>
                     </a>
                 </li>
+                <li class="sep">&nbsp;</li>
                 {% endif %}
             {% endif %}
             {% if request.user.is_authenticated %}
+            
+              <li class="spacing"><a href="{% url user_details request.user.username %}">{{ request.user.first_name }} {{ request.user.last_name }}</a>
+            </li><li class="spacing_avat">
+                <a href="{% url user_details request.user.username %}"><img src="{{ request.user.playlistprofile.avatar_url }}" class="verysmall prof"/></a>
+                </li>
+              
+            <li class="sep">&nbsp;</li>
             <li>
-                <img src="{{ request.user.playlistprofile.avatar_url }}" />
-                {{ request.user.first_name }} {{ request.user.last_name }}
-            </li>
-            <li>
-                <a href="{% url playlist_add %}" class="authenticationRequired button super blue">
-                    Create playlist
+                <a href="{% url playlist_add %}" class="authenticationRequired button super blue popup">
+                    Create a new playlist
                 </a>
             </li>
             {% endif %}

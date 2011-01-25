@@ -56,7 +56,7 @@ def music_artist_fanship(request):
 
     else:
         artist.fans.remove(request.user.playlistprofile)
-        action.send(request.user, verb='is not anymore a fan of artist', action_object=artist)
+        #action.send(request.user, verb='is not anymore a fan of artist', action_object=artist)
         msg = 'thanks for quiting the fanclub of artist <a href="%s">%s</a>' % (
             artist.get_absolute_url(),
             unicode(artist)
@@ -76,7 +76,7 @@ def music_artist_details(request, name, tab='overview', paginate_by=10,
     context['object'] = Artist(name=name)
     context['object'].lastfm_get_info()
     try:
-        context['object'].local_artist = Artist.objects.get(name__iexact=name)
+        context['object'].local_artist = Artist.objects.get(name__iexact=context['object'].name)
 
         context['playlists_including_artist'] = Playlist.objects.filter(tracks__artist=context['object'].local_artist)
 

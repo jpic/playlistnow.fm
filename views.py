@@ -18,6 +18,9 @@ def group_activities(activities):
     if not activities:
         return activities
 
+    nogroup = [
+        'started following',
+    ]
     previous = None
     for activity in activities:
         if hasattr(activity, 'action_object'):
@@ -26,7 +29,7 @@ def group_activities(activities):
             else:
                 activity.action_object_group = [activity.action_object]
             
-        if previous and activity.verb == previous.verb:
+        if previous and activity.verb == previous.verb and activity.verb not in nogroup:
             activity.open = False
             previous.close = False
             if hasattr(activity, 'action_object') and activity.action_object.__class__ == previous.action_object.__class__:
