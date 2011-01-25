@@ -1,6 +1,8 @@
 import logging
 import gfc
 import opensocial
+import urllib
+import operator
 
 from django import http
 from django import shortcuts
@@ -10,10 +12,12 @@ from django.contrib import auth
 from django.conf import settings
 from django.core import urlresolvers
 from django.template import defaultfilters
+from django.db.models import Q
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.conf.urls.defaults import patterns, url
 
+from actstream.models import follow
 from socialregistration.utils import OAuthTwitter
 
 logger = logging.getLogger(__name__)
@@ -34,6 +38,8 @@ class UserDataForm(forms.Form):
     location = forms.CharField()
     email = forms.EmailField()
     avatar_url = forms.CharField(widget=forms.HiddenInput)
+    url = forms.CharField(widget=forms.HiddenInput)
+    nick = forms.CharField(widget=forms.HiddenInput)
 
 class RegistrationMiddleware(object):
     def process_request(self, request):
@@ -69,17 +75,11 @@ def socialregistration_userdata(request, form_class=UserDataForm,
     if request.method == 'POST':
         form = form_class(request.POST)
         if form.is_valid():
-            logging.debug('valid form')
             request.session['socialregistration_userdata'] = form.cleaned_data
-            logging.debug('set socialregistration_userdata session')
-
+            
             user = request.session['socialregistration_user']
             profile = request.session['socialregistration_profile']
             userdata = request.session['socialregistration_userdata']
-
-            logger.debug('user', request.session['socialregistration_user'])
-            logger.debug('profile', request.session['socialregistration_profile'])
-            logger.debug('userdata', request.session['socialregistration_userdata'])
 
             user.first_name = userdata['first_name']
             user.last_name = userdata['last_name']
@@ -98,18 +98,17 @@ def socialregistration_userdata(request, form_class=UserDataForm,
             else:
                 user.username = user_slug
             user.save()
-            logger.info('saved user', user)
 
             user.playlistprofile.user_location = userdata['location']
             user.playlistprofile.avatar_url = userdata['avatar_url']
             user.playlistprofile.user = user
             user.playlistprofile.save()
-            logger.info('saved playlistprofile', user.playlistprofile)
 
             profile.user = user
+            profile.avatar_url = userdata['avatar_url']
+            profile.url = userdata['url']
+            profile.nick = userdata['nick']
             profile.save()
-            logger.info('saved profile', profile)
-
 
             if 'socialregistration_user' in request.session: 
                 del request.session['socialregistration_user']
@@ -119,14 +118,41 @@ def socialregistration_userdata(request, form_class=UserDataForm,
                 del request.session['socialregistration_userdata']
 
             user = profile.authenticate()
-            logger.info('authenticated %s' % user)
             auth.login(request, user)
             request.user = user
-            logger.info('logged in %s' % user)
+
+            friends = []
+            conditions = []
+            user = request.user
+            
+            for facebookprofile in user.facebookprofile_set.all():
+                friendlist = request.facebook.graph.request(request.facebook.user['uid'] + '/friends')
+                facebook_ids = [x['id'] for x in friendlist['data']]
+                conditions.append(Q(facebookprofile__uid__in=facebook_ids))
+        
+            if user.twitterprofile_set.count():
+                client = OAuthTwitter(
+                    request, settings.TWITTER_CONSUMER_KEY,
+                    settings.TWITTER_CONSUMER_SECRET_KEY,
+                    settings.TWITTER_REQUEST_TOKEN_URL,
+                )
+            for twitterprofile in user.twitterprofile_set.all():
+                res = client.query('http://api.twitter.com/1/statuses/friends.json')
+                twitter_ids = [x['id'] for x in res]
+                conditions.append(Q(twitterprofile__twitter_id__in=twitter_ids))
+        
+            for gfcprofile in user.gfcprofile_set.all():
+                container = gfc.my_opensocial_container(request)
+                res = container.fetch_friends()
+                gfc_ids = [x['id'] for x in res]
+                conditions.append(Q(gfcprofile__uid__in=gfc_ids))
+        
+            for u in User.objects.filter(reduce(operator.or_,conditions)):
+                follow(user, u)
 
             return http.HttpResponseRedirect(urlresolvers.reverse('socialregistration_friends'))
         else:
-            logging.debug('invalid form')
+            logger.debug('invalid form')
     else:
         if profile.__class__.__name__ == 'FacebookProfile':
             upstream = request.facebook.graph.request(request.facebook.user['uid'])
@@ -135,7 +161,9 @@ def socialregistration_userdata(request, form_class=UserDataForm,
                 'last_name': upstream['last_name'],
                 'location': upstream['location']['name'],
                 'email': upstream['email'],
-                'avatar_url': '/site_media/static/images/avatar-logged.jpg',
+                'avatar_url': 'http://graph.facebook.com/%s/picture' % request.facebook.user['uid'],
+                'nick': '%s %s' % (upstream['first_name'], upstream['last_name']),
+                'url': upstream['link'],
             }
 
         elif profile.__class__.__name__ == 'TwitterProfile':
@@ -151,6 +179,8 @@ def socialregistration_userdata(request, form_class=UserDataForm,
                 'location': upstream['location'],
                 'email': '',
                 'avatar_url': upstream['profile_image_url'],
+                'url': 'http://twitter.com/%s' % upstream['screen_name'],
+                'nick': upstream['screen_name'],
             }
 
         elif profile.__class__.__name__ == 'GfcProfile':
@@ -163,6 +193,8 @@ def socialregistration_userdata(request, form_class=UserDataForm,
                 'location': '',
                 'email': '',
                 'avatar_url': upstream['thumbnailUrl'],
+                'url': upstream['urls'][0]['value'],
+                'nick': upstream['displayName'],
             }
         form = form_class(initial=initial)
 
@@ -178,14 +210,14 @@ def socialregistration_friends(request,
     context = {}
 
     friends = []
+    conditions = []
     user = request.user
     
     for facebookprofile in user.facebookprofile_set.all():
         friendlist = request.facebook.graph.request(request.facebook.user['uid'] + '/friends')
         facebook_ids = [x['id'] for x in friendlist['data']]
-        logging.info("Facebook ids %s" % facebook_ids)
-        #(facebookprofile__in=facebook_ids)
-
+        logger.info("Facebook ids %s" % facebook_ids)
+        conditions.append(Q(facebookprofile__uid__in=facebook_ids))
 
     if user.twitterprofile_set.count():
         client = OAuthTwitter(
@@ -195,7 +227,20 @@ def socialregistration_friends(request,
         )
     for twitterprofile in user.twitterprofile_set.all():
         res = client.query('http://api.twitter.com/1/statuses/friends.json')
-        logger.info('twitter res %s' % res)
+        twitter_ids = [x['id'] for x in res]
+        logger.info("twitter ids %s" % twitter_ids)
+        conditions.append(Q(twitterprofile__twitter_id__in=twitter_ids))
+
+    for gfcprofile in user.gfcprofile_set.all():
+        container = gfc.my_opensocial_container(request)
+        res = container.fetch_friends()
+        logger.info('res %s' % res)
+        gfc_ids = [x['id'] for x in res]
+        conditions.append(Q(gfcprofile__uid__in=gfc_ids))
+        logger.info('gfc ids %s' % gfc_ids)
+
+    context['friends'] = User.objects.filter(reduce(operator.or_,conditions))
+    context['follows'] = [f.actor for f in user.follow_set.all()]
 
     context.update(extra_context or {})
     return shortcuts.render_to_response(template_name, context,

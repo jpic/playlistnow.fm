@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "pinax.templatetags",
     
     # external
+    "notification", # must be first
     "staticfiles",
     "debug_toolbar",
     "mailer",
@@ -167,3 +168,8 @@ SOCIALREGISTRATION_GENERATE_USERNAME = GENERATE_USERNAME
 
 AJAX_NAVIGATION = True
 LOGIN_REDIRECT_URL = '/me/'
+
+ACCOUNT_EMAIL_VERIFICATION = False
+ACCOUNT_UNIQUE_EMAIL = EMAIL_CONFIRMATION_UNIQUE_EMAIL = False
+ACCOUNT_EMAIL_AUTHENTICATION = False
+EMAIL_HOST = 'mail'

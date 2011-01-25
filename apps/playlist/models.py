@@ -14,6 +14,8 @@ from socialregistration.models import TwitterProfile, FacebookProfile
 
 TwitterProfile.add_to_class('avatar_url', models.TextField(null=True, blank=True))
 FacebookProfile.add_to_class('avatar_url', models.TextField(null=True, blank=True))
+TwitterProfile.add_to_class('nick', models.TextField(null=True, blank=True))
+FacebookProfile.add_to_class('nick', models.TextField(null=True, blank=True))
 TwitterProfile.add_to_class('url', models.TextField(null=True, blank=True))
 FacebookProfile.add_to_class('url', models.TextField(null=True, blank=True))
 

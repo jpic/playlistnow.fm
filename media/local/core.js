@@ -182,6 +182,9 @@ var ui = {
                 }
 
                 var url = $(this).attr('action');
+                if (url == '') {
+                    url = ui.currentUrl;
+                }
     
                 $.ajax({
                     url: url,

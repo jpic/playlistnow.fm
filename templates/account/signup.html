@@ -37,36 +37,13 @@
                 to sign in by clicking the button Connect with Twitter.
             </p>
         </li>
-        <li style="width:30%;float:left;padding:2px 10px 0 17px;">
-            <script type="text/javascript" src="http://www.google.com/friendconnect/script/friendconnect.js?key=notsupplied&v=0.8"></script>
-            <script type="text/javascript">
-            $(document).ready(function () {
-                google.friendconnect.container.setParentUrl('/');
-                google.friendconnect.container.initOpenSocialApi({
-                    site: '09173394585243409353',
-                    onload: function(st) {
-                        if (!window.friendconnect_times_loaded) {
-                            window.friendconnect_times_loaded = 1;
-                        } else {
-                            window.friendconnect_times_loaded++;
-                        }
-                        if (window.friendconnect_times_loaded>1) {
-                            window.top.location.href = "{% url gfc_callback %}?st="+st;
-                        }
-                    }
-                });
-                google.friendconnect.renderSignInButton({
-                    "id" : "connect_with_google",
-                    "text" : "Connect with google",
-                    "style" : "text"
-                });
-            });
-            </script>
 
-            <div id="connect_with_google" onclick="return google.friendconnect.requestSignIn();return false;" class="button super grey">
-            </div>
+        <li style="width:30%;float:left;padding:2px 10px 0 17px;">
+            <a href="{% url gfc_redirect %}" class="super button grey large ui_ignore">
+                <span class="google bold">Connect with google</span>
+            </a>
             <p style="color: #999999;font-size:12px;margin-top:10px;">
-                <span class="bold">Connect to Google</span>
+                <span class="bold">Connect to Google</span> 
                 to sign in by clicking the button Connect with Google.
             </p>
         </li>

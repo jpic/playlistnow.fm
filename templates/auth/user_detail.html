@@ -50,17 +50,20 @@
 	<ul>
 				<li>
 			<span class="location">{{ user.playlistprofile.user_location }}</span> 
+            {% if user.facebookprofile_set.all.0 %}
 			<span class="sep">|</span>
-                <a href="website" class="facebook">jonathan.y</a>
-
+                <a href="{{ user.facebookprofile_set.all.0.url }}" class="facebook">{{ user.facebookprofile_set.all.0.nick}}</a>
+            {% endif %}
+   
+            {{ user.twitterprofile_set.count }}
             {% if user.twitterprofile_set.all.0 %}
 	        <span class="sep">|</span>
-			<a href="twitter" class="twitter">jonyou</a>
+			<a href="{{ user.twitterprofile_set.all.0.url }}" class="twitter">{{ user.twitterprofile_set.all.0.nick }}</a>
             {% endif %}
 
             {% if user.gfcprofile_set.all.0.url %}
 			<span class="sep">|</span>
-			<a href="{{ user.gfcprofile_set.all.0.url }}" class="gfc ui_ignore" target="_blank">google gfc</a>
+			<a href="{{ user.gfcprofile_set.all.0.url }}" class="gfc ui_ignore" target="_blank">{{ user.gfcprofile_set.all.0.nick }}</a>
             {% endif %}
 					</li>
 			</ul>

@@ -87,7 +87,23 @@
                        <span>Logout</span>
                     </a>
                 </li>
+                <li> 
+                    <a class="button super violet" href="{% url notification_notice_settings %}">
+                      <span>Settings</span>
+                    </a>
+                </li>
                 {% endif %}
+            {% endif %}
+            {% if request.user.is_authenticated %}
+            <li>
+                <img src="{{ request.user.playlistprofile.avatar_url }}" />
+                {{ request.user.first_name }} {{ request.user.last_name }}
+            </li>
+            <li>
+                <a href="{% url playlist_add %}" class="authenticationRequired button super blue">
+                    Create playlist
+                </a>
+            </li>
             {% endif %}
         </ul>
     </div>

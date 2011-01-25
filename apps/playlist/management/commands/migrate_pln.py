@@ -22,11 +22,11 @@ class Command(BaseCommand):
         conn = backend.DatabaseWrapper({'NAME': 'pln', 'USER': 'root', 'PASSWORD': '', 'HOST': 'localhost', 'PORT': '3306', 'OPTIONS': ''})
         old = conn.cursor()
 
-        #self.sync_users_accounts(old)
-        #self.sync_categories(old)
-        #self.sync_tracks(old)
-        #self.sync_playlists(old)
-        #self.sync_tiny_playlist(old)
+        self.sync_users_accounts(old)
+        self.sync_categories(old)
+        self.sync_tracks(old)
+        self.sync_playlists(old)
+        self.sync_tiny_playlist(old)
         self.sync_artists(old)
 
     def count_table(self, old, table):
