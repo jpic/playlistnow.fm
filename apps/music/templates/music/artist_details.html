@@ -17,19 +17,96 @@
 {# enable right column #}
 {% block page_body_right_class %}block{% endblock %}
 {% block body_right %}
-<h3>Share and Recommend</h3>
-<div class="profile">
+<h3>{% if playlists_including_artist.count %}{{ playlists_including_artist.count }}{% endif %} playlist <a href="" class="right">see all</a></h3>
+			
+			
+			 <ul class="sidebar_list">
 
-<div class="ad"><a href="website" class="facebook"><strong>Facebook</strong></a></div>
-<div class="ad"><a href="twitter" class="twitter"><strong>Twitter</strong></a></div>
-<div class="ad"><a href="google" class="gfc"><strong>Google Buzz</strong></a></div>
+             <li class="sidebar_playlist sidebar_info">
+                <a href="#">
+                    <span class="icon"></span>
+
+                    <span class="label">I am working in my computer</span>
+                </a>
+            </li>
+
+           <li class="sidebar_playlist sidebar_info">
+                <a href="/playlist/list/" title="all playlists you can listen to for free">
+
+                    <span class="icon"></span>
+                    <span class="label">I am chilling with my grand ma</span>
+
+                </a>
+            </li>
+            <li class="sidebar_playlist sidebar_info">
+                <a href="#">
+                    <span class="icon"></span>
+                    <span class="label">I am in my bathroom</span>
+
+                </a>
+            </li>
+
+            
+              
+            
+        </ul>
+        <div class="espacetop"></div>
+<h3><span class="fan">{% if object.local_artist.fans.count %}{{ object.local_artist.fans.count }}{% else %}0{% endif %} Fans</span> <a href="" class="right">see all</a></h3>
+			<div class="friends" style="line-height: 22px;">
+<a href="" class="tiptip" title="John Do"><img src="{{ STATIC_URL }}images/avatar-logged.jpg" class="avatar left espace verysmall sc"></a>
+<a href="" class="tiptip" title="John Do"><img src="{{ STATIC_URL }}images/avatar-logged.jpg" class="avatar left espace verysmall sc"></a>
+<a href="" class="tiptip" title="John Do"><img src="{{ STATIC_URL }}images/avatar-logged.jpg" class="avatar left espace verysmall sc"></a>
+<a href="" class="tiptip" title="John Do"><img src="{{ STATIC_URL }}images/avatar-logged.jpg" class="avatar left espace verysmall sc"></a>
+<a href="" class="tiptip" title="John Do"><img src="{{ STATIC_URL }}images/avatar-logged.jpg" class="avatar left espace verysmall sc"></a>
+<a href="" class="tiptip" title="John Do"><img src="{{ STATIC_URL }}images/avatar-logged.jpg" class="avatar left espace verysmall sc"></a>
+<a href="" class="tiptip" title="John Do"><img src="{{ STATIC_URL }}images/avatar-logged.jpg" class="avatar left espace verysmall sc"></a>
+<a href="" class="tiptip" title="John Do"><img src="{{ STATIC_URL }}images/avatar-logged.jpg" class="avatar left espace verysmall sc"></a>
+<a href="" class="tiptip" title="John Do"><img src="{{ STATIC_URL }}images/avatar-logged.jpg" class="avatar left espace verysmall sc"></a>
+
 </div>
-<div class="dividerin"></div>
+
+
+                
+
 <div class="clear"></div>
-<div class="ads centered">
-<img src="{{ STATIC_URL }}images/pub.png">
-</div>
-<div class="sep"></div>
+<div class="espacetop"></div>
+<h3>Next events</h3>
+<ul id="playlist-tags">
+
+<li><a title="home" href="/tags/home">home</a></li>
+
+<li><a title="work" href="/tags/work">work</a></li>
+
+<li><a title="office" href="/tags/office">office</a></li>
+
+<li><a title="party" href="/tags/party">party</a></li>
+
+<li><a title="rock" href="/tags/rock">rock</a></li>
+
+<li><a title="chill" href="/tags/chill">chill</a></li>
+
+<li><a title="love" href="/tags/love">love</a></li>
+
+<li><a title="happy" href="/tags/happy">happy</a></li>
+
+<li><a title="relax" href="/tags/relax">relax</a></li>
+
+<li><a title="dance" href="/tags/dance">dance</a></li>
+
+<li><a title="computer" href="/tags/computer">computer</a></li>
+
+<li><a title="fun" href="/tags/fun">fun</a></li>
+
+<li><a title="working" href="/tags/working">working</a></li>
+
+<li><a title="school" href="/tags/school">school</a></li>
+
+<li><a title="sad" href="/tags/sad">sad</a></li>
+
+</ul>
+
+
+
 
 {% endblock %}
 {% block body %}
@@ -107,18 +184,18 @@
     <h2 class="top_tracks" style="display:inline-block"> 
     <a href="{% url music_artist_details_tab object|slugify 'music' %}" title="{% trans 'more tracks' %}">
         {% trans "top tracks" %}
-        <span class="trail_title">{% trans 'all tracks' %}</span>
+        <span class="trail_title">{% trans '(see all tracks)' %}</span>
     </a>
     </h2>
     <div class="clear"></div>
 
     {% render_tracks object.tracks '' request %}
     {% endif %}
-    
+    <div class="espacetop"></div>
     <h2 class="similar_art" style="display:inline-block">
         <a href="{% url music_artist_details_tab object|slugify 'similar' %}" title="{% trans 'all similar artists' %}">
             {% trans "similar artists" %}
-            <span class="trail_title">{% trans 'all similar artists' %}</span>
+            <span class="trail_title">{% trans '(see all similar artists)' %}</span>
         </a>
     </h2>
     <div style="clear:both"></div>

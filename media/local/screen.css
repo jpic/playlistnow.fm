@@ -37,9 +37,11 @@ body, #html_body_wrapper {
     right: 0;
     overflow: auto;
     position: fixed;
+
 }
 #page_body_wrapper {
     min-height: 100%;
+
 }
 #page_body_right {
     width: 195px;
@@ -47,6 +49,7 @@ body, #html_body_wrapper {
     float: right;
     padding: 0 15px 15px 15px;
     margin: 15px 0 0 0 ;
+
 }
 #page_body {
     min-height: 100%;

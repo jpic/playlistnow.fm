@@ -55,7 +55,6 @@
                 <a href="{{ user.facebookprofile_set.all.0.url }}" class="facebook">{{ user.facebookprofile_set.all.0.nick}}</a>
             {% endif %}
    
-            {{ user.twitterprofile_set.count }}
             {% if user.twitterprofile_set.all.0 %}
 	        <span class="sep">|</span>
 			<a href="{{ user.twitterprofile_set.all.0.url }}" class="twitter">{{ user.twitterprofile_set.all.0.nick }}</a>

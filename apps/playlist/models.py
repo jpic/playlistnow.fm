@@ -1,4 +1,5 @@
 import simplejson
+from datetime import datetime
 
 from django.db import models
 from django.db.models import signals
@@ -41,6 +42,9 @@ def new_comment(sender, instance, created, **kwargs):
 
     # if the object is a user action then also notify the actor
     if instance.content_object.__class__.__name__ == 'Action':
+        instance.content_object.timestamp = datetime.now()
+        instance.content_object.save()
+
         if instance.content_object.actor.__class__.__name__ == 'User' and \
             instance.content_object.actor not in recipients and \
             instance.content_object.actor != instance.user:

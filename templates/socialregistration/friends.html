@@ -3,7 +3,7 @@
 {% load activity_tags %}
 
 {% block body %}
-<h1 style="line-height: 16px;">Add your friends <span style="font-size:12px;color:#666;float:right;">36 playlistnow users you may know</span></h1>
+<h1 style="line-height: 16px;">Add your friends <span style="font-size:12px;color:#666;float:right;">{{ friends.count }} playlistnow users you may know</span></h1>
 <div class="ad"><a href="">Follow all</a> - <a href="">Unfollow all</a></div> 
 
 {% get_user_contenttype ctype %}

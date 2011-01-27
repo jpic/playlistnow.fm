@@ -2,6 +2,7 @@ import logging
 import gfc
 import opensocial
 import urllib
+import simplejson
 import operator
 
 from django import http
@@ -226,7 +227,7 @@ def socialregistration_friends(request,
             settings.TWITTER_REQUEST_TOKEN_URL,
         )
     for twitterprofile in user.twitterprofile_set.all():
-        res = client.query('http://api.twitter.com/1/statuses/friends.json')
+        res = simplejson.loads(client.query('http://api.twitter.com/1/statuses/friends.json'))
         twitter_ids = [x['id'] for x in res]
         logger.info("twitter ids %s" % twitter_ids)
         conditions.append(Q(twitterprofile__twitter_id__in=twitter_ids))

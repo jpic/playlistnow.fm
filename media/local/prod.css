@@ -22,7 +22,7 @@ h2.event {padding-left:25px;background: transparent url(../images/icon-event.png
 h2.fan {padding-left:25px;background: transparent url(../images/heart.png) no-repeat 0px 0px;}
 h2.all_tr {padding-left:25px;background: transparent url(../images/icon-alltr.png) no-repeat 0px 0px;}
 
-#page_body_right h3 {margin: 0 0 10px 0;padding: 0 0 8px 0;font-size:13px;line-height: 16px;border-bottom: 2px solid #D3CDD1;color:#777;}
+#page_body_right h3 {margin: 0 0 10px 0;padding: 0 0 8px 0;font-size:13px;line-height: 16px;border-bottom: 1px solid #E2E2E2;color:#000;}
 #page_body_right h3.about {padding:14px 0 9px 45px;background: transparent  url(../images/about.png) no-repeat 0 50%;}
 
 
@@ -67,7 +67,7 @@ h2.all_tr {padding-left:25px;background: transparent url(../images/icon-alltr.pn
 .searched{padding:6px 9px;}
 
 /* Form */
-input {margin-bottom:10px; background: #fff url(../images/input-bg.png) no-repeat 0 0; margin: 0 0 10px; padding: 3px 4px; border: 1px solid #bbb; -moz-border-radius: 2px; -webkit-border-radius: 2px; -webkit-box-shadow: 0 1px 1px #fff; text-shadow: 0 0 1px #fff; color: #999; position: relative; z-index: 2; line-height: 18px;}
+input {margin-bottom:10px; background: #fff url(../images/input-bg.png) no-repeat 0 0; margin: 0 0 10px; padding: 6px 8px; border: 1px solid #bbb; -moz-border-radius: 2px; -webkit-border-radius: 2px; -webkit-box-shadow: 0 1px 1px #fff; text-shadow: 0 0 1px #fff; color: #999; position: relative; z-index: 2; line-height: 18px;}
 label{position: relative;color: #656565;display: block;font-size: 12px;font-weight: 700;line-height: 18px;cursor: pointer;margin-bottom: 5px;}
 select {border:1px solid #ccc;border-radius:4px;-moz-border-radius:4px;-webkit-border-radius:4px;padding:8px;-webkit-box-shadow:0 1px #fff;-moz-box-shadow:0 1px #fff;box-shadow:0 1px #fff;color:#222;font:14px/18px "Helvetica Neue",Arial,sans-serif;outline:none;white-space:pre-wrap;word-wrap:break-word;}
 input:focus,textarea:focus {background:#fff;outline:none;border-color:rgba(82,168,236,.75)!important;box-shadow:0 0 8px rgba(82,168,236,.5);-moz-box-shadow:0 0 8px rgba(82,168,236,.5);-webkit-box-shadow:0 0 8px rgba(82,168,236,.5);}
@@ -105,11 +105,12 @@ input:focus,textarea:focus {background:#fff;outline:none;border-color:rgba(82,16
 
 #menu_right {height: 24px; position: absolute; top: 3px; right: 20px; margin-left: 200px;}
 #menu_right ul{list-style:none; /*Remove the dots*/}
-#menu_right li {float: right; margin: 1px 0 0 4px; position:relative;}
+#menu_right li {float: right; margin: 1px 0 0 4px; position:relative;height: 24px;}
 
 #menu_right li.sep{background:url(../images/sepheader.png) top left repeat-y;margin:-22px 10px 0 10px;height:59px;width:1px;border:0;}
 
-#menu_right li a{color:#fff;font-weight:700;}
+#menu_right li a{color:#fff;font-weight:700;text-decoration:none;}
+#menu_right li a:hover{color:#ECECEC;font-weight:700;text-decoration:none;}
 #menu_right li.spacing{padding:5px 5px 0 5px;}
 #menu_right li.spacing_avat{padding:0px 0 0 10px;}
 #menu_right li img.prof{margin-top:2px;border:1px solid #fff;}
@@ -207,12 +208,12 @@ input:focus,textarea:focus {background:#fff;outline:none;border-color:rgba(82,16
 #sidebar .divider{background: #C9BFC3;height:1px; display:block;margin:10px 0;border-bottom:1px solid #E9E1E5;}
 .dividerin{background: #C9C4C8;height:1px; display:block;margin:10px 0;border-bottom:1px solid #D3CDD1;}
 /* Profile / Avatar */
-.avatar{display:block;margin:0px;border-radius: 4px;-moz-border-radius: 4px;-webkit-border-radius: 4px;-khtml-border-radius:4px;border:1px solid #bbbbbb;}
+.avatar{display:block;margin:0px;border-radius: 4px;-moz-border-radius: 4px;-webkit-border-radius: 4px;-khtml-border-radius:4px;}
 .avarar:hover{border-color:#999;border-color:rgba(201,2,92,.5);  border-radius: 4px;-moz-border-radius: 4px;-webkit-border-radius: 4px;-khtml-border-radius:4px;}
 .verysmall{width:25px;height:25px;}
 .small{width:45px;height:45px;}
 .medium{width:60px;height:60px;}
-.big{width: 80px;height:80px;}
+.big{width: 85px;height:85px;}
 
 .espace{margin-right:12px;}
 .espacetop{height:12px;display:block;}
@@ -303,7 +304,7 @@ line-height: 22px}
 /* Artistes Tabs */
 ul.tabs, ul.fake_tabs {
 background:#eaf3f9;
-  margin:10px 0 13px 0;
+  margin:5px 0 13px 0;
   padding: 6px 0px 5px 6px;
 text-transform:capitalize;
     height: 24px;
@@ -371,10 +372,10 @@ li.tab:hover { color: #461b50 }
 /* playlist list */
 
 div.playlist.line {
-   background:url(../images/line_bg.png) repeat-x top left #E1E1E1;
-    height: 62px;
+   
+    height: 65px;
     width: 100%;
-    padding: 0;
+    padding: 2px 0;
     font-size: 13px;
     line-height: 18px;
      -webkit-box-shadow: 0 1px 0 #fff;
@@ -382,7 +383,7 @@ div.playlist.line {
     border-radius: 4px;
     -moz-border-radius: 4px;
     -webkit-border-radius: 4px;
-    margin-bottom:5px;
+
 }
 
 div.playlist.line:hover {
@@ -403,11 +404,12 @@ div.playlist.line .description {
 }
 
 div.playlist.line .small_font {
-    font: 10px 'Trebuchet MS',Arial,Helvetica,sans-serif;
+    font-size: 10px;
 }
 
 div.playlist.line .description .dTitle {
- font: bold 15px 'Trebuchet MS', Arial, Helvetica, sans-serif;
+ font-weight: 700;
+ font-size:15px;
 }
 div.playlist.line .description .dTitle a{
 color: #491c53;}
@@ -577,7 +579,7 @@ div.ad {font-size: 12px;background: #EFE8ED;margin-bottom:10px;padding:7px;-webk
 	font-size: .75em;
 	font-weight: normal;
 	text-align: center;
-	color: #ddd;
+	color: #777;
 	border: 1px solid #ddd;
 	-webkit-border-radius: 6px;
 	-moz-border-radius: 6px;
@@ -588,7 +590,9 @@ div.ad {font-size: 12px;background: #EFE8ED;margin-bottom:10px;padding:7px;-webk
 
 div.ad_song {font-size: 12px;background: #EFE8ED url(../images/magnify.png) no-repeat 6px 8px;margin:10px 0;padding:7px 3px 7px 45px;-webkit-border-radius: 4px;
     -moz-border-radius: 4px;
-    border-radius: 4px;}
+    border-radius: 4px;
+    border:2px solid #C9B3C3;
+    }
     
 .delete{display:block;background:url(../images/remove.png) no-repeat bottom left;height:16px;width:16px;padding:6px 0 0 0;}
 
@@ -643,7 +647,10 @@ div.profile a.twitter
 div.profile a.gfc
 {padding:3px 6px 3px 25px;background: transparent  url(../images/ico_google.png) no-repeat 0 50%;}
 
-div.profile a.fan
+ a.fan
+{padding:3px 3px 3px 25px;background: transparent  url(../images/heart.png) no-repeat 0 50%;}
+
+ span.fan
 {padding:3px 3px 3px 25px;background: transparent  url(../images/heart.png) no-repeat 0 50%;}
 
 .statut {padding:3px 3px 3px 19px;background: transparent  url(../images/music.png) no-repeat 0 50%;}
