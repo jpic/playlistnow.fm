@@ -15,26 +15,38 @@
 
 
 <h3>Follower <a href="{% url user_details_tab user.username 'followers' %}" class="right">see all</a></h3>
-<div class="friends" style="line-height:22px;">
-{% for user in followers %}
-<a href="{{ user.playlistprofile.get_absolute_url }}" class="tiptip" title="{{ user.playlistprofile }}"><img src="{{ user.playlistprofile.avatar_url }}" class="avatar left espace verysmall sc"></a>
-{% endfor %}
-</div>
-<div class="clear espacetop"></div>
-<h3>Following <a href="{% url user_details_tab user.username 'follows' %}" class="right">see all</a></h3>
-<div class="friends" style="line-height:22px;">
-{% for user in follows %}
-<a href="{{ user.playlistprofile.get_absolute_url }}" class="tiptip" title="{{ user.playlistprofile }}"><img src="{{ user.playlistprofile.avatar_url }}" class="avatar left espace verysmall sc"></a>
-{% endfor %}
-</div>
-{% endblock %}
-{% block body %}
-<div class="profile"><img src="{{ user.playlistprofile.avatar_url }}" class="avatar left espace big" style="display: block;position: relative;vertical-align: middle;">
 
-<h1 style="line-height:16px">{{ user.first_name }} {{ user.last_name }} <span class="artist_rank">Rookie</span></h1> 
+<div class="friends" style="line-height:22px;">
+    {% for user in followers %}
+    <a href="{{ user.playlistprofile.get_absolute_url }}" class="tiptip" title="{{ user.playlistprofile }}"><img src="{{ user.playlistprofile.avatar_url }}" class="avatar left espace verysmall sc"></a>
+    {% endfor %}
+</div>
+
+<div class="clear espacetop"></div>
+
+<h3>Following 
+    <a href="{% url user_details_tab user.username 'follows' %}" class="right">see all</a>
+</h3>
+
+<div class="friends" style="line-height:22px;">
+    {% for user in follows %}
+    <a href="{{ user.playlistprofile.get_absolute_url }}" class="tiptip" title="{{ user.playlistprofile }}"><img src="{{ user.playlistprofile.avatar_url }}" class="avatar left espace verysmall sc"></a>
+    {% endfor %}
+</div>
+
+{% endblock %}
+
+
+{% block body %}
+<div class="profile">
+    <img src="{{ user.playlistprofile.avatar_url }}" class="avatar left espace big" style="display: block;position: relative;vertical-align: middle;">
+
+    <h1 style="line-height:16px">{{ user.first_name }} {{ user.last_name }}
+        <span class="artist_rank">Rookie</span>
+    </h1> 
 
 	<ul>
-				<li>
+        <li>
 			<span class="location">{{ user.playlistprofile.user_location }}</span> 
             {% if facebookprofile %}
 			<span class="sep">|</span>
@@ -50,25 +62,28 @@
 			<span class="sep">|</span>
 			<a href="{{ gfcprofile.url }}" class="gfc ui_ignore" target="_blank">{% if gfcprofile.nick %}{{ gfcprofile.nick }}{% else %}google{% endif %}</a>
             {% endif %}
-					</li>
-			</ul>
+        </li>
+    </ul>
+
 {% ifequal request.user user %}{% else %}
-	<div class="follow">
+    <div class="follow">
         <a href="{% url actstream_unfollow content_type_id=ctype.id  object_id=user.id %}" id="unfollow_button" style="display:none" class="button super grey">UNFOLLOW</a>
         <a href="{% url actstream_follow content_type_id=ctype.id  object_id=user.id %}" id="follow_button" class="button super grey">FOLLOW</a>
     </div>
 {% endifequal %}
-<script>
-$(function () {
-    $("#follow_button, #unfollow_button").click(function () {
-        $.post($(this).attr("href"), {});
-        $(this).parent().find("#follow_button, #unfollow_button").toggle();
-        return false
+
+    <script>
+    $(function () {
+        $("#follow_button, #unfollow_button").click(function () {
+            $.post($(this).attr("href"), {});
+            $(this).parent().find("#follow_button, #unfollow_button").toggle();
+            return false
+        });
     });
-});
-</script>
+    </script>
 
 </div>
+
 <div class="clear"></div>
 
 <ul id="tab_artist" class="tab_artist fake_tabs">
@@ -95,8 +110,11 @@ $(function () {
 </ul>
 
 <div class="clear"></div>
+
 {% if user.playlistprofile.last_playlist %}
-<div class="ad"><span class="statut">Last mood:</span> <a href="{{ user.playlistprofile.last_playlist.get_absolute_url }}" title="{% trans "details of" %} {{ user.playlistprofile.last_playlist }}"><strong>{{ user.playlistprofile.last_playlist }}</strong></a>
+<div class="ad">
+    <span class="statut">Last mood:</span>
+    <a class="bold" href="{{ user.playlistprofile.last_playlist.get_absolute_url }}" title="{% trans "details of" %} {{ user.playlistprofile.last_playlist }}">{{ user.playlistprofile.last_playlist }}</a>
 </div>
 {% endif %}
 
@@ -114,6 +132,7 @@ $(function () {
         $(this).parent().find('.comment_form_contents').toggle('slow');
     });
     </script>
+
 </div>
 {% endif %}
 
@@ -124,44 +143,55 @@ $(function () {
 {% endif %}
 
 {% if tab == 'follows' %}
-    <h2>Following</h2>
-    
+
+<h2>Following</h2>
     {% autopaginate follows_qs %}
-  <div class="list">
-      <div class="lineFeed" style="margin-top:-15px;"></div>
-     
+<div class="list">
+    <div class="lineFeed" style="margin-top:-15px;"></div>
+ 
     {% for user in follows_qs %}
     <div class="lineFeed">
-    <div class="left"><a href="{{ user.playlistprofile.get_absolute_url }}" title="{{ user.playlistprofile }}">
-        <img src="{{ user.playlistprofile.avatar_url }}" alt="{{ user.playlistprofile }}" class="avatar espace small"/></a></div>
-     <div class="left"><a href="{{ user.playlistprofile.get_absolute_url }}" title="{{ user.playlistprofile }}" class="bold">{{ user.playlistprofile }}</a></div>
-       <div class="clear"></div>
-    
-       <div class="clear"></div>
+        <div class="left">
+            <a href="{{ user.playlistprofile.get_absolute_url }}" title="{{ user.playlistprofile }}">
+                <img src="{{ user.playlistprofile.avatar_url }}" alt="{{ user.playlistprofile }}" class="avatar espace small"/>
+            </a>
+        </div>
+
+        <div class="left">
+            <a href="{{ user.playlistprofile.get_absolute_url }}" title="{{ user.playlistprofile }}" class="bold">{{ user.playlistprofile }}</a>
+        </div>
+       
+        <div class="clear"></div>
     </div>
     {% endfor %}
-    </div>
-      {% paginate %}
+</div>
+    {% paginate %}
+
 {% endif %}
 
 {% if tab == 'followers' %}
-    <h2>Followers</h2>
+<h2>Followers</h2>
     
     {% autopaginate followers_qs %}
-   <div class="list">
-      <div class="lineFeed" style="margin-top:-15px;"></div>
+<div class="list">
+    <div class="lineFeed" style="margin-top:-15px;"></div>
     {% for user in followers_qs %}
     <div class="lineFeed">
-   
-     <div class="left"><a href="{{ user.playlistprofile.get_absolute_url }}" title="{{ user.playlistprofile }}">
-        <img src="{{ user.playlistprofile.avatar_url }}" alt="{{ user.playlistprofile }}" class="avatar espace small"/></a></div>
-     <div class="left"><a href="{{ user.playlistprofile.get_absolute_url }}" title="{{ user.playlistprofile }}" class="bold">{{ user.playlistprofile }}</a></div>
-       <div class="clear"></div>
+        <div class="left">
+            <a href="{{ user.playlistprofile.get_absolute_url }}" title="{{ user.playlistprofile }}">
+                <img src="{{ user.playlistprofile.avatar_url }}" alt="{{ user.playlistprofile }}" class="avatar espace small"/>
+            </a>
+        </div>
+
+        <div class="left">
+            <a href="{{ user.playlistprofile.get_absolute_url }}" title="{{ user.playlistprofile }}" class="bold">{{ user.playlistprofile }}</a>
+        </div>
+       
+        <div class="clear"></div>
     </div>
-    
     {% endfor %}
-    </div>
-     {% paginate %}
+</div>
+    {% paginate %}
 {% endif %}
 
 {% if tab == 'artists' %}
