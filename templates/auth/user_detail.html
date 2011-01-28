@@ -14,32 +14,18 @@
 {% block body_right %}
 
 
-<h3>Follower</h3>
+<h3>Follower <a href="{% url user_details_tab user.username 'followers' %}" class="right">see all</a></h3>
 <div class="friends" style="line-height:22px;">
-<a href="" class="tiptip" title="John Do"><img src="{{ STATIC_URL }}images/avatar-logged.jpg" class="avatar left espace verysmall sc"></a>
-<a href="" class="tiptip" title="John Do"><img src="{{ STATIC_URL }}images/avatar-logged.jpg" class="avatar left espace verysmall sc"></a>
-<a href="" class="tiptip" title="John Do"><img src="{{ STATIC_URL }}images/avatar-logged.jpg" class="avatar left espace verysmall sc"></a>
-<a href="" class="tiptip" title="John Do"><img src="{{ STATIC_URL }}images/avatar-logged.jpg" class="avatar left espace verysmall sc"></a>
-<a href="" class="tiptip" title="John Do"><img src="{{ STATIC_URL }}images/avatar-logged.jpg" class="avatar left espace verysmall sc"></a>
-<a href="" class="tiptip" title="John Do"><img src="{{ STATIC_URL }}images/avatar-logged.jpg" class="avatar left espace verysmall sc"></a>
-<a href="" class="tiptip" title="John Do"><img src="{{ STATIC_URL }}images/avatar-logged.jpg" class="avatar left espace verysmall sc"></a>
-<a href="" class="tiptip" title="John Do"><img src="{{ STATIC_URL }}images/avatar-logged.jpg" class="avatar left espace verysmall sc"></a>
-<a href="" class="tiptip" title="John Do"><img src="{{ STATIC_URL }}images/avatar-logged.jpg" class="avatar left espace verysmall sc"></a>
-<a href="" class="tiptip" title="John Do"><img src="{{ STATIC_URL }}images/avatar-logged.jpg" class="avatar left espace verysmall sc"></a>
+{% for user in followers %}
+<a href="{{ user.playlistprofile.get_absolute_url }}" class="tiptip" title="{{ user.playlistprofile }}"><img src="{{ user.playlistprofile.avatar_url }}" class="avatar left espace verysmall sc"></a>
+{% endfor %}
 </div>
 <div class="clear espacetop"></div>
-<h3>Following</h3>
+<h3>Following <a href="{% url user_details_tab user.username 'follows' %}" class="right">see all</a></h3>
 <div class="friends" style="line-height:22px;">
-<a href="" class="tiptip" title="John Do"><img src="{{ STATIC_URL }}images/avatar-logged.jpg" class="avatar left espace verysmall sc"></a>
-<a href="" class="tiptip" title="John Do"><img src="{{ STATIC_URL }}images/avatar-logged.jpg" class="avatar left espace verysmall sc"></a>
-<a href="" class="tiptip" title="John Do"><img src="{{ STATIC_URL }}images/avatar-logged.jpg" class="avatar left espace verysmall sc"></a>
-<a href="" class="tiptip" title="John Do"><img src="{{ STATIC_URL }}images/avatar-logged.jpg" class="avatar left espace verysmall sc"></a>
-<a href="" class="tiptip" title="John Do"><img src="{{ STATIC_URL }}images/avatar-logged.jpg" class="avatar left espace verysmall sc"></a>
-<a href="" class="tiptip" title="John Do"><img src="{{ STATIC_URL }}images/avatar-logged.jpg" class="avatar left espace verysmall sc"></a>
-<a href="" class="tiptip" title="John Do"><img src="{{ STATIC_URL }}images/avatar-logged.jpg" class="avatar left espace verysmall sc"></a>
-<a href="" class="tiptip" title="John Do"><img src="{{ STATIC_URL }}images/avatar-logged.jpg" class="avatar left espace verysmall sc"></a>
-<a href="" class="tiptip" title="John Do"><img src="{{ STATIC_URL }}images/avatar-logged.jpg" class="avatar left espace verysmall sc"></a>
-<a href="" class="tiptip" title="John Do"><img src="{{ STATIC_URL }}images/avatar-logged.jpg" class="avatar left espace verysmall sc"></a>
+{% for user in follows %}
+<a href="{{ user.playlistprofile.get_absolute_url }}" class="tiptip" title="{{ user.playlistprofile }}"><img src="{{ user.playlistprofile.avatar_url }}" class="avatar left espace verysmall sc"></a>
+{% endfor %}
 </div>
 {% endblock %}
 {% block body %}
@@ -50,19 +36,19 @@
 	<ul>
 				<li>
 			<span class="location">{{ user.playlistprofile.user_location }}</span> 
-            {% if user.facebookprofile_set.all.0 %}
+            {% if facebookprofile %}
 			<span class="sep">|</span>
-                <a href="{{ user.facebookprofile_set.all.0.url }}" class="facebook">{{ user.facebookprofile_set.all.0.nick}}</a>
+                <a href="{{ facebookprofile.url }}" class="facebook">{% if facebookprofile.nick %}{{ facebookprofile.nick }}{% else %}facebook{% endif %}</a>
             {% endif %}
    
-            {% if user.twitterprofile_set.all.0 %}
+            {% if twitterprofile %}
 	        <span class="sep">|</span>
-			<a href="{{ user.twitterprofile_set.all.0.url }}" class="twitter">{{ user.twitterprofile_set.all.0.nick }}</a>
+			<a href="{{ twitterprofile.url }}" class="twitter">{% if twitterprofile.nick %}{{ twitterprofile.nick }}{% else %}twitter{% endif %}</a>
             {% endif %}
 
-            {% if user.gfcprofile_set.all.0.url %}
+            {% if gfcprofile.url %}
 			<span class="sep">|</span>
-			<a href="{{ user.gfcprofile_set.all.0.url }}" class="gfc ui_ignore" target="_blank">{{ user.gfcprofile_set.all.0.nick }}</a>
+			<a href="{{ gfcprofile.url }}" class="gfc ui_ignore" target="_blank">{% if gfcprofile.nick %}{{ gfcprofile.nick }}{% else %}google{% endif %}</a>
             {% endif %}
 					</li>
 			</ul>
@@ -135,6 +121,47 @@ $(function () {
     {% autopaginate playlists %}
     {% paginate %}
     {% render_playlists playlists %}
+{% endif %}
+
+{% if tab == 'follows' %}
+    <h2>Following</h2>
+    
+    {% autopaginate follows_qs %}
+  <div class="list">
+      <div class="lineFeed" style="margin-top:-15px;"></div>
+     
+    {% for user in follows_qs %}
+    <div class="lineFeed">
+    <div class="left"><a href="{{ user.playlistprofile.get_absolute_url }}" title="{{ user.playlistprofile }}">
+        <img src="{{ user.playlistprofile.avatar_url }}" alt="{{ user.playlistprofile }}" class="avatar espace small"/></a></div>
+     <div class="left"><a href="{{ user.playlistprofile.get_absolute_url }}" title="{{ user.playlistprofile }}" class="bold">{{ user.playlistprofile }}</a></div>
+       <div class="clear"></div>
+    
+       <div class="clear"></div>
+    </div>
+    {% endfor %}
+    </div>
+      {% paginate %}
+{% endif %}
+
+{% if tab == 'followers' %}
+    <h2>Followers</h2>
+    
+    {% autopaginate followers_qs %}
+   <div class="list">
+      <div class="lineFeed" style="margin-top:-15px;"></div>
+    {% for user in followers_qs %}
+    <div class="lineFeed">
+   
+     <div class="left"><a href="{{ user.playlistprofile.get_absolute_url }}" title="{{ user.playlistprofile }}">
+        <img src="{{ user.playlistprofile.avatar_url }}" alt="{{ user.playlistprofile }}" class="avatar espace small"/></a></div>
+     <div class="left"><a href="{{ user.playlistprofile.get_absolute_url }}" title="{{ user.playlistprofile }}" class="bold">{{ user.playlistprofile }}</a></div>
+       <div class="clear"></div>
+    </div>
+    
+    {% endfor %}
+    </div>
+     {% paginate %}
 {% endif %}
 
 {% if tab == 'artists' %}

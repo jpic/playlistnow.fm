@@ -22,7 +22,6 @@
 
     {% autopaginate object_list %}
     {% paginate %}
-
     {% render_playlists object_list %}
 </div>
 {% endblock %}
@@ -31,7 +30,7 @@
 <h3>Tags</h3>
 <ul id="playlist-tags">
 {% for tag in best_tags %}
-<li><a title="{{ tag }}" href="/tags/{{ tag }}">{{ tag }}</a></li>
+<li><a title="{{ tag }}" href="{% url tag_details tag %}">{{ tag }}</a></li>
 {% endfor %}
 </ul>
 <div class="clear espacetop"></div>

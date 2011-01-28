@@ -60,6 +60,11 @@ urlpatterns = patterns("",
         name='me'
     ),
     url(
+        r'^action/delete/(?P<action_id>[0-9]+)/$',
+        views.action_delete,
+        name='action_delete'
+    ),
+    url(
         r'^tags/(?P<slug>[^/]+)/$', 
         views.tag_details,
         name='tag_details'

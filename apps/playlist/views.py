@@ -14,6 +14,38 @@ from music.models import *
 from models import *
 from forms import *
 
+def playlist_fanship(request, playlist_pk):
+    if not request.method == 'POST':
+        return http.HttpResponseForbidden()
+
+    if not request.user.is_authenticated():
+        return http.HttpResponseForbidden()
+
+    if not 'action' in request.POST:
+        return http.HttpResponseForbidden()
+
+    playlist = Playlist.objects.get(pk=playlist_pk)
+    
+    if request.POST.get('action') == 'add':
+        playlist.fans.add(request.user.playlistprofile)
+        action.send(request.user, verb='bookmarks playlist', action_object=playlist)
+        msg = 'thanks for bookmarking <a href="%s">%s</a>' % (
+            playlist.get_absolute_url(),
+            unicode(playlist)
+        )
+        messages.add_message(request, messages.INFO, msg)
+
+    else:
+        playlist.fans.remove(request.user.playlistprofile)
+        #action.send(request.user, verb='is not anymore a fan of playlist', action_object=playlist)
+        msg = 'thanks for removing playlist <a href="%s">%s</a> from bookmarks' % (
+            playlist.get_absolute_url(),
+            unicode(playlist)
+        )
+        messages.add_message(request, messages.INFO, msg)
+
+    return http.HttpResponseRedirect(request.POST['next'])
+
 @decorators.login_required
 def playlist_track_modify(request,
     template_name='playlist/track_modify.html', extra_context=None):
@@ -253,6 +285,9 @@ def playlist_details(request, user, slug, default_format=False, qname='term',
         context['totalPages'] = int(math.ceil(len(track.matches) / paginate_by))
         context['allPages'] = range(1, context['totalPages'] + 1)
         context['currentPage'] = page
+
+    if request.user.is_authenticated():
+        context['is_fan'] = request.user.playlistprofile.fanof_playlists.filter(pk=object.pk).count()
 
     context.update(extra_context or {})
     return shortcuts.render_to_response(template_name, context,

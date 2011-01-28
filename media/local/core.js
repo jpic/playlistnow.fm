@@ -28,6 +28,7 @@ var ui = {
             }
 
             $('.tab_link:first').trigger('click');
+            $('.tiptip').tipTip();
         });
         $(document).bind('signalPopupOpen', function() {
             $('.tab_link:first').trigger('click');
@@ -166,11 +167,35 @@ var ui = {
             e.preventDefault();
             $(this).parent().remove();
         });
+
+        $('.lineFeedContentWhat .delete').live('click', function(e) {
+            var pk = $(this).attr('class').match(/action_pk_([0-9]+)/)[1];
+            var url = action_delete.replace(/0/, pk);
+            var what = $(this);
+
+            $.ajax({
+                url: url,
+                dataType: 'text',
+                data: {},
+                type: 'post',
+                success: function(html, textStatus, request) {
+                    if (what.parents('.lineFeed').find('.lineFeedContent').length > 1) {
+                        what.hide('slow');
+                    } else {
+                        what.parents('.lineFeed').hide('slow');
+                    }
+                    ui.notifyUser('Thanks for deleting this action');
+                    $('#ajaxload').fadeOut();
+                },
+                beforeSend: ui.beforeSend,
+                error: ui.error,
+            });
+        });
     },
     'notifyUser': function(message) {
         $('#user_notifications').append($('<li class="delete_self">'+message+' (click to close)</li>'));
     },
-     'setupForms': function() {
+    'setupForms': function() {
         if (ui.settings['ajaxEnable'] && $('form').length) {
             $('form:not(.ui_ignore)').submit(function(e) {
                 e.preventDefault();

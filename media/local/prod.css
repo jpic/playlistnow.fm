@@ -67,10 +67,10 @@ h2.all_tr {padding-left:25px;background: transparent url(../images/icon-alltr.pn
 .searched{padding:6px 9px;}
 
 /* Form */
-input {margin-bottom:10px; background: #fff url(../images/input-bg.png) no-repeat 0 0; margin: 0 0 10px; padding: 6px 8px; border: 1px solid #bbb; -moz-border-radius: 2px; -webkit-border-radius: 2px; -webkit-box-shadow: 0 1px 1px #fff; text-shadow: 0 0 1px #fff; color: #999; position: relative; z-index: 2; line-height: 18px;}
+input {margin-bottom:10px;width:100%; background: #fff url(../images/input-bg.png) repeat-x left top; margin: 0 0 10px; padding: 6px 8px; border: 1px solid #BCCFDE; -moz-border-radius: 4px; -webkit-border-radius: 4px; -webkit-box-shadow: 0 1px 1px #fff; text-shadow: 0 0 1px #fff; color: #999; position: relative; z-index: 2; line-height: 18px;}
 label{position: relative;color: #656565;display: block;font-size: 12px;font-weight: 700;line-height: 18px;cursor: pointer;margin-bottom: 5px;}
 select {border:1px solid #ccc;border-radius:4px;-moz-border-radius:4px;-webkit-border-radius:4px;padding:8px;-webkit-box-shadow:0 1px #fff;-moz-box-shadow:0 1px #fff;box-shadow:0 1px #fff;color:#222;font:14px/18px "Helvetica Neue",Arial,sans-serif;outline:none;white-space:pre-wrap;word-wrap:break-word;}
-input:focus,textarea:focus {background:#fff;outline:none;border-color:rgba(82,168,236,.75)!important;box-shadow:0 0 8px rgba(82,168,236,.5);-moz-box-shadow:0 0 8px rgba(82,168,236,.5);-webkit-box-shadow:0 0 8px rgba(82,168,236,.5);}
+input:focus,textarea:focus {outline:none;border-color:#BCCFDE!important;box-shadow:0 0 4px #BCCFDE;-moz-box-shadow:0 0 4px #BCCFDE;-webkit-box-shadow:0 0 4px #BCCFDE;}
 
 
 /* Header */
@@ -332,7 +332,8 @@ li.tab {
 li.tab span { line-height: 22px; }
 
 li.tab a {color:#2276bb}
-li.tab.selected  a {color:#fff}
+li.tab.selected  a {color:#fff;}
+li.tab.selected  a:hover {color:#fff;text-decoration:none;}
 
 li.tab.selected {
     color: #461b50;
@@ -346,8 +347,7 @@ li.tab.selected {
     font-weight: bold;
     display: block;
    line-height: 11px;
-     -webkit-border-radius: 10px; -moz-border-radius: 10px; border-radius: 10px;
-}
+     -webkit-border-radius: 10px; -moz-border-radius: 10px; border-radius: 10px;}
 li.tab:hover { color: #461b50 }
 
 
@@ -373,7 +373,7 @@ li.tab:hover { color: #461b50 }
 
 div.playlist.line {
    
-    height: 65px;
+    min-height: 70px;
     width: 100%;
     padding: 2px 0;
     font-size: 13px;
@@ -398,9 +398,9 @@ div.playlist.line .icon {
 
 div.playlist.line .description {
     float: left;
-    padding: 4px 0 0;
+    padding: 2px 0 2px 0;
  
-    height: 44px;
+    min-height: 58px;
 }
 
 div.playlist.line .small_font {
@@ -465,10 +465,11 @@ font-size: 0.80em;
 line-height: 20px;
 margin-top: 0pt;
 margin-right: 4px;
-margin-bottom: 5px;
+margin-bottom: 3px;
 margin-left: 0pt;}
-#playlist-tags a{color: #fff;display: block;font-weight: 700;padding: 3px 6px;background: #6D485D;border-color: #492D3D;border-style: solid;border-width: 1px 1px 0;border-radius: 2px;-moz-border-radius: 2px;-webkit-border-radius: 2px;box-shadow: 0 1px 0 0 #96ca6d inset;-moz-box-shadow: 0 1px 0 0 #AF819B inset;-webkit-box-shadow: 0 1px 0 0 #3F353B inset;text-shadow: 0 -1px 0 #3F353B;-moz-text-shadow: 0 -1px 0 #3F353B;-webkit-text-shadow: 0 -1px 0 #3F353B;}
-#playlist-tags a:hover{background:#492D3D;color:#fff;text-decoration:none;}
+
+#playlist-tags a{color: #CB1767;display: block;font-weight: 700;padding: 3px 6px;background-color: #E6E6E6;border-radius: 3px;-moz-border-radius: 3px;-webkit-border-radius: 3px;}
+#playlist-tags a:hover{background:#85003B;color:#fff;text-decoration:none;}
 
  
 /* Pagination */	
@@ -591,7 +592,7 @@ div.ad {font-size: 12px;background: #EFE8ED;margin-bottom:10px;padding:7px;-webk
 div.ad_song {font-size: 12px;background: #EFE8ED url(../images/magnify.png) no-repeat 6px 8px;margin:10px 0;padding:7px 3px 7px 45px;-webkit-border-radius: 4px;
     -moz-border-radius: 4px;
     border-radius: 4px;
-    border:2px solid #C9B3C3;
+  
     }
     
 .delete{display:block;background:url(../images/remove.png) no-repeat bottom left;height:16px;width:16px;padding:6px 0 0 0;}
@@ -775,3 +776,7 @@ width: 360px;
 	 -webkit-border-radius: 2px; -moz-border-radius: 2px; border-radius: 2px;
 	}
 .add_friend:first-child {margin:0;}
+
+.lineFeedContentWhat .delete {
+    float: right;
+}

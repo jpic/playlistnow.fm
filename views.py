@@ -3,12 +3,13 @@ from django import http
 from django import shortcuts
 from django import template
 from django.db.models import get_model
+from django.db import connection, transaction
 from django.contrib.auth import decorators
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 
 from tagging.models import Tag, TaggedItem
-from actstream.models import actor_stream, user_stream, model_stream
+from actstream.models import actor_stream, user_stream, model_stream, Follow, Action
 from actstream import action
 
 from playlist.models import Playlist
@@ -81,6 +82,20 @@ def add_activity(request):
 
     return http.HttpResponse('success')
 
+def action_delete(request, action_id):
+    if not request.user.is_authenticated():
+        return http.HttpResponseForbidden()
+    if not request.method == 'POST':
+        return http.HttpResponseForbidden()
+    try:
+        action = Action.objects.get(pk=action_id)
+    except Action.DoesNotExist:
+        return http.HttpResponseNotFound()
+    if action.actor != request.user:
+        return http.HttpResponseForbidden()
+    action.delete()
+    return http.HttpResponse('action deleted')
+
 def user_details(request, slug, tab='activities',
     template_name='auth/user_detail.html', extra_context=None):
     context = {
@@ -90,13 +105,45 @@ def user_details(request, slug, tab='activities',
     user = shortcuts.get_object_or_404(User, username=slug)
     context['user'] = user
 
+    c = ContentType.objects.get_for_model(User)
+
+    #follows_users_ids = Follow.objects.filter(user=user, content_type=c).exclude(object_id=user.pk).values_list('object_id', flat=True)
+    #follows_qs = User.objects.filter(id__in=follows_users_ids).select_related('playlistprofile')
+
+    follows_users_ids = Follow.objects.filter(user=user,
+                                              content_type__app_label='auth',
+                                              content_type__model='user') \
+                                      .exclude(object_id=user.pk) \
+                                      .values_list('object_id', flat=True)
+    follows_qs = User.objects.filter(id__in=follows_users_ids) \
+                             .select_related('playlistprofile')
+    followers_qs = User.objects.filter(follow__object_id=user.pk, follow__content_type=c).select_related('playlistprofile')
+
     if tab == 'playlists':
         context['playlists'] = user.playlist_set.all()
     elif tab == 'activities':
         activities = actor_stream(user)
         context['activities'] = group_activities(activities)
+    elif tab == 'follows':
+        context['follows_qs'] = follows_qs
+    elif tab == 'followers':
+        context['followers_qs'] = followers_qs
 
-    context['ctype'] = ContentType.objects.get_for_model(User)
+    # for the sidebar
+    context['follows'] = follows_qs._clone()[:20]
+    context['followers'] = followers_qs._clone()[:20]
+
+    profiles = user.twitterprofile_set.all()
+    if profiles:
+        context['twitterprofile'] = profiles[0]
+    profiles = user.facebookprofile_set.all()
+    if profiles:
+        context['facebookprofile'] = profiles[0]
+    profiles = user.gfcprofile_set.all()
+    if profiles:
+        context['gfcprofile'] = profiles[0]
+
+    context['ctype'] = c
     context.update(extra_context or {})
     return shortcuts.render_to_response(template_name, context,
         context_instance=template.RequestContext(request))

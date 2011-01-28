@@ -3,7 +3,9 @@
 
 {% tags_for_object obj as tags %}
 {% if tags %}
+<ul id="playlist-tags">
     {% for tag in tags %}
-        <a href="/tags/{{ tag }}/" title="{% trans "all playlists tagged" %} {{ tag }}">{{ tag }}</a>
+    <li><a title="{{ tag }}" href="{% url tag_details tag %}">{{ tag }}</a></li>
     {% endfor %}
+</ul>
 {% endif %}

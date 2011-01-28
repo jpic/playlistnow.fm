@@ -1,26 +1,30 @@
 {% load i18n cache extra_tagging_tags %}
 {% for object in object_list %}
 <div class="playlist line play">
-    <div class="icon" class="play" style="margin:4px 6px 0 6px;">
-        <img src="{{ STATIC_URL }}images/avatar-logged.jpg" style="background:#fff;border:1px solid #ddd;padding:2px;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px;" alt="{% trans "play" %} {{ object }}" class="play" />
+    <div class="icon" class="play" style="margin:4px 16px 0 2px;">
+        <img src="{{ STATIC_URL }}images/avatar-logged.jpg" style="background:#fff;border:1px solid #ddd;padding:2px;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px;width:60px;height:60px;" alt="{% trans "play" %} {{ object }}" class="play" />
     </div>
 
     <div class="description play"> 
-        <span class="dTitle play">
+        <div style="padding-bottom:1px;"><span class="dTitle play">
             <a href="{{ object.get_absolute_url }}" title="{% trans "play" %} {{ object }}" class="playlist link">{{ object }}</a>
         </span>
         <span class="dValue small_font play">({{ object.tracks.count }})</span>
-
+  <span class="dValue small_font play"> Created by 
+            <a href="{% url user_details object.creation_user.username %}" title="{% trans "details of user" %} {{ object.creation_user }}">
+            <span class="bold">{{ object.creation_user }}</span>
+            </a></span></div>
     {% if object.tags %}
         <div style="display: block"></div>
-        <span class="cTitle small_font play">Tags: </span>
-        <span class="cValue small_font play">
+        
+     
         {% show_tags_for object %}
-        </span>
+      
     {% endif %}
 
         {% if object.category %}
-        <br />
+        <div class="clear"></div>
+     <div style="display:block;">
         <span class="tTitle small_font play">Categories: </span>
         <span class="tValue small_font play">
             {% if object.category.parent %}
@@ -31,11 +35,9 @@
             {% if not forloop.last %}
             ,
             {% endif %}
-            - Created by 
-            <a href="{% url user_details object.creation_user.username %}" title="{% trans "details of user" %} {{ object.creation_user }}">
-            {{ object.creation_user }}
-            </a>
+          
         </span>
+        </div>
         {% endif %}
     </div>
     

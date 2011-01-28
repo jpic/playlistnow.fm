@@ -24,8 +24,10 @@
             </a>
             {% endif %}
         {% endblock %}
-            
-            <span class="delete">delete</span>
+            {% if request.user.is_authenticated and request.user == activity.actor %}
+            <span class="delete action_pk_{{ activity.pk }}">&nbsp;</span>
+            {% endif %}
+
         </div>
 {% if activity.close %}
         {% get_comment_count for activity as comment_count %}

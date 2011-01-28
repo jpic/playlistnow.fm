@@ -86,6 +86,10 @@ MIDDLEWARE_CLASSES = [
     "pagination.middleware.PaginationMiddleware",
     "socialregistration.middleware.FacebookMiddleware",
 ]
+INTERNAL_IPS = [
+    '80.29.91.108',
+]
+
 
 CACHES = {
     'default': {

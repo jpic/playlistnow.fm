@@ -4,6 +4,7 @@ import datetime
 from django.core.management.base import BaseCommand, CommandError
 from django import db
 from django.contrib.auth.models import User
+from actstream.models import follow
 
 from jpic.slughifi import slughifi
 from jpic.progressbar import ProgressBar
@@ -22,9 +23,10 @@ class Command(BaseCommand):
         conn = backend.DatabaseWrapper({'NAME': 'pln', 'USER': 'root', 'PASSWORD': '', 'HOST': 'localhost', 'PORT': '3306', 'OPTIONS': ''})
         old = conn.cursor()
 
-        self.sync_users_accounts(old)
-        self.sync_categories(old)
-        self.sync_tracks(old)
+        #self.sync_users_accounts(old)
+        #self.sync_followers(old)
+        #self.sync_categories(old)
+        #self.sync_tracks(old)
         self.sync_playlists(old)
         self.sync_tiny_playlist(old)
         self.sync_artists(old)
@@ -33,6 +35,27 @@ class Command(BaseCommand):
         old.execute('select count(*) from %s' % table)
         result = old.fetchone()
         return result[0]
+
+    def sync_followers(self, old):
+        print "Migrating followers ..."
+        prog = ProgressBar(0, self.count_table(old, 'users_followers'), 77, mode='fixed')
+
+        old.execute('select * from users_followers')
+        for old_follower in old.fetchall():
+            if not old_follower[0]: continue
+            if not old_follower[1]: continue
+
+            try:
+                user = User.objects.get(pk=old_follower[0])
+                follower = User.objects.get(pk=old_follower[1])
+                follow(follower, user, False)
+            except:
+                continue
+
+            prog.increment_amount()
+            print prog, '\r',
+            sys.stdout.flush()
+
 
     def sync_categories(self, old):
         print "Migrating categories ..."
@@ -62,8 +85,12 @@ class Command(BaseCommand):
             select 
                 u.id, 
                 u.name,
-                ue.email
-            from users u left join users_emails ue on ue.userId = u.id
+                ue.email,
+                ua.accountLocation,
+                ua.accountAvatar
+            from users u 
+            left join users_emails ue on ue.userId = u.id
+            left join users_accounts ua on ua.userId = u.id
         ''')
         for old_user in old.fetchall():
             # skipping the couple of nonames
@@ -78,6 +105,12 @@ class Command(BaseCommand):
             user.email = old_user[2] or 'no@email.com'
             user.first_name = old_user[1]
             user.save()
+
+            if old_user[3]:
+                user.playlistprofile.user_location = old_user[3]
+            if old_user[4]:
+                user.playlistprofile.avatar_url = old_user[4]
+            user.playlistprofile.save()
            
             old.execute('select * from users_accounts where userId = ' + str(old_user[0]))
             for old_account in old.fetchall():
@@ -177,7 +210,7 @@ class Command(BaseCommand):
 
             playlist.name = old_playlist[1]
             playlist.play_counter = old_playlist[2]
-            playlist.creation_datetime = old_playlist[3] or datetime.datetime.now()
+            playlist.creation_datetime = old_playlist[3] or datetime.now()
             try:
                 playlist.creation_user = User.objects.get(pk=old_playlist[4])
             except User.DoesNotExist:
@@ -189,7 +222,7 @@ select
     pc.categoryId
 from playlists_categories pc
 where
-pc.playlistId = %s
+    pc.playlistId = %s
 ''' % int(playlist.pk))
 
             for old_cat in old.fetchall():
@@ -199,6 +232,24 @@ pc.playlistId = %s
                 playlist.category = PlaylistCategory.objects.get(pk=old_cat[0])
 
             playlist.save()
+
+            old.execute('''
+select 
+    userId 
+from users_bookmarkedPlaylists
+where
+    playlistId = %s
+''' % int(playlist.pk))
+
+            for old_fan in old.fetchall():
+                # skipping more dead relations weee
+                if not old_fan[0]: continue
+
+                try:
+                    fan = User.objects.get(pk=old_fan[0])
+                    playlist.fans.add(fan.playlistprofile)
+                except:
+                    pass
 
             old.execute('''
 select 

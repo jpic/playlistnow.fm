@@ -78,7 +78,10 @@ def music_artist_details(request, name, tab='overview', paginate_by=10,
     try:
         context['object'].local_artist = Artist.objects.get(name__iexact=context['object'].name)
 
-        context['playlists_including_artist'] = Playlist.objects.filter(tracks__artist=context['object'].local_artist)
+        context['playlists_including_artist'] = Playlist.objects.filter(tracks__artist=context['object'].local_artist).distinct('name')
+
+        context['playlists_including_artist_slice'] = context['playlists_including_artist']._clone()[:3]
+        context['artist_fans_slice'] = context['object'].local_artist.fans.all()[:20]
 
         if request.user.is_authenticated():
             context['is_fan'] = context['object'].local_artist.fans.filter(user__pk=request.user.pk).count()

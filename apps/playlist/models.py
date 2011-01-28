@@ -78,6 +78,9 @@ class PlaylistProfile(models.Model):
     last_playlist = models.ForeignKey('playlist.Playlist', verbose_name=_(u'last playlist'), null=True, blank=True)
     avatar_url = models.TextField(null=True, blank=True, default='/site_media/static/images/avatar-logged.jpg')
 
+    def __unicode__(self):
+        return '%s %s' % (self.user.first_name, self.user.last_name)
+
     def get_absolute_url(self):
         return urlresolvers.reverse('user_details', args=(self.user.username,))
 

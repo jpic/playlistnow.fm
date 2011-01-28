@@ -19,6 +19,7 @@
     var playlist_track_modify = '{% url playlist_track_modify %}';
     var popup_auth = '{% url acct_login %}';
     var music_artist_fanship = '{% url music_artist_fanship %}';
+    var action_delete = '{% url action_delete 0 %}';
     var tiny_playlist_pk = {% if request.user.is_authenticated %}{{ request.user.playlistprofile.tiny_playlist.pk }}{% else %}0{% endif %};
     </script>
     <script type="text/javascript" src="{{ STATIC_URL }}local/core.js"></script>
