@@ -12,51 +12,62 @@
 {% endblock %}
 
 {% block body %}
-  <div class="left"><h1>{% trans "Playlist" %} {{ object }}</h1></div>
+<div class="left">
+    <h1>{% trans "Playlist" %} {{ object }}</h1>
+</div>
 
-<div class="right"><div class="follow">
-<form action="{% url playlist_fanship object.pk %}" class="authenticationRequired" method="post">
-    <input type="hidden" name="action" value="{% if is_fan %}remove{% else %}add{% endif %}" />
-    <input type="hidden" name="next" value="{{ request.path }}" />
-    <input type="submit" class="button super grey" value="{% if is_fan %}{% trans "stop being a fan" %}{% else %}become a fan{% endif %}" />
-</form>
+<div class="right">
+    <div class="follow">
+        <form action="{% url playlist_fanship object.pk %}" class="authenticationRequired" method="post">
+            <input type="hidden" name="action" value="{% if is_fan %}remove{% else %}add{% endif %}" />
+            <input type="hidden" name="next" value="{{ request.path }}" />
+            <input type="submit" class="button super grey" value="{% if is_fan %}{% trans "stop being a fan" %}{% else %}become a fan{% endif %}" />
+        </form>
+    </div>
 </div>
-</div>
+
 <div class="clear"></div>
- <div class="bold" style="margin-top:-9px;">{% trans 'Published by' %} <a href="{% url user_details object.creation_user.username %}" title="{{ object.creation_user.first_name }}: {% trans "activities on playlistnow.fm" %}" class="bold">{{ object.creation_user.first_name }}</a></div>
 
-<div class="ad_song" style="margin-top:2px;"><span style="display:none;">{% trans "add tracks" %}</span>
-
-<form method="get" action="{{ request.path }}">
-    <input type="text" name="term" value="Search by artist name and / or song name" 
-    onfocus="if(this.value=='Search by artist name and / or song name'){this.value='';}" id="term"  style="width:412px;"/>
-    <input type="hidden" name="search_artists" value="0" />
-    <input type="hidden" name="search_albums" value="0" />
-    <input type="submit" class="searched super violet  button" value="{% trans "Search" %}"/>
-</form>
-<div class="clear"></div>
+<div class="bold" style="margin-top:-9px;">
+    {% trans 'Published by' %}
+    <a href="{% url user_details object.creation_user.username %}" title="{{ object.creation_user.first_name }}: {% trans "activities on playlistnow.fm" %}" class="bold">{{ object.creation_user.first_name }}</a>
 </div>
 
+<div class="ad_song" style="margin-top:2px;">
+    <span style="display:none;">{% trans "add tracks" %}</span>
+
+    <form method="get" action="{{ request.path }}">
+        <input type="text" name="term" value="Search by artist name and / or song name" onfocus="if(this.value=='Search by artist name and / or song name'){this.value='';}" id="term"  style="width:412px;"/>
+        <input type="hidden" name="search_artists" value="0" />
+        <input type="hidden" name="search_albums" value="0" />
+        <input type="submit" class="searched super violet  button" value="{% trans "Search" %}"/>
+    </form>
+    <div class="clear"></div>
+</div>
 
 {% if tracks %}
 <div class="direct_add to_playlist_{{ object.pk }}">
-<div class="delete parent" style="float:right"></div>
-<h2>{% trans "results matching" %} {{ request.GET.q }}</h2>
-<div class="clear"></div>
-{% render_tracks tracks object request %}
-<div class="virtual pagination">
+    <div class="delete parent" style="float:right"></div>
+
+    <h2>{% trans "results matching" %} {{ request.GET.q }}</h2>
+
+    <div class="clear"></div>
+
+    {% render_tracks tracks object request %}
+    <div class="virtual pagination">
     {% for page in allPages %}
-    <a class="page {% if page == currentPage %}selected ui_prevent ui_ignore{% endif %}" href="{{ request.path_info }}?term={{ request.GET.term }}&search_artists=0&search_albums=0&page={{ page }}">{{ page }}</a>
+        <a class="page {% if page == currentPage %}selected ui_prevent ui_ignore{% endif %}" href="{{ request.path_info }}?term={{ request.GET.term }}&search_artists=0&search_albums=0&page={{ page }}">{{ page }}</a>
     {% endfor %}
-</div>
-<div class="clear"></div>
+    </div>
+    <div class="clear"></div>
 </div>
 {% endif %}
 
 <hr style="height:2px; background:#ddd;">
+
 <div class="playlist_track_list">
-<span id="playlist_pk" style="display:none">{{ object.pk }}</span>
-{% render_tracks user_tracks '' request %}
+    <span id="playlist_pk" style="display:none">{{ object.pk }}</span>
+    {% render_tracks user_tracks '' request %}
 </div>
 
 {% endblock %}
@@ -64,18 +75,19 @@
 {# enable right column #}
 {% block page_body_right_class %}block{% endblock %}
 {% block body_right %}
+
 <h3>{% trans "about" %}</h3>
+
 <div class="details views sidebox">
     <b>{{ object.play_counter }}</b> {% trans "times" %}
 </div>
 <div class="details count sidebox">
     <b>{{ object.tracks.count }}</b> {% trans "tracks" %}
 </div>
-<div class="clear"></div>
-<div class="ad">
-    
 
-   
+<div class="clear"></div>
+
+<div class="ad">
     <div class="lined">
         <b>{% trans 'Category' %}:</b> 
         <br />
@@ -87,17 +99,20 @@
         <a href="{{ object.category.get_absolute_url }}" title="{% trans "playlists for object.category" %} {{ object.category }}">{{ object.category }}</a>
     </div>
 </div>
+
 <div class="clear"></div>
 
 {% show_tags_for object %}
 
-          <div class="clear"></div>
-          <div class="dividerin "></div>
-        <div class="espacetop"></div>
+<div class="clear"></div>
+<div class="dividerin "></div>
+<div class="espacetop"></div>
+
 <h3><span class="fan">{{ object.fans.count }} Fans</span></h3>
-			<div class="friends" style="line-height: 22px;">
-            {% for fan in object.fans.all %}
-            <a href="{{ fan.get_absolute_url }}" class="tiptip" title="{{ fan }}"><img src="{{ fan.avatar_url }}" class="avatar left espace verysmall sc"></a>
-            {% endfor %}
+
+<div class="friends" style="line-height: 22px;">
+    {% for fan in object.fans.all %}
+    <a href="{{ fan.get_absolute_url }}" class="tiptip" title="{{ fan }}"><img src="{{ fan.avatar_url }}" class="avatar left espace verysmall sc"></a>
+    {% endfor %}
 </div>
 {% endblock %}
