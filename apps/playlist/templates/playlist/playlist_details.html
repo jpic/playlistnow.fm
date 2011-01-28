@@ -28,12 +28,12 @@
 
 <div class="clear"></div>
 
-<div class="bold" style="margin-top:-9px;">
+<div class="bold" style="margin:-8px 0 5px 0;">
     {% trans 'Published by' %}
     <a href="{% url user_details object.creation_user.username %}" title="{{ object.creation_user.first_name }}: {% trans "activities on playlistnow.fm" %}" class="bold">{{ object.creation_user.first_name }}</a>
 </div>
-
-<div class="ad_song" style="margin-top:2px;">
+<div class="clear"></div>
+<div class="ad_song">
     <span style="display:none;">{% trans "add tracks" %}</span>
 
     <form method="get" action="{{ request.path }}">
@@ -104,15 +104,16 @@
 
 {% show_tags_for object %}
 
-<div class="clear"></div>
-<div class="dividerin "></div>
-<div class="espacetop"></div>
+<div class="clear espacetop"></div>
 
-<h3><span class="fan">{{ object.fans.count }} Fans</span></h3>
+
+<h3 class="fan">{{ object.fans.count }} Fans</h3>
 
 <div class="friends" style="line-height: 22px;">
-    {% for fan in object.fans.all %}
-    <a href="{{ fan.get_absolute_url }}" class="tiptip" title="{{ fan }}"><img src="{{ fan.avatar_url }}" class="avatar left espace verysmall sc"></a>
+    {% for fan in playlist_fans_slice %}
+    <a href="{{ fan.get_absolute_url }}" class="tiptip" title="{{ fan }}">
+        <img src="{{ fan.avatar_url }}" class="avatar left espace verysmall sc">
+    </a>
     {% endfor %}
 </div>
 {% endblock %}

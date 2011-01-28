@@ -289,6 +289,8 @@ def playlist_details(request, user, slug, default_format=False, qname='term',
     if request.user.is_authenticated():
         context['is_fan'] = request.user.playlistprofile.fanof_playlists.filter(pk=object.pk).count()
 
+    context['playlist_fans_slice'] = context['object'].fans.all()[:20]
+
     context.update(extra_context or {})
     return shortcuts.render_to_response(template_name, context,
         context_instance=template.RequestContext(request))
