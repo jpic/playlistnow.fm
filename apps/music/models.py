@@ -84,14 +84,19 @@ class MusicalEntity(models.Model):
         query = gdata.youtube.service.YouTubeVideoQuery()
         
         query.vq = term.encode('utf-8')
-        query.max_results = 1
+        query.max_results = 7
         query.start_index = 1
         query.racy = 'exclude'
         query.format = '5'
         query.orderby = 'relevance'
         #query.restriction = 'fr'
         feed = client.YouTubeQuery(query)
-        
+
+        for k in range(0, len(feed.entry) - 1):
+            for a in feed.entry[k].author:
+                if a.name.text.find('VEVO') > -1:
+                    feed.entry.pop(k)
+
         cache.set(key, feed.entry, 24*3600)
 
         return feed.entry
