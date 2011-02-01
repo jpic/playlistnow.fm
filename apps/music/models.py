@@ -17,6 +17,28 @@ import gdata.youtube.service
 # Prevent: XMLSyntaxError: Attempt to load network entity
 etree.set_default_parser(etree.XMLParser(no_network=False, recover=True))
 
+class Recommendation(models.Model):
+    source = models.ForeignKey('auth.User', related_name='recommends')
+    target = models.ForeignKey('auth.User', related_name='recommendations')
+    track  = models.ForeignKey('music.Track')
+    thanks = models.BooleanField(default=False)
+
+    creation_date = models.DateField(auto_now_add=True)
+    thank_date = models.DateField()
+
+    def __unicode__(self):
+        if self.thanks:
+            and_was_thanked = 'and was thanked'
+        else:
+            and_was_thanked = ''
+
+        return u'%s recommends %s to %s%s' % (
+            self.source,
+            self.target,
+            self.track,
+            and_was_thanked
+        )
+
 class MusicalEntity(models.Model):
     mbid = models.CharField(max_length=64, null=True, blank=True)
     image_small = models.CharField(max_length=100, null=True, blank=True)

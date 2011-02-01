@@ -9,22 +9,18 @@
         <div style="padding-bottom:1px;"><span class="dTitle play">
             <a href="{{ object.get_absolute_url }}" title="{% trans "play" %} {{ object }}" class="playlist link">{{ object }}</a>
         </span>
-        <span class="dValue small_font play">({{ object.tracks.count }})</span>
-  <span class="dValue small_font play"> Created by 
-            <a href="{% url user_details object.creation_user.username %}" title="{% trans "details of user" %} {{ object.creation_user }}">
-            <span class="bold">{{ object.creation_user }}</span>
-            </a></span></div>
-    {% if object.tags %}
-        <div style="display: block"></div>
-        
-     
-        {% show_tags_for object %}
-      
-    {% endif %}
+            <span class="dValue small_font play">({{ object.tracks.count }})</span>
+       </div>
+   
 
         {% if object.category %}
         <div class="clear"></div>
      <div style="display:block;">
+  
+  <span class="dValue small_font play"> Created by 
+            <a href="{% url user_details object.creation_user.username %}" title="{% trans "details of user" %} {{ object.creation_user }}">
+            <span class="bold">{{ object.creation_user }}</span>
+            </a></span>  - 
         <span class="tTitle small_font play">Categories: </span>
         <span class="tValue small_font play">
             {% if object.category.parent %}
@@ -39,6 +35,13 @@
         </span>
         </div>
         {% endif %}
+         {% if object.tags %}
+        <div style="display: block"></div>
+        
+     
+        {% show_tags_for object %}
+      
+    {% endif %}
     </div>
     
     <div class="play right">

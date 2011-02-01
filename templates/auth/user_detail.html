@@ -38,37 +38,12 @@
 
 
 {% block body %}
-<div class="profile">
-    <img src="{{ user.playlistprofile.avatar_url }}" class="avatar left espace big" style="display: block;position: relative;vertical-align: middle;">
-
-    <h1 style="line-height:16px">{{ user.first_name }} {{ user.last_name }}
-        <span class="artist_rank">Rookie</span>
-    </h1> 
-
-	<ul>
-        <li>
-			<span class="location">{{ user.playlistprofile.user_location }}</span> 
-            {% if facebookprofile %}
-			<span class="sep">|</span>
-                <a href="{{ facebookprofile.url }}" class="facebook">{% if facebookprofile.nick %}{{ facebookprofile.nick }}{% else %}facebook{% endif %}</a>
-            {% endif %}
-   
-            {% if twitterprofile %}
-	        <span class="sep">|</span>
-			<a href="{{ twitterprofile.url }}" class="twitter">{% if twitterprofile.nick %}{{ twitterprofile.nick }}{% else %}twitter{% endif %}</a>
-            {% endif %}
-
-            {% if gfcprofile.url %}
-			<span class="sep">|</span>
-			<a href="{{ gfcprofile.url }}" class="gfc ui_ignore" target="_blank">{% if gfcprofile.nick %}{{ gfcprofile.nick }}{% else %}google{% endif %}</a>
-            {% endif %}
-        </li>
-    </ul>
-
-{% ifequal request.user user %}{% else %}
+   <div class="profile">
+ <div class="right" style="margin-top:-5px;">
+ {% ifequal request.user user %}{% else %}
     <div class="follow">
-        <a href="{% url actstream_unfollow content_type_id=ctype.id  object_id=user.id %}" id="unfollow_button" style="display:none" class="button super grey">UNFOLLOW</a>
-        <a href="{% url actstream_follow content_type_id=ctype.id  object_id=user.id %}" id="follow_button" class="button super grey">FOLLOW</a>
+        <a href="{% url actstream_unfollow content_type_id=ctype.id  object_id=user.id %}" id="unfollow_button" style="display:none" class="button super green"><span class="follow">Following</span></a>
+        <a href="{% url actstream_follow content_type_id=ctype.id  object_id=user.id %}" id="follow_button" class="button super grey"><span class="follow">Follow</span></a>
     </div>
 {% endifequal %}
 
@@ -83,8 +58,46 @@
     </script>
 
 </div>
+ 
+ <div class="profile-picture left">
+ <img src="{{ user.playlistprofile.avatar_url }}" class="espace">
+</div>
 
-<div class="clear"></div>
+  <div class="profile-name">
+    <h1>{{ user.first_name }} {{ user.last_name }} <span class="artist_rank">Rookie</span></h1> 
+
+	<div class="profile-info">
+	<ul>
+	<li>
+			<span class="location">Lives in {{ user.playlistprofile.user_location }}</span> 
+            {% if facebookprofile %}
+			
+                <a href="{{ facebookprofile.url }}" class="facebook">{% if facebookprofile.nick %}{{ facebookprofile.nick }}{% else %}<span class="bold">Facebook</span>{% endif %}</a>
+            {% endif %}
+   
+            {% if twitterprofile %}
+	       
+			<a href="{{ twitterprofile.url }}" class="twitter">{% if twitterprofile.nick %}{{ twitterprofile.nick }}{% else %}<span class="bold">Twitter</span>{% endif %}</a>
+            {% endif %}
+
+            {% if gfcprofile.url %}
+			
+			<a href="{{ gfcprofile.url }}" class="gfc ui_ignore" target="_blank">{% if gfcprofile.nick %}{{ gfcprofile.nick }}{% else %}<span class="bold">Google</span>{% endif %}</a>
+            {% endif %}
+        </li>
+        <li><span class="fan">Affinities: 34 pourcent</span></li>
+    </ul>
+
+</div>
+ <div class="clear"></div>
+ 
+ {% if user.playlistprofile.last_playlist %}
+ <div class="framktop"></div>
+<div class="ad">
+    <span class="statut">Last mood:</span>
+    <a class="bold" href="{{ user.playlistprofile.last_playlist.get_absolute_url }}" title="{% trans "details of" %} {{ user.playlistprofile.last_playlist }}">{{ user.playlistprofile.last_playlist }}</a>
+</div>
+{% endif %}
 
 <ul id="tab_artist" class="tab_artist fake_tabs">
     <li class="tab first {% if tab == 'activities' %}selected{% endif %}">
@@ -107,19 +120,12 @@
         {% trans "recommended songs" %}
         </a>
     </li>
+    <div class="clear"></div>
 </ul>
-
 <div class="clear"></div>
 
-{% if user.playlistprofile.last_playlist %}
-<div class="ad">
-    <span class="statut">Last mood:</span>
-    <a class="bold" href="{{ user.playlistprofile.last_playlist.get_absolute_url }}" title="{% trans "details of" %} {{ user.playlistprofile.last_playlist }}">{{ user.playlistprofile.last_playlist }}</a>
-</div>
-{% endif %}
-
-
 {% if tab == 'activities' %}
+<h2>recent activities</h2>
 <div class="list">
 
     {% for activity in activities %}
@@ -137,6 +143,7 @@
 {% endif %}
 
 {% if tab == 'playlists' %}
+<h2>my playlists</h2>
     {% autopaginate playlists %}
     {% paginate %}
     {% render_playlists playlists %}
@@ -195,6 +202,7 @@
 {% endif %}
 
 {% if tab == 'artists' %}
+<h2>my favorites artists</h2>
     {% render_artists user.playlistprofile.fanof_artists.all %}
 {% endif %}
 

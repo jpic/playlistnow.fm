@@ -82,17 +82,36 @@ def add_activity(request):
 
     return http.HttpResponse('success')
 
-def action_delete(request, action_id):
+def action_like(request, action_id):
     if not request.user.is_authenticated():
         return http.HttpResponseForbidden()
-    if not request.method == 'POST':
+    try:
+        object = Action.objects.get(pk=action_id)
+    except Action.DoesNotExist:
+        return http.HttpResponseNotFound('could not find action with id %s' % action_id)
+    request.user.playlistprofile.fanof_actions.add(object)
+    action.send(request.user, verb='likes', action_object=object)
+    return http.HttpResponse('action liked')
+
+def action_unlike(request, action_id):
+    if not request.user.is_authenticated():
         return http.HttpResponseForbidden()
     try:
         action = Action.objects.get(pk=action_id)
     except Action.DoesNotExist:
-        return http.HttpResponseNotFound()
-    if action.actor != request.user:
+        return http.HttpResponseNotFound('could not find action with id %s' % action_id)
+    request.user.playlistprofile.fanof_actions.remove(action)
+    return http.HttpResponse('action unliked')
+
+def action_delete(request, action_id):
+    if not request.user.is_authenticated():
         return http.HttpResponseForbidden()
+    try:
+        action = Action.objects.get(pk=action_id)
+    except Action.DoesNotExist:
+        return http.HttpResponseNotFound('could not find action with id %s' % action_id)
+    if action.actor != request.user:
+        return http.HttpResponseForbidden('you may only delete your own actions')
     action.delete()
     return http.HttpResponse('action deleted')
 

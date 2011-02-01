@@ -74,7 +74,8 @@ class PlaylistProfile(models.Model):
     fanof_playlists = models.ManyToManyField('playlist.Playlist', verbose_name=_(u'fav playlists'), null=True, blank=True, related_name='fans')
     fanof_artists = models.ManyToManyField('music.Artist', verbose_name=_(u'fav artists'), null=True, blank=True, related_name='fans')
     fanof_tracks = models.ManyToManyField('music.Track', verbose_name=_(u'fav tracks'), null=True, blank=True, related_name='fans')
-    
+    fanof_actions = models.ManyToManyField('actstream.Action', null=True, blank=True, related_name='fans')
+
     last_playlist = models.ForeignKey('playlist.Playlist', verbose_name=_(u'last playlist'), null=True, blank=True)
     avatar_url = models.TextField(null=True, blank=True, default='/site_media/static/images/avatar-logged.jpg')
 

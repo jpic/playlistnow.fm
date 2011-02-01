@@ -60,6 +60,16 @@ urlpatterns = patterns("",
         name='me'
     ),
     url(
+        r'^action/like/(?P<action_id>[0-9]+)/$',
+        views.action_like,
+        name='action_like'
+    ),
+    url(
+        r'^action/unlike/(?P<action_id>[0-9]+)/$',
+        views.action_unlike,
+        name='action_unlike'
+    ),
+    url(
         r'^action/delete/(?P<action_id>[0-9]+)/$',
         views.action_delete,
         name='action_delete'

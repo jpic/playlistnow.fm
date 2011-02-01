@@ -339,6 +339,15 @@ var ui = {
 
 
 $(document).ready(function() {
+    var urls = [
+        {
+            'urlmatch': /^\/action/,
+            'success': function(html, textStatus, request) {
+                $.history.load(ui.currentUrl);
+            },
+        },
+    ];
+
     if (ui.settings.ajaxEnable) {
         $.getScript(STATIC_URL + "jquery.history.js", function() {
             $.history.init(function(hash) {
@@ -350,10 +359,18 @@ $(document).ready(function() {
                     url: hash,
                     dataType: 'html',
                     success: function(html, textStatus, request) {
-                        $('#ajaxload').fadeOut();
+                        for(var i in urls) {
+                            if(hash.match(urls[i]['urlmatch'])) {
+                                var cb=urls[i]['success'];
+                                cb(html, textStatus, request);
+                                return true;
+                            }
+                        }
+
                         $('#page_body_container').html(html);
                         ui.currentUrl = hash;
                         $(document).trigger('signalPageUpdate', [hash]);
+                        $('#ajaxload').fadeOut();
                     },
                     beforeSend: ui.beforeSend,
                     error: ui.error,

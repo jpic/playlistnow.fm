@@ -18,6 +18,12 @@
 
             {{ activity.verb }}
 
+            {% if activity.action_object %}
+            <a href="{{ activity.action_object.get_absolute_url }}" title="{% trans "details of" %} {{ activity.action_object }}" class="bold">
+                {{ activity.action_object }}
+            </a>
+            {% endif %}
+
             {% if activity.target %}
             <a href="{{ activity.target.get_absolute_url }}" title="{% trans "details of" %} {{ activity.target }}" class="bold">
                 {{ activity.target }}
@@ -33,7 +39,13 @@
         {% get_comment_count for activity as comment_count %}
         <div class="lineFeedContentWhen"> 
             {{ action.timestamp|timesince }} ago -
-            <a href="">I Like</a> - <a class="ui_ignore comment_form_toggle" href="">Comment (<strong>{{ comment_count }}</strong>)</a>
+            {% if action in request.user.playlistprofile.fanof_actions.all %}
+            <a class="authenticationRequired" href="{% url action_unlike action.pk %}">Unlike</a>
+            {% else %}
+            <a class="authenticationRequired" href="{% url action_like action.pk %}">I Like</a>
+            {% endif %}
+            - 
+            <a class="ui_ignore comment_form_toggle" href="">Comment (<strong>{{ comment_count }}</strong>)</a>
             {% render_comment_list for activity %}
         
             <div style="{% if not comment_count %}display: none{% endif %}" class="comment_form_contents" >
