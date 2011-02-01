@@ -13,9 +13,6 @@ var ui = {
         STATIC_URL + "local/tipTip.css",
     ],
     'init': function() {
-        $.getScript(STATIC_URL + "tipTip/jquery.tipTip.minified.js", function() {
-            $('.tiptip').tipTip();
-        });
         $.getScript(STATIC_URL + "jquery.simplemodal.min.js", function() {
         });
 
@@ -117,6 +114,7 @@ var ui = {
             }
         }, 1000);
 
+        $(document).trigger('signalPageUpdate');
         this.ready = true;
     },
     'setupLinks': function() {
@@ -217,6 +215,7 @@ var ui = {
                     data: $(this).serialize(),
                     type: $(this).attr('method'),
                     success: function(html, textStatus, request) {
+                        ui.currentUrl = url;
                         $('#page_body_container').html(html);
                         $(document).trigger('signalPageUpdate', [url]);
                         $('#ajaxload').fadeOut();
@@ -235,8 +234,8 @@ var ui = {
         if ($('div.pagination:not(.virtual)').length) {
             $('div.pagination a').each(function() {
                 var href = $(this).attr('href');
-                if (href.match(/^\?/)) {
-                    $(this).attr('href', ui.currentUrl.replace(/\?page=.*$/, '') + href);
+                if (href.match(/^[?&]page/)) {
+                    $(this).attr('href', ui.currentUrl.replace(/[?].*$/, '') + href);
                 }
             });
         }
@@ -251,30 +250,35 @@ var ui = {
         }
     },
     'setupAutocomplete': function() {
-        if ($('input.autocomplete#term').length == 0) {
+        if ($('input.autocomplete').length == 0) {
             return true;
         }
 
         // we'll just use it for autoload
         function doSetupAutocomplete() {
-            $('input.autocomplete#term').autocomplete({
-                'serviceUrl': music_search_autocomplete + '?term=' + $('input#term').val(),
-                'onSelect': function(value, data){
-                    $.history.load(data['url']); 
-                },
-                'fnFormatResult': function(value, data, currentValue) {
-                    html = '<img src="http://userserve-ak.last.fm/serve/34s/'+data['image']+'" />';
-                    html+= ' ' + data['artist'];
-                    if (data['track'] != undefined) {
-                        html += ' / ' + data['track'];
-                    }
-                    return html;
-                },
-                'deferRequestBy': 0,
+            $('input.autocomplete').each(function() {
+                if ($(this).hasClass('music')) {
+                    var url = music_search_autocomplete;
+                } else if ($(this).hasClass('user')) {
+                    var url = user_search_autocomplete;
+                } else if ($(this).hasClass('playlist')) {
+                    var url = playlist_search_autocomplete;
+                }
+
+                $(this).autocomplete({
+                    'serviceUrl': url,
+                    'onSelect': function(value, data){
+                        $.history.load(data['url']); 
+                    },
+                    'fnFormatResult': function(value, data, currentValue) {
+                        return data['html'];
+                    },
+                    'deferRequestBy': 0,
+                });
             });
         }
 
-        if ($('input#term').autocomplete == undefined) {
+        if ($.autocomplete == undefined) {
             $.getScript(STATIC_URL + 'jquery.autocomplete/jquery.autocomplete.js', doSetupAutocomplete);
         } else {
             doSetupAutocomplete();

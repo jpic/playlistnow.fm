@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load i18n cache %}
 {% if not request.ajax %}
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 {% block html_declare %}
@@ -14,12 +14,16 @@
     <!-- core js -->
     <script src="{% block jquery_src %}{{ STATIC_URL }}jquery.min.js{% endblock %}" type="text/javascript"></script>
     <script type="text/javascript">
+    {% cache 99999 site_base_js_links %}
     var STATIC_URL = '{{ STATIC_URL }}';
     var music_search_autocomplete = '{% url music_search_autocomplete %}';
+    var user_search_autocomplete = '{% url user_search_autocomplete %}';
+    var playlist_search_autocomplete = '{% url playlist_search_autocomplete %}';
     var playlist_track_modify = '{% url playlist_track_modify %}';
     var popup_auth = '{% url acct_login %}';
     var music_artist_fanship = '{% url music_artist_fanship %}';
     var action_delete = '{% url action_delete 0 %}';
+    {% endcache %}
     var tiny_playlist_pk = {% if request.user.is_authenticated %}{{ request.user.playlistprofile.tiny_playlist.pk }}{% else %}0{% endif %};
     </script>
     <script type="text/javascript" src="{{ STATIC_URL }}local/core.js"></script>
@@ -230,6 +234,7 @@ swfobject.embedSWF("http://www.youtube.com/apiplayer?enablejsapi=1&playerapiid=y
     {% block extra_body %}{% endblock %}
 {% endblock %}
 
+    <script type="text/javascript" src="{{ STATIC_URL }}tipTip/jquery.tipTip.minified.js"></script>
 </body>
 </html>
 {% endif %}

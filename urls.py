@@ -80,6 +80,16 @@ urlpatterns = patterns("",
         name='tag_details'
     ),
     url(
+        r'^user/search/autocomplete/$',
+        views.user_search_autocomplete,
+        name='user_search_autocomplete',
+    ),
+    url(
+        r'^user/search/$',
+        views.user_search,
+        name='user_search',
+    ),
+    url(
         r'^users/(?P<slug>[^/]+)/$', 
         views.user_details,
         {

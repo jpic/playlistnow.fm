@@ -33,6 +33,16 @@ urlpatterns = patterns('playlist.views',
         name='playlist_track_modify'
     ),
     url(
+        r'search/autocomplete/$',
+        'playlist_search_autocomplete',
+        name='playlist_search_autocomplete'
+    ),
+    url(
+        r'search/$',
+        'playlist_search',
+        name='playlist_search'
+    ),
+    url(
         r'add/$',
         'playlist_add',
         name='playlist_add'

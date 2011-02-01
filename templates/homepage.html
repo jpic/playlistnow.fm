@@ -14,24 +14,81 @@
 
 {% block body %}
 
-<form action="{% url music_search %}" method="get" id="search_form">
-    <div class="avatar">
-        <span>
-            <a href="home" onclick="return wind(this.href);">
-                <img title="" src="{{ STATIC_URL }}images/avatar-logged.jpg" alt="Avatar" height="50px" width="50px">
-            </a>
-        </span>
-    </div>
-    <div class="input">
-        <div class="iam" id="typeOfSearch">I am</div>
-        <div class="inputiam">
-            <input  value="" type="text" name="term" id="term" class="autocomplete">
+<ul>
+    <li class="tab_link tab_id_music">
+        search music
+    </li>
+    <li class="tab_link tab_id_user">
+        search users
+    </li>
+    <li class="tab_link tab_id_playlist">
+        search playlists
+    </li>
+</ul>
+
+<div class="tab_content tab_id_music">
+    <form action="{% url music_search %}" method="get" id="search_form">
+        <div class="avatar">
+            <span>
+                <a href="home">
+                    <img title="" src="{{ STATIC_URL }}images/avatar-logged.jpg" alt="Avatar" height="50px" width="50px">
+                </a>
+            </span>
         </div>
-    </div>
-    <div class="submit">
-        <button type="submit" class="form-search">{% trans "Search" %}</button>
-    </div>
-</form>
+        <div class="input">
+            <div class="iam" id="typeOfSearch">Artist or Track</div>
+            <div class="inputiam">
+                <input  value="" type="text" name="term" class="autocomplete music">
+            </div>
+        </div>
+        <div class="submit">
+            <button type="submit" class="form-search">{% trans "Search" %}</button>
+        </div>
+    </form>
+</div>
+
+<div class="tab_content tab_id_user">
+    <form action="{% url user_search %}" method="get" id="search_form">
+        <div class="avatar">
+            <span>
+                <a href="home">
+                    <img title="" src="{{ STATIC_URL }}images/avatar-logged.jpg" alt="Avatar" height="50px" width="50px">
+                </a>
+            </span>
+        </div>
+        <div class="input">
+            <div class="iam" id="typeOfSearch">Username or first name or last_name</div>
+            <div class="inputiam">
+                <input  value="" type="text" name="term" class="autocomplete user">
+            </div>
+        </div>
+        <div class="submit">
+            <button type="submit" class="form-search">{% trans "Search" %}</button>
+        </div>
+    </form>
+</div>
+    
+<div class="tab_content tab_id_playlist">
+    <form action="{% url playlist_search %}" method="get" id="search_form">
+        <div class="avatar">
+            <span>
+                <a href="home">
+                    <img title="" src="{{ STATIC_URL }}images/avatar-logged.jpg" alt="Avatar" height="50px" width="50px">
+                </a>
+            </span>
+        </div>
+        <div class="input">
+            <div class="iam" id="typeOfSearch">I am</div>
+            <div class="inputiam">
+                <input  value="" type="text" name="term" class="autocomplete playlist">
+            </div>
+        </div>
+        <div class="submit">
+            <button type="submit" class="form-search">{% trans "Search" %}</button>
+        </div>
+    </form>
+</div>
+
 {% endblock %}
 
 {% block extra_body %}

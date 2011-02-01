@@ -136,10 +136,7 @@ def music_track_details(request, name, artist, album=None,
         context_instance=template.RequestContext(request))
 
 def music_search_autocomplete(request, qname='query'):
-    if not qname in request.GET:
-        return return_json()
-
-    if not request.GET[qname]:
+    if not request.GET.get(qname, False):
         return return_json()
 
     url = 'http://www.last.fm/search/autocomplete?q=%s&force=1' % urllib2.quote(request.GET[qname].encode('utf-8'))
@@ -157,11 +154,17 @@ def music_search_autocomplete(request, qname='query'):
     }
 
     for doc in upstream_response['response']['docs']:
+        if 'image' in doc.keys():
+            doc['html'] = '<img src="http://userserve-ak.last.fm/serve/34s/%s" /> ' % doc['image']
         if 'track' in doc.keys():
             doc['url'] = urlresolvers.reverse('music_track_details', args=(
                 defaultfilters.slugify(doc['artist']),
                 defaultfilters.slugify(doc['track']),
             ))
+            doc['html'] += '%s / %s' % (
+                doc['track'],
+                doc['artist']
+            )
             suggestion = doc['track']
         elif 'album' in doc.keys():
             continue
@@ -169,6 +172,7 @@ def music_search_autocomplete(request, qname='query'):
             doc['url'] =  urlresolvers.reverse('music_artist_details', args=(
                 defaultfilters.slugify(doc['artist']),
             ))
+            doc['html'] += doc['artist']
             suggestion = doc['artist']
         else:
             continue

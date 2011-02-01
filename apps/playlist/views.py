@@ -10,6 +10,7 @@ from django.db.models import Q
 from tagging.models import Tag
 from actstream import action
 
+from music.views import return_json
 from music.models import *
 from models import *
 from forms import *
@@ -203,6 +204,58 @@ def playlist_category_details(request, slug, parent_slug=None,
     context.update(extra_context or {})
     return shortcuts.render_to_response(template_name, context,
         context_instance=template.RequestContext(request))
+
+def playlist_search_autocomplete(request, qname='query', qs=Playlist.objects.all()):
+    if not request.GET.get(qname, False):
+        return return_json()
+
+    q = request.GET[qname]
+
+    response = {
+        'query': request.GET[qname].encode('utf-8'),
+        'suggestions': [],
+        'data': [],
+    }
+    
+    playlist_search_url = urlresolvers.reverse('playlist_search')
+
+    qs = qs.distinct('name').filter(name__icontains=q)
+    for playlist in qs:
+        response['suggestions'].append(playlist.name)
+        response['data'].append({
+            'url': '%s?term=%s' % (playlist_search_url, playlist.name),
+            'html': '%s' % (
+                playlist.name,
+            )
+        })
+
+    return return_json(response)
+
+def playlist_search(request,
+    template_name='playlist/playlist_search.html', extra_context=None):
+    qs1 = Playlist.objects.filter(
+        Q(name__icontains=request.GET.get('term', '')) &
+        Q(tags__icontains=request.GET.get('term', ''))
+    )
+    qs2 = Playlist.objects.filter(
+        Q(name__icontains=request.GET.get('term', ''))
+    )
+    qs3 = Playlist.objects.filter(
+        Q(name__icontains=request.GET.get('term', ''))
+    )
+
+    context = {
+        'term': request.GET.get('term', ''),
+    }
+    context['object_list'] = []
+    for o in qs1:
+        context['object_list'].append(o)
+    for o in qs2:
+        context['object_list'].append(o)
+    for o in qs3:
+        context['object_list'].append(o)
+    context.update(extra_context or {})
+    return playlist_list(request, extra_context=context)
 
 def playlist_list(request, qs=Playlist.objects.all(),
     template_name='playlist/playlist_list.html', extra_context=None):

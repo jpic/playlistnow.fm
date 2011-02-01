@@ -179,13 +179,15 @@
       }
       clearInterval(this.onChangeInterval);
       if (this.currentValue !== this.el.val()) {
-        if (this.options.deferRequestBy > 0) {
-          // Defer lookup in case when value changes very quickly:
-          var me = this;
-          this.onChangeInterval = setInterval(function() { me.onValueChange(); }, this.options.deferRequestBy);
-        } else {
-          this.onValueChange();
-        }
+        this.onValueChange();
+        
+        //if (this.options.deferRequestBy > 0) {
+          //// Defer lookup in case when value changes very quickly:
+          //var me = this;
+          //this.onChangeInterval = setInterval(function() { me.onValueChange(); }, this.options.deferRequestBy);
+        //} else {
+          //this.onValueChange();
+        //}
       }
     },
 
@@ -239,7 +241,10 @@
       } else if (!this.isBadQuery(q)) {
         me = this;
         me.options.params.query = q;
-        $.get(this.serviceUrl, me.options.params, function(txt) { me.processResponse(txt); }, 'text');
+        if (this.xhr && this.xhr.abort) {
+            this.xhr.abort();
+        }
+        this.xhr = $.get(this.serviceUrl, me.options.params, function(txt) { me.processResponse(txt); }, 'text');
       }
     },
 

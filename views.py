@@ -4,6 +4,7 @@ from django import shortcuts
 from django import template
 from django.db.models import get_model
 from django.db import connection, transaction
+from django.db.models import Q
 from django.contrib.auth import decorators
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
@@ -12,6 +13,7 @@ from tagging.models import Tag, TaggedItem
 from actstream.models import actor_stream, user_stream, model_stream, Follow, Action
 from actstream import action
 
+from music.views import return_json
 from playlist.models import Playlist
 from music.models import Track
 
@@ -114,6 +116,50 @@ def action_delete(request, action_id):
         return http.HttpResponseForbidden('you may only delete your own actions')
     action.delete()
     return http.HttpResponse('action deleted')
+
+def user_search_autocomplete(request, qname='query', qs=User.objects.all()):
+    if not request.GET.get(qname, False):
+        return return_json()
+
+    q = request.GET[qname]
+
+    response = {
+        'query': request.GET[qname].encode('utf-8'),
+        'suggestions': [],
+        'data': [],
+    }
+
+    qs = qs.filter(
+        Q(username__icontains=q) |
+        Q(first_name__icontains=q) |
+        Q(last_name__icontains=q)
+    ).select_related('playlistprofile')
+
+    for user in qs:
+        response['suggestions'].append(unicode(user.playlistprofile))
+        response['data'].append({
+            'url': user.playlistprofile.get_absolute_url(),
+            'html': '<img src="%s"> %s' % (
+                user.playlistprofile.avatar_url,
+                unicode(user.playlistprofile),
+            )
+        })
+
+    return return_json(response)
+
+def user_search(request, qname='term', qs=User.objects.all(),
+    template_name='auth/user_list.html', extra_context=None):
+    context = {}
+    q = request.GET.get(qname, '')
+    qs = qs.filter(
+        Q(username__icontains=q) |
+        Q(first_name__icontains=q) |
+        Q(last_name__icontains=q)
+    ).select_related('playlistprofile')
+    context['object_list'] = qs
+    context.update(extra_context or {})
+    return shortcuts.render_to_response(template_name, context,
+        context_instance=template.RequestContext(request))
 
 def user_details(request, slug, tab='activities',
     template_name='auth/user_detail.html', extra_context=None):

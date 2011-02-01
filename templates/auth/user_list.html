@@ -1,0 +1,20 @@
+{% extends 'site_base.html' %}
+{% load pagination_tags %}
+{% load i18n %}
+
+{% block body %}
+
+    {% autopaginate object_list %}
+    {% paginate %}
+
+    <ul>
+    {% for user in object_list %}
+        <li>
+            <a href="{{ user.playlistprofile.get_absolute_url }}" title="{% trans 'details of user' %} {{ user.playlistprofile }}">
+            <img src="{{ user.playlistprofile.avatar_url }}" alt="{% trans 'avatar of' %} {{ user.playlistprofile }}" />
+            {{ user.playlistprofile }}
+            </a>
+        </li>
+    {% endfor %}
+    </ul>
+{% endblock %}

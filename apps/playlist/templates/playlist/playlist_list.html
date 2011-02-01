@@ -20,6 +20,7 @@
         <b>({{ object_list|length }})</b>
     </span>
 
+    {# pagination won't work in playlist_search because object_list is a plain list instead of a queryset #}
     {% autopaginate object_list %}
     {% paginate %}
     {% render_playlists object_list %}
