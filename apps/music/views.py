@@ -11,8 +11,6 @@ from django.conf import settings
 from django.utils import simplejson
 from django.contrib import messages
 
-import gdata.youtube
-import gdata.youtube.service
 from actstream import action
 
 from models import *
