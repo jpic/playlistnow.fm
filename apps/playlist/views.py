@@ -344,6 +344,21 @@ def playlist_details(request, user, slug, default_format=False, qname='term',
 
     context['playlist_fans_slice'] = context['object'].fans.all()[:20]
 
+    context['you_may_also_like'] = []
+    if request.user.is_authenticated():
+       context['you_may_also_like'] += Track.objects.filter(
+            playlistmodification__playlist=object,
+            playlistmodification__creation_user__pk__in=
+                request.user.follow_set.all().values_list('object_id', flat=True)
+        )
+
+    if len(context['you_may_also_like']) < 6:
+        context['you_may_also_like'] += Track.objects.filter(
+            playlistmodification__playlist=object
+        ).exclude(
+            pk__in=[t.pk for t in context['you_may_also_like']]
+        )[:6-len(context['you_may_also_like'])]
+
     context.update(extra_context or {})
     return shortcuts.render_to_response(template_name, context,
         context_instance=template.RequestContext(request))
