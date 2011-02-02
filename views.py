@@ -135,7 +135,7 @@ def user_search_autocomplete(request, qname='query', qs=User.objects.all()):
         Q(last_name__icontains=q)
     ).select_related('playlistprofile')
 
-    for user in qs:
+    for user in qs[:15]:
         response['suggestions'].append(unicode(user.playlistprofile))
         response['data'].append({
             'url': user.playlistprofile.get_absolute_url(),
