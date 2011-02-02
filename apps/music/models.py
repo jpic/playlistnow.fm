@@ -92,11 +92,6 @@ class MusicalEntity(models.Model):
         #query.restriction = 'fr'
         feed = client.YouTubeQuery(query)
 
-        for k in range(0, len(feed.entry) - 1):
-            for a in feed.entry[k].author:
-                if a.name.text.find('VEVO') > -1:
-                    feed.entry.pop(k)
-
         cache.set(key, feed.entry, 24*3600)
 
         return feed.entry
