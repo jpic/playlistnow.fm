@@ -1,47 +1,49 @@
 {% load i18n cache extra_tagging_tags %}
 {% for object in object_list %}
 <div class="playlist line play">
+    {% cache 360000 render_playlist_line object.pk %}
     <div class="icon" class="play" style="margin:4px 16px 0 2px;">
         <img src="{{ STATIC_URL }}images/avatar-logged.jpg" style="background:#fff;border:1px solid #ddd;padding:2px;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px;width:60px;height:60px;" alt="{% trans "play" %} {{ object }}" class="play" />
     </div>
 
     <div class="description play"> 
-        <div style="padding-bottom:1px;"><span class="dTitle play">
-            <a href="{{ object.get_absolute_url }}" title="{% trans "play" %} {{ object }}" class="playlist link">{{ object }}</a>
-        </span>
+        <div style="padding-bottom:1px;">
+            <span class="dTitle play">
+                <a href="{{ object.get_absolute_url }}" title="{% trans "play" %} {{ object }}" class="playlist link">{{ object }}</a>
+            </span>
             <span class="dValue small_font play">({{ object.tracks.count }})</span>
        </div>
-   
 
         {% if object.category %}
         <div class="clear"></div>
-     <div style="display:block;">
+        <div style="display:block;">
   
-  <span class="dValue small_font play"> Created by 
-            <a href="{% url user_details object.creation_user.username %}" title="{% trans "details of user" %} {{ object.creation_user }}">
-            <span class="bold">{{ object.creation_user }}</span>
-            </a></span>  - 
-        <span class="tTitle small_font play">Categories: </span>
-        <span class="tValue small_font play">
+            <span class="dValue small_font play"> Created by 
+                <a class="bold" href="{% url user_details object.creation_user.username %}" title="{% trans "details of user" %} {{ object.creation_user }}">
+                    {{ object.creation_user }}
+                </a>
+            </span>
+            -
+            <span class="tTitle small_font play">
+                Categories: 
+            </span>
+            <span class="tValue small_font play">
             {% if object.category.parent %}
-            <a href="{{ object.category.parent.get_absolute_url }}" title="{% trans "playlists for object.category" %} {{ object.category.parent }}">{{ object.category.parent }}</a>
-            → 
+                <a href="{{ object.category.parent.get_absolute_url }}" title="{% trans "playlists for object.category" %} {{ object.category.parent }}">{{ object.category.parent }}</a>
+                → 
             {% endif %}
-            <a href="{{ object.category.get_absolute_url }}" title="{% trans "playlists for object.category" %} {{ object.category }}">{{ object.category }}</a>
+                <a href="{{ object.category.get_absolute_url }}" title="{% trans "playlists for object.category" %} {{ object.category }}">{{ object.category }}</a>
             {% if not forloop.last %}
             ,
             {% endif %}
-          
-        </span>
+            </span>
         </div>
-        {% endif %}
-         {% if object.tags %}
-        <div style="display: block"></div>
+        {% endif %}        
         
-     
+        {% if object.tags %}
+        <div style="display: block"></div>
         {% show_tags_for object %}
-      
-    {% endif %}
+        {% endif %}
     </div>
     
     <div class="play right">
@@ -49,5 +51,6 @@
             <img src="{{ STATIC_URL }}images/play_line.png" alt="{% trans "play playlist" %} {{ object }}" height="60" width="60" class="play">
         </a>
     </div>
+    {% endcache %}
 </div>
 {% endfor %}

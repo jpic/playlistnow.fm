@@ -1,6 +1,113 @@
 {% extends "site_base.html" %}
 {% load activity_tags %}
+{# enable right column #}
+{% block page_body_right_class %}block{% endblock %}
+{% block body_right %}
 
+<h3>who to follow ?</h3>
+<div id="whotofollow">
+
+<div class="whotofollow_list">
+
+<div class="whotofollow_person">
+<img src="http://www.google.com/friendconnect/scs/images/NoPictureDark.png" alt="CLO BLA" class="left whotofollow_img">
+
+<div class="left whotofollow_profile">
+<ul>
+<li><a href="" class="whotofollow_name">Anthony Lacrite</a></li>
+<li><a href="">Follow</a></li>
+</ul>
+</div>
+
+</div>  
+<div class="left hide"><a href="#" title="Hide">x</a></div>
+
+<div class="clear"></div>
+</div>
+
+<div class="whotofollow_list">
+
+<div class="whotofollow_person">
+<img src="http://www.google.com/friendconnect/scs/images/NoPictureDark.png" alt="CLO BLA" class="left whotofollow_img">
+
+<div class="left whotofollow_profile">
+<ul>
+<li><a href="" class="whotofollow_name">Roger Ramirez</a></li>
+<li><a href="">Follow</a></li>
+</ul>
+</div>
+
+</div>  
+<div class="left hide"><a href="#" title="Hide">x</a></div>
+
+<div class="clear"></div>
+</div>
+
+<div class="whotofollow_list">
+
+<div class="whotofollow_person">
+<img src="http://www.google.com/friendconnect/scs/images/NoPictureDark.png" alt="CLO BLA" class="left whotofollow_img">
+
+<div class="left whotofollow_profile">
+<ul>
+<li><a href="" class="whotofollow_name">Pierre Dupuis</a></li>
+<li><a href="">Follow</a></li>
+</ul>
+</div>
+
+</div>  
+<div class="left hide"><a href="#" title="Hide">x</a></div>
+
+<div class="clear"></div>
+</div>
+
+</div>
+
+<h3>Hot song today</h3>
+<div id="hotsong">
+<div class="hotsong_list">
+<ul class="song_list" style="font-size:11px;">
+
+<li class="song_play song_info dd track_pk_33001">
+    <span class="icon play"></span>
+    
+
+    <a style="display: none;" title="j8nMmfUGLh4" class="hidden youtube_play" href="j8nMmfUGLh4">
+    </a>
+    <a title="Matt Duncan" class="artist" href="/music/artist/matt-duncan/" style="font-weight: bold;">Matt Duncan</a>
+    
+    <span style="color: rgb(190, 189, 189);">-</span> 
+    
+    <a title="details of track Beacon" href="/music/track/matt-duncan/beacon/" class="label track">Beacon</a>
+
+   
+</li>
+<li>Added by Jonathan Younes</li>
+</ul>
+</div>
+
+<div class="hotsong_list">
+<ul class="song_list" style="font-size:11px;">
+
+<li class="song_play song_info dd track_pk_33001">
+    <span class="icon play"></span>
+    
+
+    <a style="display: none;" title="j8nMmfUGLh4" class="hidden youtube_play" href="j8nMmfUGLh4">
+    </a>
+    <a title="Matt Duncan" class="artist" href="/music/artist/matt-duncan/" style="font-weight: bold;">Jill Duncan</a>
+    
+    <span style="color: rgb(190, 189, 189);">-</span> 
+    
+    <a title="details of track Beacon" href="/music/track/matt-duncan/beacon/" class="label track">Two of us</a>
+
+   
+</li>
+<li>Added by James Pic</li>
+</ul>
+</div>
+</div>
+{% endblock %}
 {% block body %}
 <div class="list">
 

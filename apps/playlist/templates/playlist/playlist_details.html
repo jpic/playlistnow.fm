@@ -47,7 +47,7 @@
 
 {% if tracks %}
 <div class="direct_add to_playlist_{{ object.pk }}">
-    <div class="delete parent" style="float:right"></div>
+    <div class="delete parent icon" style="float:right"></div>
 
     <h2>{% trans "results matching" %} {{ request.GET.q }}</h2>
 
@@ -75,6 +75,11 @@
 {# enable right column #}
 {% block page_body_right_class %}block{% endblock %}
 {% block body_right %}
+
+<div class="you_may_also_like">
+<h3>{% trans "you may also like" %}</h3>
+    {% render_tracks you_may_also_like '' request %}
+</div>
 
 <h3>{% trans "about" %}</h3>
 

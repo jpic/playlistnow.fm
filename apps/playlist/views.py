@@ -219,8 +219,9 @@ def playlist_search_autocomplete(request, qname='query', qs=Playlist.objects.all
     
     playlist_search_url = urlresolvers.reverse('playlist_search')
 
-    qs = qs.distinct('name').filter(name__icontains=q)
-    for playlist in qs:
+    qs = qs.filter(name__icontains=q)
+    qs = qs.distinct('name')
+    for playlist in qs[:15]:
         response['suggestions'].append(playlist.name)
         response['data'].append({
             'url': '%s?term=%s' % (playlist_search_url, playlist.name),
@@ -261,7 +262,8 @@ def playlist_list(request, qs=Playlist.objects.all(),
     template_name='playlist/playlist_list.html', extra_context=None):
     context = {}
     
-    context['object_list'] = qs
+    context['object_list'] = qs.select_related(depth=3)
+
     s = '''
     select 
         t.id,
@@ -358,6 +360,14 @@ def playlist_details(request, user, slug, default_format=False, qname='term',
         ).exclude(
             pk__in=[t.pk for t in context['you_may_also_like']]
         )[:6-len(context['you_may_also_like'])]
+
+    random_tracks = context['user_tracks']
+    i = 0
+    while len(context['you_may_also_like']) <= 12:
+        track = random_tracks[i]
+        track.lastfm_get_similar()
+        context['you_may_also_like'] += track.similar[:12]
+        i += 1
 
     context.update(extra_context or {})
     return shortcuts.render_to_response(template_name, context,

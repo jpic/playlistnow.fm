@@ -112,3 +112,25 @@ img.simplemodal-close {
 .tab_content {
     display: none;
 }
+
+li.song_info .delete.parent.icon {
+    display: none;
+}
+div.you_may_also_like li {
+    display: none;
+}
+
+div.you_may_also_like span.icon.play,
+div.you_may_also_like span.icon.play,
+div.you_may_also_like span.number.play,
+div.you_may_also_like span.icon.love,
+div.you_may_also_like span.dash
+{
+    display: none;
+}
+
+div.you_may_also_like .artist,
+div.you_may_also_like .delete.parent.icon
+{
+    display: block;
+}

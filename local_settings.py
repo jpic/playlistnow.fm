@@ -87,7 +87,7 @@ MIDDLEWARE_CLASSES = [
     "socialregistration.middleware.FacebookMiddleware",
 ]
 INTERNAL_IPS = [
-    '80.29.91.108',
+    '79.151.161.163',
 ]
 
 

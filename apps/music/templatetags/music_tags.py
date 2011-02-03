@@ -20,6 +20,12 @@ def render_artist(artist, playlist=None):
 
 @register.inclusion_tag('music/_render_tracks.html')
 def render_tracks(tracks, playlist=None, request=None):
+    if not hasattr(request, 'tiny_tracks'):
+        if request.user.is_authenticated():
+            request.tiny_tracks = request.user.playlistprofile.tiny_playlist.tracks.all()
+        else:
+            request.tiny_tracks = []
+
     context = {
         'tracks': tracks,
         'playlist': playlist,
@@ -30,6 +36,12 @@ def render_tracks(tracks, playlist=None, request=None):
 
 @register.inclusion_tag('music/_render_tracks.html')
 def render_track(track, playlist=None, request=None):
+    if not hasattr(request, 'tiny_tracks'):
+        if request.user.is_authenticated():
+            request.tiny_tracks = request.user.playlistprofile.tiny_playlist.tracks.all()
+        else:
+            request.tiny_tracks = []
+
     return {
         'tracks': (track,),
         'playlist': playlist,
