@@ -49,6 +49,7 @@ class DynamicHtmlMiddleware(object):
 
         elif request.path != '/empty/' and request.method != 'POST':
             # automatic redirect to container for chrome user agents
+            print request.META
             test = request.META['HTTP_USER_AGENT'].lower()
             for agent in JS_AGENTS:
                 if test.find(agent) > -1:

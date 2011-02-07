@@ -75,12 +75,6 @@
 {# enable right column #}
 {% block page_body_right_class %}block{% endblock %}
 {% block body_right %}
-
-<div class="you_may_also_like">
-<h3>{% trans "you may also like" %}</h3>
-    {% render_tracks you_may_also_like '' request %}
-</div>
-
 <h3>{% trans "about" %}</h3>
 
 <div class="details views sidebox">
@@ -121,4 +115,11 @@
     </a>
     {% endfor %}
 </div>
+<div class="clear espacetop"></div>
+
+<div class="you_may_also_like">
+<h3>{% trans "you may also like" %}</h3>
+    {% render_tracks you_may_also_like '' request %}
+</div>
+
 {% endblock %}

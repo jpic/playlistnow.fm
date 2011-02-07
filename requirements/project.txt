@@ -3,10 +3,21 @@
 
 --requirement=base.txt
 django-admin-tools
--e svn+http://python-lastfm.googlecode.com/svn/trunk/#egg=lastfm
 gdata
-opensocial
+opensocial_py
 -e git+https://github.com/flashingpumpkin/django-socialregistration.git#egg=socialregistration
 -e git+https://github.com/pinax/django-mailer.git#egg=mailer
+flup
+psycopg2
+lxml
+ipython
+bpython
+django-notification
+django-tagging
+django_extensions
+django_pagination
+django_tagging_ext
+-e git+https://github.com/justquick/django-activity-stream.git#egg=actstream
+pil
 # Put project-specific requirements here.
 # See http://pip-installer.org/requirement-format.html for more information.

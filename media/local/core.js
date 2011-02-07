@@ -163,11 +163,6 @@ var ui = {
             }
         });
 
-        $('.delete_self').live('click', function(e) {
-            e.preventDefault();
-            $(this).remove();
-        });
-
         $('.delete').live('click', function(e) {
             e.preventDefault();
             if ($(this).hasClass('parent')) {

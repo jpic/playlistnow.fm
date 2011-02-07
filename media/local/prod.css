@@ -65,6 +65,8 @@ h2.all_tr {padding-left:25px;background: transparent url(../images/icon-alltr.pn
 
 .inputed{padding:3px 6px;}
 .searched{padding:6px 9px;}
+input[type="text"],input[type="password"],textarea{border:1px solid #e0e0e0;-moz-border-radius:5px;-webkit-border-radius:5px;border-radius:5px;padding:10px;font-size:14px;}
+
 
 /* Profile / Avatar */
 .profile{}

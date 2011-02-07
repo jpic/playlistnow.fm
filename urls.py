@@ -9,7 +9,6 @@ from pinax.apps.account.openid_consumer import PinaxConsumer
 
 import views
 import registration
-import forms
 
 handler500 = "pinax.views.server_error"
 

@@ -118,6 +118,8 @@ li.song_info .delete.parent.icon {
 }
 div.you_may_also_like li {
     display: none;
+    margin-bottom:2px;
+
 }
 
 div.you_may_also_like span.icon.play,
@@ -133,4 +135,13 @@ div.you_may_also_like .artist,
 div.you_may_also_like .delete.parent.icon
 {
     display: block;
+   
 }
+
+div.you_may_also_like .artist{width:150px;}
+div.you_may_also_like .track{width:100px;}
+
+div.you_may_also_like .delete.parent.icon
+{float:right;margin-top:-6px;margin-right:2px;}
+
+

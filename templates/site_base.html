@@ -211,6 +211,7 @@ function onYouTubePlayerAPIReady() {
       height: '182',
       width: '182',
       videoId: 'JW5meKfy3fY',
+      playerVars: { 'controls': 0 },
       events: {
         'onReady': function() {
             player.ytplayer.setVolume(60);
@@ -219,35 +220,39 @@ function onYouTubePlayerAPIReady() {
         'onStateChange': function() {}
       }
     });
-}
+}   
 
-    {% if FACEBOOK_APP_ID %}
-      <div id="fb-root"></div>
-      <script>
-      window.fbAsyncInit = function() {
-        FB.init({appId: '{{ FACEBOOK_APP_ID }}', status: true, cookie: true, xfbml: true});
-        FB.Event.subscribe('auth.sessionChange', function(response) {
-          if (response.session) {
-              window.location = '{% url socialauth_facebook_login_done %}';
-          } else {
-              //window.location = '{% url socialauth_social_logout %}';
-          }
-        });
-      };
-      (function() {
-        var e = document.createElement('script');
-        e.type = 'text/javascript';
-        e.src = document.location.protocol +
-          '//connect.facebook.net/en_US/all.js';
-        e.async = true;
-        document.getElementById('fb-root').appendChild(e);
-      }());
-      </script>    
-    {% endif %}    
+    {% if request.noreload %}
+    $(document).ready(function() {
+        $(document).trigger('signalPageUpdate');
+    });
+    {% endif %}
 </script>
-<div id="ytapiplayer" style="display:none">
-    You need Flash player 8+ and JavaScript enabled to enjoy PlaylistNow.Fm.
-</div>
+
+
+{% if FACEBOOK_APP_ID %}
+  <div id="fb-root"></div>
+  <script>
+  window.fbAsyncInit = function() {
+    FB.init({appId: '{{ FACEBOOK_APP_ID }}', status: true, cookie: true, xfbml: true});
+    FB.Event.subscribe('auth.sessionChange', function(response) {
+      if (response.session) {
+          window.location = '{% url socialauth_facebook_login_done %}';
+      } else {
+          //window.location = '{% url socialauth_social_logout %}';
+      }
+    });
+  };
+  (function() {
+    var e = document.createElement('script');
+    e.type = 'text/javascript';
+    e.src = document.location.protocol +
+      '//connect.facebook.net/en_US/all.js';
+    e.async = true;
+    document.getElementById('fb-root').appendChild(e);
+  }());
+  </script>    
+{% endif %} 
 
 
 {% block extra_body_base %}
