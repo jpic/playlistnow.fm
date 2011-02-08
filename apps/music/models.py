@@ -71,6 +71,11 @@ class MusicalEntity(models.Model):
     def __unicode__(self):
         return self.name
 
+    def youtube_cache_reset(self):
+        term = self.youtube_get_term()
+        key = 'youtube_entries for ' + term
+        cache.delete(key)
+
     @property
     def youtube_entries(self):
         term = self.youtube_get_term()
@@ -84,7 +89,7 @@ class MusicalEntity(models.Model):
         query = gdata.youtube.service.YouTubeVideoQuery()
         
         query.vq = term.encode('utf-8')
-        query.max_results = 7
+        query.max_results = 15
         query.start_index = 1
         query.racy = 'exclude'
         query.format = '5'

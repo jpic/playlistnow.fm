@@ -190,6 +190,7 @@ var player = {
             'currentPlaylist': false,
             'currentPlaylistTrackIndex': 0,
             'currentTrackHistoryIndex': 0,
+            'waitingNewVideo': false,
             'lastAction': {
                 'action': false,
                 'date': false,
@@ -227,7 +228,32 @@ var player = {
         });
     },
     'badVideo': function() {
-        player.playNext()
+        var bad_data = {
+            'youtube_id': player.state.currentTrack.youtube_best_id,
+            'track_name': player.state.currentTrack.name,
+        }
+        if (player.state.currentTrack.pk != undefined) {
+            bad_data['track_pk'] = player.state.currentTrack.pk;
+        }
+        if (player.state.currentTrack.artist.name != undefined) {
+            bad_data['artist_name'] = player.state.currentTrack.artist.name;
+        }
+
+        $.ajax({
+            url: music_badvideo + '?a=' + new Date(),
+            dataType: 'text',
+            data: bad_data,
+            type: 'post',
+            success: function(text, textStatus, request) {
+                player.state.lastAction.date = new Date();
+                player.state.waitingNewVideo = false;
+                player.state.currentTrack.youtube_best_id = text;
+                player.ytplayer.loadVideoById(player.state.currentTrack.youtube_best_id);
+                $('#ajaxload').fadeOut();
+            },
+            beforeSend: ui.beforeSend,
+            error: ui.error,
+        });
     },
     'initBinds': function() {
         $(document).bind('signalPageUpdate', function() {
@@ -278,7 +304,7 @@ var player = {
             $('.player_bttn_play').show();
             $('.player_bttn_pause').hide();
             
-            this.state.lastAction = {
+            player.state.lastAction = {
                 'date': new Date(),
                 'action': 'stop'
             }
@@ -288,7 +314,7 @@ var player = {
             $('.player_bttn_pause').hide();
             $('.player_bttn_play').show();
 
-            this.state.lastAction = {
+            player.state.lastAction = {
                 'date': new Date(),
                 'action': 'pause'
             }
@@ -298,7 +324,7 @@ var player = {
             $('.player_bttn_play').hide();
             $('.player_bttn_pause').show();
 
-            this.state.lastAction = {
+            player.state.lastAction = {
                 'date': new Date(),
                 'action': 'play'
             }
@@ -523,7 +549,9 @@ var player = {
         {
             player.playNext();
         }
-        else if (plState == -1 && player.state.lastAction.action == 'play' && new Date() - player.state.lastAction.date >= 2500) {
+        else if (plState == -1 && player.state.lastAction.action == 'play' && new Date() - player.state.lastAction.date >= 10000 && player.state.waitingNewVideo == false) {
+            console.log(player.state.lastAction, plState,new Date() - player.state.lastAction.date )
+            player.state.waitingNewVideo = true;
             player.badVideo();
         }
     }

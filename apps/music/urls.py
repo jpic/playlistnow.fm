@@ -9,6 +9,11 @@ urlpatterns = patterns('music.views',
         name='music_search'
     ),
     url(
+        r'badvideo/$',
+        'music_badvideo',
+        name='music_badvideo'
+    ),
+    url(
         r'album/(?P<name>[^/]+)/$',
         'music_album_details',
         name='music_album_details'

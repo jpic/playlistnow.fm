@@ -29,6 +29,37 @@ def return_json(data=None):
         mimetype='application/json'
     )
 
+def music_badvideo(request):
+    bad_youtube_id = request.POST.get('youtube_id', False)
+    if not bad_youtube_id:
+        return http.HttpResponseForbidden()
+
+    new_id = ''
+    bad_track_pk = request.POST.get('track_pk', '')
+    bad_track_name = request.POST.get('track_name', '')
+    bad_artist_name = request.POST.get('artist_name', '')
+
+    if not bad_track_pk:
+        t = Track(name=bad_track_name)
+        t.youtube_cache_reset()
+        if bad_artist_name:
+            t.artist = Artist(name=bad_artist_name)
+    else:
+        t = Track.objects.get(pk=bad_track_pk)
+    t.youtube_cache_reset()
+
+    for e in t.youtube_entries:
+        m = re.match(r'.*/([0-9A-Za-z_-]*)/?$', e.id.text)
+        if m and m.group(1) != bad_youtube_id:
+            new_id = m.group(1)
+            break
+
+    if new_id:
+        Track.objects.filter(youtube_id=bad_youtube_id).update(
+            youtube_id=new_id)
+
+    return http.HttpResponse(new_id)
+
 def music_artist_fanship(request):
     if not request.method == 'POST':
         return http.HttpResponseForbidden()
