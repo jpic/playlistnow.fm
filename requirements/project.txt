@@ -12,9 +12,9 @@ psycopg2
 lxml
 ipython
 bpython
-django-notification
-django-tagging
+-e git+https://github.com/jtauber/django-notification.git#egg=notification
 django_extensions
+django-uni-form
 django_pagination
 django_tagging_ext
 -e git+https://github.com/justquick/django-activity-stream.git#egg=actstream
