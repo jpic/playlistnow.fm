@@ -112,7 +112,6 @@ class MusicalEntity(models.Model):
             method,
             urllib.urlencode(kwargs)
         )
-        print url
 
         try:
             tree = etree.parse(url)
@@ -152,6 +151,8 @@ class MusicalEntity(models.Model):
         klass = self.__class__
         tree = self.lastfm_get_tree(self.get_type() + '.search')
 
+        if tree is None: return None
+
         for element in tree.findall('results/%smatches/%s' % (self.get_type(), self.get_type() )):
             match = klass(name=element.find('name').text)
             match.lastfm_get_info(element)
@@ -160,6 +161,9 @@ class MusicalEntity(models.Model):
     def lastfm_get_similar(self):
         cls = self.__class__
         tree = self.lastfm_get_tree(self.get_type() + '.getSimilar')
+
+        if tree is None: return None
+
         self.similar = []
         for element in tree.findall('similar'+self.get_type()+'s/'+self.get_type()):
             similar = cls(name=element.find('name').text)
