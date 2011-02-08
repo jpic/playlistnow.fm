@@ -9,6 +9,10 @@ var player = {
     'playTrack': function(track, playlist, fromHistory /* new in history ? (bool) */) {
         player.ytplayer.loadVideoById(track.youtube_best_id);
         this.state.currentTrack = track;
+        this.state.lastAction = {
+            'date': new Date(),
+            'action': 'play'
+        }
         this.hiliteCurrentTrack(); 
 
         $('.player_current_artist').html(track.artist.name);
@@ -186,6 +190,10 @@ var player = {
             'currentPlaylist': false,
             'currentPlaylistTrackIndex': 0,
             'currentTrackHistoryIndex': 0,
+            'lastAction': {
+                'action': false,
+                'date': false,
+            }
         }
         this.initBinds();
     },
@@ -217,6 +225,9 @@ var player = {
         $('li.song_info a.track[href=' + player.state.currentTrack.url + ']').each(function() {
             $(this).parent().addClass('selected');
         });
+    },
+    'badVideo': function() {
+        player.playNext()
     },
     'initBinds': function() {
         $(document).bind('signalPageUpdate', function() {
@@ -266,16 +277,31 @@ var player = {
             player.ytplayer.stopVideo(); 
             $('.player_bttn_play').show();
             $('.player_bttn_pause').hide();
+            
+            this.state.lastAction = {
+                'date': new Date(),
+                'action': 'stop'
+            }
         });
         $('.player_bttn_pause').click(function() { 
             player.ytplayer.pauseVideo(); 
             $('.player_bttn_pause').hide();
             $('.player_bttn_play').show();
+
+            this.state.lastAction = {
+                'date': new Date(),
+                'action': 'pause'
+            }
         });
         $('.player_bttn_play').click(function() { 
             player.ytplayer.playVideo(); 
             $('.player_bttn_play').hide();
             $('.player_bttn_pause').show();
+
+            this.state.lastAction = {
+                'date': new Date(),
+                'action': 'play'
+            }
         });
         $('.player_bttn_mute').click(function() {
             if (player.ytplayer.isMuted()) {
@@ -496,6 +522,9 @@ var player = {
         if(plState==0)
         {
             player.playNext();
+        }
+        else if (plState == -1 && player.state.lastAction.action == 'play' && new Date() - player.state.lastAction.date >= 2500) {
+            player.badVideo();
         }
     }
 }
