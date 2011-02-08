@@ -215,9 +215,9 @@ function onYouTubePlayerAPIReady() {
       events: {
         'onReady': function() {
             player.ytplayer.setVolume(60);
-            setInterval(player.update, 250);
+            setInterval(player.update, 500);
         },
-        'onStateChange': function() {}
+        'onStateChange': player.update
       }
     });
 }   

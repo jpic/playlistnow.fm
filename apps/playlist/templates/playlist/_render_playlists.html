@@ -1,4 +1,4 @@
-{% load i18n cache extra_tagging_tags %}
+{% load i18n cache tagging_ext_tags %}
 {% for object in object_list %}
 <div class="playlist line play">
     {% cache 360000 render_playlist_line object.pk %}

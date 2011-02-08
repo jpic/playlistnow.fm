@@ -363,11 +363,13 @@ def playlist_details(request, user, slug, default_format=False, qname='term',
 
     random_tracks = context['user_tracks']
     i = 0
-    while len(context['you_may_also_like']) <= 12:
+    while i < len(random_tracks) and len(context['you_may_also_like']) < 12:
         track = random_tracks[i]
         track.lastfm_get_similar()
         context['you_may_also_like'] += track.similar[:12]
         i += 1
+
+    print context['you_may_also_like']
 
     context.update(extra_context or {})
     return shortcuts.render_to_response(template_name, context,
