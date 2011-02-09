@@ -549,8 +549,7 @@ var player = {
         {
             player.playNext();
         }
-        else if (plState == -1 && player.state.lastAction.action == 'play' && new Date() - player.state.lastAction.date >= 10000 && player.state.waitingNewVideo == false) {
-            console.log(player.state.lastAction, plState,new Date() - player.state.lastAction.date )
+        else if (plState == -1 && player.state.lastAction.action == 'play' && new Date() - player.state.lastAction.date >= 2000 && player.state.waitingNewVideo == false) {
             player.state.waitingNewVideo = true;
             player.badVideo();
         }
