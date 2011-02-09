@@ -85,7 +85,9 @@
 			<a href="{{ gfcprofile.url }}" class="gfc ui_ignore" target="_blank">{% if gfcprofile.nick %}{{ gfcprofile.nick }}{% else %}<span class="bold">Google</span>{% endif %}</a>
             {% endif %}
         </li>
-        <li><span class="fan">Affinities: 34 pourcent</span></li>
+        {% if request.user.is_authenticated %}
+        <li><span class="fan">Affinities: {{ user|affinities_with:request.user }} %</span></li>
+        {% endif %}
     </ul>
 
 </div>

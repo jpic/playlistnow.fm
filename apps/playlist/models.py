@@ -9,7 +9,9 @@ from django.core import urlresolvers
 from django.template import defaultfilters
 from django.conf import settings
 from django.contrib.comments.managers import CommentManager
+from django.core.cache import cache
 
+from music.models import Track, Artist
 from tagging.fields import TagField
 from notification import models as notification
 
@@ -67,13 +69,56 @@ def new_comment(sender, instance, created, **kwargs):
     notification.send(recipients, 'new_comment', context)
 signals.post_save.connect(new_comment, sender=models.get_model('comments', 'Comment'))
 
+def affinities_betwen(profile1, profile2):
+    key1 = '%s and %s affinities' % (profile1.pk, profile2.pk)
+    key2 = '%s and %s affinities' % (profile2.pk, profile1.pk)
+
+    result1 = cache.get(key1)
+    if result1:
+        return result1
+    result2 = cache.get(key2)
+    if result2:
+        return result2
+
+    factors = []
+
+    profile1_tracks_count = profile1.tiny_playlist.tracks.count()
+    profile2_tracks_count = profile2.tiny_playlist.tracks.count()
+    if profile1_tracks_count and profile2_tracks_count:
+        comon_tracks_count = float(Track.objects.filter(playlist=profile1.tiny_playlist).filter(playlist=profile2.tiny_playlist).count())
+        comon_tracks_factor = comon_tracks_count / profile1_tracks_count + comon_tracks_count / profile2_tracks_count
+        factors.append(comon_tracks_factor)
+        #print profile1_tracks_count, comon_tracks_count, profile2_tracks_count, comon_tracks_factor
+
+    profile1_artists_count = profile1.fanof_artists.count()
+    profile2_artists_count = profile2.fanof_artists.count()
+    if profile1_artists_count and profile2_artists_count:
+        comon_artists_count = float(Artist.objects.filter(fans=profile1).filter(fans=profile2).count())
+        comon_artists_factor = comon_artists_count / profile1_artists_count + comon_artists_count / profile2_artists_count
+        factors.append(comon_artists_factor)
+        #print profile1_artists_count, comon_artists_count, profile2_artists_count, comon_artists_factor
+
+    profile1_playlists_count = profile1.fanof_playlists.count()
+    profile2_playlists_count = profile2.fanof_playlists.count()
+    if profile1_playlists_count and profile2_playlists_count:
+        comon_playlists_count = float(Playlist.objects.filter(fans=profile1).filter(fans=profile2).count())
+        comon_playlists_factor = comon_playlists_count / profile1_playlists_count + comon_playlists_count / profile2_playlists_count
+        factors.append(comon_playlists_factor)
+        #print profile1_playlists_count, comon_playlists_count, profile2_playlists_count, comon_playlists_factor
+
+    percent = int((sum(factors) / len(factors)) * 100)
+    #print percent
+
+    #cache.set(key1, percent, 7200)
+
+    return percent
+
 class PlaylistProfile(models.Model):
     user = models.OneToOneField('auth.User', verbose_name=_(u'user'))
     user_location = models.CharField(max_length=100, verbose_name=_(u'location'), null=True, blank=True)
     tiny_playlist = models.ForeignKey('Playlist', related_name='favorite_of')
     fanof_playlists = models.ManyToManyField('playlist.Playlist', verbose_name=_(u'fav playlists'), null=True, blank=True, related_name='fans')
     fanof_artists = models.ManyToManyField('music.Artist', verbose_name=_(u'fav artists'), null=True, blank=True, related_name='fans')
-    fanof_tracks = models.ManyToManyField('music.Track', verbose_name=_(u'fav tracks'), null=True, blank=True, related_name='fans')
     fanof_actions = models.ManyToManyField('actstream.Action', null=True, blank=True, related_name='fans')
 
     last_playlist = models.ForeignKey('playlist.Playlist', verbose_name=_(u'last playlist'), null=True, blank=True)
