@@ -240,10 +240,10 @@ def playlist_search(request,
     )
     qs2 = Playlist.objects.filter(
         Q(name__icontains=request.GET.get('term', ''))
-    )
+    ).exclude(id__in=qs1.values_list('id'))
     qs3 = Playlist.objects.filter(
         Q(name__icontains=request.GET.get('term', ''))
-    )
+    ).exclude(id__in=qs1.values_list('id')).exclude(id__in=qs2.values_list('id'))
 
     context = {
         'term': request.GET.get('term', ''),

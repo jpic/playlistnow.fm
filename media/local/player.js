@@ -9,10 +9,6 @@ var player = {
     'playTrack': function(track, playlist, fromHistory /* new in history ? (bool) */) {
         player.ytplayer.loadVideoById(track.youtube_best_id);
         this.state.currentTrack = track;
-        this.state.lastAction = {
-            'date': new Date(),
-            'action': 'play'
-        }
         this.hiliteCurrentTrack(); 
 
         $('.player_current_artist').html(track.artist.name);
@@ -77,6 +73,8 @@ var player = {
             if (player.state.currentPlaylist.tracks.length) {
                 player.playPlaylistTrack(offset);
             }
+        } else if (player.state != undefined && player.state.currentPlaylist && playlist == player.state.currentPlaylist.object.url) {
+            player.playPlaylistTrack(offset);
         } else {
             $.get(
                 playlist,
@@ -191,10 +189,6 @@ var player = {
             'currentPlaylistTrackIndex': 0,
             'currentTrackHistoryIndex': 0,
             'waitingNewVideo': false,
-            'lastAction': {
-                'action': false,
-                'date': false,
-            }
         }
         this.initBinds();
     },
@@ -228,6 +222,9 @@ var player = {
         });
     },
     'badVideo': function() {
+        if (player.state == undefined || player.state.currentTrack == undefined) {
+            return false;
+        }
         var bad_data = {
             'youtube_id': player.state.currentTrack.youtube_best_id,
             'track_name': player.state.currentTrack.name,
@@ -245,7 +242,6 @@ var player = {
             data: bad_data,
             type: 'post',
             success: function(text, textStatus, request) {
-                player.state.lastAction.date = new Date();
                 player.state.waitingNewVideo = false;
                 player.state.currentTrack.youtube_best_id = text;
                 player.ytplayer.loadVideoById(player.state.currentTrack.youtube_best_id);
@@ -295,6 +291,10 @@ var player = {
 
             player.hiliteCurrentTrack();
         });
+        $('.badvideo').live('click', function(e) {
+            player.state.waitingNewVideo = true;
+            player.badVideo();
+        });
         $('li.song_play .play').live('click', function(e) {
             e.preventDefault();
             $(this).parents('li.song_play').trigger('click');
@@ -303,31 +303,16 @@ var player = {
             player.ytplayer.stopVideo(); 
             $('.player_bttn_play').show();
             $('.player_bttn_pause').hide();
-            
-            player.state.lastAction = {
-                'date': new Date(),
-                'action': 'stop'
-            }
         });
         $('.player_bttn_pause').click(function() { 
             player.ytplayer.pauseVideo(); 
             $('.player_bttn_pause').hide();
             $('.player_bttn_play').show();
-
-            player.state.lastAction = {
-                'date': new Date(),
-                'action': 'pause'
-            }
         });
         $('.player_bttn_play').click(function() { 
             player.ytplayer.playVideo(); 
             $('.player_bttn_play').hide();
             $('.player_bttn_pause').show();
-
-            player.state.lastAction = {
-                'date': new Date(),
-                'action': 'play'
-            }
         });
         $('.player_bttn_mute').click(function() {
             if (player.ytplayer.isMuted()) {
@@ -530,6 +515,9 @@ var player = {
         if (player.ytplayer.getDuration == undefined) {
             return false;
         }
+        if (player.state == undefined) {
+            return false;
+        }
 
         var all = player.ytplayer.getDuration();
         var part = player.ytplayer.getCurrentTime();
@@ -548,10 +536,6 @@ var player = {
         if(plState==0)
         {
             player.playNext();
-        }
-        else if (plState == -1 && player.state.lastAction.action == 'play' && new Date() - player.state.lastAction.date >= 2000 && player.state.waitingNewVideo == false) {
-            player.state.waitingNewVideo = true;
-            player.badVideo();
         }
     }
 }

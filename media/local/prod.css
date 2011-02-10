@@ -264,7 +264,9 @@ li.song_info {
 li.song_info span, li.song_info a {
     padding-left: 4px;
 }
-
+ul.song_tools {
+    display: none;
+}
 
 li.song_info:hover a{ color:#2276bb}
 li.song_info.selected a{ color:#461b50}
@@ -289,6 +291,8 @@ li.song_info.selected.dd, li.song_info.selected { background-color: rgba(70,27,8
 .song_info  .love{background: url(../images/love.png) no-repeat 0 0 transparent;}
 .song_info  .love:hover {background-position: bottom left}
 
+.song_info  .tools{background: url(../images/player/player_share.png) no-repeat 0 0 transparent;}
+.song_info  .tools:hover {background-position: bottom left}
 .song_info  .remove{background: url(../images/remove_pl.png) no-repeat 0 0 transparent;}
 .song_info  .remove:hover {background-position: bottom left}
 li.song_info.dd, .dd{background-color:#f4f4f4;}

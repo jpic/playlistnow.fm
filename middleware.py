@@ -1,4 +1,5 @@
 import re
+import hotshot
 
 from django import http
 from django.conf import settings
@@ -30,7 +31,9 @@ class DynamicHtmlMiddleware(object):
         request.modal = request.GET.get('modal', False)
 
         for url in settings.UI_IGNORE_URLS:
+            print "testing %s against %s" % (url, request.path_info)
             if url in request.path_info:
+                print "CONTINUE NORMAL"
                 request.noreload = True
                 request.ajax = False
                 return None
@@ -49,7 +52,6 @@ class DynamicHtmlMiddleware(object):
 
         elif request.path != '/empty/' and request.method != 'POST':
             # automatic redirect to container for chrome user agents
-            print request.META
             test = request.META['HTTP_USER_AGENT'].lower()
             for agent in JS_AGENTS:
                 if test.find(agent) > -1:
@@ -77,3 +79,14 @@ class DynamicHtmlMiddleware(object):
                 response = http.HttpResponseRedirect(new_url)
 
         return response
+
+    #def process_view(self, request, view_func, view_args, view_kwargs):
+        
+        #profiler = hotshot.Profile('/tmp/django.prof')
+        #response = profiler.runcall(view_func, request, *view_args, **view_kwargs)
+        #profiler.close()
+        
+        ## process results
+        
+        #return response
+

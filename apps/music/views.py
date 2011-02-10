@@ -42,8 +42,7 @@ def music_badvideo(request):
     if not bad_track_pk:
         t = Track(name=bad_track_name)
         t.youtube_cache_reset()
-        if bad_artist_name:
-            t.artist = Artist(name=bad_artist_name)
+        t.artist = Artist(name=bad_artist_name)
     else:
         t = Track.objects.get(pk=bad_track_pk)
     t.youtube_cache_reset()

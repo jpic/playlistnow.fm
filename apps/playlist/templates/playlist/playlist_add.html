@@ -5,7 +5,7 @@
 {% block body %}
 <h1>create a new playlist</h1>
 
-<form action="{% url playlist_add %}" method="post">
+<form action="{% url playlist_add %}" method="post" class="closePopup">
     {{ form.non_field_errors }}
 
     {% csrf_token %}

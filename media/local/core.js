@@ -6,7 +6,6 @@ var ui = {
         'ajaxEnable': true,
     },
     'css': [
-        STATIC_URL + "JSONSuggestBox/jsonSuggest.css",
         STATIC_URL + "local/reset.css",
         STATIC_URL + "local/screen.css",
         STATIC_URL + "local/prod.css",
@@ -36,6 +35,22 @@ var ui = {
         });
         $(document).bind('signalPopupOpen', function() {
             $('.tab_link:first').trigger('click');
+            $('#simplemodal-data form.closePopup').submit(function(e) {
+                e.preventDefault();
+                $.modal.close();
+
+                $.ajax({
+                    url: $(this).attr('action'),
+                    data: $(this).serialize(),
+                    type: $(this).attr('method'),
+                    dataType: 'html',
+                    success: function(html, textStatus, request) {
+                        $('#user_notifications').append($(html).find('#user_notifications').html());
+                    },
+                    beforeSend: ui.beforeSend,
+                    error: ui.error,
+                });
+            });
         });
         $(document).bind('signalPageUpdate', ui.setupForms);
         $(document).bind('signalPageUpdate', ui.setupPagination);
@@ -128,6 +143,17 @@ var ui = {
         if (!ui.settings['ajaxEnable']) {
             return undefined;
         }
+
+        $('.toggle.tools').live('click', function(e) {
+            var li = $(this).parent();
+            var ul = $(this).next();
+            if (ul.css('display') != 'none') {
+                ul.hide('fast');
+            } else {
+                $('ul.song_tools').hide('slow');
+                ul.show('fast');
+            }
+        });
 
         $('.tab_link').live('click', function(e) {
             var tabid = $(this).attr('class').match(/tab_id_([a-z]*)/)[1];

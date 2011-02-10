@@ -16,6 +16,11 @@
     <span class="icon track_modify add add_track authenticationRequired right tiptip {% if playlist %}noconfirm copy_track_row playlist_pk_{{ playlist.pk }}{% endif %}" title="Add this song to {% if not playlist %}a Playlist{% else %}playlist {{ playlist }}{% endif %}"></span>
     <span class="icon love tiny_playlist {% if track in request.tiny_tracks %}remove_track {% if request.user.playlistprofile.tiny_playlist == playlist %}delete parent{% endif %}{% else %}add_track{% endif %} track_modify authenticationRequired right tiptip noconfirm {% if playlist and playlist == request.user.playlistprofile.tiny_playlist %}copy_track_row{% endif %} {% if request.user.is_authenticated %}playlist_pk_{{ request.user.playlistprofile.tiny_playlist.pk }}{% endif %}" title="{% if track in request.tiny_tracks %}Unlike and remove from your Tiny Playlist{% else %}Like and add to your tiny Playlist{% endif %}" style="{% if track in request.tiny_tracks %}background-position: left bottom;{% endif %}"></span>
     <span class="delete parent icon show_next"></span>
+    <span class="right tools toggle icon tiptip" title="More actions for this track"></span>
+    <ul class="song_tools">
+        <li>foo</li>
+        <li>bar</li>
+    </ul>
 </li>
 {% endfor %}
 </ul>

@@ -82,12 +82,12 @@ MIDDLEWARE_CLASSES = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "pinax.apps.account.middleware.LocaleMiddleware",
     "pinax.middleware.security.HideSensistiveFieldsMiddleware",
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
+    #"debug_toolbar.middleware.DebugToolbarMiddleware",
     "pagination.middleware.PaginationMiddleware",
     "socialregistration.middleware.FacebookMiddleware",
 ]
 INTERNAL_IPS = [
-    '79.151.161.163',
+    '80.30.92.61',
 ]
 
 
@@ -165,6 +165,7 @@ UI_IGNORE_URLS = (
     '/socialregistration/twitter',
     #'/socialregistration/setup',
     '/registration/userdata',
+    '/music/badvideo',
 )
 
 GENERATE_USERNAME = False

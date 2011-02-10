@@ -27,12 +27,12 @@
     {% trans "Do you want to" %} {% trans action %} {{ track.name }} {% if track.artist.name %} {% trans "by" %} {{ track.artist.name }}{% endif %} {% trans "to" %} {{ playlist }} ?
 </p>
 {% endif %}
-<form action="{{ request.path }}" method="post">
+<form action="{{ request.path }}" method="post" class="closePopup">
 
     {% if playlist.pk %}
     <input type="hidden" name="playlist_pk" value="{{ playlist.pk }}" />
     {% else %}
-        {% if playlist %}
+        {% if playlist.name %}
         <input type="hidden" name="playlist_name" value="{{ playlist }}" />
         {% else %}
         <label for="playlist_pk">
@@ -40,6 +40,9 @@
         </label>
         <select name="playlist_pk">
             {% for playlist in user_playlists %}
+            <option value="{{ playlist.pk }}">{{ playlist }}</option>
+            {% endfor %}
+            {% for playlist in request.user.playlistprofile.fanof_playlists.all %}
             <option value="{{ playlist.pk }}">{{ playlist }}</option>
             {% endfor %}
         </select>
@@ -57,6 +60,7 @@
     {% endif %}
     <input type="hidden" name="action" value="{{ action }}" />
     <input type="submit" value="{% trans action %}" />
+    {% csrf_token %}
 </form>
 {% endif %}
 {% endblock %}

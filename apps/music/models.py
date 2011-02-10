@@ -101,11 +101,11 @@ class MusicalEntity(models.Model):
 
         return feed.entry
 
-    def lastfm_get_tree(self, method):
-        kwargs = {
+    def lastfm_get_tree(self, method, **kwargs):
+        kwargs.update({
             'autocorrect': 1,
             self.get_type(): unicode(self).encode('utf-8'),
-        }
+        })
 
         if hasattr(self, 'artist'):
             kwargs['artist'] = unicode(self.artist).encode('utf-8')
@@ -165,7 +165,7 @@ class MusicalEntity(models.Model):
 
     def lastfm_get_similar(self):
         cls = self.__class__
-        tree = self.lastfm_get_tree(self.get_type() + '.getSimilar')
+        tree = self.lastfm_get_tree(self.get_type() + '.getSimilar', limit=12)
 
         if tree is None: return None
 
@@ -241,10 +241,13 @@ class Album(MusicalEntity):
         return 'album'
    
     def youtube_get_term(self):
-        return u'%s - %s' % (
-            self.artist.name,
-            self.name
-        )
+        try:
+            return u'%s - %s' % (
+                self.artist.name,
+                self.name
+            )
+        except Artist.DoesNotExist:
+            return self.name
 
     def lastfm_get_info(self):
         tree = self.lastfm_get_tree('album.getInfo')
