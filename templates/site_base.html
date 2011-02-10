@@ -113,7 +113,7 @@
               
             <li class="sep">&nbsp;</li>
             <li>
-                <a href="{% url playlist_add %}" class="authenticationRequired button super blue popup">
+                <a href="{% url playlist_add %}" class="authenticationRequired button super blue">
                     Create a new playlist
                 </a>
             </li>
@@ -218,7 +218,8 @@ function onYouTubePlayerAPIReady() {
             player.ytplayer.setVolume(60);
             setInterval(player.update, 500);
         },
-        'onStateChange': player.update
+        'onStateChange': player.update,
+        'onError': player.badVideo,
       }
     });
 }   
