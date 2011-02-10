@@ -260,18 +260,29 @@ var player = {
             if(!player.state.currentPlaylist) {
                 return true;
             }
-            if(playlist_pk == player.state.currentPlaylist.object.pk) {
-                $.get(
-                    player.state.currentPlaylist.object.url,
-                    {
-                        'format': 'json',
-                    },
-                    function(data, textStatus, req) {
-                        player.state.currentPlaylist = data;
-                    },
-                    'json'
-                );
-            } 
+            
+            if ($('div.playlist_track_list.playlist_pk_' + playlist_pk).length < 1) {
+                // not updating a rendered playlist, we don't care about updates
+                return true;
+            }
+            
+            if (! player.state.currentPlaylist) {
+                // not playlist any playlist, we don't care about updates
+                return true;
+            }
+
+            if ( player.state.currentPlaylist.object.pk == undefined ) {
+                // the currently playlist playlist is virtual, we don't care
+                return true;
+            }
+
+            if ( player.state.currentPlaylist.object.pk != playlist_pk ) {
+                // the currently playlist playlist was not updated, we don't care
+                return true;
+            }
+
+            var new_playlist = player.parseTrackList($('div.playlist_track_list.playlist_pk_' + playlist_pk));
+            player.state.currentPlaylist.tracks = new_playlist.tracks;
         });
         $('li.song_play').live('click', function(e) {
             /* use when li.click != a.clikc */

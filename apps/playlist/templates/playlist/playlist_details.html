@@ -65,7 +65,7 @@
 
 <hr style="height:2px; background:#ddd;">
 
-<div class="playlist_track_list">
+<div class="playlist_track_list playlist_pk_{{ object.pk }}">
     <span id="playlist_pk" style="display:none">{{ object.pk }}</span>
     {% render_tracks user_tracks '' request %}
 </div>
