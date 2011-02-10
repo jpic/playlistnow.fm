@@ -8,6 +8,7 @@ var player = {
     'tiny_playlist': {},
     'playTrack': function(track, playlist, fromHistory /* new in history ? (bool) */) {
         player.ytplayer.loadVideoById(track.youtube_best_id);
+        player.state.playingTrackSince = new Date();
         this.state.currentTrack = track;
         this.hiliteCurrentTrack(); 
 
@@ -139,6 +140,7 @@ var player = {
                 player.playTrack(player.state.trackHistory[0], false, true);
             }
         }
+        player.state.playingTrackSince = new Date();
 
         return true;
     },
@@ -189,6 +191,7 @@ var player = {
             'currentPlaylistTrackIndex': 0,
             'currentTrackHistoryIndex': 0,
             'waitingNewVideo': false,
+            'playingTrackSince': false,
         }
         this.initBinds();
     },
@@ -245,6 +248,7 @@ var player = {
                 player.state.waitingNewVideo = false;
                 player.state.currentTrack.youtube_best_id = text;
                 player.ytplayer.loadVideoById(player.state.currentTrack.youtube_best_id);
+                player.state.playingTrackSince = new Date();
                 $('#ajaxload').fadeOut();
             },
             beforeSend: ui.beforeSend,
@@ -312,16 +316,19 @@ var player = {
         });
         $('.player_bttn_stop').click(function() { 
             player.ytplayer.stopVideo(); 
+            player.state.playingTrackSince = false;
             $('.player_bttn_play').show();
             $('.player_bttn_pause').hide();
         });
         $('.player_bttn_pause').click(function() { 
             player.ytplayer.pauseVideo(); 
+            player.state.playingTrackSince = false;
             $('.player_bttn_pause').hide();
             $('.player_bttn_play').show();
         });
         $('.player_bttn_play').click(function() { 
             player.ytplayer.playVideo(); 
+            player.state.playingTrackSince = new Date();
             $('.player_bttn_play').hide();
             $('.player_bttn_pause').show();
         });
@@ -546,6 +553,9 @@ var player = {
 
         if(plState==0)
         {
+            player.playNext();
+        }
+        if(plState == -1 && player.state.playingTrackSince != false && new Date() - player.state.playingTrackSince > 15000) {
             player.playNext();
         }
     }

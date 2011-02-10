@@ -307,11 +307,14 @@ class Track(MusicalEntity):
             self.artist = Artist(name=tree.find('artist/name').text)
 
     def youtube_get_term(self):
-        return u'%s - %s' % (
-            self.artist.name,
-            self.name
-        )
-
+        try:
+            return u'%s - %s' % (
+                self.artist.name,
+                self.name
+            )
+        except Artist.DoesNotExist:
+            return self.name
+    
     def get_type(self):
         return 'track'
 
