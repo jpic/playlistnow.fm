@@ -106,8 +106,12 @@ def affinities_betwen(profile1, profile2):
         factors.append(comon_playlists_factor)
         #print profile1_playlists_count, comon_playlists_count, profile2_playlists_count, comon_playlists_factor
 
+    # actually that would be len(factors) * 2 if we did not want to intentionnaly increase the affinities :D
     percent = int((sum(factors) / len(factors)) * 100)
     #print percent
+
+    if percent > 100:
+        percent = 100
 
     #cache.set(key1, percent, 7200)
 
