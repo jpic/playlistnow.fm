@@ -18,8 +18,16 @@
     <span class="delete parent icon show_next"></span>
     <span class="right tools toggle icon tiptip" title="More actions for this track"></span>
     <ul class="song_tools">
-        <li>foo</li>
-        <li>bar</li>
+        <li class="recommend">
+            <a href="{% url music_recommendation_add %}?artist_name={{ track.artist.name|urlencode }}&track_name={{ track.name|urlencode }}&tab_id=local" class="popup authenticationRequired">
+                Recommend this track
+            </a>
+        </li>
+        <li class="share">
+            <a href="{% url music_recommendation_add %}?artist_name={{ track.artist.name|urlencode }}&track_name={{ track.name|urlencode }}&tab_id=external" class="popup authenticationRequired">
+                Share this track
+            </a>
+        </li>
     </ul>
 </li>
 {% endfor %}

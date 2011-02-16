@@ -4,8 +4,8 @@
 {% if activity.open %}
 <div class="lineFeed">
     <div class="lineFeedAvatar">
-        <a href="{% url user_details activity.actor.username %}" title="{% trans "details of user" %} {{ activity.actor }}">
-            <img src="{{ STATIC_URL }}images/avatar-logged.jpg" class="avatar small left espace" />
+        <a href="{% url user_details activity.actor.username %}" title="{% trans "details of user" %} {{ activity.actor.first_name }} {{ activity.actor.last_name }}">
+            <img src="{{ activity.actor.playlistprofile.avatar_url }}" class="avatar small left espace" />
         </a>
     </div>
     <div class="lineFeedContent">
@@ -44,6 +44,8 @@
             {% else %}
             <a class="authenticationRequired" href="{% url action_like action.pk %}">I Like</a>
             {% endif %}
+            {% block extra_actions %}
+            {% endblock %}
             - 
             <a class="ui_ignore comment_form_toggle" href="">Comment (<strong>{{ comment_count }}</strong>)</a>
             {% render_comment_list for activity %}

@@ -1,0 +1,34 @@
+{% extends 'music/base.html' %}
+{% load uni_form_tags %}
+
+{% block head_title %}Recommend or share {{ track }} by {{ track.artist }}{% endblock %}
+
+{% block body %}
+<div style="width:200px; float: left;">
+    <span style="display: block" class="tab_link tab_id_local">Recommend to friend</span>
+    <span style="display: block" class="tab_link tab_id_external">Share</span>
+</div>
+
+<div style="width: 200px; margin-left: 200px;">
+    <div class="tab_content tab_id_local">
+        <form action="{% url music_recommendation_add %}?track_name={{ track_name|urlencode }}&artist_name={{ artist_name|urlencode }}&track_pk={{ track_pk }}" method="post" class="closePopup">
+            {{ form.non_field_errors }}
+            {% csrf_token %}
+            {{ form.target.errors|as_uni_errors }}
+            <input type="text" class="autocomplete friends" style="width: 200px" />
+            <input type="hidden" class="autocomplete_pk" name="target" />
+
+            <textarea name="message"></textarea>
+            <input type="submit" />
+            <span class="simplemodal-close">cancel</span>
+        </form>
+    </div>
+    <div class="tab_content tab_id_external">
+        <form action="{# url music_share #}?track_name={{ track_name|urlencode }}&artist_name={{ artist_name|urlencode }}&track_pk={{ track_pk }}" method="post" class="closePopup">
+            {% csrf_token %}
+            <textarea name="message"></textarea>
+            <span class="simplemodal-close">cancel</span>
+        </form>
+    </div>
+</div>
+{% endblock %}

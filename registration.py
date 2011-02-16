@@ -215,6 +215,7 @@ def socialregistration_friends(request,
     user = request.user
     
     for facebookprofile in user.facebookprofile_set.all():
+        print facebookprofile
         friendlist = request.facebook.graph.request(request.facebook.user['uid'] + '/friends')
         facebook_ids = [x['id'] for x in friendlist['data']]
         logger.info("Facebook ids %s" % facebook_ids)

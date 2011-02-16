@@ -28,7 +28,7 @@
 
 <div class="tab_content tab_id_music">
     <form action="{% url music_search %}" method="get" id="search_form">
-        <div class="avatar">
+        <div class="avatar_home">
             <span>
                 <a href="home">
                     <img title="" src="{{ STATIC_URL }}images/avatar-logged.jpg" alt="Avatar" height="50px" width="50px">
@@ -36,7 +36,7 @@
             </span>
         </div>
         <div class="input">
-            <div class="iam" id="typeOfSearch">Artist or Track</div>
+            <div class="iam" id="typeOfSearch">Song</div>
             <div class="inputiam">
                 <input  value="" type="text" name="term" class="autocomplete music">
             </div>
@@ -49,7 +49,7 @@
 
 <div class="tab_content tab_id_user">
     <form action="{% url user_search %}" method="get" id="search_form">
-        <div class="avatar">
+        <div class="avatar_home">
             <span>
                 <a href="home">
                     <img title="" src="{{ STATIC_URL }}images/avatar-logged.jpg" alt="Avatar" height="50px" width="50px">
@@ -57,7 +57,7 @@
             </span>
         </div>
         <div class="input">
-            <div class="iam" id="typeOfSearch">Username or first name or last_name</div>
+            <div class="iam" id="typeOfSearch">User</div>
             <div class="inputiam">
                 <input  value="" type="text" name="term" class="autocomplete user">
             </div>
@@ -70,7 +70,7 @@
     
 <div class="tab_content tab_id_playlist">
     <form action="{% url playlist_search %}" method="get" id="search_form">
-        <div class="avatar">
+        <div class="avatar_home">
             <span>
                 <a href="home">
                     <img title="" src="{{ STATIC_URL }}images/avatar-logged.jpg" alt="Avatar" height="50px" width="50px">

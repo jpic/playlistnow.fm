@@ -28,7 +28,7 @@
 
 <div class="clear"></div>
 
-<div class="bold" style="margin:-8px 0 5px 0;">
+<div class="bold" style="margin:-1px 0 5px 0;">
     {% trans 'Published by' %}
     <a href="{% url user_details object.creation_user.username %}" title="{{ object.creation_user.first_name }}: {% trans "activities on playlistnow.fm" %}" class="bold">{{ object.creation_user.first_name }}</a>
 </div>
@@ -37,7 +37,7 @@
     <span style="display:none;">{% trans "add tracks" %}</span>
 
     <form method="get" action="{{ request.path }}">
-        <input type="text" name="term" value="Search by artist name and / or song name" onfocus="if(this.value=='Search by artist name and / or song name'){this.value='';}" id="term"  style="width:412px;"/>
+        <input class="ad_song_field" type="text" name="term" value="Search by artist name and / or song name" onfocus="if(this.value=='Search by artist name and / or song name'){this.value='';}" id="term"  style="width:412px;" class="search"/>
         <input type="hidden" name="search_artists" value="0" />
         <input type="hidden" name="search_albums" value="0" />
         <input type="submit" class="searched super violet  button" value="{% trans "Search" %}"/>

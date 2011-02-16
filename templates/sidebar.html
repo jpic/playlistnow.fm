@@ -3,21 +3,15 @@
     <div class="container_inner">
     
         <ul class="sidebar_list">
-
+<li class="menu_top">Menu</li>
              <li class="sidebar_playlist sidebar_info">
-                <a href="#">
+                    <a href="{% url playlist_list %}" title="{% trans "all playlists you can listen to for free" %}">
                     <span class="icon"></span>
-                    <span class="label">Playlists</span>
+                   <span class="label">{% trans "all playlists" %}</span>
                 </a>
             </li>
 
-            <li class="sidebar_Allplaylists sidebar_info">
-                <a href="{% url playlist_list %}" title="{% trans "all playlists you can listen to for free" %}">
-
-                    <span class="icon"></span>
-                    <span class="label">{% trans "all playlists" %}</span>
-                </a>
-            </li>
+           
             <li class="sidebar_Topplaylists sidebar_info">
                 <a href="{% url playlist_list_top %}" title="{% trans "most popular playlists" %}">
                     <span class="icon"></span>
@@ -55,9 +49,10 @@
 
         <div class="divider"></div>
            </div>
-        <div id="iframeplayer" style="background:#000;padding:1px;z-index:0;">
+        <div id="iframeplayer">
             <!--<iframe title="YouTube video player" class="youtube-player" type="text/html" width="182" height="182" src="http://www.youtube.com/embed/cxVH-5D6c-k" frameborder="0" allowFullScreen></iframe>-->
         </div>
        
- 
+       <div class="sidebar_action"><a href="" class="fullscreen">Full Screen</a>     <a class="tiptip badvideo ui_ignore" title="Get a fresh youtube result">Bad video</a></div>       
+
 </div>

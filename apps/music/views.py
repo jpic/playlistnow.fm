@@ -1,10 +1,12 @@
 import urllib2
 import math
+import datetime
 
 from django import http
 from django import shortcuts
 from django import template
 from django.db.models import get_model
+from django.db.models import Q
 from django.template import defaultfilters
 from django.contrib.auth import decorators
 from django.conf import settings
@@ -15,7 +17,7 @@ from actstream import action
 
 from models import *
 from playlist.models import *
-#from forms import *
+from forms import *
 
 def return_json(data=None):
     if not data: 
@@ -28,6 +30,74 @@ def return_json(data=None):
         content_type='text/plain; charset=utf-8',
         mimetype='application/json'
     )
+
+def music_recommendation_thank(request, id):
+    if not request.user.is_authenticated():
+        return http.HttpResponseForbidden()
+
+    try:
+        r = Recommendation.objects.get(pk=id)
+    except Recommendation.DoesNotExist:
+        return http.HttpResponseForbidden()
+    
+    r.thanks = True
+    r.thank_date = datetime.now()
+
+def music_recommendation_add(request, form_class=RecommendationForm,
+    template_name='music/recommendation_add.html', extra_context=None):
+
+    if not request.user.is_authenticated():
+        return http.HttpResponseForbidden('please authenticate')
+
+    context = {
+        'track_name': request.REQUEST.get('track_name', ''),
+        'track_pk': request.REQUEST.get('track_pk', ''),
+        'artist_name': request.REQUEST.get('artist_name', ''),
+        'target_pk_list': request.REQUEST.get('target_pk_list', ''),
+        'track': None,
+        'friend_pk': request.REQUEST.get('user_pk', ''),
+    }
+
+    if context['track_name'] and context['artist_name']:
+        try:
+            context['track'] = Track.objects.get(
+                name=context['track_name'], artist__name=context['artist_name'])
+        except Track.DoesNotExist:
+            context['track'] = Track(name=context['track_name'],
+                artist=Artist(name=context['artist_name']))
+            context['track'].lastfm_get_info()
+    elif context['track_name']:
+        try:
+            context['track'] = Track.objects.get(name=context['track_name'])
+        except Track.DoesNotExist:
+            pass
+
+    if request.method == 'POST' and context['track']:
+        form = form_class(request.POST, instance=Recommendation(source=request.user, track=context['track']))
+        if form.is_valid():
+            if not context['track'].pk:
+                context['track'].artist.lastfm_get_info()
+                context['track'].artist.save()
+                context['track'].lastfm_get_info()
+                context['track'].save()
+            recommendation = form.save()
+            action.send(request.user, verb='recommends', action_object=recommendation)
+            msg = 'thanks for recommending <a href="%s">%s</a> to <a href="%s">%s</a>' % (
+                recommendation.track.get_absolute_url(),
+                unicode(recommendation.track),
+                recommendation.target.playlistprofile.get_absolute_url(),
+                unicode(recommendation.target),
+            )
+            return http.HttpResponse(msg)
+        else:
+            print form.errors
+    else:
+        form = form_class()
+
+    context.update(extra_context or {})
+    return shortcuts.render_to_response(template_name, context,
+        context_instance=template.RequestContext(request))
+
 
 def music_badvideo(request):
     bad_youtube_id = request.POST.get('youtube_id', False)

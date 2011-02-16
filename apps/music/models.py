@@ -22,9 +22,10 @@ class Recommendation(models.Model):
     target = models.ForeignKey('auth.User', related_name='recommendations')
     track  = models.ForeignKey('music.Track')
     thanks = models.BooleanField(default=False)
+    message = models.TextField(null=True, blank=True)
 
-    creation_date = models.DateField(auto_now_add=True)
-    thank_date = models.DateField()
+    creation_date = models.DateTimeField(auto_now_add=True)
+    thank_date = models.DateTimeField(null=True, blank=True)
 
     def __unicode__(self):
         if self.thanks:

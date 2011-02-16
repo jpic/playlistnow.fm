@@ -1,3 +1,5 @@
+from operator import or_
+
 from django.core import urlresolvers
 from django import http
 from django import shortcuts
@@ -15,7 +17,7 @@ from actstream import action
 
 from music.views import return_json
 from playlist.models import Playlist
-from music.models import Track
+from music.models import Track, Recommendation
 
 def group_activities(activities):
     if not activities:
@@ -23,6 +25,7 @@ def group_activities(activities):
 
     nogroup = [
         'started following',
+        'recommends',
     ]
     previous = None
     for activity in activities:
@@ -92,7 +95,7 @@ def action_like(request, action_id):
     except Action.DoesNotExist:
         return http.HttpResponseNotFound('could not find action with id %s' % action_id)
     request.user.playlistprofile.fanof_actions.add(object)
-    action.send(request.user, verb='likes', action_object=object)
+    #action.send(request.user, verb='likes', action_object=object)
     return http.HttpResponse('action liked')
 
 def action_unlike(request, action_id):
@@ -147,6 +150,37 @@ def user_search_autocomplete(request, qname='query', qs=User.objects.all()):
 
     return return_json(response)
 
+def friends_search_autocomplete(request, qname='query'):
+    if not request.user.is_authenticated():
+        return http.HttpResponseForbidden()
+
+    if not request.GET.get(qname, False):
+        return return_json()
+
+    q = request.GET[qname]
+    qs = request.user.playlistprofile.friends()
+    qs = qs.filter(Q(first_name__icontains=q) | Q(last_name__icontains=q))
+
+    response = {
+        'query': request.GET[qname].encode('utf-8'),
+        'suggestions': [],
+        'data': [],
+    }
+
+    for user in qs:
+        print user
+        response['suggestions'].append(unicode(user.playlistprofile))
+        response['data'].append({
+            'url': user.playlistprofile.get_absolute_url(),
+            'html': '<img src="%s"> %s' % (
+                user.playlistprofile.avatar_url,
+                unicode(user.playlistprofile),
+            ),
+            'pk': user.pk,
+        })
+
+    return return_json(response)
+
 def user_search(request, qname='term', qs=User.objects.all(),
     template_name='auth/user_list.html', extra_context=None):
     context = {}
@@ -187,7 +221,16 @@ def user_details(request, slug, tab='activities',
     if tab == 'playlists':
         context['playlists'] = user.playlist_set.all()
     elif tab == 'activities':
-        activities = actor_stream(user)
+        activities = Action.objects.filter(
+            Q(
+                actor_content_type = ContentType.objects.get_for_model(user),
+                actor_object_id = user.pk
+            ) | Q(
+                action_object_content_type = ContentType.objects.get_for_model(Recommendation),
+                action_object_object_id__in = Recommendation.objects.filter(target=user).values_list('id')
+            )
+        ).order_by('-timestamp')
+
         context['activities'] = group_activities(activities)
     elif tab == 'follows':
         context['follows_qs'] = follows_qs
@@ -256,7 +299,15 @@ def me(request,
             return http.HttpResponseRedirect(urlresolvers.reverse(
                 'socialregistration_complete'))
 
-    activities = user_stream(request.user)
+    follows = Follow.objects.filter(user=request.user)
+    qs = [Action.objects.stream_for_actor(follow.actor) for follow in follows]
+    qs.append(Action.objects.filter(target_object_id__in=Recommendation.objects.filter(target=request.user)))
+
+    if follows.count():
+        activities = reduce(or_, qs).order_by('-timestamp')
+    else:
+        activities = Action.objects.none()
+
     context['activities'] = group_activities(activities)
 
     context.update(extra_context or {})

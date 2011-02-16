@@ -31,9 +31,9 @@ class DynamicHtmlMiddleware(object):
         request.modal = request.GET.get('modal', False)
 
         for url in settings.UI_IGNORE_URLS:
-            print "testing %s against %s" % (url, request.path_info)
+            #print "testing %s against %s" % (url, request.path_info)
             if url in request.path_info:
-                print "CONTINUE NORMAL"
+                #print "CONTINUE NORMAL"
                 request.noreload = True
                 request.ajax = False
                 return None

@@ -82,12 +82,12 @@ MIDDLEWARE_CLASSES = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "pinax.apps.account.middleware.LocaleMiddleware",
     "pinax.middleware.security.HideSensistiveFieldsMiddleware",
-    #"debug_toolbar.middleware.DebugToolbarMiddleware",
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
     "pagination.middleware.PaginationMiddleware",
     "socialregistration.middleware.FacebookMiddleware",
 ]
 INTERNAL_IPS = [
-    '80.30.92.61',
+    '80.29.103.72',
 ]
 
 
@@ -171,8 +171,9 @@ UI_IGNORE_URLS = (
 GENERATE_USERNAME = False
 SOCIALREGISTRATION_GENERATE_USERNAME = GENERATE_USERNAME
 
-AJAX_NAVIGATION = True
+AJAX_NAVIGATION = False
 LOGIN_REDIRECT_URL = '/me/'
+FACEBOOK_OFFLINE_ACCESS = True
 
 ACCOUNT_EMAIL_VERIFICATION = False
 ACCOUNT_UNIQUE_EMAIL = EMAIL_CONFIRMATION_UNIQUE_EMAIL = False

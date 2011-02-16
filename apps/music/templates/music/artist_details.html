@@ -99,16 +99,8 @@
 </div>    
 </div>
  <div class="clear"></div>
-
- {% if object.local_artist.last_playlist %}
-  <div class="framktop"></div>
-<div class="ad">
-    <span class="statut">Last playlist with {{ object.name }}:</span> 
-    <a class="bold" href="{{ object.local_artist.last_playlist.get_absolute_url }}">{{ object.local_artist.last_playlist }}</a>
-</div>
-{% endif %}
-
-<ul id="tab_artist" class="tab_artist fake_tabs">
+ 
+ <ul id="tab_artist" class="tab_artist fake_tabs">
     <li class="tab first {% if tab == 'overview' %}selected{% endif %}">
         <a class="" href="{% url music_artist_details_tab object|slugify 'overview' %}">
         {% trans "overview" %}
@@ -137,7 +129,17 @@
     <div class="clear"></div>
 </ul>
 
-<div class="clear"></div>
+
+
+
+ {% if object.local_artist.last_playlist %}
+
+<div class="statut">
+    <span class="statut">Last playlist with {{ object.name }}:</span> 
+    <a class="bold" href="{{ object.local_artist.last_playlist.get_absolute_url }}">{{ object.local_artist.last_playlist }}</a>
+</div>
+{% endif %}
+
 
 
 
@@ -148,7 +150,7 @@
 <p class="artist_descr">
     {{ object.description|striptags|safe }}
 </p>
-<div class="clear"></div>
+<div class="clear espacetop"></div>
     {% endif %}
 
     {% if object.tracks %}

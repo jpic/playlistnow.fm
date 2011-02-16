@@ -1,8 +1,10 @@
 import simplejson
 from datetime import datetime
 
+from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import signals
+from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
 from django.utils.translation import ugettext as _
 from django.core import urlresolvers
@@ -15,6 +17,7 @@ from music.models import Track, Artist
 from tagging.fields import TagField
 from notification import models as notification
 
+from actstream.models import Follow
 from socialregistration.models import TwitterProfile, FacebookProfile
 
 TwitterProfile.add_to_class('avatar_url', models.TextField(null=True, blank=True))
@@ -107,7 +110,10 @@ def affinities_betwen(profile1, profile2):
         #print profile1_playlists_count, comon_playlists_count, profile2_playlists_count, comon_playlists_factor
 
     # actually that would be len(factors) * 2 if we did not want to intentionnaly increase the affinities :D
-    percent = int((sum(factors) / len(factors)) * 100)
+    if len(factors):
+        percent = int((sum(factors) / len(factors)) * 100)
+    else:
+        percent = 0
     #print percent
 
     if percent > 100:
@@ -133,6 +139,19 @@ class PlaylistProfile(models.Model):
 
     def get_absolute_url(self):
         return urlresolvers.reverse('user_details', args=(self.user.username,))
+
+    def friends(self):
+        follows_users_ids = Follow.objects.filter(user=self.user,
+                                                  content_type__app_label='auth',
+                                                  content_type__model='user') \
+                                          .exclude(object_id=self.user.pk) \
+                                          .values_list('object_id', flat=True)
+        c = ContentType.objects.get_for_model(User)
+        target_choices_qs = User.objects.filter(
+            Q(follow__object_id=self.user.pk, follow__content_type=c) | 
+            Q(id__in=follows_users_ids)
+        ).select_related('playlistprofile')
+        return target_choices_qs
 
 def autoprofile(sender, instance, **kwargs):
     try:

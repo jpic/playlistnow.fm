@@ -1,0 +1,28 @@
+{% extends 'activity/action.html' %}
+{% load music_tags i18n %}
+{% block what %}
+    <a href="{% url user_details activity.actor.username %}" title="{% trans "see details of user" %} {{ activity.actor }}" class="bold">
+        {{ activity.actor.first_name }} {{ activity.actor.last_name }}
+    </a>
+
+    {{ activity.verb }}
+    
+    <a href="{{ activity.action_object.track.get_absolute_url }}" title="{% trans "details of" %} {{ activity.action_object.track }}" class="bold">
+        {{ activity.action_object.track }}
+    </a>
+    to
+    <a href="{{ activity.action_object.target.get_absolute_url }}" title="{% trans "details of" %} {{ activity.action_object.target.first_name }} {{ activity.action_object.target.last_name }}" class="bold">
+        {{ activity.action_object.target.first_name }} {{ activity.action_object.target.last_name }}
+    </a>
+
+    {% with activity.action_object.track as track %}
+    {% render_track track '' request %}
+    {% endwith %}
+{% endblock %}
+
+{% block extra_actions %}
+    {% if activity.action_object.target == request.user %}
+    -
+    <a href="{% url music_recommendation_thank activity.action_object.pk %}">Thanks</a>
+    {% endif %}
+{% endblock %}

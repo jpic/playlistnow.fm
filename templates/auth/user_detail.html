@@ -64,12 +64,12 @@
 </div>
 
   <div class="profile-name">
-    <h1>{{ user.first_name }} {{ user.last_name }} <span class="artist_rank">Rookie</span></h1> 
-
+    <h1 class="left" style="margin-right:10px;">{{ user.first_name }} {{ user.last_name }}</h1> 
+<div class="button super violet">Rookie</div>
 	<div class="profile-info">
 	<ul>
 	<li>
-			<span class="location">Lives in {{ user.playlistprofile.user_location }}</span> 
+			<span class="location">{{ user.playlistprofile.user_location }}</span> 
             {% if facebookprofile %}
 			
                 <a href="{{ facebookprofile.url }}" class="facebook">{% if facebookprofile.nick %}{{ facebookprofile.nick }}{% else %}<span class="bold">Facebook</span>{% endif %}</a>
@@ -86,21 +86,13 @@
             {% endif %}
         </li>
         {% if request.user.is_authenticated %}
-        <li><span class="fan">Affinities: {{ user|affinities_with:request.user }} %</span></li>
+        <li><span class="afinities"><span class="bold">{{ user|affinities_with:request.user }} %</span> musical match</span></li>
         {% endif %}
     </ul>
 
 </div>
  <div class="clear"></div>
- 
- {% if user.playlistprofile.last_playlist %}
- <div class="framktop"></div>
-<div class="ad">
-    <span class="statut">Last mood:</span>
-    <a class="bold" href="{{ user.playlistprofile.last_playlist.get_absolute_url }}" title="{% trans "details of" %} {{ user.playlistprofile.last_playlist }}">{{ user.playlistprofile.last_playlist }}</a>
-</div>
-{% endif %}
-
+ </div> </div>
 <ul id="tab_artist" class="tab_artist fake_tabs">
     <li class="tab first {% if tab == 'activities' %}selected{% endif %}">
         <a class="" href="{% url user_details_tab user.username 'activities' %}">
@@ -124,7 +116,14 @@
     </li>
     <div class="clear"></div>
 </ul>
-<div class="clear"></div>
+
+ {% if user.playlistprofile.last_playlist %}
+
+<div class="statut">
+    <span class="mood">Last mood:</span>
+    <a class="bold" href="{{ user.playlistprofile.last_playlist.get_absolute_url }}" title="{% trans "details of" %} {{ user.playlistprofile.last_playlist }}">{{ user.playlistprofile.last_playlist }}</a>
+</div>
+{% endif %}
 
 {% if tab == 'activities' %}
 <h2>recent activities</h2>

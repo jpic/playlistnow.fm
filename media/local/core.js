@@ -33,6 +33,7 @@ var ui = {
                 $('.you_may_also_like li').slice(0,4).show('slow');
             }
         });
+        $(document).bind('signalPopupOpen', ui.setupAutocomplete)
         $(document).bind('signalPopupOpen', function() {
             $('.tab_link:first').trigger('click');
             $('#simplemodal-data form.closePopup').submit(function(e) {
@@ -294,40 +295,37 @@ var ui = {
         }
     },
     'setupAutocomplete': function() {
-        if ($('input.autocomplete').length == 0) {
-            return true;
-        }
-
-        // we'll just use it for autoload
-        function doSetupAutocomplete() {
-            $('input.autocomplete').each(function() {
-                if ($(this).hasClass('music')) {
-                    var url = music_search_autocomplete;
-                } else if ($(this).hasClass('user')) {
-                    var url = user_search_autocomplete;
-                } else if ($(this).hasClass('playlist')) {
-                    var url = playlist_search_autocomplete;
+        $('input.autocomplete').each(function() {
+            if ($(this).hasClass('music')) {
+                var url = music_search_autocomplete;
+            } else if ($(this).hasClass('user')) {
+                var url = user_search_autocomplete;
+            } else if ($(this).hasClass('playlist')) {
+                var url = playlist_search_autocomplete;
+            } else if ($(this).hasClass('friends')) {
+                var url = friends_search_autocomplete;
+            }
+    
+            var next = $(this).next();
+            if (next.hasClass('autocomplete_pk')) {
+                var callback = function(value, data) {
+                    next.val(data.pk);
                 }
+            } else {
+                var callback = function(value, data) {
+                    $.history.load(data['url']); 
+                }
+            }
 
-                $(this).autocomplete({
-                    'serviceUrl': url,
-                    'onSelect': function(value, data){
-                        $.history.load(data['url']); 
-                    },
-                    'fnFormatResult': function(value, data, currentValue) {
-                        return data['html'];
-                    },
-                    'deferRequestBy': 0,
-                });
+            $(this).autocomplete({
+                'serviceUrl': url,
+                'onSelect': callback,
+                'fnFormatResult': function(value, data, currentValue) {
+                    return data['html'];
+                },
+                'deferRequestBy': 0,
             });
-        }
-
-        if ($.autocomplete == undefined) {
-            $.getScript(STATIC_URL + 'jquery.autocomplete/jquery.autocomplete.js', doSetupAutocomplete);
-        } else {
-            doSetupAutocomplete();
-        }
-
+        });
     },
     'beforeSend': function(req) {
         var loader = $('#ajaxload');
@@ -375,7 +373,7 @@ var ui = {
             type: method,
             success: function(html, textStatus, request) {
                 $.modal(html);
-                $('#simplemodal-data').before($('#page_title').clone().attr('id', 'simplemodal-title'));
+                $('#simplemodal-data').before($(html).find('#page_title').clone().attr('id', 'simplemodal-title'));
                 $(document).trigger('signalPopupOpen');
                 $('#ajaxload').fadeOut();
             },

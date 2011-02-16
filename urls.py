@@ -79,6 +79,11 @@ urlpatterns = patterns("",
         name='tag_details'
     ),
     url(
+        r'^friends/search/autocomplete/$',
+        views.friends_search_autocomplete,
+        name='friends_search_autocomplete',
+    ),
+    url(
         r'^user/search/autocomplete/$',
         views.user_search_autocomplete,
         name='user_search_autocomplete',
