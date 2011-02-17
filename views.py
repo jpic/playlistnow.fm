@@ -306,13 +306,14 @@ def me(request,
                 'socialregistration_complete'))
 
     follows = Follow.objects.filter(user=request.user)
+    print follows
     qs = [Action.objects.stream_for_actor(follow.actor) for follow in follows]
-    qs.append(Action.objects.filter(target_object_id__in=Recommendation.objects.filter(target=request.user)))
 
     if follows.count():
         activities = reduce(or_, qs).order_by('-timestamp')
     else:
         activities = Action.objects.none()
+    print activities
 
     context['activities'] = group_activities(activities)
 
