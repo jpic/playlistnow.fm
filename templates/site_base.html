@@ -36,6 +36,8 @@
     }
     </script>
     <script type="text/javascript" src="{{ STATIC_URL }}local/player.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}endless_pagination/js/endless.js"></script>
+    <!--<script type="text/javascript" src="{{ STATIC_URL }}endless_pagination/js/endless_on_scroll.js"></script>-->
     {% if request.user.is_authenticated %}
     <script type="text/javascript">
         player.tiny_playlist = {{ request.user.playlistprofile.tiny_playlist.to_json_dict|safe }};

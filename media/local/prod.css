@@ -37,33 +37,39 @@ h2.all_tr {padding-left:25px;background: transparent url(../images/playlists.png
 .button{
 height: 22px;
 line-height: 22px;
- padding: 0 12px;
--webkit-border-radius: 15px; -moz-border-radius: 15px; border-radius: 15px;
+padding:0px 10px;
+color: #555555;
+cursor: pointer;
+display: inline-block;
+font-size: 11px;
+font-weight: bold;
+outline: medium none;
+position: relative;
+text-align: center;
+text-decoration: none !important;
 
- -moz-user-select: none;
+border: 1px solid #4081af;
+border-bottom-color: #20559a;
+text-shadow: 0 -1px 0 hsla(0,0%,0%,.3);
 
+     
+/*Border radius*/
+    -webkit-border-radius: 15px;
+    -moz-border-radius: 15px;
+    border-radius: 15px;
 
-     border-style: solid;
-    border-width: 1px;
-    color: #555555;
-    cursor: pointer;
-    display: inline-block;
-    font-size: 11px;
-    font-weight: bold;
-    outline: medium none;
-    position: relative;
-    text-align: center;
-    text-decoration: none !important;
-    -webkit-box-shadow: rgba(255, 255, 255, 0.496094) 0px 0px 2px inset;
-background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#CCC), to(#F0F0F0));
-border-top-color: #888;
-
--webkit-background-clip: padding-box;
--webkit-box-shadow: rgba(255, 255, 255, 0.296875) 0px 1px 0px inset;
--webkit-font-smoothing: antialiased;
--webkit-user-select: none;
-background-clip: padding-box;
-
+ /*Box shadow*/
+    -webkit-box-shadow: inset 0 1px 0 hsla(0,100%,100%,.3) /*Top*/,
+                        inset 0 0 2px hsla(0,100%,100%,.3) /*Shine*/,
+                        0 1px 2px hsla(0, 0%, 0%, .29) /*Shadow*/;
+    -moz-box-shadow: inset 0 1px 0 hsla(0,100%,100%,.3) /*Top*/,
+                    inset 0 0 2px hsla(0,100%,100%,.3) /*Shine*/,
+                    0 1px 2px hsla(0, 0%, 0%, .29) /*Shadow*/;
+    box-shadow: inset 0 1px 0 hsla(0,100%,100%,.3) /*Top*/,
+                inset 0 0 2px hsla(0,100%,100%,.3) /*Shine*/,
+                0 1px 2px hsla(0, 0%, 0%, .29) /*Shadow*/;
+}
+ 
    
 
 }
@@ -682,7 +688,7 @@ margin-left: 0pt;}
 #player_bottom ul li a.player_bttn_rand { width:30px; height:30px; background: url(../images/player/player_random.png) top left no-repeat; margin: 5px 0px 0 6px;}
 #player_bottom ul li a.player_bttn_repeat { width:30px; height:30px; background: url(../images/player/player_repeat.png) top left no-repeat; margin: 5px 0 0 3px;}
 #player_bottom ul li a.player_bttn_mute { width:30px; height:30px; background: url(../images/player/player_mute.png) top left no-repeat; margin: 5px 5px 0 6px;}
-#player_bottom ul li a.player_bttn_sound { width:9px; height:21px; background: url(../images/player/player_volume.png) bottom left no-repeat; margin: 10px 0 0 0;}
+#player_bottom ul li a.player_bttn_sound { width:9px; height:21px; background: url(../images/player/player_volume.png) bottom left no-repeat; margin: 9px 0 0 0;}
 #player_bottom ul li a.player_bttn_reduce { width:37px; height:39px; background: url(../images/player/player_reduce.png) top left no-repeat;margin-left: 15px;}
 #player_bottom ul li a.player_bttn_prev:hover { width:30px; height:30px;background-position: bottom left; }
 #player_bottom ul li a.player_bttn_forw:hover { width:30px; height:30px; background-position: bottom left; }
@@ -708,10 +714,10 @@ margin-left: 0pt;}
 #player_plname b a {color:#fff; font-weight:bold; font-size:12px; text-decoration: none;}
 #player_plname b a:hover {color:#1c9bc8; font-weight:bold; font-size:12px; text-decoration: underline;}
 #player_bottomsep {float:left; width:2px; background: url(../images/player/player_separator.png) top left no-repeat; height:32px;margin: 0px 8px 0 12px;}
-#player_mzname {font-size:11px; color: #999; padding-left:24px;  float: left; background: url(../images/playlists.png) top left no-repeat;height:16px;margin-top:7px;}
-#player_mzname a {font-size: 13px; color: #747474;text-shadow: 0 1px 0 #FFFFFF;font-weight: bold; text-decoration:none;}
-#player_mzname a:hover {border-bottom: 1px solid #747474; color:#747474;}
-#player_mzname b {font-size: 13px; color: #747474;text-shadow: 0 1px 0 #FFFFFF;font-weight: bold; text-decoration:none;}
+#player_mzname {font-size:11px; color: #999; padding-left:24px;  float: left; background: url(../images/player/playlists.png) bottom left no-repeat;height:16px;margin-top:7px;}
+#player_mzname a {font-size: 13px; color: #ddd;text-shadow: 0 1px 0 #000;font-weight: bold; text-decoration:none;}
+#player_mzname a:hover {border-bottom: 1px solid #fff; color:#fff;}
+#player_mzname b {font-size: 13px; color: #fff;text-shadow: 0 1px 0 #000;font-weight: bold; text-decoration:none;}
 #player_flag{float:left; margin-left:5px;margin-top:8px;}
 
 #xparm {display:none;}
@@ -730,12 +736,12 @@ margin-left: 0pt;}
 
 #player_bottomseparator {float:left; width:2px; background: url(../images/player/player_separator.png) top left repeat-y; height:40px;margin: 0px 8px 0 12px;}
 
-#player .player_current_track {font-weight: bold;color: #747474;text-shadow: 0 1px 0 #FFFFFF;}
+#player .player_current_track {font-weight: bold;color: #fff;text-shadow: 0 1px 0 #000;}
 
-#player_pzname {font-size:13px; color: #999; padding-left:24px;  float: left; background: url(../images/myplaylists.png) 4px 2px no-repeat;height:20px;padding-top:2px;margin-top:3px;}
-#player_pzname a {font-size: 13px;color: #747474;text-shadow: 0 1px 0 #FFFFFF;font-weight: bold; text-decoration:none;}
-#player_pzname a:hover {border-bottom: 1px solid #747474;color: #747474;text-shadow: 0 1px 0 #FFFFFF;;}
-#player_pzname b {font-size: 13px; color:#747474;}
+#player_pzname {font-size:13px; color: #fff; padding-left:24px;float: left; background: url(../images/myplaylists.png) 0 4px no-repeat;height:16px;padding-top:2px;margin-top:4px;}
+#player_pzname a {font-size: 13px;color: #ddd;text-shadow: 0 1px 0 #000;font-weight: bold; text-decoration:none;}
+#player_pzname a:hover {border-bottom: 1px solid #eee;color: #fff;text-shadow: 0 1px 0 #000;}
+#player_pzname b {font-size: 13px; color:#fff;}
 
 #player_bottom .player_bttn_play {
     background-image: url(../images/player/player_bttn_play.png);

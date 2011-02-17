@@ -35,8 +35,8 @@ class Recommendation(models.Model):
 
         return u'%s recommends %s to %s%s' % (
             self.source,
-            self.target,
             self.track,
+            self.target,
             and_was_thanked
         )
 

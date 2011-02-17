@@ -5,7 +5,6 @@
 {% load playlist_tags %}
 {% load music_tags %}
 {% load comments %}
-{% load activity_tags %}
 
 {% block head_title %}{% trans "playlists created by" %}: {{ user }}{% endblock %}
 
@@ -128,11 +127,7 @@
 {% if tab == 'activities' %}
 <h2>recent activities</h2>
 <div class="list">
-
-    {% for activity in activities %}
-        {% display_action activity %}
-    {% endfor %}
-    
+    {% include 'auth/user_activities.html' %}  
     <script type="text/javascript">
     $('.comment_form_toggle').click(function(e) {
         e.preventDefault();

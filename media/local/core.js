@@ -137,6 +137,20 @@ var ui = {
             }
         }, 1000);
 
+        function scrollBind() {
+            $('#page_body_container').scroll(function(){
+                if ($(window).scrollTop() > $(document).height() - ($(window).height()*3)) {
+                    // temporarily unhook the scroll event watcher so we don't call a bunch of times in a row
+                    if ($('a.endless_more').length == 1) {
+                        $(window).unbind('scroll');
+                        $("a.endless_more").click();
+                        scrollBind();
+                    }
+                }
+            })
+        }
+        scrollBind();
+
         $(document).trigger('signalPageUpdate');
         this.ready = true;
     },
@@ -162,11 +176,7 @@ var ui = {
             $('.tab_content.tab_id_'+tabid).show().addClass('selected');
         });
 
-        $('a:not(a.ui_ignore):not(a.tab_link)').live('click', function(e) {
-            // fugbix google.friendconnect.renderSignInButton
-            if ($(this).attr('href') == 'javascript:void(0);')
-                return true;
-
+        $('a:not(a.endless_more):not(a.ui_ignore):not(a.tab_link)').live('click', function(e) {
             e.preventDefault();
             var url = $(this).attr('href');
             if ($(this).hasClass('authenticationRequired') && !user.is_authenticated) {

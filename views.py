@@ -14,6 +14,7 @@ from django.contrib.contenttypes.models import ContentType
 from tagging.models import Tag, TaggedItem
 from actstream.models import actor_stream, user_stream, model_stream, Follow, Action
 from actstream import action
+from endless_pagination.decorators import page_template
 
 from music.views import return_json
 from playlist.models import Playlist
@@ -25,7 +26,7 @@ def group_activities(activities):
 
     nogroup = [
         'started following',
-        'recommends',
+        #'recommends',
     ]
     previous = None
     for activity in activities:
@@ -195,11 +196,16 @@ def user_search(request, qname='term', qs=User.objects.all(),
     return shortcuts.render_to_response(template_name, context,
         context_instance=template.RequestContext(request))
 
+@page_template('auth/user_activities.html')
 def user_details(request, slug, tab='activities',
     template_name='auth/user_detail.html', extra_context=None):
     context = {
         'tab': tab,
     }
+    
+    if 'page' not in request.GET: 
+        template_name = 'auth/user_detail.html'
+    print template_name
 
     user = shortcuts.get_object_or_404(User, username=slug)
     context['user'] = user
