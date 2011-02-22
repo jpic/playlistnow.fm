@@ -17,6 +17,44 @@ import gdata.youtube.service
 # Prevent: XMLSyntaxError: Attempt to load network entity
 etree.set_default_parser(etree.XMLParser(no_network=False, recover=True))
 
+def save_if_fake_track(track):
+    if not track.artist.pk:
+        track.artist.save()
+        # set track.artist_id
+        track.artist = track.artist
+
+    if not track.pk:
+        track.save()
+
+    return track
+
+def get_or_create_track(track_name, artist_name=None):
+    track = get_or_fake_track(track_name, artist_name)
+    save_if_fake_track(track)
+    return track
+
+def get_or_fake_track(track_name, artist_name=None):
+    artist = None
+    if artist_name:
+        try:
+            artist = Artist.objects.get(name__iexact=artist_name)
+        except Artist.DoesNotExist:
+            artist = Artist(name=artist_name)
+            artist.lastfm_get_info()
+
+        try:
+            track = Track.objects.get(name__iexact=track_name,
+                artist__name__iexact=artist_name)
+        except Track.DoesNotExist:
+            track = Track(name=track_name, artist=artist)
+            track.lastfm_get_info()
+    else:
+        try:
+            track = Track.objects.get(name__iexact=track_name)
+        except Track.DoesNotExist:
+            track = Track(name=track_name)
+    return track
+
 class Recommendation(models.Model):
     source = models.ForeignKey('auth.User', related_name='recommends')
     target = models.ForeignKey('auth.User', related_name='recommendations')

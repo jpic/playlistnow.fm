@@ -1,8 +1,9 @@
 {% load endless %}
 {% load activity_tags %}
+{% load group_activities %}
 
-{# paginate activities #}
-{% for activity in activities %}
+{% paginate 7 activities %}
+{% for activity in activities|group_activities %}
     {% display_action activity %}
 {% endfor %}
-{# show_more #}
+{% show_more %}

@@ -14,17 +14,26 @@
 
 {% block body %}
 
-<ul>
-    <li class="tab_link tab_id_music">
-        search music
+          <div style="width:720px;margin:10px auto;">      
+  <div style="display:block"><img title="" src="{{ STATIC_URL }}images/intro.png"></div>
+  
+<ul style="display:inline;color:#64205C;font-weight:700;">
+
+    <li class="tab_link tab_id_music left espace">
+        Search music
     </li>
-    <li class="tab_link tab_id_user">
-        search users
+      <li class="left espace">|</li>
+    <li class="tab_link tab_id_user left espace">
+        Search users
     </li>
-    <li class="tab_link tab_id_playlist">
-        search playlists
+      <li class="left espace">|</li>
+    <li class="tab_link tab_id_playlist left espace">
+
+        Search playlists
     </li>
+
 </ul>
+</div>
 
 <div class="tab_content tab_id_music">
     <form action="{% url music_search %}" method="get" id="search_form">
@@ -88,7 +97,43 @@
         </div>
     </form>
 </div>
+<div style="width:727px;margin:0px auto;">
+<h3 style="text-align:left;">Tags</h3>
+<ul id="playlist-tags">
+<li><a title="home" href="/tags/home/" class="radius-4">home</a></li>
 
+<li><a title="work" href="/tags/work/" class="radius-4">work</a></li>
+
+<li><a title="office" href="/tags/office/" class="radius-4">office</a></li>
+
+<li><a title="party" href="/tags/party/" class="radius-4">party</a></li>
+
+<li><a title="rock" href="/tags/rock/" class="radius-4">rock</a></li>
+
+<li><a title="chill" href="/tags/chill/" class="radius-4">chill</a></li>
+
+<li><a title="love" href="/tags/love/" class="radius-4">love</a></li>
+
+<li><a title="happy" href="/tags/happy/" class="radius-4">happy</a></li>
+
+<li><a title="relax" href="/tags/relax/"class="radius-4">relax</a></li>
+
+<li><a title="dance" href="/tags/dance/" class="radius-4">dance</a></li>
+
+<li><a title="computer" href="/tags/computer/" class="radius-4">computer</a></li>
+
+<li><a title="fun" href="/tags/fun/" class="radius-4">fun</a></li>
+
+<li><a title="working" href="/tags/working/" class="radius-4">working</a></li>
+
+<li><a title="school" href="/tags/school/" class="radius-4">school</a></li>
+
+<li><a title="sad" href="/tags/sad/" class="radius-4">sad</a></li>
+</ul>
+<div class="clear"></div>
+
+
+</div>
 {% endblock %}
 
 {% block extra_body %}

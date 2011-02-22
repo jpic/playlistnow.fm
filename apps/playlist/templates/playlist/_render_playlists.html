@@ -1,9 +1,9 @@
 {% load i18n cache tagging_ext_tags %}
 {% for object in object_list %}
-<div class="playlist line play">
+<div class="playlist line play radius-4">
     {% cache 360000 render_playlist_line object.pk %}
-    <div class="icon" class="play" style="margin:4px 16px 0 2px;">
-        <img src="{{ STATIC_URL }}images/avatar-logged.jpg" style="background:#fff;border:1px solid #ddd;padding:2px;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px;width:60px;height:60px;" alt="{% trans "play" %} {{ object }}" class="play" />
+    <div class="icon" class="play" style="margin:4px 10px 0 10px;">
+        <img src="{{ STATIC_URL }}images/avatar-logged.jpg" alt="{% trans "play" %} {{ object }}"  class="play avatar" />
     </div>
 
     <div class="description play"> 
@@ -18,7 +18,7 @@
         <div class="clear"></div>
         <div style="display:block;">
   
-            <span class="dValue small_font play"> Created by 
+            <span class="tValue small_font play">Created by 
                 <a class="bold" href="{% url user_details object.creation_user.username %}" title="{% trans "details of user" %} {{ object.creation_user }}">
                     {{ object.creation_user }}
                 </a>
@@ -39,16 +39,17 @@
             </span>
         </div>
         {% endif %}        
-        
+      
         {% if object.tags %}
+      
         <div style="display: block"></div>
-        {% show_tags_for object %}
+          <span class="dValue small_font play violet">{% show_tags_for object %}</span>
         {% endif %}
     </div>
     
-    <div class="play right">
+       <div class="play right" style="padding:1px 0px;">
         <a href="{{ object.get_absolute_url }}" title="{% trans "play playlist" %} {{ object }}" class="play">
-            <img src="{{ STATIC_URL }}images/play_line.png" alt="{% trans "play playlist" %} {{ object }}" height="60" width="60" class="play">
+            <img src="{{ STATIC_URL }}images/play_line.png" alt="{% trans "play playlist" %} {{ object }}" height="64" width="60" class="play">
         </a>
     </div>
     {% endcache %}

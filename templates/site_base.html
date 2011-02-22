@@ -69,16 +69,22 @@
         </h1>
         <ul id="menu">
              <li class="seplogo">&nbsp;</li>
-            
+            {% if request.user.is_authenticated %}
               
             <li id="topheader_feed">
                 <a href="{% url me %}" class="tiptip" title="Friend Feed"></a>
             </li>
                <li class="sep">&nbsp;</li>
+                    <li id="topheader_profile">
+                <a href="{% url user_details request.user.username %}" class="tiptip" title="{{ request.user.first_name }} {{ request.user.last_name }}"></a>
+            </li>
+             <li class="sep">&nbsp;</li>
+               {% endif %}
+              
                  <li class="espace">&nbsp;</li>
             <li><form action="{% url music_search %}" method="get">
     <input type="text" name="term" id="term" class="autocomplete music search_header" />
-    <input class="super button grey" type="submit" value="{% trans "Search" %}" />
+    <input class="super button grey radius-15" type="submit" value="{% trans "Search" %}" />
 </form></li>
         </ul>
         <ul id="menu_right" class="right">
@@ -91,12 +97,12 @@
             {% else %}
                 {% if not request.user.is_authenticated %}
                 <li class="topheader_create"> 
-                    <a class="button super violet popup" href="{% url acct_login %}">
+                    <a class="button radius-15 violet popup" href="{% url acct_login %}">
                       <span>Login</span>
                     </a>
                 </li>
                 <li class="topheader_create">
-                    <a class="button super blue" href="{% url acct_signup %}">
+                    <a class="button radius-15 blue" href="{% url acct_signup %}">
                        <span>Become Member</span>
                     </a>
                 </li>
@@ -116,14 +122,10 @@
             {% endif %}
             {% if request.user.is_authenticated %}
             
-              <li class="spacing"><a href="{% url user_details request.user.username %}">{{ request.user.first_name }} {{ request.user.last_name }}</a>
-            </li><li class="spacing_avat">
-                <a href="{% url user_details request.user.username %}"><img src="{{ request.user.playlistprofile.avatar_url }}" class="verysmall prof"/></a>
-                </li>
               
-            <li class="sep">&nbsp;</li>
+           
             <li class="topheader_create"> 
-                <a href="{% url playlist_add %}" class="authenticationRequired button super blue">
+                <a href="{% url playlist_add %}" class="authenticationRequired button radius-15 blue">
                     Create a new playlist
                 </a>
             </li>

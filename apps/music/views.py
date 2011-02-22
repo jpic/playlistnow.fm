@@ -51,35 +51,18 @@ def music_recommendation_add(request, form_class=RecommendationForm,
 
     context = {
         'track_name': request.REQUEST.get('track_name', ''),
-        'track_pk': request.REQUEST.get('track_pk', ''),
         'artist_name': request.REQUEST.get('artist_name', ''),
         'target_pk_list': request.REQUEST.get('target_pk_list', ''),
         'track': None,
         'friend_pk': request.REQUEST.get('user_pk', ''),
     }
 
-    if context['track_name'] and context['artist_name']:
-        try:
-            context['track'] = Track.objects.get(
-                name=context['track_name'], artist__name=context['artist_name'])
-        except Track.DoesNotExist:
-            context['track'] = Track(name=context['track_name'],
-                artist=Artist(name=context['artist_name']))
-            context['track'].lastfm_get_info()
-    elif context['track_name']:
-        try:
-            context['track'] = Track.objects.get(name=context['track_name'])
-        except Track.DoesNotExist:
-            pass
+    context['track'] = get_or_fake_track(context['track_name'], context['artist_name'])
 
     if request.method == 'POST' and context['track']:
         form = form_class(request.POST, instance=Recommendation(source=request.user, track=context['track']))
         if form.is_valid():
-            if not context['track'].pk:
-                context['track'].artist.lastfm_get_info()
-                context['track'].artist.save()
-                context['track'].lastfm_get_info()
-                context['track'].save()
+            save_if_fake_track(context['track'])
             recommendation = form.save()
             action.send(request.user, verb='recommends', action_object=recommendation)
             msg = 'thanks for recommending <a href="%s">%s</a> to <a href="%s">%s</a>' % (

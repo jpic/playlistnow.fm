@@ -1,0 +1,12 @@
+{% extends 'activity/action.html' %}
+
+{% load music_tags %}
+
+{% block what %}
+    {% if activity.open %}
+        {{ block.super }}
+    {% endif %}
+    {% if activity.close %}
+        {% render_tracks activity.action_object_group '' request %}
+    {% endif %}
+{% endblock %}

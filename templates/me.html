@@ -112,9 +112,7 @@
 <h1>friend feed</h1>
 <div class="list">
 
-    {% for activity in activities %}
-        {% display_action activity %}
-    {% endfor %}
+    {% include 'auth/user_activities.html' %}  
     
     <script type="text/javascript">
     $('.comment_form_toggle').click(function(e) {

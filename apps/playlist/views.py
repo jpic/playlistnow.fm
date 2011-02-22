@@ -52,19 +52,19 @@ def playlist_track_modify(request,
     template_name='playlist/track_modify.html', extra_context=None):
 
     context = {
-        'action': request.GET.get('action', request.POST.get('action', 'add')),
+        'action': request.REQUEST.get('action', 'add'),
         'status': None,
         'playlist': {
-                'pk': request.GET.get('playlist_pk', request.POST.get('playlist_pk', False)),
-                'name': request.GET.get('playlist_name', request.POST.get('playlist_name', False)),
+                'pk': request.REQUEST.get('playlist_pk', False),
+                'name': request.REQUEST.get('playlist_name', False),
         },
         'track': {
             'artist': {
-                'pk': request.GET.get('artist_pk', request.POST.get('artist_pk', False)),
-                'name': request.GET.get('artist_name', request.POST.get('artist_name', False)),
+                'pk': request.REQUEST.get('artist_pk', False),
+                'name': request.REQUEST.get('artist_name', False),
             },
-            'pk': request.GET.get('track_pk', request.POST.get('track_pk', False)),
-            'name': request.GET.get('track_name', request.POST.get('track_name', False)),
+            'pk': request.REQUEST.get('track_pk', False),
+            'name': request.REQUEST.get('track_name', False),
         }
     }
 
@@ -84,26 +84,18 @@ def playlist_track_modify(request,
         try:
             context['track'] = Track.objects.get(pk=context['track']['pk'])
         except Track.DoesNotExist:
-            pass
-    elif context['track']['name'] and context['track']['artist']['name']:
-        try:
-            context['track'] = Track.objects.get(name=context['track']['name'],
-                artist__name=context['track']['artist']['name'])
-        except Track.DoesNotExist:
-            try:
-                artist = Artist.objects.get(name=context['track']['artist']['name'])
-            except Artist.DoesNotExist:
-                artist = Artist(name=context['track']['artist']['name'])
-            
-            context['track'] = Track(name=context['track']['name'],
-                artist=artist)
+            if context['track']['artist']:
+                context['track'] = get_or_fake_track(context['track']['name'],
+                    context['track']['artist']['name'])
+            else:
+                context['track'] = get_or_fake_track(context['track']['name'])
 
     if context['action'] == 'add':
         context['user_playlists'] = Playlist.objects.all_with_hidden().filter(
             creation_user=request.user)
     elif context['action'] == 'remove':
         context['user_playlists'] = Playlist.objects.all_with_hidden().filter(
-            creation_user=request.user, tracks__name=context['track'].name)
+            creation_user=request.user, tracks__name__iexact=context['track'].name)
 
     plname = False
     if isinstance(context['playlist'], dict):
@@ -119,16 +111,11 @@ def playlist_track_modify(request,
         getattr(context['track'], 'name', False) and \
         request.method == 'POST':
 
-        if not getattr(context['track'].artist, 'pk', False):
-            context['track'].artist.save()
-            context['track'].artist = context['track'].artist
-            print 'saved artist', context['track'].artist, context['track'].artist.pk
-        else:
-            print 'got artist', context['track'].artist, context['track'].artist.pk
-
-        if not getattr(context['track'], 'pk', False):
+        if not getattr(context['track'], 'youtube_id', False):
             context['track'].youtube_id = context['track'].youtube_get_best()
-            context['track'].save()
+
+        if not getattr(context['track'].artist, 'pk', False):
+            save_if_fake_track(context['track'])
 
         try:
             if context['action'] == 'add':

@@ -1,5 +1,6 @@
 {% load i18n %}
 {% load comments %}
+{% load cache %}
 
 {% if activity.open %}
 <div class="lineFeed">
@@ -12,6 +13,7 @@
 {% endif %}
         <div class="lineFeedContentWhat">
         {% block what %}
+
             <a href="{% url user_details activity.actor.username %}" title="{% trans "see details of user" %} {{ activity.actor }}" class="bold">
                 {{ activity.actor.first_name }} {{ activity.actor.last_name }}
             </a>
@@ -29,10 +31,13 @@
                 {{ activity.target }}
             </a>
             {% endif %}
+
+
+
         {% endblock %}
-            {% if request.user.is_authenticated and request.user == activity.actor %}
+        {% if request.user.is_authenticated and request.user == activity.actor %}
             <span class="delete action_pk_{{ activity.pk }}">&nbsp;</span>
-            {% endif %}
+        {% endif %}
 
         </div>
 {% if activity.close %}

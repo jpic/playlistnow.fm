@@ -1,0 +1,13 @@
+{% extends 'activity/action.html' %}
+
+{% load music_tags %}
+
+{% block what %}
+    {% if activity.open %}
+        {{ block.super }}
+    {% endif %}
+    added track template, doing nothing
+    {% if activity.close %}
+        {% render_tracks activity.action_object_group '' request %}
+    {% endif %}
+{% endblock %}

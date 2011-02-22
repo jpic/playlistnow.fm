@@ -93,7 +93,7 @@
             <a href="fan" class="fan bold">{% if object.local_artist.fans.count %}{{ object.local_artist.fans.count }}{% else %}0{% endif %} fans</a>
 
         </li>
-        <li>Next event:</li>
+        <li><span class="location">Next event:</span></li>
     </ul>
 </div>
 </div>    
@@ -135,7 +135,7 @@
  {% if object.local_artist.last_playlist %}
 
 <div class="statut">
-    <span class="statut">Last playlist with {{ object.name }}:</span> 
+    <span class="mood">Last playlist with {{ object.name }}:</span> 
     <a class="bold" href="{{ object.local_artist.last_playlist.get_absolute_url }}">{{ object.local_artist.last_playlist }}</a>
 </div>
 {% endif %}

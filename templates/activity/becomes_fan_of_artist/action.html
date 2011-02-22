@@ -1,15 +1,22 @@
 {% extends 'activity/action.html' %}
 
-{% load music_tags %}
+{% load music_tags i18n cache %}
 
 {% block what %}
     {% if activity.open %}
-        {{ block.super }}
+        <a href="{% url user_details activity.actor.username %}" title="{% trans "see details of user" %} {{ activity.actor }}" class="bold">
+            {{ activity.actor.first_name }} {{ activity.actor.last_name }}
+        </a>
+        {% if activity.close %}
+        is fan of this artist
+        {% else %}
+        is fan of this artists
+        {% endif %}
     {% endif %}
     {% if activity.close %}
+        {% cache 99999 activity activity.pk %}
         {% render_artists activity.action_object_group %}
+        {% endcache %}
         <div class="clear"></div>
-    {% else %}
-        {{ activity.action_object }}
     {% endif %}
 {% endblock %}

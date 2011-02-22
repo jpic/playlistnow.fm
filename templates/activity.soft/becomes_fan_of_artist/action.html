@@ -1,0 +1,18 @@
+{% extends 'activity/action.html' %}
+
+{% load music_tags %}
+
+{% block what %}
+    {% if activity.open %}
+        {{ block.super }}
+        openning artist template for verb {{ activity.verb }}
+    {% endif %}
+    artist template, doing nothing, for activity verb {{ activity.verb }}
+    {% if activity.close %}
+        closing artists for activity {{ activity.verb }}
+        {% render_artists activity.action_object_group %}
+        <div class="clear"></div>
+    {% else %}
+        {{ activity.action_object }}
+    {% endif %}
+{% endblock %}

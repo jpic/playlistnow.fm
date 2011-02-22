@@ -142,7 +142,7 @@ var ui = {
                 if ($(window).scrollTop() > $(document).height() - ($(window).height()*3)) {
                     // temporarily unhook the scroll event watcher so we don't call a bunch of times in a row
                     if ($('a.endless_more').length == 1) {
-                        $(window).unbind('scroll');
+                        $('#page_body_container').unbind('scroll');
                         $("a.endless_more").click();
                         scrollBind();
                     }
