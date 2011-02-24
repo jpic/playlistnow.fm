@@ -50,7 +50,6 @@ def playlist_fanship(request, playlist_pk):
 @decorators.login_required
 def playlist_track_modify(request,
     template_name='playlist/track_modify.html', extra_context=None):
-
     context = {
         'action': request.REQUEST.get('action', 'add'),
         'status': None,
@@ -84,11 +83,14 @@ def playlist_track_modify(request,
         try:
             context['track'] = Track.objects.get(pk=context['track']['pk'])
         except Track.DoesNotExist:
-            if context['track']['artist']:
-                context['track'] = get_or_fake_track(context['track']['name'],
-                    context['track']['artist']['name'])
-            else:
-                context['track'] = get_or_fake_track(context['track']['name'])
+            pass
+    
+    if not isinstance(context['track'], Track):
+        if context['track']['artist']:
+            context['track'] = get_or_fake_track(context['track']['name'],
+                context['track']['artist']['name'])
+        else:
+            context['track'] = get_or_fake_track(context['track']['name'])
 
     if context['action'] == 'add':
         context['user_playlists'] = Playlist.objects.all_with_hidden().filter(
@@ -111,11 +113,11 @@ def playlist_track_modify(request,
         getattr(context['track'], 'name', False) and \
         request.method == 'POST':
 
+        save_if_fake_track(context['track'])
+
         if not getattr(context['track'], 'youtube_id', False):
             context['track'].youtube_id = context['track'].youtube_get_best()
-
-        if not getattr(context['track'].artist, 'pk', False):
-            save_if_fake_track(context['track'])
+            context['track'].save()
 
         try:
             if context['action'] == 'add':
@@ -159,16 +161,12 @@ def playlist_track_modify(request,
                     context['playlist'].get_absolute_url(),
                     unicode(context['playlist']),
                 )
-                # disabled negative actions
-#                if request.user.is_authenticated():
-#                    if context['playlist'].pk == request.user.playlistprofile.tiny_playlist.pk:
-#                        action.send(request.user, verb='unliked track', action_object=context['track'])
-#                    else:
-#                        action.send(request.user, verb='removed track from playlist', action_object=context['track'], target=context['playlist'])
             messages.add_message(request, messages.INFO, msg)
-        except Exception:
-            context['status'] = 'error'
-            messages.add_message(request, messages.INFO, msg)
+        #except Exception:
+            #context['status'] = 'error'
+            #messages.add_message(request, messages.INFO, msg)
+        except User.DoesNotExist:
+            pass
 
     context.update(extra_context or {})
     return shortcuts.render_to_response(template_name, context,
@@ -310,6 +308,8 @@ def playlist_details(request, user, slug, default_format=False, qname='term',
         if object.name[0:7] != 'hidden:' and request.user.is_authenticated():
             request.user.playlistprofile.last_playlist = object
             request.user.playlistprofile.save()
+        object.play_counter += 1
+        object.save()
         return http.HttpResponse(simplejson.dumps(serialized))
 
     context['object'] = object

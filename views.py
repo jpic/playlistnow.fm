@@ -1,5 +1,7 @@
 from operator import or_
+from datetime import date, timedelta
 
+from django.core.cache import cache
 from django.core import urlresolvers
 from django import http
 from django import shortcuts
@@ -10,6 +12,8 @@ from django.db.models import Q
 from django.contrib.auth import decorators
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
+from django.utils.hashcompat import md5_constructor
+from django.utils.http import urlquote
 
 from tagging.models import Tag, TaggedItem
 from actstream.models import actor_stream, user_stream, model_stream, Follow, Action
@@ -17,8 +21,18 @@ from actstream import action
 from endless_pagination.decorators import page_template
 
 from music.views import return_json
-from playlist.models import Playlist
+from playlist.models import *
 from music.models import Track, Recommendation
+
+def make_cache_key(fragment_name, *variables):
+    args = md5_constructor(u':'.join([urlquote(var) for var in variables]))
+    cache_key = '%s.%s' % (fragment_name, args.hexdigest())
+    return cache_key
+
+def invalidate_cache_key(fragment_name, *variables):
+    args = md5_constructor(u':'.join([urlquote(var) for var in variables]))
+    cache_key = 'template.cache.%s.%s' % (fragment_name, args.hexdigest())
+    cache.delete(cache_key)
 
 def group_activities(activities):
     if not activities:
@@ -26,7 +40,7 @@ def group_activities(activities):
 
     nogroup = [
         'started following',
-        #'recommends',
+        'recommends',
     ]
     previous = None
     for activity in activities:
@@ -36,7 +50,7 @@ def group_activities(activities):
             else:
                 activity.action_object_group = [activity.action_object]
             
-        if previous and activity.verb == previous.verb and activity.verb not in nogroup:
+        if previous and activity.verb == previous.verb and activity.verb not in nogroup and previous.actor_object_id == activity.actor_object_id:
             activity.open = False
             previous.close = False
             if hasattr(activity, 'action_object') and activity.action_object.__class__ == previous.action_object.__class__:
@@ -48,6 +62,14 @@ def group_activities(activities):
                 previous.close = True
         
         previous = activity
+
+    # reset cache of the first group closer because new activities might be
+    # part of the group
+    #import pdb; pdb.set_trace()
+    for activity in activities:
+        if getattr(activity, 'close', False):
+            invalidate_cache_key('activity', activity.pk)
+            break
 
     activities[0].open = True
     activities[len(activities)-1].close = True
@@ -137,7 +159,7 @@ def user_search_autocomplete(request, qname='query', qs=User.objects.all()):
         Q(username__icontains=q) |
         Q(first_name__icontains=q) |
         Q(last_name__icontains=q)
-    ).select_related('playlistprofile')
+    ).select_related('playlistprofile').distinct('username')
 
     for user in qs[:15]:
         response['suggestions'].append(unicode(user.playlistprofile))
@@ -169,7 +191,6 @@ def friends_search_autocomplete(request, qname='query'):
     }
 
     for user in qs:
-        print user
         response['suggestions'].append(unicode(user.playlistprofile))
         response['data'].append({
             'url': user.playlistprofile.get_absolute_url(),
@@ -205,15 +226,11 @@ def user_details(request, slug, tab='activities',
     
     if 'page' not in request.GET: 
         template_name = 'auth/user_detail.html'
-    print template_name
 
     user = shortcuts.get_object_or_404(User, username=slug)
     context['user'] = user
 
     c = ContentType.objects.get_for_model(User)
-
-    #follows_users_ids = Follow.objects.filter(user=user, content_type=c).exclude(object_id=user.pk).values_list('object_id', flat=True)
-    #follows_qs = User.objects.filter(id__in=follows_users_ids).select_related('playlistprofile')
 
     follows_users_ids = Follow.objects.filter(user=user,
                                               content_type__app_label='auth',
@@ -228,16 +245,13 @@ def user_details(request, slug, tab='activities',
         context['playlists'] = user.playlist_set.all()
     elif tab == 'activities':
         activities = Action.objects.filter(
+            Q(pk__in=actor_stream(user).values_list('pk')) |
             Q(
-                actor_content_type = ContentType.objects.get_for_model(user),
-                actor_object_id = user.pk
-            ) | Q(
                 action_object_content_type = ContentType.objects.get_for_model(Recommendation),
                 action_object_object_id__in = Recommendation.objects.filter(target=user).values_list('id')
             )
         ).order_by('-timestamp')
-
-        context['activities'] = group_activities(activities)
+        context['activities'] = activities
     elif tab == 'follows':
         context['follows_qs'] = follows_qs
     elif tab == 'followers':
@@ -287,6 +301,7 @@ def empty(request,
     return shortcuts.render_to_response(template_name, context,
         context_instance=template.RequestContext(request))
 
+@page_template('auth/user_activities.html')
 def me(request,
     template_name='me.html', extra_context=None):
     context = {}
@@ -304,18 +319,46 @@ def me(request,
         else:
             return http.HttpResponseRedirect(urlresolvers.reverse(
                 'socialregistration_complete'))
+    
+    user = request.user
+    activities = Action.objects.filter(
+        Q(pk__in=user_stream(user).values_list('pk')) |
+        Q(pk__in=actor_stream(user).values_list('pk')) |
+        Q(
+            action_object_content_type = ContentType.objects.get_for_model(Recommendation),
+            action_object_object_id__in = Recommendation.objects.filter(target=user).values_list('id')
+        )
+    ).order_by('-timestamp')
+    context['activities'] = activities
 
-    follows = Follow.objects.filter(user=request.user)
-    print follows
-    qs = [Action.objects.stream_for_actor(follow.actor) for follow in follows]
+    context['who_to_follow'] = suggested_users_for(user)
 
-    if follows.count():
-        activities = reduce(or_, qs).order_by('-timestamp')
-    else:
-        activities = Action.objects.none()
-    print activities
+    context['hot_tracks'] = []
+    like_qs = Action.objects.filter(timestamp__gte=date.today() - timedelta(1))
+    like_qs = like_qs.filter(verb='liked track')
+    like_qs = like_qs.exclude(action_object_object_id__in=user.playlistprofile.tiny_playlist.tracks.all().values_list('pk'))
+    like_friends_qs = like_qs.filter(actor_object_id__in=user.playlistprofile.friends().values_list('pk'))
+    
+    def get_sorted_tracks_from_actions(actions):
+        points = {}
+        for pk in actions.values_list('action_object_object_id', flat=True):
+            if pk not in points.keys():
+                points[pk] = 0
+            points[pk] += 1
 
-    context['activities'] = group_activities(activities)
+        sorted_points = sorted(points.iteritems(), key=operator.itemgetter(1))
+        sorted_points.reverse()
+        sorted_pks = [pk for pk, points in sorted_points][:8]
+        tracks = Track.objects.filter(pk__in=sorted_pks)
+        sorted_tracks = sorted(tracks, key=lambda track: sorted_pks.index(track.pk))
+        return sorted_tracks
+
+    context['hot_tracks'] += get_sorted_tracks_from_actions(like_friends_qs)
+    if len(context['hot_tracks']) < 8:
+        context['hot_tracks'] += get_sorted_tracks_from_actions(like_friends_qs)
+
+    if 'page' not in request.GET: 
+        template_name = 'me.html'
 
     context.update(extra_context or {})
     return shortcuts.render_to_response(template_name, context,

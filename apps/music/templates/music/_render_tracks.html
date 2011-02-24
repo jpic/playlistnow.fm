@@ -28,6 +28,11 @@
                 Share this track
             </a>
         </li>
+        <li class="rm">
+            {% if playlist.pk and track.pk %}
+            <a href="{% url playlist_track_modify %}?action=remove&playlist_pk={{ playlist.pk }}&track_pk={{ track.pk }}">Remove</a>
+            {% endif %}
+        </li>
     </ul>
 </li>
 {% endfor %}

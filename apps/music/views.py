@@ -42,6 +42,11 @@ def music_recommendation_thank(request, id):
     
     r.thanks = True
     r.thank_date = datetime.now()
+    r.save()
+            
+    action.send(request.user, verb='thanks recommendation', action_object=r)
+
+    return http.HttpResponse('you thanked')
 
 def music_recommendation_add(request, form_class=RecommendationForm,
     template_name='music/recommendation_add.html', extra_context=None):

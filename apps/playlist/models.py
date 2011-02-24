@@ -1,9 +1,10 @@
 import simplejson
+import operator
 from datetime import datetime
 
 from django.contrib.auth.models import User
 from django.db import models
-from django.db.models import signals
+from django.db.models import signals, Q, Count
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
 from django.utils.translation import ugettext as _
@@ -71,6 +72,39 @@ def new_comment(sender, instance, created, **kwargs):
 
     notification.send(recipients, 'new_comment', context)
 signals.post_save.connect(new_comment, sender=models.get_model('comments', 'Comment'))
+
+def suggested_users_for(user):
+    points = {}
+
+    def count_points(user_list, points, value):
+        for user in user_list:
+            if user.pk not in points.keys():
+                points[user.pk] = 0
+            points[user.pk] += value
+
+    common_playlist = User.objects.filter(
+        playlistprofile__fanof_playlists__in=user.playlistprofile.fanof_playlists.all()
+    ).exclude(pk=user.pk).exclude(pk__in=user.playlistprofile.friends().values_list('pk', flat=True))
+    count_points(common_playlist, points, 1)
+
+    common_artists = User.objects.filter(
+        playlistprofile__fanof_artists__in=user.playlistprofile.fanof_artists.all()
+    ).exclude(pk=user.pk).exclude(pk__in=user.playlistprofile.friends().values_list('pk', flat=True))
+    count_points(common_artists, points, 3)
+
+    common_tiny = User.objects.filter(
+        playlistprofile__tiny_playlist__tracks__in=
+            user.playlistprofile.tiny_playlist.tracks.all()
+    ).exclude(pk=user.pk).exclude(pk__in=user.playlistprofile.friends().values_list('pk', flat=True))
+    count_points(common_artists, points, 4)
+
+    sorted_points = sorted(points.iteritems(), key=operator.itemgetter(1))
+    sorted_points.reverse()
+    sorted_pks = [pk for pk, points in sorted_points][:12]
+    users = User.objects.filter(pk__in=sorted_pks)
+    sorted_users = sorted(users, key=lambda user: sorted_pks.index(user.pk))
+
+    return sorted_users
 
 def affinities_betwen(profile1, profile2):
     key1 = '%s and %s affinities' % (profile1.pk, profile2.pk)

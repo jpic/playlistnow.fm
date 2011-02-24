@@ -5,6 +5,10 @@
 {% block body_right %}
 
 <h3>who to follow ?</h3>
+{% for user in who_to_follow %}
+{{ user }}
+{% endfor %}
+
 <div id="whotofollow">
 
 <div class="whotofollow_list">
@@ -64,6 +68,11 @@
 </div>
 
 <h3>Hot song today</h3>
+
+{% for track in hot_tracks %}
+{{ track }}
+{% endfor %}
+
 <div id="hotsong">
 <div class="hotsong_list">
 <ul class="song_list" style="font-size:11px;">
