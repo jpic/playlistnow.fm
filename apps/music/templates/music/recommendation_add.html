@@ -1,34 +1,86 @@
 {% extends 'music/base.html' %}
 {% load uni_form_tags %}
+{% load facebook_tags %}
 
-{% block head_title %}Recommend or share {{ track }} by {{ track.artist }}{% endblock %}
+{% block head_title %}{{ track }} by {{ track.artist }}{% endblock %}
 
 {% block body %}
-<div style="width:200px; float: left;">
-    <span style="display: block" class="tab_link tab_id_local">Recommend to friend</span>
-    <span style="display: block" class="tab_link tab_id_external">Share</span>
+<div style="float: left;" id="popup_sidebar">
+    <div class="container_inner">
+        <ul class="sidebar_list">
+            <li class="menu_top">
+                Menu
+            </li>
+            <li class="sidebar_pln sidebar_info">
+                <a style="display: block" class="ui_ignore tab_link tab_id_local">Recommend to friend</a>
+            </li>
+            <li class="sidebar_twitter sidebar_info">
+                <a style="display: block" class="ui_ignore tab_link tab_id_twitter">Share on Twitter</a>
+            </li>
+            <li class="sidebar_facebook sidebar_info">
+                <a style="display: block" class="ui_ignore tab_link tab_id_facebook">Share on Facebook</a>
+            </li>
+        </ul>
+    </div>
 </div>
 
-<div style="width: 200px; margin-left: 200px;">
+<div style="width: 200px; margin-left: 210px; padding:15px 0;">
     <div class="tab_content tab_id_local">
-        <form action="{% url music_recommendation_add %}?track_name={{ track_name|urlencode }}&artist_name={{ artist_name|urlencode }}&track_pk={{ track_pk }}" method="post" class="closePopup">
+    
+        <form class="share closePopup" action="{% url music_recommendation_add %}?track_name={{ track_name|urlencode }}&artist_name={{ artist_name|urlencode }}&track_pk={{ track_pk }}" method="post">
             {{ form.non_field_errors }}
             {% csrf_token %}
             {{ form.target.errors|as_uni_errors }}
-            <input type="text" class="autocomplete friends" style="width: 200px" />
+            <label>Enter a friend name</label>
+            <input type="text" class="autocomplete friends friend_select" style="width: 230px" />
             <input type="hidden" class="autocomplete_pk" name="target" />
-
+            <label>Message (optionnel)</label>
             <textarea name="message"></textarea>
-            <input type="submit" />
-            <span class="simplemodal-close">cancel</span>
+            <input type="submit" value="recommend" class="button blue"/>
+            <span class="simplemodal-close button black">cancel</span>
         </form>
     </div>
-    <div class="tab_content tab_id_external">
-        <form action="{# url music_share #}?track_name={{ track_name|urlencode }}&artist_name={{ artist_name|urlencode }}&track_pk={{ track_pk }}" method="post" class="closePopup">
+    <div class="tab_content tab_id_twitter">
+    <h1>Share on Twitter</h1>
+        {% if twitterprofile %}
+        <form class="share closePopup" action="{% url music_recommendation_add %}?track_name={{ track_name|urlencode }}&artist_name={{ artist_name|urlencode }}&track_pk={{ track_pk }}&method=twitter" method="post">
             {% csrf_token %}
-            <textarea name="message"></textarea>
-            <span class="simplemodal-close">cancel</span>
+            <span class="twitter_counter_display"></span> characters left
+            <textarea class="twitter_counter" name="message">{% if track.artist.name %}{{ track.artist.name }} - {% endif %}{{ track.name }} {{ twitterurl }} #nowplaying</textarea>
+             <input value="share" type="submit" class="button blue"/>
+            <span class="simplemodal-close button black">cancel</span>
         </form>
+        {% else %}
+        <p>
+        You haven't connected your twitter account yet!
+        </p>
+
+        <p>
+        Connecting your twitter account to your current account is as easy as 1 2 3
+        </p>
+
+        <p>
+        All you have to do is visit <a class="ui_ignore" href="{% url twitter_redirect %}">this url</a> while being connected with your current account.
+        </p>
+        {% endif %}
+    </div>
+    <div class="tab_content tab_id_facebook">
+     <h1>Share on Facebook</h1>
+        {% if facebookprofile %}
+        <form class="closePopup share" action="{% url music_recommendation_add %}?track_name={{ track_name|urlencode }}&artist_name={{ artist_name|urlencode }}&track_pk={{ track_pk }}&method=facebook" method="post">
+            {% csrf_token %}
+            <textarea name="message">{% if track.artist.name %}{{ track.artist.name }} - {% endif %}{{ track.name }} {{ twitterurl }}</textarea>
+             <input value="share" type="submit" class="button blue"/>
+            <span class="simplemodal-close button black">cancel</span>
+        </form>
+        {% else %}
+        <p>You haven't connected your facebook account yet!</p>
+
+        <p>Connecting your facebook account is as easy as clicking the following button while being connected with your current account.</p>
+
+        {% facebook_js %}
+        {% facebook_button %}
+        {% endif %}
     </div>
 </div>
 {% endblock %}

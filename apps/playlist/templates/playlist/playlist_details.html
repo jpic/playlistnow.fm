@@ -13,27 +13,34 @@
 
 {% block body %}
 <div class="left">
-    <h1>{% trans "Playlist" %} {{ object }}</h1>
+    <h1>{{ object }}</h1>
+
+</div>
+<div class="right" style="margin-top:-5px;">
+ 
+	<iframe src="http://www.facebook.com/plugins/like.php?href={{ 'http://pln.yourlabs.org'|urlencode }}{{ object.get_absolute_url|urlencode }}&amp;layout=button_count&amp;show_faces=true&amp;width=90&amp;action=like&amp;colorscheme=light&amp;height=20" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:90px; height:20px;" allowTransparency="true"></iframe>
+	<iframe allowtransparency="true" frameborder="0" scrolling="no"
+        src="http://platform.twitter.com/widgets/tweet_button.html"
+        style="width:95px; height:20px;float:right;"></iframe>
+
 </div>
 
+<div class="clear"></div>
+  <div class="bold" style="margin:5px 0 10px 0;">
+    {% trans 'Published by' %}
+    <a href="{% url user_details object.creation_user.username %}" title="{{ object.creation_user.first_name }}: {% trans "activities on playlistnow.fm" %}" class="bold">{{ object.creation_user.first_name }}</a>
 <div class="right">
-    <div class="follow">
+ <div class="follow">
         <form action="{% url playlist_fanship object.pk %}" class="authenticationRequired" method="post">
             <input type="hidden" name="action" value="{% if is_fan %}remove{% else %}add{% endif %}" />
             <input type="hidden" name="next" value="{{ request.path }}" />
-            <input type="submit" class="button super grey" value="{% if is_fan %}{% trans "Unbookmark" %}{% else %}Add to bookmark{% endif %}" />
+            <input type="submit" class="button super grey" value="{% if is_fan %}{% trans "Unbookmark this playlist" %}{% else %}Add to bookmark this playlist{% endif %}" />
         </form>
     </div>
 </div>
-
 <div class="clear"></div>
-
-<div class="bold" style="margin:-1px 0 5px 0;">
-    {% trans 'Published by' %}
-    <a href="{% url user_details object.creation_user.username %}" title="{{ object.creation_user.first_name }}: {% trans "activities on playlistnow.fm" %}" class="bold">{{ object.creation_user.first_name }}</a>
 </div>
-<div class="clear"></div>
-<div class="ad_song">
+<div class="ad_song radius-4">
     <span style="display:none;">{% trans "add tracks" %}</span>
 
     <form method="get" action="{{ request.path }}">
@@ -77,16 +84,16 @@
 {% block body_right %}
 <h3>{% trans "about" %}</h3>
 
-<div class="details views sidebox">
+<div class="details views sidebox radius-4">
     <b>{{ object.play_counter }}</b> {% trans "times" %}
 </div>
-<div class="details count sidebox">
+<div class="details count sidebox radius-4">
     <b>{{ object.tracks.count }}</b> {% trans "tracks" %}
 </div>
 
 <div class="clear"></div>
 
-<div class="ad">
+
     <div class="lined">
         <b>{% trans 'Category' %}:</b> 
         <br />
@@ -97,12 +104,12 @@
         {% endif %}
         <a href="{{ object.category.get_absolute_url }}" title="{% trans "playlists for object.category" %} {{ object.category }}">{{ object.category }}</a>
     </div>
-</div>
+
 
 <div class="clear"></div>
-
+<ul id="playlist-tags">
 {% show_tags_for object %}
-
+</ul>
 <div class="clear espacetop"></div>
 
 
@@ -116,10 +123,10 @@
     {% endfor %}
 </div>
 <div class="clear espacetop"></div>
-
 <div class="you_may_also_like">
 <h3>{% trans "you may also like" %}</h3>
-    {% render_tracks you_may_also_like '' request %}
+{% render_tracks you_may_also_like '' request %}
 </div>
+
 
 {% endblock %}

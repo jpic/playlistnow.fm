@@ -21,7 +21,7 @@
 <img src="{{ object.image_large }}" alt="{{ object }}" />
 {% endif %}
 
-{% render_track object %}
+{% render_track object '' request %}
 
 {% if object.description %}
 <p>{{ object.description|striptags|safe }}</p>
@@ -29,7 +29,7 @@
 
 {% if object.similar %}
 <h2>{% trans "similar tracks" %}</h2>
-{% render_tracks object.similar %}
+{% render_tracks object.similar '' request %}
 {% endif %}
 
 {% endblock %}

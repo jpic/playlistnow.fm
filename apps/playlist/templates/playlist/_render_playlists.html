@@ -3,7 +3,7 @@
 <div class="playlist line play radius-4">
     {% cache 360000 render_playlist_line object.pk %}
     <div class="icon" class="play" style="margin:4px 10px 0 10px;">
-        <img src="{{ STATIC_URL }}images/avatar-logged.jpg" alt="{% trans "play" %} {{ object }}"  class="play avatar" />
+        <img src="{{ object.creation_user.playlistprofile.avatar_url }}" alt="{% trans "play" %} {{ object }}"  class="play avatar" />
     </div>
 
     <div class="description play"> 
@@ -20,7 +20,7 @@
   
             <span class="tValue small_font play">Created by 
                 <a class="bold" href="{% url user_details object.creation_user.username %}" title="{% trans "details of user" %} {{ object.creation_user }}">
-                    {{ object.creation_user }}
+                    {{ object.creation_user.first_name }} {{ object.creation_user.last_name }}
                 </a>
             </span>
             -

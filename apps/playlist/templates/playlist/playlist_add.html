@@ -1,11 +1,12 @@
 {% extends "playlist/base.html" %}
 {% load i18n %}
 {% load uni_form_tags %}
-
+{% block head_title %}{% trans "Create a new playlist" %}{% endblock %}
 {% block body %}
-<h1>create a new playlist</h1>
 
-<form action="{% url playlist_add %}" method="post" class="closePopup">
+
+<form action="{% url playlist_add %}" method="post" class="closePopup create">
+
     {{ form.non_field_errors }}
 
     {% csrf_token %}
@@ -34,10 +35,11 @@
     {% endfor %}
     </select>
 <div class="clear"></div>
-    <input type="submit" class="inputed super violet  button bigger" value="{% trans "Create playlist" %}" />
+    <input type="submit" class="inputed super violet  button bigger" value="{% trans "Create a playlist" %}" />
 </form>
 
-<div class="ad">Please you need to fill in all the fields to create your playlist.</div>
+<div class="ad">Fill in every fields to create your playlist.     <span class="simplemodal-close button black right">No, thanks</span> 
+<div class="clear"></div></div>
 
 
 <script type="text/javascript">

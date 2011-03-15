@@ -21,12 +21,19 @@ from notification import models as notification
 from actstream.models import Follow
 from socialregistration.models import TwitterProfile, FacebookProfile
 
+TwitterProfile.add_to_class('access_token', models.TextField(help_text='only useful if your app wants to tweet while the browser is not authenticated via twitter', null=True, blank=True))
+TwitterProfile.add_to_class('token_secret', models.TextField(help_text='only useful if your app wants to tweet while the browser is not authenticated via twitter', null=True, blank=True))
 TwitterProfile.add_to_class('avatar_url', models.TextField(null=True, blank=True))
 FacebookProfile.add_to_class('avatar_url', models.TextField(null=True, blank=True))
 TwitterProfile.add_to_class('nick', models.TextField(null=True, blank=True))
 FacebookProfile.add_to_class('nick', models.TextField(null=True, blank=True))
 TwitterProfile.add_to_class('url', models.TextField(null=True, blank=True))
 FacebookProfile.add_to_class('url', models.TextField(null=True, blank=True))
+
+def twitter_url(sender, instance, **kwargs):
+    if instance.nick:
+        instance.url = 'http://twitter.com/%s' % instance.nick
+signals.pre_save.connect(twitter_url, sender=TwitterProfile)
 
 def create_notice_types(app, created_models, verbosity, **kwargs):
     notification.create_notice_type("new_comment", "Comment posted", "Another member comments one of your actions")
@@ -82,25 +89,27 @@ def suggested_users_for(user):
                 points[user.pk] = 0
             points[user.pk] += value
 
+    exclude = Follow.objects.filter(user=user).values_list('object_id', flat=True)
+
     common_playlist = User.objects.filter(
         playlistprofile__fanof_playlists__in=user.playlistprofile.fanof_playlists.all()
-    ).exclude(pk=user.pk).exclude(pk__in=user.playlistprofile.friends().values_list('pk', flat=True))
+    ).exclude(pk=user.pk).exclude(pk__in=exclude)
     count_points(common_playlist, points, 1)
 
     common_artists = User.objects.filter(
         playlistprofile__fanof_artists__in=user.playlistprofile.fanof_artists.all()
-    ).exclude(pk=user.pk).exclude(pk__in=user.playlistprofile.friends().values_list('pk', flat=True))
+    ).exclude(pk=user.pk).exclude(pk__in=exclude)
     count_points(common_artists, points, 3)
 
     common_tiny = User.objects.filter(
         playlistprofile__tiny_playlist__tracks__in=
             user.playlistprofile.tiny_playlist.tracks.all()
-    ).exclude(pk=user.pk).exclude(pk__in=user.playlistprofile.friends().values_list('pk', flat=True))
+    ).exclude(pk=user.pk).exclude(pk__in=exclude)
     count_points(common_artists, points, 4)
 
     sorted_points = sorted(points.iteritems(), key=operator.itemgetter(1))
     sorted_points.reverse()
-    sorted_pks = [pk for pk, points in sorted_points][:12]
+    sorted_pks = [pk for pk, points in sorted_points][:3]
     users = User.objects.filter(pk__in=sorted_pks)
     sorted_users = sorted(users, key=lambda user: sorted_pks.index(user.pk))
 
@@ -164,6 +173,7 @@ class PlaylistProfile(models.Model):
     fanof_playlists = models.ManyToManyField('playlist.Playlist', verbose_name=_(u'fav playlists'), null=True, blank=True, related_name='fans')
     fanof_artists = models.ManyToManyField('music.Artist', verbose_name=_(u'fav artists'), null=True, blank=True, related_name='fans')
     fanof_actions = models.ManyToManyField('actstream.Action', null=True, blank=True, related_name='fans')
+    points = models.IntegerField(null=True, blank=True)
 
     last_playlist = models.ForeignKey('playlist.Playlist', verbose_name=_(u'last playlist'), null=True, blank=True)
     avatar_url = models.TextField(null=True, blank=True, default='/site_media/static/images/avatar-logged.jpg')
@@ -173,6 +183,11 @@ class PlaylistProfile(models.Model):
 
     def get_absolute_url(self):
         return urlresolvers.reverse('user_details', args=(self.user.username,))
+
+    def follows(self):
+        if not hasattr(self, '_follows'):
+            self._follows = User.objects.filter(pk__in=Follow.objects.filter(user=self.user).values_list('object_id'))
+        return self._follows
 
     def friends(self):
         follows_users_ids = Follow.objects.filter(user=self.user,

@@ -1,5 +1,6 @@
 {% extends 'music/base.html' %}
 
+{% load activity_tags %}
 {% load i18n %}
 {% load music_tags %}
 {% load pagination_tags %}
@@ -189,10 +190,9 @@
         <a class="{% if tab == 'playlists' %}selected{% endif %}" href="{% url music_artist_details_tab object|slugify 'playlists' %}">
         {% trans "playlists" %}
         </a>
-    <div class="clear">
 
     {% if tab == 'music' %}
-        <h2 class="all_tr">{% trans 'music of artist' %} {{ object }}</h2>
+        <h2 class="all_tr" style="display: inline">{% trans 'music of artist' %} {{ object }}</h2>
         {% render_tracks tracks '' request %}
         <div class="dividerin"></div>
         <div class="virtual pagination">
@@ -215,6 +215,7 @@
 {% endif %}
 
 {% if tab == 'fans' %}
+{% get_user_contenttype ctype %}
 <ul class="fans">
 <h2 class="fan" style="display:inline-block">{{ object }}'s {% trans "fans" %}</h2>
  <div class="list">
@@ -224,9 +225,17 @@
         <div class="left"><a href="{% url user_details fan.user.username|slugify %}" title="{% trans "click to see the complete profile of" %} {{ fan.user }}">
             <img src="{{ fan.avatar_url }}" class="avatar espace small"/></a></div>
        <div class="left"><div><a href="{% url user_details fan.user.username|slugify %}" title="{% trans "click to see the complete profile of" %} {{ fan.user }}">{{ fan.user }}</a></div>
-       <div>Affinities: 45&#37;</div>
+       <div>Affinities: {{ fan|affinities_with:request.user }}&#37;</div>
      </div>
-      <div class="right"><a href="" class="button grey super"><span class="follow">follow</span></a></div>
+      <div class="right">
+      <a href="{% url actstream_follow content_type_id=ctype.id  object_id=fan.user.id %}" class="super button grey right follow_button ui_ignore" style="margin-top:14px;{% if fan.user in request.user.playlistprofile.follows %}display:none{%endif%}">
+            <span class="follow">follow</span>
+        </a>
+        <a href="{% url actstream_unfollow content_type_id=ctype.id  object_id=fan.user.id %}" class="super button grey right unfollow_button ui_ignore" style="margin-top:14px;{% if fan.user not in request.user.playlistprofile.follows %}display:none{% endif %}">
+            <span class="unfollow">unfollow</span>
+        </a> 
+          
+      </div>
 <div class="clear"></div>
     </li>
     </div>

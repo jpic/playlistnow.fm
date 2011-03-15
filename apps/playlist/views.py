@@ -331,7 +331,7 @@ def playlist_details(request, user, slug, default_format=False, qname='term',
     if request.user.is_authenticated():
         context['is_fan'] = request.user.playlistprofile.fanof_playlists.filter(pk=object.pk).count()
 
-    context['playlist_fans_slice'] = context['object'].fans.all()[:20]
+    context['playlist_fans_slice'] = context['object'].fans.all().select_related()[:20]
 
     context['you_may_also_like'] = []
     if request.user.is_authenticated():
@@ -341,22 +341,22 @@ def playlist_details(request, user, slug, default_format=False, qname='term',
                 request.user.follow_set.all().values_list('object_id', flat=True)
         )
 
-    if len(context['you_may_also_like']) < 6:
+    if len(context['you_may_also_like']) < 8:
         context['you_may_also_like'] += Track.objects.filter(
             playlistmodification__playlist=object
         ).exclude(
             pk__in=[t.pk for t in context['you_may_also_like']]
-        )[:6-len(context['you_may_also_like'])]
+        )
+    
+    context['you_may_also_like'] = context['you_may_also_like'][:8]
 
-    random_tracks = context['user_tracks']
-    i = 0
-    while i < len(random_tracks) and len(context['you_may_also_like']) < 12:
-        track = random_tracks[i]
-        track.lastfm_get_similar()
-        context['you_may_also_like'] += track.similar[:12]
-        i += 1
-
-    print context['you_may_also_like']
+#    random_tracks = context['user_tracks']
+#    i = 0
+#    while i < len(random_tracks) and len(context['you_may_also_like']) < 12:
+#        track = random_tracks[i]
+#        track.lastfm_get_similar()
+#        context['you_may_also_like'] += track.similar[:12]
+#        i += 1
 
     context.update(extra_context or {})
     return shortcuts.render_to_response(template_name, context,

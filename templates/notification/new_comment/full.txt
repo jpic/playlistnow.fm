@@ -1,3 +1,7 @@
-<a href="{% url user_details comment.user.username %}">{{
-comment.user.first_name }} {{ comment.user.last_name }}</a> commented <a
-href="{{ url }}">{{ comment.content_object }}</a>
+{{ comment.user.first_name }} {{ comment.user.last_name }} commented {{ comment.content_object }}.
+
+Comment: {{ comment.comment }}
+
+{{ comment.user.first_name }} {{ comment.user.last_name }} profile: {% url user_details comment.user.username %}
+
+comment url: {{ url }}

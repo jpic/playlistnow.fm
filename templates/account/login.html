@@ -21,71 +21,54 @@
         {% endifsetting %}
     {% endif %}
     
-    <div class="network_tabs">
-		<a class="tab_link tab_id_facebook"><span class="facebook">Facebook</span></a>
-		<a class="tab_link tab_id_twitter"><span class="twitter">Twitter</span></a>
-		<a class="tab_link tab_id_google"><span class="google">Google</span></a>
-		<div class="clear"></div>
+<div class="left" id="popup_sidebar">
+	<div class="container_inner">
+ 		<ul class="sidebar_list">
+			<li class="menu_top">One-clik Login</li>
+  			<li class="sidebar_pln sidebar_info"><a class="tab_link tab_id_facebook"><span class="facebook">Facebook</span></a></li>
+  			<li class="sidebar_facebook sidebar_info"><a class="tab_link tab_id_twitter"><span class="twitter">Twitter</span></a></li>
+  			<li class="sidebar_facebook sidebar_info"><a class="tab_link tab_id_google"><span class="google">Google</span></a></li>
+		</ul>
 	</div>
+</div>
+    
+<div class="tab_content tab_id_google inside">
+    <h1>Connect with Google</h1>
+            <div class="tabscontentL">
+            	Connect your Google account to Playlistnow to sign up or sign in by clicking the button Sign in with Google Friend Connect.
+            </div>
+            	<a href="{% url gfc_redirect %}" class="super button grey large ui_ignore"><span class="google bold">Connect with google</span></a>
+					<div class="clear"></div>
+        				<div id="login-fcbutton"></div>
+</div>
 
-    <script type="text/javascript" src="http://www.google.com/friendconnect/script/friendconnect.js?key=notsupplied&v=0.8"></script>
-    <script type="text/javascript">
-          function onFriendConnectInitialized(st) {
-            if (!window.friendconnect_times_loaded) {
-              window.friendconnect_times_loaded = 1;
-            } else {
-              window.friendconnect_times_loaded++;
-            }
-            init(window.friendconnect_times_loaded);
-          };
-              
-          $(document).ready(function () {
-            google.friendconnect.container.setParentUrl('/');
-            google.friendconnect.container.loadOpenSocialApi({
-               site: '09173394585243409353',
-              onload: onFriendConnectInitialized
-            });
-          });
-          
-          function init(times) { };
+<div class="tab_content tab_id_facebook inside">
+	<h1>Connect with Facebook</h1>
+		<div class="tabscontentL">
+		Connect your Facebook account to Playlistnow to sign up or sign in by clicking the button Connect with Facebook.
+		</div>
 
-    </script>
-
-    <script type="text/javascript">
-      google.friendconnect.renderSignInButton({
-        "id" : "login-fcbutton",
-        "text" : "Sign in with Google Friend Connect",
-        "style" : "long"
-      });
-      window.init = function(times) {
-        if (times > 1) {
-          window.top.location.href = "{% url gfc_callback %}";
-        }
-      };
-    </script>
-    <div class="tab_content tab_id_google">
-            <div class="tabscontentL">Connect your Google account to Playlistnow to sign up or sign in by clicking the button Sign in with Google Friend Connect.</div>
-<div class="clear"></div>
-        <div id="login-fcbutton"></div>
-    </div>
-
-    <div class="tab_content tab_id_facebook">
-    <div class="tabscontentL">Connect your Facebook account to Playlistnow to sign up or sign in by clicking the button Connect with Facebook.</div>
-   <div class="clear"></div>
-   {% facebook_button %}
-    </div>
+   <!-- FBJS start -->
     {% facebook_js %}
+   <!-- FBJS end -->
+   {% facebook_button %}
+   <!-- FB button end -->
+   	<div class="clear"></div>
+</div>
 
-    <div class="tab_content tab_id_twitter">
-        <div class="tabscontentL">Connect your Twitter account to Playlistnow to sign up or sign in by clicking the button Sign in with Twitter.</div>
-<div class="clear"></div>
-    {% twitter_button %}
-    </div>
-
-    <div class="clear"></div>
-<div class="dividerin"></div>
-    <div class="ad">
-    {% blocktrans %}If you have any trouble logging in to your account, contact us at 
-    <a href="mailto:{{ CONTACT_EMAIL }}">{{ CONTACT_EMAIL}}</a>.{% endblocktrans %}
-    </div>
+<div class="tab_content tab_id_twitter inside">
+	<h1>Connect with Twitter</h1>
+       <div class="tabscontentL">
+       Connect your Twitter account to Playlistnow to sign up or sign in by clicking the button Sign in with Twitter.
+       </div>
+	 <a href="{% url twitter_redirect %}" class="super button grey large ui_ignore"><span class="twitter bold">Connect with twitter</span></a>
+		<div class="clear"></div>
+</div>
+  <!-- Popup End -->
+<div class="dividerin clear"></div>
+<div class="ad">
+	<span class="simplemodal-close button black right">No, thanks</span>  
+    	<div class="clear"></div>
+</div>  
 {% endblock %}
+<!-- Popup  end -->

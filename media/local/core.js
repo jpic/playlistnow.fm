@@ -15,6 +15,14 @@ var ui = {
         $.getScript(STATIC_URL + "jquery.simplemodal.min.js", function() {
         });
 
+        $.ajaxSetup({
+            beforeSend: ui.beforeSend,
+            error: ui.error,
+            success: function() {
+                $('#ajaxload').fadeOut();
+            }
+        });
+
         // one time slots
         ui.setupLinks();
         // slots to execute at each update
@@ -30,12 +38,19 @@ var ui = {
             $('.tiptip').tipTip();
 
             if ($('div.you_may_also_like li').length > 0) {
-                $('.you_may_also_like li').slice(0,4).show('slow');
+                $('.you_may_also_like li.song_info').slice(0,3).show('slow');
             }
         });
         $(document).bind('signalPopupOpen', ui.setupAutocomplete)
+        $(document).bind('signalPopupOpen', ui.twitterCounter)
         $(document).bind('signalPopupOpen', function() {
-            $('.tab_link:first').trigger('click');
+            var m = ui.currentPopupUrl.match(/tab_id=([^&]+)/)
+            if (m == null || m[1] == undefined) {
+                $('.simplemodal-data .tab_link:first').trigger('click');
+            } else {
+                $('.simplemodal-data .tab_link.tab_id_' + m[1]).trigger('click');
+            }
+
             $('#simplemodal-data form.closePopup').submit(function(e) {
                 e.preventDefault();
                 $.modal.close();
@@ -46,13 +61,21 @@ var ui = {
                     type: $(this).attr('method'),
                     dataType: 'html',
                     success: function(html, textStatus, request) {
-                        $('#user_notifications').append($(html).find('#user_notifications').html());
+                        var htmlnotifications = $(html).find('#user_notifications');
+                        if (htmlnotifications.html()) {
+                            $('#user_notifications').append(htmlnotifications.html());
+                        } else {
+                            $('#user_notifications').append('<li>' + html + '</li>');
+                        }
+                        $('#ajaxload').fadeOut();
                     },
-                    beforeSend: ui.beforeSend,
-                    error: ui.error,
                 });
             });
         });
+
+        $(document).bind('signalPopupOpen', ui.setupFacebook);
+        $(document).bind('signalPageUpdate', ui.setupFacebook);
+
         $(document).bind('signalPageUpdate', ui.setupForms);
         $(document).bind('signalPageUpdate', ui.setupPagination);
         $(document).bind('signalPageUpdate', ui.setupAutocomplete);
@@ -120,8 +143,6 @@ var ui = {
                         $(document).trigger('signalPlaylistUpdate', [data.playlist_pk]);
                         $('#ajaxload').fadeOut();
                     },
-                    beforeSend: ui.beforeSend,
-                    error: ui.error,
                 });
             } else {
                 ui.popup(playlist_track_modify + '?' + $.param(data));
@@ -170,10 +191,49 @@ var ui = {
             }
         });
 
+        $(".follow_button, .unfollow_button").live('click', function () {
+            $.post($(this).attr("href"), {});
+            $(this).parent().find(".follow_button, .unfollow_button").toggle();
+            return false
+        });
+
         $('.tab_link').live('click', function(e) {
             var tabid = $(this).attr('class').match(/tab_id_([a-z]*)/)[1];
             $('.tab_content').hide().removeClass('selected');
             $('.tab_content.tab_id_'+tabid).show().addClass('selected');
+        });
+                
+        $('.simplemodal-close').live('click', function() {$.modal.close();});
+
+        $('.add_current_track').click(function(e) {
+            var track = player.state.currentTrack;
+            var playlist = false;
+            $(document).trigger('signalPlaylistTrackModificationRequest', [track, playlist, 'add', $(this)]);
+        });
+        $('#right_action .share').click(function(e) {
+            $('#track_menu').toggle('slow');
+        })
+        $('.like_current_track').click(function(e) {
+            var track = player.state.currentTrack;
+            var playlist = { 'pk': tiny_playlist_pk };
+            if ($(this).css('backgroundPosition') == '0% 100%') {
+                var action = 'remove';
+            } else {
+                var action = 'add';
+            }
+            $(document).trigger('signalPlaylistTrackModificationRequest', [track, playlist, action, $(this)]);
+            player.tiny_playlist.tracks.push(track);
+            if ($(this).css('backgroundPosition') == '0% 100%') {
+                $(this).css('backgroundPosition', 'left top');
+                $('.song_info.selected .love.icon').css('backgroundPosition', 'left top');
+                $('.song_info.selected .love.icon').removeClass('remove_track');
+                $('.song_info.selected .love.icon').addClass('add_track');
+            } else {
+                $(this).css('backgroundPosition', 'left bottom');
+                $('.song_info.selected .love.icon').css('backgroundPosition', 'left bottom');
+                $('.song_info.selected .love.icon').addClass('remove_track');
+                $('.song_info.selected .love.icon').removeClass('add_track');
+            }
         });
 
         $('a:not(a.endless_more):not(a.ui_ignore):not(a.tab_link)').live('click', function(e) {
@@ -190,9 +250,7 @@ var ui = {
                         $(document).trigger('signalPageUpdate', [url]);
                         $('#ajaxload').fadeOut();
                     },
-                    beforeSend: ui.beforeSend,
-                    error: ui.error,
-                });               
+                }); 
             } else if ($(this).hasClass('popup')) {
                 ui.popup(url);
             } else {
@@ -240,13 +298,23 @@ var ui = {
                     ui.notifyUser('Thanks for deleting this action');
                     $('#ajaxload').fadeOut();
                 },
-                beforeSend: ui.beforeSend,
-                error: ui.error,
             });
         });
     },
     'notifyUser': function(message) {
         $('#user_notifications').append($('<li class="delete">'+message+' (click to close)</li>'));
+    },
+    'twitterCounter': function() {
+        if ($('.twitter_counter').length < 1) {
+            return true;
+        }
+
+        textField = $('.twitter_counter')
+        textField.keyup(function(e) {
+            left = 140 - $(this).val().length;
+            $('.twitter_counter_display').html(left);
+        });
+        textField.trigger('keyup');
     },
     'setupForms': function() {
         if (ui.settings['ajaxEnable'] && $('form').length) {
@@ -275,8 +343,6 @@ var ui = {
                         $(document).trigger('signalPageUpdate', [url]);
                         $('#ajaxload').fadeOut();
                     },
-                    beforeSend: ui.beforeSend,
-                    error: ui.error,
                 });
             });
         }
@@ -376,6 +442,7 @@ var ui = {
             }
             url += '&modal=1';
         }
+        ui.currentPopupUrl = url;
 
         $.ajax({
             url: url,
@@ -387,12 +454,23 @@ var ui = {
                 $(document).trigger('signalPopupOpen');
                 $('#ajaxload').fadeOut();
             },
-            beforeSend: ui.beforeSend,
-            error: ui.error,
         });
-    }
-}
+    },
+    'setupFacebook': function() {
+        if ($('#fb-root').length < 1) return true;
 
+        function initFb() {
+            FB.init({ apiKey: '738ca1d67fa0e795c8a5604278278e8e', status: true, cookie: true, xfbml: true});
+        }
+
+        if (ui.facebookJsLoaded == undefined) {
+            $.getScript('http://connect.facebook.net/en_US/all.js', initFb);
+            ui.facebookJsLoaded = true;
+        } else {
+            initFb();
+        }
+    },
+}
 
 $(document).ready(function() {
     var urls = [
@@ -428,8 +506,6 @@ $(document).ready(function() {
                         $(document).trigger('signalPageUpdate', [hash]);
                         $('#ajaxload').fadeOut();
                     },
-                    beforeSend: ui.beforeSend,
-                    error: ui.error,
                 });
     
                 if (!ui.ready) {

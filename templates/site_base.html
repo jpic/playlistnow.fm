@@ -79,39 +79,59 @@
                 <a href="{% url user_details request.user.username %}" class="tiptip" title="{{ request.user.first_name }} {{ request.user.last_name }}"></a>
             </li>
              <li class="sep">&nbsp;</li>
-               {% endif %}
-              
-                 <li class="espace">&nbsp;</li>
-            <li><form action="{% url music_search %}" method="get">
-    <input type="text" name="term" id="term" class="autocomplete music search_header" />
-    <input class="super button grey radius-15" type="submit" value="{% trans "Search" %}" />
-</form></li>
+        
+      <li id="topheader_create">
+           <a href="{% url playlist_add %}" class="tiptip icon popup" title="Create a new playlist"></a>
+            </li>
+            {% if notices.count %}
+             <li class="sep">&nbsp;</li>
+               <li>
+           <a href="{% url notification_notices %}" class="tiptip icon" title="notification">{{ notices.count }}</a>
+            </li>
+            {% endif %}
+             <li class="sep">&nbsp;</li>
+            {% endif %}
+   
         </ul>
         <ul id="menu_right" class="right">
+                      <li class="espace">&nbsp;</li>
+            <li><form action="{% url music_search %}" method="get">
+    <input type="text" name="term" id="term" class="autocomplete music search_header radius-8" style="margin-top:3px" />
+</form></li>
+<li><span class="topheader_search">&nbsp;</span></li>
             {% if request.session.socialregistration_user %}
+              <li class="sep">&nbsp;</li>
                 <li class="topheader_create">
                     <a class="button super blue" href="{% url socialregistration_setup %}">
                        <span>Complete registration process</span>
                     </a>
+                    <a class="button super black" href="{% url acct_logout %}">
+                       <span>Cancel registration process</span>
+                    </a>
                 </li>
             {% else %}
                 {% if not request.user.is_authenticated %}
+                  <li class="sep">&nbsp;</li>
                 <li class="topheader_create"> 
                     <a class="button radius-15 violet popup" href="{% url acct_login %}">
                       <span>Login</span>
                     </a>
                 </li>
+                  <li class="sep">&nbsp;</li>
                 <li class="topheader_create">
                     <a class="button radius-15 blue" href="{% url acct_signup %}">
                        <span>Become Member</span>
                     </a>
                 </li>
+                
                 {% else %}
+                 <li class="sep">&nbsp;</li>
                <li class="spacing">
                     <a class="ui_ignore" href="{% url acct_logout %}">
                        <span>Logout</span>
                     </a>
                 </li>
+                 <li class="sep">&nbsp;</li>
                 <li class="spacing">
                     <a href="{% url notification_notice_settings %}">
                       <span>Settings</span>
@@ -120,16 +140,7 @@
                 <li class="sep">&nbsp;</li>
                 {% endif %}
             {% endif %}
-            {% if request.user.is_authenticated %}
-            
-              
-           
-            <li class="topheader_create"> 
-                <a href="{% url playlist_add %}" class="authenticationRequired button radius-15 blue">
-                    Create a new playlist
-                </a>
-            </li>
-            {% endif %}
+       
         </ul>
     </div>
 
@@ -200,20 +211,7 @@ $(document).ready(function(){
 </script>
 {% endif %}
 
-<script src="{{ STATIC_URL }}swfobject/swfobject.js" type="text/javascript"></script>
 <script type="text/javascript">
-/*
-function onYouTubePlayerReady() {
-    player.ytplayer = document.getElementById("myytplayer");
-    player.ytplayer.setVolume(60);
-    setInterval(player.update, 250);
-}
-
-var params = { allowScriptAccess: "always" };
-var atts = { id: "myytplayer" };
-swfobject.embedSWF("http://www.youtube.com/apiplayer?enablejsapi=1&playerapiid=ytplayer", 
-                   "ytapiplayer", "0", "0", "8", null, null, params, atts);
-*/
 var tag = document.createElement('script');
 tag.src = "http://www.youtube.com/player_api?enablejsapi=1&version=3";
 var firstScriptTag = document.getElementsByTagName('script')[0];
@@ -241,32 +239,14 @@ function onYouTubePlayerAPIReady() {
         $(document).trigger('signalPageUpdate');
     });
     {% endif %}
+
+    function facebookConnect(form){
+        function handleResponse(response){
+            form.submit();
+        }
+        FB.login(handleResponse,{perms:'user_location,email,publish_stream,offline_access,status_update,read_stream'});
+    }
 </script>
-
-
-{% if FACEBOOK_APP_ID %}
-  <div id="fb-root"></div>
-  <script>
-  window.fbAsyncInit = function() {
-    FB.init({appId: '{{ FACEBOOK_APP_ID }}', status: true, cookie: true, xfbml: true});
-    FB.Event.subscribe('auth.sessionChange', function(response) {
-      if (response.session) {
-          window.location = '{% url socialauth_facebook_login_done %}';
-      } else {
-          //window.location = '{% url socialauth_social_logout %}';
-      }
-    });
-  };
-  (function() {
-    var e = document.createElement('script');
-    e.type = 'text/javascript';
-    e.src = document.location.protocol +
-      '//connect.facebook.net/en_US/all.js';
-    e.async = true;
-    document.getElementById('fb-root').appendChild(e);
-  }());
-  </script>    
-{% endif %} 
 
 
 {% block extra_body_base %}

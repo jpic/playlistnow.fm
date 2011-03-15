@@ -23,7 +23,7 @@ class Command(BaseCommand):
         conn = backend.DatabaseWrapper({'NAME': 'pln', 'USER': 'root', 'PASSWORD': '', 'HOST': 'localhost', 'PORT': '3306', 'OPTIONS': ''})
         old = conn.cursor()
 
-        #self.sync_users_accounts(old)
+        self.sync_users_accounts(old)
         #self.sync_followers(old)
         #self.sync_categories(old)
         #self.sync_tracks(old)
@@ -87,10 +87,12 @@ class Command(BaseCommand):
                 u.name,
                 ue.email,
                 ua.accountLocation,
-                ua.accountAvatar
+                ua.accountAvatar,
+                up.pts
             from users u 
             left join users_emails ue on ue.userId = u.id
             left join users_accounts ua on ua.userId = u.id
+            left join users_pts up on up.idUser = u.id
         ''')
         for old_user in old.fetchall():
             # skipping the couple of nonames
@@ -106,6 +108,7 @@ class Command(BaseCommand):
             user.first_name = old_user[1]
             user.save()
 
+            user.playlistprofile.points = old_user[5]
             if old_user[3]:
                 user.playlistprofile.user_location = old_user[3]
             if old_user[4]:

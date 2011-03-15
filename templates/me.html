@@ -1,121 +1,69 @@
 {% extends "site_base.html" %}
 {% load activity_tags %}
+{% load playlist_tags %}
+{% load music_tags %}
 {# enable right column #}
 {% block page_body_right_class %}block{% endblock %}
 {% block body_right %}
+<h3>Hi {{ user.first_name }} {{ user.last_name }}</h3>
 
+<table border="0" cellspacing="0" cellpadding="0">
+    <tr>
+        <td></td>
+        <td width="190">
+            <div style="width:185px; height:9px;border:1px solid #616161; background:url({{ STATIC_URL }}images/medals/progbarbg_1.png) top left repeat-x;    -webkit-border-radius: 6px;-moz-border-radius: 6px;border-radius: 6px;"><div style="width:42px; height:9px;background:url{{ STATIC_URL }}images/medals/progbar_1.png) top left repeat-x;"></div>
+            </div>
+        </td>
+        <td></td>
+    </tr>
+    <tr>
+        <td colspan="3" align="center" style="color:#828181; font: 11px Trebuchet MS; font-style:italic; "></td>
+    </tr>
+</table> 
+
+{% if who_to_follow %}
 <h3>who to follow ?</h3>
-{% for user in who_to_follow %}
-{{ user }}
-{% endfor %}
-
+    {% for user in who_to_follow %}
 <div id="whotofollow">
 
-<div class="whotofollow_list">
-
-<div class="whotofollow_person">
-<img src="http://www.google.com/friendconnect/scs/images/NoPictureDark.png" alt="CLO BLA" class="left whotofollow_img">
-
+	<div class="whotofollow_list">
+		<div class="whotofollow_person">
+		<a href="{% url user_details user %}" title="{{ user.first_name }} {{ user.last_name }}"><img src="{{ user.playlistprofile.avatar_url }}" alt="{{ user.first_name }} {{ user.last_name }}" class="left whotofollow_img avatar"></a>
+			
 <div class="left whotofollow_profile">
-<ul>
-<li><a href="" class="whotofollow_name">Anthony Lacrite</a></li>
-<li><a href="">Follow</a></li>
-</ul>
+	<ul>
+		<li><a href="{% url user_details user %}" class="whotofollow_name" title="{{ user.first_name }} {{ user.last_name }}">{{ user.first_name }} {{ user.last_name }}</a></li>
+		<li><span class="afinities">{{ request.user|affinities_with:user }}% matching</span></li>
+		<li>
+        
+            <a href="{% url actstream_follow content_type_id=ctype.id  object_id=user.id %}" class="ui_ignore follow_button">
+                <span class="follow">follow</span>
+            </a>
+            <a href="{% url actstream_unfollow content_type_id=ctype.id  object_id=user.id %}" class="ui_ignore unfollow_button" style="display:none">
+                <span class="unfollow">unfollow</span>
+            </a> 
+        
+        </li>
+	</ul>
 </div>
 
-</div>  
-<div class="left hide"><a href="#" title="Hide">x</a></div>
+		</div>  
+
+<div class="left hide"><a href="" title="Hide">x</a></div>
 
 <div class="clear"></div>
-</div>
-
-<div class="whotofollow_list">
-
-<div class="whotofollow_person">
-<img src="http://www.google.com/friendconnect/scs/images/NoPictureDark.png" alt="CLO BLA" class="left whotofollow_img">
-
-<div class="left whotofollow_profile">
-<ul>
-<li><a href="" class="whotofollow_name">Roger Ramirez</a></li>
-<li><a href="">Follow</a></li>
-</ul>
-</div>
-
-</div>  
-<div class="left hide"><a href="#" title="Hide">x</a></div>
-
-<div class="clear"></div>
-</div>
-
-<div class="whotofollow_list">
-
-<div class="whotofollow_person">
-<img src="http://www.google.com/friendconnect/scs/images/NoPictureDark.png" alt="CLO BLA" class="left whotofollow_img">
-
-<div class="left whotofollow_profile">
-<ul>
-<li><a href="" class="whotofollow_name">Pierre Dupuis</a></li>
-<li><a href="">Follow</a></li>
-</ul>
-</div>
-
-</div>  
-<div class="left hide"><a href="#" title="Hide">x</a></div>
-
-<div class="clear"></div>
-</div>
+	</div>
+	
 
 </div>
+    {% endfor %}
+{% endif %}
 
+{% if hot_tracks %}
 <h3>Hot song today</h3>
+{% render_tracks hot_tracks '' request %}
+{% endif %}
 
-{% for track in hot_tracks %}
-{{ track }}
-{% endfor %}
-
-<div id="hotsong">
-<div class="hotsong_list">
-<ul class="song_list" style="font-size:11px;">
-
-<li class="song_play song_info dd track_pk_33001">
-    <span class="icon play"></span>
-    
-
-    <a style="display: none;" title="j8nMmfUGLh4" class="hidden youtube_play" href="j8nMmfUGLh4">
-    </a>
-    <a title="Matt Duncan" class="artist" href="/music/artist/matt-duncan/" style="font-weight: bold;">Matt Duncan</a>
-    
-    <span style="color: rgb(190, 189, 189);">-</span> 
-    
-    <a title="details of track Beacon" href="/music/track/matt-duncan/beacon/" class="label track">Beacon</a>
-
-   
-</li>
-<li>Added by Jonathan Younes</li>
-</ul>
-</div>
-
-<div class="hotsong_list">
-<ul class="song_list" style="font-size:11px;">
-
-<li class="song_play song_info dd track_pk_33001">
-    <span class="icon play"></span>
-    
-
-    <a style="display: none;" title="j8nMmfUGLh4" class="hidden youtube_play" href="j8nMmfUGLh4">
-    </a>
-    <a title="Matt Duncan" class="artist" href="/music/artist/matt-duncan/" style="font-weight: bold;">Jill Duncan</a>
-    
-    <span style="color: rgb(190, 189, 189);">-</span> 
-    
-    <a title="details of track Beacon" href="/music/track/matt-duncan/beacon/" class="label track">Two of us</a>
-
-   
-</li>
-<li>Added by James Pic</li>
-</ul>
-</div>
-</div>
 {% endblock %}
 {% block body %}
 <h1>friend feed</h1>

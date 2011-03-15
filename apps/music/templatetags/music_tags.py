@@ -21,7 +21,7 @@ def render_artist(artist, playlist=None):
 @register.inclusion_tag('music/_render_tracks.html')
 def render_tracks(tracks, playlist=None, request=None):
     if not hasattr(request, 'tiny_tracks'):
-        if request.user.is_authenticated():
+        if request.user.is_authenticated() and not hasattr(request, 'tiny_tracks'):
             request.tiny_tracks = request.user.playlistprofile.tiny_playlist.tracks.all()
         else:
             request.tiny_tracks = []
@@ -37,7 +37,7 @@ def render_tracks(tracks, playlist=None, request=None):
 @register.inclusion_tag('music/_render_tracks.html')
 def render_track(track, playlist=None, request=None):
     if not hasattr(request, 'tiny_tracks'):
-        if request.user.is_authenticated():
+        if request.user.is_authenticated() and not hasattr(request, 'tiny_tracks'):
             request.tiny_tracks = request.user.playlistprofile.tiny_playlist.tracks.all()
         else:
             request.tiny_tracks = []

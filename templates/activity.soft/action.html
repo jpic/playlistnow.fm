@@ -12,6 +12,7 @@
     <div class="lineFeedContent">
 {% endif %}
         <div class="lineFeedContentWhat">
+
         {% block what %}
             <a href="{% url user_details activity.actor.username %}" title="{% trans "see details of user" %} {{ activity.actor }}" class="bold">
                 {{ activity.actor.first_name }} {{ activity.actor.last_name }}
@@ -27,13 +28,19 @@
 
             {% if activity.target %}
             <a href="{{ activity.target.get_absolute_url }}" title="{% trans "details of" %} {{ activity.target }}" class="bold">
+                {% if activity.target.first_name %}
+                {{ activity.target.first_name }}
+                {{ activity.target.last_name }}
+                {% else %}
                 {{ activity.target }}
+                {% endif %}
             </a>
             {% endif %}
-        {% endblock %}
-            {% if request.user.is_authenticated and request.user == activity.actor %}
+        {% endblock %}        
+
+        {% if request.user.is_authenticated and request.user == activity.actor %}
             <span class="delete action_pk_{{ activity.pk }}">&nbsp;</span>
-            {% endif %}
+        {% endif %}
 
         </div>
 {% if activity.close %}
@@ -49,6 +56,17 @@
             {% endblock %}
             - 
             <a class="ui_ignore comment_form_toggle" href="">Comment (<strong>{{ comment_count }}</strong>)</a>
+
+            {% if action.fans.count %}
+            <div class="topcomments"></div>
+            <div class="likes">
+            <img src="{{ STATIC_URL }}images/not_newthumbup.png" class="espace">
+                {% for fan in action.fans.all %}
+                <a href="{% url user_details fan.user.username %}">{{ fan.user.first_name }} {{ fan.user.last_name }}</a> likes it
+                {% endfor %}
+            </div>
+            {% endif %}
+
             {% render_comment_list for activity %}
         
             <div style="{% if not comment_count %}display: none{% endif %}" class="comment_form_contents" >

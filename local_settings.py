@@ -88,14 +88,19 @@ MIDDLEWARE_CLASSES = [
     'socialregistration.middleware.FacebookMiddleware',
 ]
 INTERNAL_IPS = [
-    '80.29.100.20',
+    #'83.38.0.213',
+    #'81.36.51.224',
+    #'127.0.0.1',
 ]
 
 
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-        'LOCATION': '/var/tmp/django_cache',
+        #'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        #'LOCATION': '/var/tmp/django_cache',
+        #'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
     }
 }
 CACHE_BACKEND = 'file:///var/tmp/django_cache'
@@ -131,12 +136,11 @@ ADMIN_TOOLS_MENU = 'menu.CustomMenu'
 LASTFM_API_KEY = 'a67b55859d8b3cf1ed3bb2c9a5c59898'
 LASTFM_API_SECRET = 'c7970cc5b664b1b1e19a3f471ebc1b12'
 
-TWITTER_CONSUMER_KEY = 'CmjacxzweBzBy1w1Rr1Q5g'
-TWITTER_CONSUMER_SECRET_KEY = 'j2Jx2Iz0JQn0WASJFPfifijVBewC1D2h3vbQI25zc'
-TWITTER_REQUEST_TOKEN_URL = 'http://api.twitter.com/oauth/request_token'
+TWITTER_CONSUMER_KEY = '61g88FE8bBXLDwck7gaRlA'
+TWITTER_CONSUMER_SECRET_KEY = '4Tza4RltIdTgBODWdCflfGWFlIRtbFIL1bBz7Z7OBE'
+TWITTER_REQUEST_TOKEN_URL = 'https://api.twitter.com/oauth/request_token'
 TWITTER_ACCESS_TOKEN_URL = 'https://api.twitter.com/oauth/access_token'
 TWITTER_AUTHORIZATION_URL = 'https://api.twitter.com/oauth/authorize'
-
 
 FACEBOOK_APP_ID = '117753378295717'
 FACEBOOK_API_KEY = '738ca1d67fa0e795c8a5604278278e8e'
@@ -172,15 +176,19 @@ UI_IGNORE_URLS = (
 GENERATE_USERNAME = False
 SOCIALREGISTRATION_GENERATE_USERNAME = GENERATE_USERNAME
 
-AJAX_NAVIGATION = False
+AJAX_NAVIGATION = True
 LOGIN_REDIRECT_URL = '/me/'
 FACEBOOK_OFFLINE_ACCESS = True
 
 ACCOUNT_EMAIL_VERIFICATION = False
 ACCOUNT_UNIQUE_EMAIL = EMAIL_CONFIRMATION_UNIQUE_EMAIL = False
 ACCOUNT_EMAIL_AUTHENTICATION = False
-EMAIL_HOST = 'mail'
 
 FORCE_SCRIPT_NAME=''
 ENDLESS_PAGINATION_TEMPLATE_VARNAME='template_name'
 ENDLESS_PAGINATION_PER_PAGE=4
+
+
+TIME_ZONE = "Europe/Paris"
+
+#EMAIL_HOST="localhost"

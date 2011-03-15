@@ -2,8 +2,12 @@
 {% load activity_tags %}
 {% load group_activities %}
 
+{% if activities.count %}
 {% paginate 7 activities %}
 {% for activity in activities|group_activities %}
     {% display_action activity %}
 {% endfor %}
 {% show_more %}
+{% else %}
+No activities to display
+{% endif %}

@@ -2,11 +2,10 @@
 
 <dl id="comments">
   {% for comment in comment_list %}
-
   <div class="comment">
     <dt  id="c{{ comment.id }}">
-    <a href="{{ user.get_absolute_url }}" title="Details of user {{ comment.name }}"><img alt="Avatar of {{ comment.name }}" src="{{ comment.user.playlistprofile.avatar_url }}" class="avatar verysmall left espace"></a>
-       <a href="{{ user.get_absolute_url }}" title="Details of user {{ comment.name }}"><strong>{{ comment.name }}</strong></a> - {{ comment.submit_date|naturalday }} 
+    <a href="{{ comment.user.get_absolute_url }}" title="Details of user {{ comment.name }}"><img alt="Avatar of {{ comment.name }}" src="{{ comment.user.playlistprofile.avatar_url }}" class="avatar verysmall left espace"></a>
+       <a href="{{ comment.user.get_absolute_url }}" title="Details of user {{ comment.name }}"><strong>{{ comment.name }}</strong></a> - {{ comment.submit_date|naturalday }} 
     </dt>
     <dd>
         <p style="color:#77777">{{ comment.comment }}</p>

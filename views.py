@@ -15,6 +15,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.utils.hashcompat import md5_constructor
 from django.utils.http import urlquote
 
+from notification.models import Notice
 from tagging.models import Tag, TaggedItem
 from actstream.models import actor_stream, user_stream, model_stream, Follow, Action
 from actstream import action
@@ -241,6 +242,12 @@ def user_details(request, slug, tab='activities',
                              .select_related('playlistprofile')
     followers_qs = User.objects.filter(follow__object_id=user.pk, follow__content_type=c).select_related('playlistprofile')
 
+    context['follows'] = follows_qs
+    if request.user.is_authenticated():
+        context['do_i_follow'] = followers_qs.filter(pk=request.user.pk).count()
+    else:
+        context['do_i_follow'] = False
+
     if tab == 'playlists':
         context['playlists'] = user.playlist_set.all()
     elif tab == 'activities':
@@ -296,6 +303,7 @@ def empty(request,
 
     if request.user.is_authenticated():
         context['my_playlists'] = Playlist.objects.filter(creation_user=request.user)[:20]
+        context['notices'] = Notice.objects.notices_for(request.user, unseen=True)
 
     context.update(extra_context or {})
     return shortcuts.render_to_response(template_name, context,
@@ -332,6 +340,7 @@ def me(request,
     context['activities'] = activities
 
     context['who_to_follow'] = suggested_users_for(user)
+    context['ctype'] = ContentType.objects.get_for_model(User)
 
     context['hot_tracks'] = []
     like_qs = Action.objects.filter(timestamp__gte=date.today() - timedelta(1))

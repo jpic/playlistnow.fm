@@ -1,58 +1,27 @@
-{% load music_tags i18n comments %}
+{% extends 'activity/action.html' %}
+{% load i18n music_tags cache %}
+{% block what %}
+    {# cache 999999 activity activity.pk #}
+    recommend template cached what block
+    <a href="{% url user_details activity.actor.username %}" title="{% trans "see details of user" %} {{ activity.actor }}" class="bold">
+        {{ activity.actor.first_name }} {{ activity.actor.last_name }}
+    </a>
+    recommends this track to
+    <a href="{{ activity.action_object.target.get_absolute_url }}" title="{% trans "details of" %} {{ activity.action_object.target.first_name }} {{ activity.action_object.target.last_name }}" class="bold">
+        {{ activity.action_object.target.first_name }} {{ activity.action_object.target.last_name }}
+    </a>
+    {% with activity.action_object.track as track %}
+    {% render_track track '' request %}
+    {% endwith %}
+    {# endcache #}
+{% endblock %}
 
-<div class="lineFeed">
-    <div class="lineFeedAvatar">
-        <a href="{% url user_details activity.actor.username %}" title="{% trans "details of user" %} {{ activity.actor.first_name }} {{ activity.actor.last_name }}">
-            <img src="{{ activity.actor.playlistprofile.avatar_url }}" class="avatar small left espace" />
-        </a>
-    </div>
-    <div class="lineFeedContent">
-        <div class="lineFeedContentWhat">
-
-            <a href="{% url user_details activity.actor.username %}" title="{% trans "see details of user" %} {{ activity.actor }}" class="bold">
-                {{ activity.actor.first_name }} {{ activity.actor.last_name }}
-            </a>
-
-            {{ activity.verb }}
-            
-            <a href="{{ activity.action_object.track.get_absolute_url }}" title="{% trans "details of" %} {{ activity.action_object.track }}" class="bold">
-                {{ activity.action_object.track }}
-            </a>
-            to
-            <a href="{{ activity.action_object.target.get_absolute_url }}" title="{% trans "details of" %} {{ activity.action_object.target.first_name }} {{ activity.action_object.target.last_name }}" class="bold">
-                {{ activity.action_object.target.first_name }} {{ activity.action_object.target.last_name }}
-            </a>
-
-            {% with activity.action_object.track as track %}
-            {% render_track track '' request %}
-            {% endwith %}
-
-            {% if request.user.is_authenticated and request.user == activity.actor %}
-            <span class="delete action_pk_{{ activity.pk }}">&nbsp;</span>
-            {% endif %}
-
-        </div>
-        {% get_comment_count for activity as comment_count %}
-        <div class="lineFeedContentWhen"> 
-            {{ action.timestamp|timesince }} ago -
-            {% if action in request.user.playlistprofile.fanof_actions.all %}
-            <a class="authenticationRequired" href="{% url action_unlike action.pk %}">Unlike</a>
-            {% else %}
-            <a class="authenticationRequired" href="{% url action_like action.pk %}">I Like</a>
-            {% endif %}
-            {% if activity.action_object.target == request.user %}
-            -
-            <a href="{% url music_recommendation_thank activity.action_object.pk %}">Thanks</a>
-            {% endif %}
-            - 
-            <a class="ui_ignore comment_form_toggle" href="">Comment (<strong>{{ comment_count }}</strong>)</a>
-            {% render_comment_list for activity %}
-        
-            <div style="{% if not comment_count %}display: none{% endif %}" class="comment_form_contents" >
-            {% render_comment_form for activity %}
-            </div>
-        </div>
-    </div>
-    <div class="clear"></div>
-</div>
-
+{% block extra_actions %}
+    {% if not activity.action_object.thanks %}
+        {% if request.user == activity.action_object.target %}
+        <span>
+        - <a class="delete parent" href="{% url music_recommendation_thank activity.action_object.pk %}">Thank</a>
+        </span>
+        {% endif %}
+    {% endif %}
+{% endblock %}

@@ -33,7 +33,7 @@
 {% if tracks %}
 <h2>{% trans "tracks matching" %} '{{ request.GET.term }}'</h2>
 
-{% render_tracks tracks %}
+{% render_tracks tracks '' request %}
 
 {% endif %}
 

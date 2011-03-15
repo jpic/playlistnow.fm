@@ -17,6 +17,14 @@ import gdata.youtube.service
 # Prevent: XMLSyntaxError: Attempt to load network entity
 etree.set_default_parser(etree.XMLParser(no_network=False, recover=True))
 
+def get_info_if_no_image(sender, instance, **kwargs):
+    if not isinstance(instance, MusicalEntity):
+        return None
+    
+    if not instance.image_medium:
+        instance.lastfm_get_info()
+signals.pre_save.connect(get_info_if_no_image)
+
 def save_if_fake_track(track):
     if not track.artist.pk:
         track.artist.save()
@@ -156,6 +164,7 @@ class MusicalEntity(models.Model):
             method,
             urllib.urlencode(kwargs)
         )
+        print url
 
         try:
             tree = etree.parse(url)

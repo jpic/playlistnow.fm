@@ -21,6 +21,17 @@ var player = {
         $('.sidebar_Playing a').attr('href', track.url);
         $('.player_current_playlist').hide();
 
+        $('#right_action a.fav').css('backgroundPosition', 'left top');
+        $('#right_action a.fav').attr('title', 'Like this track');
+        for(i in player.tiny_playlist.tracks) {
+            var compare = player.tiny_playlist.tracks[i];
+            if (compare.name == track.name && compare.artist.name == track.artist.name) {
+                $('#right_action a.fav').css('backgroundPosition', 'left bottom');
+                $('#right_action a.fav').attr('title', 'Unlike this track');
+                break;
+            }
+        }
+
         if (!fromHistory) {
             this.state.trackHistory.push(track);
             this.state.currentTrackHistoryIndex = this.state.trackHistory.length - 1;
@@ -504,11 +515,21 @@ var player = {
                     if ($('#playlist_pk').length && $('#playlist_pk').html() == player.tiny_playlist.object.pk) {
                         $(this).parent().fadeOut();
                     }
+                    if (track.name == player.state.currentTrack.name) {
+                        $('#right_action a.fav').css('backgroundPosition', 'left top');
+                        $('#right_action a.fav').removeClass('remove_track');
+                        $('#right_action a.fav').addClass('add_track');
+                    }
                 } else {
                     $(this).css('backgroundPosition', 'left bottom');
                     $(this).removeClass('add_track');
                     $(this).addClass('remove_track');
                     player.tiny_playlist.tracks.push(track);
+                    if (track.name == player.state.currentTrack.name) {
+                        $('#right_action a.fav').css('backgroundPosition', 'left bottom');
+                        $('#right_action a.fav').addClass('remove_track');
+                        $('#right_action a.fav').removeClass('add_track');
+                    }
                 }
             }
         });
@@ -547,9 +568,31 @@ var player = {
 
         var timebarWidth = 548;
         var plState = player.ytplayer.getPlayerState();
-
+        
         document.getElementById('player_progress_bar').style.width = percent * (timebarWidth / 100) + "px";
         document.getElementById('player_loading_bar').style.width = percentload * (timebarWidth / 100) + "px";
+
+        t = Math.round(part);
+        var s = t % 60; 
+        var m = (t - s) / 60; 
+        if (s < 10) 
+            s = '0' + s;
+        tt = Math.round(all);
+        var st = tt % 60; 
+        var mt = (tt - st) / 60; 
+        if (st < 10) 
+            st = '0' + st; 
+
+        if (player.state.currentTrack && s > 0)
+        {
+            document.getElementById('videoCurrentTime').innerHTML = m + ':' + s;
+        }
+        else
+        {
+            document.getElementById('videoCurrentTime').innerHTML = '';
+        }   
+        document.getElementById('videoDuration').innerHTML = mt + ':' + st;// + " state :" + ytplayer.getPlayerState();
+
 
         if(plState==0)
         {

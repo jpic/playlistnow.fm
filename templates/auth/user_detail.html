@@ -39,12 +39,17 @@
 {% block body %}
    <div class="profile">
  <div class="right" style="margin-top:-5px;">
- {% ifequal request.user user %}{% else %}
+ {% if request.user != user %}
     <div class="follow">
-        <a href="{% url actstream_unfollow content_type_id=ctype.id  object_id=user.id %}" id="unfollow_button" style="display:none" class="button super green"><span class="follow">Following</span></a>
-        <a href="{% url actstream_follow content_type_id=ctype.id  object_id=user.id %}" id="follow_button" class="button super grey"><span class="follow">Follow</span></a>
+    <a href="{% url actstream_follow content_type_id=ctype.id  object_id=user.id %}" class="ui_ignore super button grey right follow_button" style="margin-top:14px;{% if do_i_follow %}display:none{%endif%}">
+        <span class="follow">follow</span>
+    </a>
+    <a href="{% url actstream_unfollow content_type_id=ctype.id  object_id=user.id %}" class="ui_ignore super button grey right unfollow_button" style="margin-top:14px;{% if not do_i_follow %}display:none{% endif %}">
+        <span class="unfollow">unfollow</span>
+    </a> 
+
     </div>
-{% endifequal %}
+{% endif %}
 
     <script>
     $(function () {
@@ -64,7 +69,7 @@
 
   <div class="profile-name">
     <h1 class="left" style="margin-right:10px;">{{ user.first_name }} {{ user.last_name }}</h1> 
-<div class="button super violet">Rookie</div>
+<div class="button super violet tiptip" style="margin-top:-5px;" title="level {{ user|get_rank_integer }} xp {{ user|get_xp }}/{{ user|get_next_rank_integer }} next level is {{ user|get_next_rank_text }}">{{ user|get_rank_text }}</div>
 	<div class="profile-info">
 	<ul>
 	<li>
@@ -119,8 +124,7 @@
  {% if user.playlistprofile.last_playlist %}
 
 <div class="statut">
-    <span class="mood">Last mood:</span>
-    <a class="bold" href="{{ user.playlistprofile.last_playlist.get_absolute_url }}" title="{% trans "details of" %} {{ user.playlistprofile.last_playlist }}">{{ user.playlistprofile.last_playlist }}</a>
+    <span class="mood">Last mood:</span><a class="bold" href="{{ user.playlistprofile.last_playlist.get_absolute_url }}" title="{% trans "details of" %} {{ user.playlistprofile.last_playlist }}">{{ user.playlistprofile.last_playlist }}</a>
 </div>
 {% endif %}
 
@@ -206,6 +210,7 @@
 {% endif %}
 
 {% if tab == 'recommendations' %}
+    {% render_tracks user.playlistprofile.tiny_playlist.tracks.all '' request %}
 {% endif %}
 
 {% endblock %}

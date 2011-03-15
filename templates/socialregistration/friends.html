@@ -19,10 +19,10 @@
         {{ friend.playlistprofile.user_location }}
     </div>
 
-    <a href="{% url actstream_follow content_type_id=ctype.id  object_id=friend.id %}" class="super button grey right follow_button" style="margin-top:14px;{% if friend not in follows %}display:none{%endif%}">
+    <a href="{% url actstream_follow content_type_id=ctype.id  object_id=friend.id %}" class="super button grey right follow_button" style="margin-top:14px;{% if friend in follows %}display:none{%endif%}">
         <span class="follow">follow</span>
     </a>
-    <a href="{% url actstream_unfollow content_type_id=ctype.id  object_id=friend.id %}" class="super button grey right unfollow_button" style="margin-top:14px;{% if friend in follows %}display:none{% endif %}">
+    <a href="{% url actstream_unfollow content_type_id=ctype.id  object_id=friend.id %}" class="super button grey right unfollow_button" style="margin-top:14px;{% if friend not in follows %}display:none{% endif %}">
         <span class="unfollow">unfollow</span>
     </a> 
     <div class="clear"></div>

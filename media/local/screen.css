@@ -8,6 +8,14 @@ body, #html_body_wrapper {
 }
 .hidden, a.hidden, div.hidden { display: none; }
 
+#track_menu {
+    bottom: 72px;
+    left: 180px;
+    position: fixed;
+    display: none;
+    background-color: #EAF3F9;
+}
+
 #player {
     bottom: 0;
     left: 0;
@@ -44,11 +52,11 @@ body, #html_body_wrapper {
 
 }
 #page_body_right {
-    width: 195px;
+    width: 220px;
     border-left:1px solid #ddd;
     float: right;
     padding: 0 15px 15px 15px;
-    margin: 15px 0 0 0 ;
+    margin: 10px 0 0 0 ;
 
 }
 #page_body {
@@ -69,8 +77,8 @@ body, #html_body_wrapper {
 
 #simplemodal-data {
     margin: 0;
-    padding: 20px 40px 40px 40px;
-    width: 460px;
+    padding: 0px 0px 0px 0px;
+    width: 540px;
    -moz-border-radius-bottomleft: 9px;
    -moz-border-radius-bottomright: 9px;
    -webkit-border-bottom-left-radius: 9px;

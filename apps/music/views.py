@@ -1,6 +1,8 @@
 import urllib2
+from urllib import urlencode
 import math
 import datetime
+from lxml.html import fromstring
 
 from django import http
 from django import shortcuts
@@ -12,12 +14,20 @@ from django.contrib.auth import decorators
 from django.conf import settings
 from django.utils import simplejson
 from django.contrib import messages
+from socialregistration.utils import OAuthTwitter, get_token_prefix
 
 from actstream import action
 
 from models import *
 from playlist.models import *
 from forms import *
+
+def shorten_url(url):
+    data = urlencode((('long', url),))
+    response = urllib2.urlopen('http://gw.gd/api.php', data)
+    if response.getcode() != 200:
+        return url
+    return response.read()
 
 def return_json(data=None):
     if not data: 
@@ -65,22 +75,71 @@ def music_recommendation_add(request, form_class=RecommendationForm,
     context['track'] = get_or_fake_track(context['track_name'], context['artist_name'])
 
     if request.method == 'POST' and context['track']:
-        form = form_class(request.POST, instance=Recommendation(source=request.user, track=context['track']))
-        if form.is_valid():
-            save_if_fake_track(context['track'])
-            recommendation = form.save()
-            action.send(request.user, verb='recommends', action_object=recommendation)
-            msg = 'thanks for recommending <a href="%s">%s</a> to <a href="%s">%s</a>' % (
-                recommendation.track.get_absolute_url(),
-                unicode(recommendation.track),
-                recommendation.target.playlistprofile.get_absolute_url(),
-                unicode(recommendation.target),
+        if request.GET.get('method', False) == 'facebook':
+            request.facebook.graph.put_wall_post(request.POST.get('message'))
+            msg = 'thanks for sharing <a href="%s">%s</a> on Facebook' % (
+                context['track'].get_absolute_url(),
+                unicode(context['track']),
+            )
+            return http.HttpResponse(msg)
+        elif request.GET.get('method', False) == 'twitter':
+            session_key = 'oauth_%s_access_token' % get_token_prefix(settings.TWITTER_REQUEST_TOKEN_URL)
+            if session_key in request.session.keys():
+                restore = request.session[session_key]
+            else:
+                restore = None
+
+            for twitterprofile in request.user.twitterprofile_set.all():
+                request.session[session_key] = {
+                    'oauth_token_secret': 'krEu2rA0BbTyLmCfTQtHfv34wrFE6qVmLGRB9YR5es4', 
+                    'oauth_token': twitterprofile.access_token, 
+                    'user_id': twitterprofile.user_id,
+                    'screen_name': twitterprofile.nick,
+                }
+                client = OAuthTwitter(
+                    request, settings.TWITTER_CONSUMER_KEY,
+                    settings.TWITTER_CONSUMER_SECRET_KEY,
+                    settings.TWITTER_REQUEST_TOKEN_URL,
+                )
+                client.query('http://api.twitter.com/1/statuses/update.json', 'POST', {'status': request.POST.get('message')})
+            
+            if restore:
+                request.session[session_key] = restore
+            else:
+                del request.session[session_key]
+
+            msg = 'thanks for sharing <a href="%s">%s</a> on Twitter' % (
+                context['track'].get_absolute_url(),
+                unicode(context['track']),
             )
             return http.HttpResponse(msg)
         else:
-            print form.errors
+            form = form_class(request.POST, instance=Recommendation(source=request.user, track=context['track']))
+            if form.is_valid():
+                save_if_fake_track(context['track'])
+                recommendation = form.save()
+                action.send(request.user, verb='recommends', action_object=recommendation)
+                msg = 'thanks for recommending <a href="%s">%s</a> to <a href="%s">%s</a>' % (
+                    recommendation.track.get_absolute_url(),
+                    unicode(recommendation.track),
+                    recommendation.target.playlistprofile.get_absolute_url(),
+                    unicode(recommendation.target),
+                )
+                return http.HttpResponse(msg)
+            else:
+                print form.errors
     else:
         form = form_class()
+
+    base = 'http://%s' % request.META.get('HTTP_HOST', 'http://pln.yourlabs.org')
+    profiles = request.user.twitterprofile_set.all()
+    if profiles:
+        context['twitterprofile'] = profiles[0]
+        context['twitterurl'] = shorten_url(base+context['track'].get_absolute_url())
+    profiles = request.user.facebookprofile_set.all()
+    if profiles:
+        context['facebookprofile'] = profiles[0]
+        context['facebookurl'] = base+context['track'].get_absolute_url()
 
     context.update(extra_context or {})
     return shortcuts.render_to_response(template_name, context,
@@ -126,6 +185,8 @@ def music_artist_fanship(request):
 
     if request.POST.get('artist_pk', False):
         artist = Artist.objects.get(pk=request.POST['artist_pk'])
+        if not artist.image_medium:
+            artist.lastfm_get_info()
     else:
         artist = Artist(name=request.POST.get('artist_name'))
         artist.lastfm_get_info()
