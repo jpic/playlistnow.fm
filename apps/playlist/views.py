@@ -15,6 +15,7 @@ from music.models import *
 from models import *
 from forms import *
 
+@decorators.login_required
 def playlist_fanship(request, playlist_pk):
     if not request.method == 'POST':
         return http.HttpResponseForbidden()

@@ -8,7 +8,7 @@
 {% if activity.open %}
 <div class="lineFeed">
     <div class="lineFeedAvatar">
-        <a href="{% url user_details activity.actor.username %}" title="{% trans "details of user" %} {{ activity.actor.first_name }} {{ activity.actor.last_name }}">
+        <a href="{% url user_details activity.actor.username %}" title="{% trans "details of user" %} {{ activity.actor }}">
             <img src="{{ activity.actor.playlistprofile.avatar_url }}" class="avatar small left espace" />
         </a>
     </div>
@@ -18,11 +18,11 @@
         <div class="lineFeedContentWhat">
 {% if activity.verb == 'recommends' %}
     <a href="{% url user_details activity.actor.username %}" title="{% trans "see details of user" %} {{ activity.actor }}" class="bold">
-        {{ activity.actor.first_name }} {{ activity.actor.last_name }}
+        {{ activity.actor }}
     </a>
     recommends this track to
-    <a href="{{ activity.action_object.target.get_absolute_url }}" title="{% trans "details of" %} {{ activity.action_object.target.first_name }} {{ activity.action_object.target.last_name }}" class="bold">
-        {{ activity.action_object.target.first_name }} {{ activity.action_object.target.last_name }}
+    <a href="{{ activity.action_object.target.get_absolute_url }}" title="{% trans "details of" %} {{ activity.action_object.target }}" class="bold">
+        {{ activity.action_object.target }}
     </a>
     {% with activity.action_object.track as track %}
     {% render_track track '' request %}
@@ -31,7 +31,7 @@
 {% if activity.verb == 'added track to playlist' %}
     {% if activity.open %}
         <a href="{% url user_details activity.actor.username %}" title="{% trans "see details of user" %} {{ activity.actor }}" class="bold">
-            {{ activity.actor.first_name }} {{ activity.actor.last_name }}
+            {{ activity.actor }}
         </a>
         added to playlist
         <a href="{{ activity.target.get_absolute_url }}" title="{% trans "details of" %} {{ activity.target }}" class="bold">
@@ -50,7 +50,7 @@
 {% if activity.verb == 'becomes fan of artist' %}
     {% if activity.open %}
         <a href="{% url user_details activity.actor.username %}" title="{% trans "see details of user" %} {{ activity.actor }}" class="bold">
-            {{ activity.actor.first_name }} {{ activity.actor.last_name }}
+            {{ activity.actor }}
         </a>
         {% if activity.close %}
         is fan of this artist
@@ -66,7 +66,7 @@
 {% if activity.verb == 'liked track' %}
     {% if activity.open %}
         <a href="{% url user_details activity.actor.username %}" title="{% trans "see details of user" %} {{ activity.actor }}" class="bold">
-            {{ activity.actor.first_name }} {{ activity.actor.last_name }}
+            {{ activity.actor }}
         </a>
         {% if activity.close %}
         likes this track
@@ -84,7 +84,7 @@
 {% endif %}
 {% if activity.verb == 'started following' %}
     <a href="{% url user_details activity.actor.username %}" title="{% trans "see details of user" %} {{ activity.actor }}" class="bold">
-        {{ activity.actor.first_name }} {{ activity.actor.last_name }}
+        {{ activity.actor }}
     </a>
     {{ activity.verb }}
     <a href="{{ activity.target.get_absolute_url }}" title="{% trans "details of" %} {{ activity.target }}" class="bold">
@@ -94,7 +94,7 @@
 {% endif %}
 {% if activity.verb == 'bookmarks playlist' %}
     <a href="{% url user_details activity.actor.username %}" title="{% trans "see details of user" %} {{ activity.actor }}" class="bold">
-        {{ activity.actor.first_name }} {{ activity.actor.last_name }}
+        {{ activity.actor }}
     </a>
     {{ activity.verb }}
     <a href="{{ activity.action_object.get_absolute_url }}" title="{% trans "details of" %} {{ activity.action_object }}" class="bold">
@@ -103,12 +103,21 @@
 {% endif %}
 {% if activity.verb == 'created playlist' %}
     <a href="{% url user_details activity.actor.username %}" title="{% trans "see details of user" %} {{ activity.actor }}" class="bold">
-        {{ activity.actor.first_name }} {{ activity.actor.last_name }}
+        {{ activity.actor }}
     </a>
     {{ activity.verb }}
     <a href="{{ activity.target.get_absolute_url }}" title="{% trans "details of" %} {{ activity.target }}" class="bold">
         {{ activity.target }}
     </a>
+{% endif %}
+{% if activity.verb == 'thanks recommendation' %}
+    <a class="bold" href="{{ activity.actor.get_absolute_url }}" title="{% trans "details of user" %} {{ activity.actor }}">{{ activity.actor }}</a>
+    thanks
+    <a class="bold" href="{{ activity.action_object.source.get_absolute_url }}" title="{% trans "details of user" %} {{ activity.action_object.source }}">{{ activity.action_object.source }}</a>
+    for recommending this track:
+    {% with activity.action_object.track as track %}
+    {% render_track track '' request %}
+    {% endwith %}
 {% endif %}
 
 {% if request.user.is_authenticated and request.user == activity.actor %}
@@ -124,7 +133,7 @@
             {% else %}
             <a class="authenticationRequired" href="{% url action_like action.pk %}">I Like</a>
             {% endif %}
-            {% if activity.verb == 'recommends' and activity.action_object.thanks == False and request.user == activity.action_object.target %}
+            {% if activity.verb == 'recommends' and request.user == activity.action_object.target and not activity.action_object.thanks %}
             <span>
             - <a class="delete parent" href="{% url music_recommendation_thank activity.action_object.pk %}">Thank</a>
             </span>
@@ -137,7 +146,7 @@
             <div class="likes">
             <img src="{{ STATIC_URL }}images/not_newthumbup.png" class="espace">
                 {% for fan in action.fans.all %}
-                <a href="{% url user_details fan.user.username %}">{{ fan.user.first_name }} {{ fan.user.last_name }}</a> likes it
+                <a href="{% url user_details fan.user.username %}">{{ fan.user }}</a> likes it
                 {% endfor %}
             </div>
             {% endif %}

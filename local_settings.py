@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.humanize',
+    'django.contrib.sitemaps',
     
     'pinax.templatetags',
     
@@ -68,6 +69,7 @@ INSTALLED_APPS = [
     'tagging_ext',
     'socialregistration',
     'gfc',
+    'robots',
     'actstream',
     'django.contrib.comments',
     'endless_pagination',
@@ -159,6 +161,7 @@ AUTHENTICATION_BACKENDS = (
 UI_IGNORE_URLS = (
     '/admin',
     '/site_media',
+    '/robots.txt',
     
     '/gfc/redirect',
     '/gfc/callback',
@@ -191,4 +194,8 @@ ENDLESS_PAGINATION_PER_PAGE=4
 
 TIME_ZONE = "Europe/Paris"
 
-#EMAIL_HOST="localhost"
+ROBOTS_USE_SITEMAP = False
+
+EMAIL_SUBJECT_PREFIX='[pln alpha] '
+DEFAULT_FROM_EMAIL='jpic@pln.yourlabs.org'
+SERVER_EMAIL='jpic@pln.yourlabs.org'

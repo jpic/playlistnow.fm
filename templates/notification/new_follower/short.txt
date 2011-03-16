@@ -1,0 +1,1 @@
+You have a new follower: {{ follow.user.first_name }} {{ follow.user.last_name }}!

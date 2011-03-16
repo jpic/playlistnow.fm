@@ -1,0 +1,1 @@
+{{ recommendation.source.first_name }} {{ recommendation.source.last_name }} recommends {{ recommendation.track }} to you!

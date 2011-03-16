@@ -152,8 +152,6 @@ def socialregistration_userdata(request, form_class=UserDataForm,
                 #follow(user, u)
 
             return http.HttpResponseRedirect(urlresolvers.reverse('socialregistration_friends'))
-        else:
-            logger.debug('invalid form')
     else:
         if profile.__class__.__name__ == 'FacebookProfile':
             upstream = request.facebook.graph.request(request.facebook.user['uid'])
@@ -218,7 +216,6 @@ def socialregistration_friends(request,
         print facebookprofile
         friendlist = request.facebook.graph.request(request.facebook.user['uid'] + '/friends')
         facebook_ids = [x['id'] for x in friendlist['data']]
-        logger.info("Facebook ids %s" % facebook_ids)
         conditions.append(Q(facebookprofile__uid__in=facebook_ids))
 
     if user.twitterprofile_set.count():
@@ -230,16 +227,13 @@ def socialregistration_friends(request,
     for twitterprofile in user.twitterprofile_set.all():
         res = simplejson.loads(client.query('http://api.twitter.com/1/statuses/friends.json'))
         twitter_ids = [x['id'] for x in res]
-        logger.info("twitter ids %s" % twitter_ids)
         conditions.append(Q(twitterprofile__twitter_id__in=twitter_ids))
 
     for gfcprofile in user.gfcprofile_set.all():
         container = gfc.my_opensocial_container(request)
         res = container.fetch_friends()
-        logger.info('res %s' % res)
         gfc_ids = [x['id'] for x in res]
         conditions.append(Q(gfcprofile__uid__in=gfc_ids))
-        logger.info('gfc ids %s' % gfc_ids)
 
     context['friends'] = User.objects.filter(reduce(operator.or_,conditions))
     context['follows'] = [f.actor for f in user.follow_set.all()]
@@ -264,18 +258,13 @@ def socialregistration_cancel(request,
     template_name='socialregistration/cancel.html', extra_context=None):
     context = {}
 
-    logger.info('user attempts to cancel registration')
     # don't cancel if the registration is complete
     if 'socialregistration_user' in request.session and \
        'socialregistration_profile' in request.session and \
        'socialregistration_userdata' in request.session:
-        logger.info('a user wanted to cancel registration, but it is complete')
         request.session['socialregistration_cancelattempt'] = True
         return http.HttpResponseRedirect(urlresolvers.reverse(
             'socialregistration_complete'))
-
-    if request.user.is_authenticated():
-        logger.info('an authenticated user tried to cancel registration')
 
     if request.method == 'POST' and request.POST.get('confirm', False):
         if 'socialregistration_user' in request.session: 
@@ -286,9 +275,6 @@ def socialregistration_cancel(request,
             del request.session['socialregistration_userdata']
         # socialregistration_friends intentionally omited because it would
         # mean that registration is complete
-        logger.info('user canceled registration')
-    else:
-        logger.info('asking for confirmation')
 
     context.update(extra_context or {})
     return shortcuts.render_to_response(template_name, context,

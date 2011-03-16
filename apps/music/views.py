@@ -41,6 +41,7 @@ def return_json(data=None):
         mimetype='application/json'
     )
 
+@decorators.login_required
 def music_recommendation_thank(request, id):
     if not request.user.is_authenticated():
         return http.HttpResponseForbidden()
@@ -58,6 +59,7 @@ def music_recommendation_thank(request, id):
 
     return http.HttpResponse('you thanked')
 
+@decorators.login_required
 def music_recommendation_add(request, form_class=RecommendationForm,
     template_name='music/recommendation_add.html', extra_context=None):
 
@@ -119,11 +121,12 @@ def music_recommendation_add(request, form_class=RecommendationForm,
                 save_if_fake_track(context['track'])
                 recommendation = form.save()
                 action.send(request.user, verb='recommends', action_object=recommendation)
-                msg = 'thanks for recommending <a href="%s">%s</a> to <a href="%s">%s</a>' % (
+                msg = 'thanks for recommending <a href="%s">%s</a> to <a href="%s">%s %s</a>' % (
                     recommendation.track.get_absolute_url(),
                     unicode(recommendation.track),
                     recommendation.target.playlistprofile.get_absolute_url(),
-                    unicode(recommendation.target),
+                    unicode(recommendation.target.first_name),
+                    unicode(recommendation.target.last_name),
                 )
                 return http.HttpResponse(msg)
             else:
@@ -144,7 +147,6 @@ def music_recommendation_add(request, form_class=RecommendationForm,
     context.update(extra_context or {})
     return shortcuts.render_to_response(template_name, context,
         context_instance=template.RequestContext(request))
-
 
 def music_badvideo(request):
     bad_youtube_id = request.POST.get('youtube_id', False)
@@ -176,6 +178,7 @@ def music_badvideo(request):
 
     return http.HttpResponse(new_id)
 
+@decorators.login_required
 def music_artist_fanship(request):
     if not request.method == 'POST':
         return http.HttpResponseForbidden()
@@ -276,7 +279,7 @@ def music_track_details(request, name, artist, album=None,
     context['object'].artist = Artist(name=artist)
     context['object'].lastfm_get_info()
     context['object'].lastfm_get_similar()
-    context['object'].similar = context['object'].similar[:5]
+    context['object'].similar = context['object'].similar[:3]
 
     context.update(extra_context or {})
     return shortcuts.render_to_response(template_name, context,

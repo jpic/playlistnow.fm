@@ -5,18 +5,15 @@
 
 {% block extra_head %}
 <meta name="keywords" content="{% for tag in object.tags %}{{ tag }}{% endfor %}" />
-{% if object.description %}
-<meta name="description" content="{{ object.description|striptags|safe }}" />
-{% else %}
-<meta name="description" content="{% trans "Read details of track" %} {{ object.name }} {% trans "by" %} {{ object.artist.name }}" />
-{% endif %}
+<meta name="description" content="Listen to track {{ object.name }}{% if object.artist %} by {{ object.artist.name }}{% endif %} for free and legally! a panel of similar tracks which you may also like is available" />
 {% endblock %}
 
 {% block head_title %}{% trans "Details of track" %} {{ object.name }} {% trans "by" %} {{ object.artist.name }}{% endblock %}
 
 {% block body %}
 <h1>{{ object.name }}{% if object.artist %} {% trans "by" %} {{ object.artist.name }}{% endif %}</h1>
-
+<hr style="height:2px; background:#ddd;">
+    <div class="clear"></div>
 {% if object.image_large %}
 <img src="{{ object.image_large }}" alt="{{ object }}" />
 {% endif %}
@@ -26,7 +23,8 @@
 {% if object.description %}
 <p>{{ object.description|striptags|safe }}</p>
 {% endif %}
-
+<div class="clear"></div>
+<br/>
 {% if object.similar %}
 <h2>{% trans "similar tracks" %}</h2>
 {% render_tracks object.similar '' request %}

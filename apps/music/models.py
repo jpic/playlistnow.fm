@@ -236,6 +236,8 @@ class Artist(MusicalEntity):
 
     def lastfm_get_info(self, tree=None):
         tree = super(Artist, self).lastfm_get_info(tree)
+        if not tree:
+            return None
         
         self.description = getattr(tree.find('bio/summary'), 'text', None)
 
@@ -246,6 +248,9 @@ class Artist(MusicalEntity):
 
     def lastfm_get_tracks(self):
         tree = self.lastfm_get_tree('artist.getTopTracks')
+        if not tree:
+            return None
+
         for element in tree.findall('toptracks/track'):
             track = Track(name=element.find('name').text, artist=self)
             track.lastfm_get_info(element)
@@ -253,6 +258,8 @@ class Artist(MusicalEntity):
 
     def lastfm_get_events(self):
         tree = self.lastfm_get_tree('artist.getEvents')
+        if not tree:
+            return None
         event = None
         for element in tree.findall('events/event'):
             name = element.find('venue/name').text
@@ -299,6 +306,8 @@ class Album(MusicalEntity):
 
     def lastfm_get_info(self):
         tree = self.lastfm_get_tree('album.getInfo')
+        if not tree:
+            return None
         self.name = tree.find('album/name').text
         for element in tree.findall('album/toptags/tag/name'):
             self.tags.append(element.text)
@@ -310,7 +319,7 @@ class Album(MusicalEntity):
                 setattr(self, attr, element.text)
 
 class Track(MusicalEntity):
-    artist = models.ForeignKey(Artist, verbose_name=_(u'artist'))
+    artist = models.ForeignKey(Artist, verbose_name=_(u'artist'), default=0)
     album = models.ForeignKey(Album, verbose_name=_(u'album'), null=True, blank=True)
     name = models.CharField(max_length=255, verbose_name=_(u'name'), unique=False)
 
@@ -348,6 +357,10 @@ class Track(MusicalEntity):
 
     def lastfm_get_info(self, tree=None):
         tree = super(Track, self).lastfm_get_info(tree)
+
+        if not tree:
+            return None
+
         self.description = getattr(tree.find('wiki/summary'), 'text', None)
         try:
             self.artist
@@ -381,6 +394,8 @@ class Track(MusicalEntity):
     def lastfm_search(self):
         klass = self.__class__
         tree = self.lastfm_get_tree(self.get_type() + '.search')
+        if not tree:
+            return None
 
         for element in tree.findall('results/%smatches/%s' % (self.get_type(), self.get_type() )):
             match = klass(name=element.find('name').text, 

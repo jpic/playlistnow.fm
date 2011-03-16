@@ -76,6 +76,7 @@ def group_activities(activities):
     activities[len(activities)-1].close = True
     return activities
 
+@decorators.login_required
 def add_activity(request):
     if not request.method == 'POST':
         return http.HttpResponseForbidden()
@@ -111,6 +112,7 @@ def add_activity(request):
 
     return http.HttpResponse('success')
 
+@decorators.login_required
 def action_like(request, action_id):
     if not request.user.is_authenticated():
         return http.HttpResponseForbidden()
@@ -122,6 +124,7 @@ def action_like(request, action_id):
     #action.send(request.user, verb='likes', action_object=object)
     return http.HttpResponse('action liked')
 
+@decorators.login_required
 def action_unlike(request, action_id):
     if not request.user.is_authenticated():
         return http.HttpResponseForbidden()
@@ -132,6 +135,7 @@ def action_unlike(request, action_id):
     request.user.playlistprofile.fanof_actions.remove(action)
     return http.HttpResponse('action unliked')
 
+@decorators.login_required
 def action_delete(request, action_id):
     if not request.user.is_authenticated():
         return http.HttpResponseForbidden()
@@ -309,6 +313,7 @@ def empty(request,
     return shortcuts.render_to_response(template_name, context,
         context_instance=template.RequestContext(request))
 
+@decorators.login_required
 @page_template('auth/user_activities.html')
 def me(request,
     template_name='me.html', extra_context=None):

@@ -1,0 +1,16 @@
+{{ recommendation.source.first_name }} {{ recommendation.source.last_name }}
+thought of you while listenning to {{ recommendation.track }}!
+
+Check it out at this address: 
+
+http://{{ site.domain }}{{ recommendation.track.get_absolute_url }}
+
+Or check out all the music from {{ recommendation.track.artist }}:
+
+http://{{ site.domain }}{{ recommendation.track.artist.get_absolute_url }}
+
+[Text to persuade to click "thank"]
+
+You can thank in your activity feed:
+
+http://{{ site.domain }}{{ recommendation.target.get_absolute_url }}

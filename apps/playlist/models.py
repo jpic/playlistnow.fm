@@ -3,6 +3,7 @@ import operator
 from datetime import datetime
 
 from django.contrib.auth.models import User
+from django.contrib.sites.models import Site
 from django.db import models
 from django.db.models import signals, Q, Count
 from django.contrib.contenttypes.models import ContentType
@@ -30,6 +31,10 @@ FacebookProfile.add_to_class('nick', models.TextField(null=True, blank=True))
 TwitterProfile.add_to_class('url', models.TextField(null=True, blank=True))
 FacebookProfile.add_to_class('url', models.TextField(null=True, blank=True))
 
+def new_user_unicode(self):
+    return '%s %s' % (self.first_name, self.last_name)
+User.__unicode__ = new_user_unicode
+
 def twitter_url(sender, instance, **kwargs):
     if instance.nick:
         instance.url = 'http://twitter.com/%s' % instance.nick
@@ -40,11 +45,64 @@ def create_notice_types(app, created_models, verbosity, **kwargs):
     notification.create_notice_type("new_follower", "New follower", "Another member follows you")
     notification.create_notice_type("yourplaylist_bookmarked", "Bookmarked your playlist", "Another member bookmarks your playlist")
     notification.create_notice_type("new_message", "New message", "Another member posted on your wall")
-    notification.create_notice_type("new_recomandation", "New recomandation", "A friend recomands you a particular song")
+    notification.create_notice_type("new_recommendation", "New recommendation", "A friend recommends you a particular song")
     notification.create_notice_type("new_thanks", "You were thanked", "Another member thanked you for your contribution")
 signals.post_syncdb.connect(create_notice_types, sender=notification)
 
+def new_recommendation(sender, instance, created, **kwargs):
+    if not created:
+        return None
+
+    recipients = [instance.target]
+    context = {
+        'recommendation': instance,
+        'site': Site.objects.get_current(),
+    }
+
+    notification.send(recipients, 'new_recommendation', context)
+signals.post_save.connect(new_recommendation, sender=models.get_model('music', 'Recommendation'))
+
+def yourplaylist_bookmarked(sender, instance, **kwargs):
+    if sender.__name__ != 'PlaylistProfile_fanof_playlists':
+        return None
+    if kwargs['action'] != 'post_add':
+        return None
+
+    recipients = [instance.creation_user]
+
+    for pk in kwargs['pk_set']:
+        context = {
+            'playlist': instance,
+            'user': User.objects.get(playlistprofile__pk=pk),
+            'site': Site.objects.get_current(),
+        }
+
+        notification.send(recipients, 'yourplaylist_bookmarked', context)
+signals.m2m_changed.connect(yourplaylist_bookmarked)
+
+def new_follower(sender, instance, created, **kwargs):
+    if not created:
+        return None
+    if not instance.__class__.__name__ == 'Follow':
+        return None
+    if not instance.actor.__class__.__name__ == 'User':
+        return None
+
+    recipients = [instance.actor]
+    context = {
+        'follow': instance,
+        'site': Site.objects.get_current(),
+    }
+
+    notification.send(recipients, 'new_follower', context)
+signals.post_save.connect(new_follower, sender=models.get_model('activity', 'Follow'))
+
 def new_comment(sender, instance, created, **kwargs):
+    if not created:
+        return None
+    if not instance.__class__.__name__ == 'Comment':
+        return None
+
     context = {}
     recipients = []
 
@@ -76,6 +134,7 @@ def new_comment(sender, instance, created, **kwargs):
                 'user_details', args=(instance.content_object.target.username,))
 
     context['comment'] = instance
+    context['site'] = Site.objects.get_current()
 
     notification.send(recipients, 'new_comment', context)
 signals.post_save.connect(new_comment, sender=models.get_model('comments', 'Comment'))

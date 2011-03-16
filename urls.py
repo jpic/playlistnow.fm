@@ -45,6 +45,8 @@ urlpatterns = patterns("",
     url(r"^account/", include("pinax.apps.account.urls")),
     url(r"^openid/(.*)", PinaxConsumer()),
 
+    #(r'^sitemap\.xml$', 'django.contrib.sitemaps.views.sitemap', {'sitemaps': sitemaps}),
+    (r'^robots.txt$', include('robots.urls')),
     url(r'^admin_tools/', include('admin_tools.urls')),
     url(r'^playlist/', include('playlist.urls')),
     url(r'^music/', include('music.urls')),

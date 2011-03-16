@@ -98,6 +98,7 @@ var player = {
                     if (player.state.currentPlaylist.tracks.length) {
                         player.playPlaylistTrack(offset);
                     }
+                    $('#ajaxload').fadeOut();
                 },
                 'json'
             );

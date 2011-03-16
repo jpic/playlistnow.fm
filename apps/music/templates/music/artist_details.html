@@ -8,10 +8,10 @@
 
 {% block extra_head %}
 <meta name="keywords" content="{% for tag in object.tags %}{{ tag }}{% endfor %}" />
-{% if object.description %}
-<meta name="description" content="{{ object.description|striptags|safe }}" />
+{% if tab == 'music' %}
+<meta name="description" content="{% trans "Click to listen to all streaming mp3 and videos of" %} {{ object.name }}: it's free and legal with PlaylistNow.fm!" />
 {% else %}
-<meta name="description" content="{% trans "Read details of artist" %} {{ object.name }}" />
+<meta name="description" content="{% trans "Click to listen to all streaming mp3 and videos of" %} {{ object.name }}: it's free and legal with PlaylistNow.fm! {{ object.description|striptags|safe }}" />
 {% endif %}
 {% endblock %}
 
