@@ -5,7 +5,7 @@
 {% if activity.open %}
 <div class="lineFeed">
     <div class="lineFeedAvatar">
-        <a href="{% url user_details activity.actor.username %}" title="{% trans "details of user" %} {{ activity.actor.first_name }} {{ activity.actor.last_name }}">
+        <a href="{% url user_details activity.actor.username %}" title="{% trans "details of user" %} {{ activity.actor }}">
             <img src="{{ activity.actor.playlistprofile.avatar_url }}" class="avatar small left espace" />
         </a>
     </div>
@@ -14,7 +14,7 @@
         <div class="lineFeedContentWhat">
         {% if activity.open %}
             <a href="{% url user_details activity.actor.username %}" title="{% trans "see details of user" %} {{ activity.actor }}" class="bold">
-                {{ activity.actor.first_name }} {{ activity.actor.last_name }}
+                {{ activity.actor }}
             </a>
 
             {% if activity.close %}

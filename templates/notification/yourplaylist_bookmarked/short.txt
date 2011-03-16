@@ -1,1 +1,1 @@
-{{ user.first_name }} {{ user.last_name }} bookmarks your playlist {{ playlist }} !
+{{ user }} bookmarks your playlist {{ playlist }} !

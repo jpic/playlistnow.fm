@@ -5,7 +5,7 @@
 {% if activity.open %}
 <div class="lineFeed">
     <div class="lineFeedAvatar">
-        <a href="{% url user_details activity.actor.username %}" title="{% trans "details of user" %} {{ activity.actor.first_name }} {{ activity.actor.last_name }}">
+        <a href="{% url user_details activity.actor.username %}" title="{% trans "details of user" %} {{ activity.actor }}">
             <img src="{{ activity.actor.playlistprofile.avatar_url }}" class="avatar small left espace" />
         </a>
     </div>
@@ -15,7 +15,7 @@
 
         {% block what %}
             <a href="{% url user_details activity.actor.username %}" title="{% trans "see details of user" %} {{ activity.actor }}" class="bold">
-                {{ activity.actor.first_name }} {{ activity.actor.last_name }}
+                {{ activity.actor }}
             </a>
 
             {{ activity.verb }}
@@ -62,7 +62,7 @@
             <div class="likes">
             <img src="{{ STATIC_URL }}images/not_newthumbup.png" class="espace">
                 {% for fan in action.fans.all %}
-                <a href="{% url user_details fan.user.username %}">{{ fan.user.first_name }} {{ fan.user.last_name }}</a> likes it
+                <a href="{% url user_details fan.user.username %}">{{ fan.user }}</a> likes it
                 {% endfor %}
             </div>
             {% endif %}

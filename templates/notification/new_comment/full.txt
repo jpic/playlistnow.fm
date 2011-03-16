@@ -1,7 +1,7 @@
-{{ comment.user.first_name }} {{ comment.user.last_name }} commented {{ comment.content_object }}.
+{{ comment.user }} commented {{ comment.content_object }}.
 
 Comment: {{ comment.comment }}
 
-{{ comment.user.first_name }} {{ comment.user.last_name }} profile: {% url user_details comment.user.username %}
+{{ comment.user }} profile: {% url user_details comment.user.username %}
 
 comment url: http://{{ site.domain }}{{ url }}

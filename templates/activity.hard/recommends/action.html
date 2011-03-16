@@ -2,7 +2,7 @@
 
 <div class="lineFeed">
     <div class="lineFeedAvatar">
-        <a href="{% url user_details activity.actor.username %}" title="{% trans "details of user" %} {{ activity.actor.first_name }} {{ activity.actor.last_name }}">
+        <a href="{% url user_details activity.actor.username %}" title="{% trans "details of user" %} {{ activity.actor }}">
             <img src="{{ activity.actor.playlistprofile.avatar_url }}" class="avatar small left espace" />
         </a>
     </div>
@@ -10,7 +10,7 @@
         <div class="lineFeedContentWhat">
 
             <a href="{% url user_details activity.actor.username %}" title="{% trans "see details of user" %} {{ activity.actor }}" class="bold">
-                {{ activity.actor.first_name }} {{ activity.actor.last_name }}
+                {{ activity.actor }}
             </a>
             
             {% comment %}
@@ -19,8 +19,8 @@
             </a>
             {% endcomment %}
             recommends this track to
-            <a href="{{ activity.action_object.target.get_absolute_url }}" title="{% trans "details of" %} {{ activity.action_object.target.first_name }} {{ activity.action_object.target.last_name }}" class="bold">
-                {{ activity.action_object.target.first_name }} {{ activity.action_object.target.last_name }}
+            <a href="{{ activity.action_object.target.get_absolute_url }}" title="{% trans "details of" %} {{ activity.action_object.target }}" class="bold">
+                {{ activity.action_object.target }}
             </a>
 
             {% with activity.action_object.track as track %}

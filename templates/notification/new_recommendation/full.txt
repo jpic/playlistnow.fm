@@ -1,4 +1,4 @@
-{{ recommendation.source.first_name }} {{ recommendation.source.last_name }}
+{{ recommendation.source }}
 thought of you while listenning to {{ recommendation.track }}!
 
 Check it out at this address: 

@@ -1,9 +1,9 @@
-{{ user.first_name }} {{ user.last_name }} checked out your playlist {{ playlist }} and decided to bookmark it!
+{{ user }} checked out your playlist {{ playlist }} and decided to bookmark it!
 
 [Text to persuade the recipient to follow the user]
 
 Your playlist {{ playlist }} url is:
 http://{{ site.domain }}{{ playlist.get_absolute_url }}
 
-Check out the profile {{ user.first_name }} {{ user.last_name }} on:
+Check out the profile {{ user }} on:
 http://{{ site.domain }}{{ user.get_absolute_url }}

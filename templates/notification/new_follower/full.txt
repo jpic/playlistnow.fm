@@ -1,4 +1,4 @@
-{{ follow.user.first_name }} {{ follow.user.last_name }} now follows your
+{{ follow.user }} now follows your
 activities on {{ site.name }}!
 
 [This is a placeholder for: a text to persuade the recipient to follow the
