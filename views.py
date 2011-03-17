@@ -42,6 +42,7 @@ def group_activities(activities):
     nogroup = [
         'started following',
         'recommends',
+        'wall posted',
     ]
     previous = None
     for activity in activities:
@@ -268,6 +269,10 @@ def user_details(request, slug, tab='activities',
             Q(
                 action_object_content_type = ContentType.objects.get_for_model(Recommendation),
                 action_object_object_id__in = Recommendation.objects.filter(target=user).values_list('id')
+            ) | 
+            Q(
+                target_content_type = ContentType.objects.get_for_model(User),
+                target_object_id = user.pk
             )
         ).order_by('-timestamp')
         context['activities'] = activities
@@ -348,6 +353,10 @@ def me(request,
         Q(
             action_object_content_type = ContentType.objects.get_for_model(Recommendation),
             action_object_object_id__in = Recommendation.objects.filter(target=user).values_list('id')
+        ) | 
+        Q(
+            target_content_type = ContentType.objects.get_for_model(User),
+            target_object_id = user.pk
         )
     ).order_by('-timestamp')
     context['activities'] = activities

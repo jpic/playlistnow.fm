@@ -20,6 +20,7 @@ from tagging.fields import TagField
 from notification import models as notification
 
 from actstream.models import Follow
+from actstream import action
 from socialregistration.models import TwitterProfile, FacebookProfile
 
 TwitterProfile.add_to_class('access_token', models.TextField(help_text='only useful if your app wants to tweet while the browser is not authenticated via twitter', null=True, blank=True))
@@ -118,7 +119,10 @@ def new_comment(sender, instance, created, **kwargs):
     if not instance.__class__.__name__ == 'Comment':
         return None
 
-    context = {}
+    context = {
+        'comment': instance,
+        'site': Site.objects.get_current(),
+    }
     recipients = []
 
     # notify all users who commented the same object
@@ -135,12 +139,14 @@ def new_comment(sender, instance, created, **kwargs):
             instance.content_object.actor not in recipients and \
             instance.content_object.actor != instance.user:
             recipients.append(instance.content_object.actor)
+
         if instance.content_object.action_object.__class__.__name__ == 'User' and \
             instance.content_object.action_object not in recipients and \
             instance.content_object.action_object != instance.user:
             recipients.append(instance.content_object.action_object)
             context['url'] = urlresolvers.reverse(
                 'user_details', args=(instance.content_object.action_object.username,))
+
         if instance.content_object.target.__class__.__name__ == 'User' and \
             instance.content_object.target not in recipients and \
             instance.content_object.target != instance.user:
@@ -148,15 +154,16 @@ def new_comment(sender, instance, created, **kwargs):
             context['url'] = urlresolvers.reverse(
                 'user_details', args=(instance.content_object.target.username,))
         context['activity'] = instance.content_object
+        notification.send(recipients, 'new_comment', context)
 
+    # if the object is a user then create a wall post activity and notify him
     elif instance.content_object.__class__.__name__ == 'User':
         if instance.content_object != instance.user:
+            context['comment'] = instance
             recipients.append(instance.content_object)
+            action.send(instance.user, verb='wall posted', target=instance.content_object, action_object=instance)
+            notification.send(recipients, 'new_message', context)
 
-    context['comment'] = instance
-    context['site'] = Site.objects.get_current()
-
-    notification.send(recipients, 'new_comment', context)
 signals.post_save.connect(new_comment, sender=models.get_model('comments', 'Comment'))
 
 def suggested_users_for(user):

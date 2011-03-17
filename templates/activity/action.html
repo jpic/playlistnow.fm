@@ -119,6 +119,12 @@
     {% render_track track '' request %}
     {% endwith %}
 {% endif %}
+{% if activity.verb == 'wall posted' %}
+    <a class="bold" href="{{ activity.actor.get_absolute_url }}" title="{% trans "details of user" %} {{ activity.actor }}">{{ activity.actor }}</a>
+    posted a message to
+    <a class="bold" href="{{ activity.target.get_absolute_url }}" title="{% trans "details of user" %} {{ activity.target }}">{{ activity.target }}</a>
+    <p class="message">{{ activity.action_object.comment }}</p>
+{% endif %}
 
 {% if request.user.is_authenticated and request.user == activity.actor %}
             <span class="delete action_pk_{{ activity.pk }}">&nbsp;</span>
@@ -151,10 +157,18 @@
             </div>
             {% endif %}
 
-            {% render_comment_list for activity %}
+            {% if activity.action_object_group.0 %}
+                {% render_comment_list for activity.action_object_group.0 %}
+            {% else %}
+                {% render_comment_list for activity %}
+            {% endif %}
         
             <div style="{% if not comment_count %}display: none{% endif %}" class="comment_form_contents" >
-            {% render_comment_form for activity %}
+            {% if activity.action_object_group.0 %}
+                {% render_comment_form for activity.action_object_group.0 %}
+            {% else %}
+                {% render_comment_form for activity %}
+            {% endif %}
             </div>
         </div>
     </div>

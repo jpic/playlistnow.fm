@@ -1,0 +1,10 @@
+{{ comment.user }} posted this message on your wall:
+{{ comment.comment }}
+
+[Text to persuade the reader to reply]
+
+Reply on {{ comment.content_object }}'s profile: 
+http://{{ site.domain }}{{ comment.content_object.get_absolute_url }}
+
+Or your activity stream:
+http://{{ site.domain }}{% url me %}

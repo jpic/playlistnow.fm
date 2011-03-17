@@ -1,0 +1,1 @@
+{{ comment.user }} posted a message on your wall!
