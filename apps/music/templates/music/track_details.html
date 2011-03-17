@@ -21,6 +21,7 @@
 {% render_track object '' request %}
 
 {% if object.description %}
+<div class="espacetop"></div>
 <p>{{ object.description|striptags|safe }}</p>
 {% endif %}
 <div class="clear"></div>

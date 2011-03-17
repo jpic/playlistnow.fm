@@ -4,5 +4,5 @@ activities on {{ site.name }}!
 [This is a placeholder for: a text to persuade the recipient to follow the
 user in question]
 
-Visit his profile and follow him if you want on
+Visit his profile and follow him if you want on:
 http://{{ site.domain }}{{ follow.user.get_absolute_url }}

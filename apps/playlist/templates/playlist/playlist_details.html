@@ -32,11 +32,11 @@
 
 <div class="clear"></div>
 </div>
-<div class="ad_song statut">
+<div class="ad_song">
     <span style="display:none;">{% trans "add tracks" %}</span>
 
     <form method="get" action="{{ request.path }}">
-        <input class="ad_song_field radius-15" type="text" name="term" value="Search by artist name and / or song name" onfocus="if(this.value=='Search by artist name and / or song name'){this.value='';}" id="term"  style="width:412px;" class="search"/>
+        <input class="ad_song_field" type="text" name="term" value="Search by artist name and / or song name" onfocus="if(this.value=='Search by artist name and / or song name'){this.value='';}" id="term"  class="search"/>
         <input type="hidden" name="search_artists" value="0" />
         <input type="hidden" name="search_albums" value="0" />
         <input type="submit" class="searched radius-15 violet  button" value="{% trans "Search" %}"/>

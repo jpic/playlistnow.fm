@@ -160,11 +160,19 @@ def user_search_autocomplete(request, qname='query', qs=User.objects.all()):
         'data': [],
     }
 
-    qs = qs.filter(
+    pks_qs = qs.filter(
         Q(username__icontains=q) |
         Q(first_name__icontains=q) |
         Q(last_name__icontains=q)
-    ).select_related('playlistprofile').distinct('username')
+    ).values_list('pk', flat=True) # .select_related('playlistprofile').distinct('username')
+
+    # distinct not working
+    # http://stackoverflow.com/questions/3693405/django-distinct-not-behaving
+    pks = []
+    for pk in pks_qs:
+        if pk not in pks:
+            pks.append(pk)
+    qs = User.objects.filter(pk__in=pks).select_related('playlistprofile')
 
     for user in qs[:15]:
         response['suggestions'].append(unicode(user.playlistprofile))

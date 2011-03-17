@@ -49,6 +49,21 @@ def create_notice_types(app, created_models, verbosity, **kwargs):
     notification.create_notice_type("new_thanks", "You were thanked", "Another member thanked you for your contribution")
 signals.post_syncdb.connect(create_notice_types, sender=notification)
 
+def new_thanks(sender, instance, created, **kwargs):
+    if created:
+        return None
+    if not instance.thanks:
+        return None
+
+    recipients = [instance.source]
+    context = {
+        'recommendation': instance,
+        'site': Site.objects.get_current(),
+    }
+
+    notification.send(recipients, 'new_thanks', context)
+signals.post_save.connect(new_thanks, sender=models.get_model('music', 'Recommendation'))
+
 def new_recommendation(sender, instance, created, **kwargs):
     if not created:
         return None
@@ -132,6 +147,11 @@ def new_comment(sender, instance, created, **kwargs):
             recipients.append(instance.content_object.target)
             context['url'] = urlresolvers.reverse(
                 'user_details', args=(instance.content_object.target.username,))
+        context['activity'] = instance.content_object
+
+    elif instance.content_object.__class__.__name__ == 'User':
+        if instance.content_object != instance.user:
+            recipients.append(instance.content_object)
 
     context['comment'] = instance
     context['site'] = Site.objects.get_current()

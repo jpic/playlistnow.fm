@@ -1,7 +1,10 @@
-{{ comment.user }} commented {{ comment.content_object }}.
+{{ comment.user }} commented an activity: 
+{{ comment.content_object }}
 
-Comment: {{ comment.comment }}
+Comment:
+{{ comment.comment }}
 
-{{ comment.user }} profile: {% url user_details comment.user.username %}
+[Text to persuade the reader to reply]
 
-comment url: http://{{ site.domain }}{{ url }}
+Reply on {{ comment.content_object.actor }}'s profile: 
+http://{{ site.domain }}{{ comment.content_object.actor.get_absolute_url }}

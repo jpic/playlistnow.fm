@@ -54,7 +54,7 @@
     {% endblock %}
 
     <title>{% else %}<span><span id="page_title" style"display:none">{% endif %}
-    {% block head_title_base %}{% if SITE_NAME and not request.modal %}{{ SITE_NAME }} : {% endif %}{% block head_title %}{% endblock %}{% endblock %}
+    {% block head_title_base %}{#{% if SITE_NAME and not request.modal %}{{ SITE_NAME }} : {% endif %}#}{% block head_title %}{% endblock %}{% endblock %}
     {% if request.ajax %}{% if request.modal %}<img src="{{ STATIC_URL }}images/bttn_closepp.png" class="simplemodal-close" />{% endif %}</span></span>{% else %}</title>
 </head>
 <body class="{% block body_class %}{% endblock %}">
@@ -85,8 +85,8 @@
             </li>
             {% if notices.count %}
              <li class="sep">&nbsp;</li>
-               <li>
-           <a href="{% url notification_notices %}" class="tiptip icon" title="notification">{{ notices.count }}</a>
+             <li id="topheader_notif">
+           <a href="{% url notification_notices %}" class="tiptip icon" title="you have {{ notices.count }} new notifications"><span>{{ notices.count }}</span></a>
             </li>
             {% endif %}
              <li class="sep">&nbsp;</li>

@@ -179,8 +179,7 @@ class MusicalEntity(models.Model):
             if tree:
                 tree = tree.find(self.get_type())
         
-        if not tree:
-            return None
+        if tree is None: return None
 
         self.name = tree.find('name').text
         self.mbid = getattr(tree.find('mbid'), 'text', None)
@@ -319,7 +318,7 @@ class Album(MusicalEntity):
                 setattr(self, attr, element.text)
 
 class Track(MusicalEntity):
-    artist = models.ForeignKey(Artist, verbose_name=_(u'artist'), default=0)
+    artist = models.ForeignKey(Artist, verbose_name=_(u'artist'))
     album = models.ForeignKey(Album, verbose_name=_(u'album'), null=True, blank=True)
     name = models.CharField(max_length=255, verbose_name=_(u'name'), unique=False)
 
@@ -394,8 +393,8 @@ class Track(MusicalEntity):
     def lastfm_search(self):
         klass = self.__class__
         tree = self.lastfm_get_tree(self.get_type() + '.search')
-        if not tree:
-            return None
+        
+        if tree is None: return None
 
         for element in tree.findall('results/%smatches/%s' % (self.get_type(), self.get_type() )):
             match = klass(name=element.find('name').text, 

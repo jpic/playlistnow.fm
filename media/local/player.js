@@ -215,7 +215,7 @@ var player = {
         for(var i in player.tiny_playlist.tracks) {
             var track = player.tiny_playlist.tracks[i];
 
-            $('li.song_info.external_track a.track[href=' + track.url + ']').each(function() {
+            $('li.song_info.external_track a.track[href="' + track.url + '"]').each(function() {
                 var icon = $(this).parent().find('.icon.tiny_playlist');
                 icon.css(
                     'backgroundPosition',
@@ -232,7 +232,7 @@ var player = {
         }
 
         $('li.song_info.selected').removeClass('selected');
-        $('li.song_info a.track[href=' + player.state.currentTrack.url + ']').each(function() {
+        $('li.song_info a.track[href="' + player.state.currentTrack.url + '"]').each(function() {
             $(this).parent().addClass('selected');
         });
     },
@@ -315,8 +315,6 @@ var player = {
                 var playlist = player.parseTrackList($(this).parent());
                 player.playPlaylist(playlist, $(this).prevAll().length);
             }
-
-            player.hiliteCurrentTrack();
         });
         $('.badvideo').live('click', function(e) {
             player.state.waitingNewVideo = true;

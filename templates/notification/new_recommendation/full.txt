@@ -1,16 +1,17 @@
-{{ recommendation.source }}
-thought of you while listenning to {{ recommendation.track }}!
+{{ recommendation.source }} thought of you while listenning to {{ recommendation.track }} by {{ recommendation.track.artist }}!{% spaceless %}
+    {% if recommendation.message %}
+His message is:
+{{ recommendation.message }}
+    {% endif %}
+{% endspaceless %}
 
 Check it out at this address: 
-
 http://{{ site.domain }}{{ recommendation.track.get_absolute_url }}
 
 Or check out all the music from {{ recommendation.track.artist }}:
-
 http://{{ site.domain }}{{ recommendation.track.artist.get_absolute_url }}
 
 [Text to persuade to click "thank"]
 
-You can thank in your activity feed:
-
-http://{{ site.domain }}{{ recommendation.target.get_absolute_url }}
+You can thank in his activity feed:
+http://{{ site.domain }}{{ recommendation.source.get_absolute_url }}

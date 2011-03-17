@@ -18,9 +18,12 @@ var ui = {
         $.ajaxSetup({
             beforeSend: ui.beforeSend,
             error: ui.error,
-            success: function() {
-                $('#ajaxload').fadeOut();
-            }
+        });
+        $('#ajaxload').ajaxStop(function() {
+            $(this).fadeOut();
+        });
+        $('#ajaxload').ajaxStart(function() {
+            $(this).fadeIn();
         });
 
         // one time slots
@@ -67,7 +70,6 @@ var ui = {
                         } else {
                             $('#user_notifications').append('<li>' + html + '</li>');
                         }
-                        $('#ajaxload').fadeOut();
                     },
                 });
             });
@@ -141,7 +143,6 @@ var ui = {
                         }
                         $('#user_notifications').append($(html).find('#user_notifications').html());
                         $(document).trigger('signalPlaylistUpdate', [data.playlist_pk]);
-                        $('#ajaxload').fadeOut();
                     },
                 });
             } else {
@@ -248,7 +249,6 @@ var ui = {
                     success: function(html, textStatus, request) {
                         $('#simplemodal-data').html(html);
                         $(document).trigger('signalPageUpdate', [url]);
-                        $('#ajaxload').fadeOut();
                     },
                 }); 
             } else if ($(this).hasClass('popup')) {
@@ -296,7 +296,6 @@ var ui = {
                         what.parents('.lineFeed').hide('slow');
                     }
                     ui.notifyUser('Thanks for deleting this action');
-                    $('#ajaxload').fadeOut();
                 },
             });
         });
@@ -341,7 +340,6 @@ var ui = {
                         ui.currentUrl = url;
                         $('#page_body_container').html(html);
                         $(document).trigger('signalPageUpdate', [url]);
-                        $('#ajaxload').fadeOut();
                     },
                 });
             });
@@ -404,24 +402,18 @@ var ui = {
         });
     },
     'beforeSend': function(req) {
-        var loader = $('#ajaxload');
-        if (loader.css('display') == 'none') {
-            loader.fadeIn();
-        }
         var currentRequest = ui.currentRequest;
         ui.currentRequest = req;
         if (currentRequest && currentRequest != req) {
             currentRequest.abort()
         }
     },
-    'error': function(req, textStatus) {
-        if (ui.currentRequest == req) { 
-            /* failed */
-            ui.currentUrl = false;
-            $('#ajaxload').fadeOut();
+    'error': function(req, textStatus, error) {
+        if (textStatus == 'error') {
+            if (ui.currentRequest == req) {
+                ui.currentUrl = false;
+            }
             ui.notifyUser('Sorry but your request failed. Our techies have been notified by mail and will take care of it');
-        } else { 
-            /* aborted */
         }
     },
     'authenticationPopup': function(url) {
@@ -452,7 +444,6 @@ var ui = {
                 $.modal(html);
                 $('#simplemodal-data').before($(html).find('#page_title').clone().attr('id', 'simplemodal-title'));
                 $(document).trigger('signalPopupOpen');
-                $('#ajaxload').fadeOut();
             },
         });
     },
@@ -504,7 +495,6 @@ $(document).ready(function() {
                         $('#page_body_container').html(html);
                         ui.currentUrl = hash;
                         $(document).trigger('signalPageUpdate', [hash]);
-                        $('#ajaxload').fadeOut();
                     },
                 });
     
