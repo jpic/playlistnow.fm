@@ -11,6 +11,9 @@ JS_AGENTS = [
     'vimprobable',
     'vimpression',
 ]
+BOTS = [
+    'googlebot',
+]
 IGNORE = r'^(site_media)|(ajax)'
 
 class DynamicHtmlMiddleware(object):
@@ -53,6 +56,9 @@ class DynamicHtmlMiddleware(object):
         elif request.path != '/empty/' and request.method != 'POST':
             # automatic redirect to container for chrome user agents
             test = request.META['HTTP_USER_AGENT'].lower()
+            #for bot in BOTS:
+                #if test.find(agent) > -1:
+                    #return None
             for agent in JS_AGENTS:
                 if test.find(agent) > -1:
                     return http.HttpResponseRedirect('/empty/#' + request.path)

@@ -132,8 +132,23 @@ def new_comment(sender, instance, created, **kwargs):
 
     # if the object is a user action then also notify the actor
     if instance.content_object.__class__.__name__ == 'Action':
-        instance.content_object.timestamp = datetime.now()
-        instance.content_object.save()
+        activity = instance.content_object
+        update_timestamp_pks = [activity.pk]
+        
+        group_verbs = ('liked track', 'added track to playlist', 'becomes fan of artist')
+        if activity.verb in group_verbs:
+            next_instances = activity.__class__.objects.filter(
+                actor_content_type = activity.actor_content_type,
+                actor_object_id = activity.actor_object_id,
+                pk__gt = activity.pk
+            )[:15]
+            for next_instance in next_instances:
+                if next_instance.verb != activity.verb:
+                    break
+                update_timestamp_pks.append(next_instance.pk)
+        update_timestamp_qs = activity.__class__.objects.filter(pk__in=update_timestamp_pks)
+        print "UPDATE ALL", update_timestamp_pks
+        update_timestamp_qs.update(timestamp=datetime.now())
 
         if instance.content_object.actor.__class__.__name__ == 'User' and \
             instance.content_object.actor not in recipients and \

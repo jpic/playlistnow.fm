@@ -18,7 +18,11 @@
   <div style="display:block"><img title="" src="{{ STATIC_URL }}images/intro.png"></div>
   
 <ul style="display:inline;color:#64205C;font-weight:700;">
+ <li class="tab_link tab_id_playlist left espace">
 
+        Search playlists
+    </li>
+ <li class="left espace">|</li>
     <li class="tab_link tab_id_music left espace">
         Search music
     </li>
@@ -26,13 +30,29 @@
     <li class="tab_link tab_id_user left espace">
         Search users
     </li>
-      <li class="left espace">|</li>
-    <li class="tab_link tab_id_playlist left espace">
-
-        Search playlists
-    </li>
-
+     
+   
 </ul>
+</div>
+<div class="tab_content tab_id_playlist">
+    <form action="{% url playlist_search %}" method="get" id="search_form">
+        <div class="avatar_home">
+            <span>
+                <a href="home">
+                    <img title="" src="{{ STATIC_URL }}images/avatar-logged.jpg" alt="Avatar" height="50px" width="50px">
+                </a>
+            </span>
+        </div>
+        <div class="input">
+            <div class="iam" id="typeOfSearch">I am</div>
+            <div class="inputiam">
+                <input  value="chilling, working, eating ..." type="text" name="term" class="autocomplete playlist magic_value">
+            </div>
+        </div>
+        <div class="submit">
+            <button type="submit" class="form-search">{% trans "Search" %}</button>
+        </div>
+    </form>
 </div>
 
 <div class="tab_content tab_id_music">
@@ -47,7 +67,7 @@
         <div class="input">
             <div class="iam" id="typeOfSearch">Song</div>
             <div class="inputiam">
-                <input  value="" type="text" name="term" class="autocomplete music">
+                <input  value="name or artist here..." type="text" name="term" class="autocomplete music magic_value">
             </div>
         </div>
         <div class="submit">
@@ -68,28 +88,7 @@
         <div class="input">
             <div class="iam" id="typeOfSearch">User</div>
             <div class="inputiam">
-                <input  value="" type="text" name="term" class="autocomplete user">
-            </div>
-        </div>
-        <div class="submit">
-            <button type="submit" class="form-search">{% trans "Search" %}</button>
-        </div>
-    </form>
-</div>
-    
-<div class="tab_content tab_id_playlist">
-    <form action="{% url playlist_search %}" method="get" id="search_form">
-        <div class="avatar_home">
-            <span>
-                <a href="home">
-                    <img title="" src="{{ STATIC_URL }}images/avatar-logged.jpg" alt="Avatar" height="50px" width="50px">
-                </a>
-            </span>
-        </div>
-        <div class="input">
-            <div class="iam" id="typeOfSearch">I am</div>
-            <div class="inputiam">
-                <input  value="" type="text" name="term" class="autocomplete playlist">
+                <input  value="type a user name or login here..." type="text" name="term" class="autocomplete user magic_value">
             </div>
         </div>
         <div class="submit">

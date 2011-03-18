@@ -128,19 +128,14 @@
 </div>
 {% endif %}
 
+{% if request.user.is_authenticated and request.user != user %}
 {% render_comment_form for user %}
+{% endif %}
 
 {% if tab == 'activities' %}
 <h2>recent activities</h2>
 <div class="list">
     {% include 'auth/user_activities.html' %}  
-    <script type="text/javascript">
-    $('.comment_form_toggle').click(function(e) {
-        e.preventDefault();
-        $(this).parent().find('.comment_form_contents').toggle('slow');
-    });
-    </script>
-
 </div>
 {% endif %}
 

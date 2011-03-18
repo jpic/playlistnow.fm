@@ -4,25 +4,38 @@
 {% block head_title %}{% trans "Create a new playlist" %}{% endblock %}
 {% block body %}
 
+<h1>Create a new Playlist</h1>
+<h2>You have to fill in all the fields to create your playlist</h2>
+<form action="{% url playlist_add %}" method="post" id="create">
 
-<form action="{% url playlist_add %}" method="post" class="closePopup create">
 
-    {{ form.non_field_errors }}
+{{ form.non_field_errors }}
 
     {% csrf_token %}
 
     {{ form.name.errors|as_uni_errors }}
-    {{ form.name.label_tag }} {{ form.name }}
-
+    {{ form.name.label_tag }}
+<div class="create">
+     <div> I am
+    	<input name="{{ form.name.name }}" value="{% if form.name.data %}{{ form.name.data }}{% else %}chilling, working, eating ...{% endif %}" class="{% if not form.name.data %}magic_value{% endif %} search-input" id="{{ form.name.auto_id }}" type="text" />
+	</div>
+</div>
     <br />
-
+   <br />
     {{ form.tags.errors|as_uni_errors }}
-    {{ form.tags.label_tag }} {{ form.tags }}
-
+    {{ form.tags.label_tag }} 
+<div class="create">
+  <div>
+    	<input name="{{ form.tags.tags }}" value="{% if form.tags.data %}{{ form.tags.data }}{% else %}work, eat, chill...{% endif %}" class="{% if not form.tags.data %}magic_value{% endif %} search-input" id="{{ form.tags.auto_id }}" type="text" />
+	</div>
+</div>
+    <br />
     <br />
 
     {{ form.category.errors }}
     {{ form.category.label_tag }}
+<div class="create">
+	<div>
     <select name="category">
     {% for category in form.playlist_categories %}
         <optgroup label="{{ category }}">
@@ -34,12 +47,13 @@
         </optgroup>
     {% endfor %}
     </select>
-<div class="clear"></div>
-    <input type="submit" class="inputed super violet  button bigger" value="{% trans "Create a playlist" %}" />
+	</div>    
+</div>
+<br/><br/>
+    <input type="submit" class="violet  button" value="{% trans "Create a playlist" %}" />
 </form>
 
-<div class="ad">Fill in every fields to create your playlist.     <span class="simplemodal-close button black right">No, thanks</span> 
-<div class="clear"></div></div>
+
 
 
 <script type="text/javascript">

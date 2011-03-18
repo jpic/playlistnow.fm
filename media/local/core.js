@@ -26,6 +26,12 @@ var ui = {
             $(this).fadeIn();
         });
 
+        $('.comment_form_toggle').live('click', function(e) {
+           e.preventDefault();
+            $(this).parent().find('.comment_form_contents').toggle('slow');
+        });
+ 
+
         // one time slots
         ui.setupLinks();
         // slots to execute at each update
@@ -43,6 +49,15 @@ var ui = {
             if ($('div.you_may_also_like li').length > 0) {
                 $('.you_may_also_like li.song_info').slice(0,3).show('slow');
             }
+
+            $('input.magic_value').each(function() {
+                var initial = $(this).val();
+                $(this).click(function() {
+                    if ($(this).val() == initial) {
+                        $(this).val('');
+                    }
+                });
+            });
         });
         $(document).bind('signalPopupOpen', ui.setupAutocomplete)
         $(document).bind('signalPopupOpen', ui.twitterCounter)
@@ -159,9 +174,38 @@ var ui = {
             }
         }, 1000);
 
+        // initializes links for ajax requests
+        $("a.endless_more").live("click", function() {
+            var container = $(this).closest(".endless_container");
+            var loading = container.find(".endless_loading");
+            $(this).hide();
+            loading.show();
+            var data = "querystring_key=" + $(this).attr("rel").split(" ")[0];
+            $.get($(this).attr("href"), data, function(data) {
+                container.before(data);
+                container.remove();
+            });
+            return false;
+        });
+        $("a.endless_page_link").live("click", function() {
+            var data = "querystring_key=" + $(this).attr("rel").split(" ")[0];
+            $(this).closest(".endless_page_template").load($(this).attr("href"), data);
+            return false;
+        }); 
+
+        function hiddenHeight(element)
+        {
+            var height = 0;
+            $(element).children().each(function() {
+                height = height + $(this).outerHeight(false);
+            });
+            return height;
+        }
+
         function scrollBind() {
             $('#page_body_container').scroll(function(){
-                if ($(window).scrollTop() > $(document).height() - ($(window).height()*3)) {
+                var pixelsFromWindowBottomToBottom = 0 + hiddenHeight($(this)) - $(this).scrollTop() - $(this).height();
+                if (pixelsFromWindowBottomToBottom < 20) {
                     // temporarily unhook the scroll event watcher so we don't call a bunch of times in a row
                     if ($('a.endless_more').length == 1) {
                         $('#page_body_container').unbind('scroll');

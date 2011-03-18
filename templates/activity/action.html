@@ -131,7 +131,7 @@
 {% endif %}
         </div>
 {% if activity.close %}
-        {% get_comment_count for activity as comment_count %}
+        {% get_comment_count for activity.earliest_of_group as comment_count %}
         <div class="lineFeedContentWhen"> 
             {{ action.timestamp|timesince }} ago -
             {% if action in request.user.playlistprofile.fanof_actions.all %}
@@ -157,19 +157,13 @@
             </div>
             {% endif %}
 
-            {% if activity.action_object_group.0 %}
-                {% render_comment_list for activity.action_object_group.0 %}
-            {% else %}
-                {% render_comment_list for activity %}
-            {% endif %}
-        
+            {% render_comment_list for activity.earliest_of_group %}
+            
+            {% if request.user.is_authenticated %}
             <div style="{% if not comment_count %}display: none{% endif %}" class="comment_form_contents" >
-            {% if activity.action_object_group.0 %}
-                {% render_comment_form for activity.action_object_group.0 %}
-            {% else %}
-                {% render_comment_form for activity %}
-            {% endif %}
+            {% render_comment_form for activity.earliest_of_group %}
             </div>
+            {% endif %}
         </div>
     </div>
     <div class="clear"></div>
