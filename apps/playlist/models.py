@@ -92,6 +92,8 @@ def yourplaylist_bookmarked(sender, instance, **kwargs):
             'user': User.objects.get(playlistprofile__pk=pk),
             'site': Site.objects.get_current(),
         }
+        instance.creation_user.playlistprofile.points += 3
+        instance.creation_user.playlistprofile.save()
 
         notification.send(recipients, 'yourplaylist_bookmarked', context)
 signals.m2m_changed.connect(yourplaylist_bookmarked)
@@ -147,7 +149,6 @@ def new_comment(sender, instance, created, **kwargs):
                     break
                 update_timestamp_pks.append(next_instance.pk)
         update_timestamp_qs = activity.__class__.objects.filter(pk__in=update_timestamp_pks)
-        print "UPDATE ALL", update_timestamp_pks
         update_timestamp_qs.update(timestamp=datetime.now())
 
         if instance.content_object.actor.__class__.__name__ == 'User' and \
@@ -180,6 +181,16 @@ def new_comment(sender, instance, created, **kwargs):
             notification.send(recipients, 'new_message', context)
 
 signals.post_save.connect(new_comment, sender=models.get_model('comments', 'Comment'))
+
+def new_follow(sender, instance, created, **kwargs):
+    if not created:
+        return None
+    
+    profile = getattr(instance.actor, 'playlistprofile', False)
+    if profile:
+        profile.points += 1
+        profile.save()
+signals.post_save.connect(new_follow, sender=models.get_model('actstream', 'Follow'))
 
 def suggested_users_for(user):
     points = {}
@@ -274,7 +285,7 @@ class PlaylistProfile(models.Model):
     fanof_playlists = models.ManyToManyField('playlist.Playlist', verbose_name=_(u'fav playlists'), null=True, blank=True, related_name='fans')
     fanof_artists = models.ManyToManyField('music.Artist', verbose_name=_(u'fav artists'), null=True, blank=True, related_name='fans')
     fanof_actions = models.ManyToManyField('actstream.Action', null=True, blank=True, related_name='fans')
-    points = models.IntegerField(null=True, blank=True)
+    points = models.IntegerField(default=0)
 
     last_playlist = models.ForeignKey('playlist.Playlist', verbose_name=_(u'last playlist'), null=True, blank=True)
     avatar_url = models.TextField(null=True, blank=True, default='/site_media/static/images/avatar-logged.jpg')
@@ -365,7 +376,7 @@ class PlaylistModification(models.Model):
 
 class PlaylistManager(models.Manager):
     def get_query_set(self):
-        return super(PlaylistManager, self).get_query_set().exclude(name__istartswith='hidden:')
+        return super(PlaylistManager, self).get_query_set().exclude(favorite_of__isnull=False)
 
     def all_with_hidden(self):
         return super(PlaylistManager, self).get_query_set()

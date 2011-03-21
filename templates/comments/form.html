@@ -1,5 +1,5 @@
 {% load comments i18n %}
-  <div class="comment">
+  <div class="comment radius-4">
 <form action="{% comment_form_target %}" method="post" class="authenticationRequired" style="margin-top:2px;">
     {% if request.user.is_authenticated %}
     {% csrf_token %}
@@ -10,7 +10,7 @@
     {% endif %}
       <a href="{{ request.user.get_absolute_url }}"><img src="{{ request.user.playlistprofile.avatar_url }}" class="avatar verysmall left espace"></a>
     <input type="hidden" name="next" value="{{ request.path }}" />
-<div style="margin-left:40px" style="color:#77777;font-size:11px;">
+<div style="display: table-cell;vertical-align: top;width: 10000px;">
     {{ form.comment }}
 <div class="clear"></div>
     <input type="submit" class="submit-post super button blue" value="Comment">

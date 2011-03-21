@@ -1,5 +1,4 @@
-
-    <div id="topheader">
+ <div id="topheader">
         <h1>
             <a href="/" id="playlistnow">
                 <span>Playistnow</span>
@@ -9,18 +8,15 @@
              <li class="seplogo">&nbsp;</li>
             {% if request.user.is_authenticated %}
             
-             <li>
-         
+       <li>
          <ul id="nav" class="dropdown dropdown-horizontal">
 
-	<li class="dir">Activies
-		<ul>
-			<li class="first"><a href="{% url me %}" title="Friend Feed">Friends Activities</a></li>
-			<li><a href="{% url notification_notices %}" title="you have {{ notices.count }} new notifications">Notifications <span class="bold">({{ notices.count }})</span></a></li>
-			
-
-	</ul>
-	</ul>
+			<li class="dir">Activities
+				<ul>
+					<li class="first"><a href="{% url me %}" title="Friend Feed">Friends Activities</a></li>
+					<li><a href="{% url notification_notices %}" title="you have {{ notices.count }} new notifications">Notifications <span class="bold">({{ notices.count }})</span></a></li>
+				</ul>
+		</ul>
     </li>  
                <li class="sep">&nbsp;</li>    
               
@@ -31,8 +27,8 @@
 	<li class="dir">You
 		<ul>
 			<li class="first"><a href="{% url user_details request.user.username %}" title="Your Profile {{ request.user }}">Your Profile</a></li>
-			<li class="first"><a href="{% url user_details request.user.username %}" title="Your Profile">Your Playlists</a></li>
-						<li class="first"><a href="{% url user_details request.user.username %}" title="Your Profile">Your Artists</a></li>
+			<li class="first"><a href="{% url user_details_tab request.user.username 'playlists' %}" title="Your Profile">Your Playlists</a></li>
+			<li class="first"><a href="{% url user_details_tab request.user.username 'artists' %}" title="Your Profile">Your Artists</a></li>
 
 
 
@@ -40,34 +36,26 @@
 	</ul>
     </li> 
               
-            <li id="topheader_feed">
-                <a href="{% url me %}" class="tiptip" title="Friend Feed"></a>
-            </li>
-               <li class="sep">&nbsp;</li>
-                    <li id="topheader_profile">
-                <a href="{% url user_details request.user.username %}" class="tiptip" title="{{ request.user }}"></a>
-            </li>
+           
              <li class="sep">&nbsp;</li>
         
-      <li id="topheader_create">
-           <a href="{% url playlist_add %}" class="tiptip icon" title="Create a new playlist"></a>
+      <li style="padding:2px 10px;"> 
+           <a href="{% url playlist_add %}" class="button grey" title="Create a new playlist">Create a new playlist</a>
             </li>
-            {% if notices.count %}
-             <li class="sep">&nbsp;</li>
-             <li id="topheader_notif">
-           <a href="{% url notification_notices %}" class="tiptip icon" title="you have {{ notices.count }} new notifications"><span>{{ notices.count }}</span></a>
-            </li>
-            {% endif %}
+           
              <li class="sep">&nbsp;</li>
             {% endif %}
    
         </ul>
         <ul id="menu_right" class="right">
-                      <li class="espace">&nbsp;</li>
-            <li><form action="{% url music_search %}" method="get">
-    <input type="text" name="term" id="term" class="autocomplete music search_header radius-8" style="margin-top:3px" />
-</form></li>
-<li><span class="topheader_search">&nbsp;</span></li>
+        	<li><span class="topheader_search">&nbsp;</span></li>
+             <li class="espace">&nbsp;</li>
+            <li>
+            	<form action="{% url music_search %}" method="get">
+    			<input type="text" name="term" id="term" class="autocomplete music search_header radius-3" style="margin-top:3px" />
+				</form>
+			</li>
+
             {% if request.session.socialregistration_user %}
               <li class="sep">&nbsp;</li>
                 <li class="topheader_create">
@@ -95,17 +83,24 @@
                 
                 {% else %}
                  <li class="sep">&nbsp;</li>
-               <li class="spacing">
-                    <a class="ui_ignore" href="{% url acct_logout %}">
+               
+                  <li>
+		<ul id="nav" class="dropdown dropdown-horizontal">
+			<li class="dir">Account
+				<ul>
+                    <li>
+                    	<a class="ui_ignore" href="{% url acct_logout %}">
                        <span>Logout</span>
-                    </a>
-                </li>
-                 <li class="sep">&nbsp;</li>
-                <li class="spacing">
+                    	</a>
+                	</li>
+					<li>
                     <a href="{% url notification_notice_settings %}">
                       <span>Settings</span>
                     </a>
-                </li>
+                	</li>
+                </ul>
+            </li>
+        </ul>
                 <li class="sep">&nbsp;</li>
                 {% endif %}
             {% endif %}

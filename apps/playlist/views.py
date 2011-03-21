@@ -5,6 +5,7 @@ from django import http
 from django import shortcuts
 from django import template
 from django.contrib import messages
+from django.core.cache import cache
 from django.contrib.auth import decorators
 from django.db.models import Q
 from tagging.models import Tag
@@ -14,6 +15,29 @@ from music.views import return_json
 from music.models import *
 from models import *
 from forms import *
+
+def playlist_playtrack(request):
+    if not request.method == 'POST':
+        return http.HttpResponseForbidden()
+    playlist_pk = request.POST.get('playlist_pk', False)
+    if not playlist_pk:
+        return http.HttpResponseBadRequest()
+    try:
+        playlist = Playlist.objects.get(pk=playlist_pk)
+    except Playlist.DoesNotExist:
+        return http.HttpResponseBadRequest()
+    if playlist.creation_user != request.user:
+        key = 'user_points_%s' % playlist.creation_user.pk
+        day_points = cache.get(key)
+        if not day_points:
+            day_points = 1
+        else:
+            day_points += 1
+        cache.set(key, day_points)
+        if day_points <= 10:
+            playlist.creation_user.playlistprofile.points += 1
+            playlist.creation_user.playlistprofile.save()
+    return http.HttpResponse()
 
 @decorators.login_required
 def playlist_fanship(request, playlist_pk):

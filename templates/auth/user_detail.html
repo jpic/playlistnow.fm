@@ -41,11 +41,11 @@
  <div class="right" style="margin-top:-5px;">
  {% if request.user != user %}
     <div class="follow">
-    <a href="{% url actstream_follow content_type_id=ctype.id  object_id=user.id %}" class="ui_ignore super button grey right follow_button" style="margin-top:14px;{% if do_i_follow %}display:none{%endif%}">
+    <a href="{% url actstream_follow content_type_id=ctype.id  object_id=user.id %}" class="ui_ignore super button grey right follow_button" style="{% if do_i_follow %}display:none{%endif%}">
         <span class="follow">follow</span>
     </a>
-    <a href="{% url actstream_unfollow content_type_id=ctype.id  object_id=user.id %}" class="ui_ignore super button grey right unfollow_button" style="margin-top:14px;{% if not do_i_follow %}display:none{% endif %}">
-        <span class="unfollow">unfollow</span>
+    <a href="{% url actstream_unfollow content_type_id=ctype.id  object_id=user.id %}" class="ui_ignore super button green right unfollow_button" style="{% if not do_i_follow %}display:none{% endif %}">
+        <span class="following">following</span>
     </a> 
 
     </div>
@@ -69,7 +69,7 @@
 
   <div class="profile-name">
     <h1 class="left" style="margin-right:10px;">{{ user }}</h1> 
-<div class="button super violet tiptip" style="margin-top:-5px;" title="level {{ user|get_rank_integer }} xp {{ user|get_xp }}/{{ user|get_next_rank_integer }} next level is {{ user|get_next_rank_text }}">{{ user|get_rank_text }}</div>
+<div class="button super violet tiptip" style="margin-top:-5px;" title="level {{ user|get_rank_number }} xp {{ user|get_xp }}/{{ user|get_next_rank_xp }} next level is {{ user|get_next_rank_text }}">{% if user.is_staff %}staff{% else %}{{ user|get_rank_text }}{% endif %}</div>
 	<div class="profile-info">
 	<ul>
 	<li>
@@ -130,6 +130,7 @@
 
 {% if request.user.is_authenticated and request.user != user %}
 {% render_comment_form for user %}
+<div class="clear espacetop"></div>
 {% endif %}
 
 {% if tab == 'activities' %}

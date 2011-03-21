@@ -14,7 +14,6 @@
     <!-- core js -->
     <script src="{% block jquery_src %}{{ STATIC_URL }}jquery.min.js{% endblock %}" type="text/javascript"></script>
     <script type="text/javascript">
-    {% cache 99999 site_base_js_links %}
     var STATIC_URL = '{{ STATIC_URL }}';
     var music_search_autocomplete = '{% url music_search_autocomplete %}';
     var user_search_autocomplete = '{% url user_search_autocomplete %}';
@@ -24,8 +23,9 @@
     var music_artist_fanship = '{% url music_artist_fanship %}';
     var action_delete = '{% url action_delete 0 %}';
     var music_badvideo = '{% url music_badvideo %}';
+    var playlist_playtrack = '{% url playlist_playtrack %}';
     var friends_search_autocomplete = '{% url friends_search_autocomplete %}';
-    {% endcache %}
+    var comment_form_target = '/comments/post/';
     var tiny_playlist_pk = {% if request.user.is_authenticated %}{{ request.user.playlistprofile.tiny_playlist.pk }}{% else %}0{% endif %};
     </script>
     <script type="text/javascript" src="{{ STATIC_URL }}jquery.autocomplete/jquery.autocomplete.js"></script>

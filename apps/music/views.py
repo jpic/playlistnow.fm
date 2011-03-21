@@ -51,10 +51,13 @@ def music_recommendation_thank(request, id):
     except Recommendation.DoesNotExist:
         return http.HttpResponseForbidden()
     
+    r.source.playlistprofile.points += 1
+    r.source.playlistprofile.save()
+
     r.thanks = True
     r.thank_date = datetime.now()
     r.save()
-            
+    
     action.send(request.user, verb='thanks recommendation', action_object=r)
 
     return http.HttpResponse('you thanked')

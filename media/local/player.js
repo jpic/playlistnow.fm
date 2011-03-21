@@ -36,6 +36,15 @@ var player = {
             this.state.trackHistory.push(track);
             this.state.currentTrackHistoryIndex = this.state.trackHistory.length - 1;
         }
+
+        if (playlist.object.pk != undefined && playlist.object.pk > 0) {
+            $.post(
+                playlist_playtrack, 
+                {
+                    'playlist_pk': playlist.object.pk,
+                }
+            );
+        }
     },
     'playPlaylistTrack': function(index, fromHistory) {
         if (typeof index == 'object') {

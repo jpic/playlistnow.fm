@@ -236,6 +236,42 @@ var ui = {
             }
         });
 
+        $('a.unlike').live('click', function(e) {
+            e.preventDefault();
+            var container = $(this).parent().find('div.likes');
+            $.get($(this).attr('href'), {}, function() {
+                if (container.find('a').length == 1) {
+                    container.remove();
+                } else {
+                    container.find('a.me').remove();
+                }
+            });
+            $(this).fadeOut();
+            $(this).next().fadeIn();
+        });
+
+
+        $('a.like').live('click', function(e) {
+            e.preventDefault();
+            var after = $(this).parent().find('.before_likes');
+            var container = $(this).parent().find('div.likes');
+            $(this).fadeOut();
+            $(this).prev().fadeIn();
+            $.get($(this).attr('href'), {}, function() {
+                if (!container.length) {
+                    var html = []
+                    html.push('<div class="topcomments"></div>');
+                    html.push('<div class="likes">');
+                    html.push('<img src="'+STATIC_URL+'images/not_newthumbup.png" class="espace" />');
+                    html.push('<a href="/me" class="me">You like it</a>');
+                    html.push('</div>');
+                    after.after(html.join(''));
+                } else {
+                    container.append('<a href="/me" class="me">You like it</a>');
+                }
+            });
+        });
+
         $(".follow_button, .unfollow_button").live('click', function () {
             $.post($(this).attr("href"), {});
             $(this).parent().find(".follow_button, .unfollow_button").toggle();
@@ -374,6 +410,7 @@ var ui = {
                 if (url == '') {
                     url = ui.currentUrl;
                 }
+                var form = $(this);
     
                 $.ajax({
                     url: url,
@@ -381,9 +418,25 @@ var ui = {
                     data: $(this).serialize(),
                     type: $(this).attr('method'),
                     success: function(html, textStatus, request) {
-                        ui.currentUrl = url;
-                        $('#page_body_container').html(html);
-                        $(document).trigger('signalPageUpdate', [url]);
+                        if (url == comment_form_target) {
+                            var html = []
+                            html.push('<div class="comment">');
+                            html.push('<a href="/me">');
+                            html.push(form.find('img.avatar').parent().html());
+                            html.push('</a>');
+                            html.push('<a href="/me">You</a> - right now');
+                            html.push('<p>');
+                            html.push(form.find('textarea').val());
+                            html.push('</p>');
+                            html.push('</div>');
+                            html = html.join('');
+                            form.find('textarea').val('');
+                            form.parent().parent().prev().append(html);
+                        } else {
+                            ui.currentUrl = url;
+                            $('#page_body_container').html(html);
+                            $(document).trigger('signalPageUpdate', [url]);
+                        }
                     },
                 });
             });
@@ -509,12 +562,12 @@ var ui = {
 
 $(document).ready(function() {
     var urls = [
-        {
-            'urlmatch': /^\/action/,
-            'success': function(html, textStatus, request) {
-                $.history.load(ui.currentUrl);
-            },
-        },
+        //{
+            //'urlmatch': /^\/action/,
+            //'success': function(html, textStatus, request) {
+                //$.history.load(ui.currentUrl);
+            //},
+        //},
     ];
 
     if (ui.settings.ajaxEnable) {

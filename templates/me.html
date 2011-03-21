@@ -7,20 +7,20 @@
 {% block body_right %}
 <h3>Hi {{ user }}</h3>
 
-<table border="0" cellspacing="0" cellpadding="0">
-    <tr>
-        <td></td>
-        <td width="190">
-            <div style="width:185px; height:9px;border:1px solid #616161; background:url({{ STATIC_URL }}images/medals/progbarbg_1.png) top left repeat-x;    -webkit-border-radius: 6px;-moz-border-radius: 6px;border-radius: 6px;"><div style="width:42px; height:9px;background:url{{ STATIC_URL }}images/medals/progbar_1.png) top left repeat-x;"></div>
-            </div>
-        </td>
-        <td></td>
-    </tr>
-    <tr>
-        <td colspan="3" align="center" style="color:#828181; font: 11px Trebuchet MS; font-style:italic; "></td>
-    </tr>
-</table> 
-
+<style type="text/css">
+.exp_bar {
+    height: 12px;
+    background:url({{ STATIC_URL }}images/medals/progbar_1.png) top left repeat-x;
+}
+.exp_bar.container {
+width:185px; height:9px;border:1px solid #616161; background:url({{ STATIC_URL }}images/medals/progbarbg_1.png) top left repeat-x;    -webkit-border-radius: 6px;-moz-border-radius: 6px;border-radius: 6px;
+}
+</style>
+<div class="exp_bar container">
+	<div class="exp_bar" style="width:{{ user|get_bar_width:185 }}px">
+	</div>
+</div>
+<div class="clear espacetop"></div>
 {% if who_to_follow %}
 <h3>who to follow ?</h3>
     {% for user in who_to_follow %}

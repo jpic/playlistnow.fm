@@ -13,6 +13,11 @@ urlpatterns = patterns('playlist.views',
         }, name='playlist_list_top'
     ),
     url(
+        r'playtrack/$',
+        'playlist_playtrack',
+        name='playlist_playtrack'
+    ),
+    url(
         r'list/$',
         'playlist_list',
         name='playlist_list'

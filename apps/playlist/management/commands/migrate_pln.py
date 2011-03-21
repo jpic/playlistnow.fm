@@ -29,7 +29,7 @@ class Command(BaseCommand):
         #self.sync_tracks(old)
         #self.sync_playlists(old)
         #self.sync_tiny_playlist(old)
-        self.sync_artists(old)
+        #self.sync_artists(old)
 
     def count_table(self, old, table):
         old.execute('select count(*) from %s' % table)

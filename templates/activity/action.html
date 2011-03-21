@@ -134,25 +134,24 @@
         {% get_comment_count for activity.earliest_of_group as comment_count %}
         <div class="lineFeedContentWhen"> 
             {{ action.timestamp|timesince }} ago -
-            {% if action in request.user.playlistprofile.fanof_actions.all %}
-            <a class="authenticationRequired" href="{% url action_unlike action.pk %}">Unlike</a>
-            {% else %}
-            <a class="authenticationRequired" href="{% url action_like action.pk %}">I Like</a>
-            {% endif %}
+            
+            <a class="authenticationRequired ui_ignore unlike" href="{% url action_unlike activity.earliest_of_group.pk %}" style="{% if action not in request.user.playlistprofile.fanof_actions.all %}display: none{% endif %}">Unlike</a>
+            <a class="ui_ignore like authenticationRequired" href="{% url action_like activity.earliest_of_group.pk %}" style="{% if action in request.user.playlistprofile.fanof_actions.all %}display: none{% endif %}">I Like</a>
             {% if activity.verb == 'recommends' and request.user == activity.action_object.target and not activity.action_object.thanks %}
             <span>
             - <a class="delete parent" href="{% url music_recommendation_thank activity.action_object.pk %}">Thank</a>
             </span>
             {% endif %}
             - 
-            <a class="ui_ignore comment_form_toggle" href="">Comment (<strong>{{ comment_count }}</strong>)</a>
+            <span class="comment_form_toggle" class="link">Comment (<span class="bold">{{ comment_count }}</span>)</span>
 
+            <div class="before_likes" style="display:none;"></div>
             {% if action.fans.count %}
-            <div class="topcomments"></div>
+         
             <div class="likes">
-            <img src="{{ STATIC_URL }}images/not_newthumbup.png" class="espace">
+            <img src="{{ STATIC_URL }}images/not_newthumbup.png">
                 {% for fan in action.fans.all %}
-                <a href="{% url user_details fan.user.username %}">{{ fan.user }}</a> likes it
+                <a href="{% url user_details fan.user.username %}" class="{% if fan.user == request.user %}me{% endif %}">{{ fan.user }} </a> likes this.
                 {% endfor %}
             </div>
             {% endif %}

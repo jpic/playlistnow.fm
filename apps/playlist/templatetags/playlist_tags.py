@@ -14,15 +14,12 @@ levels = (
     (999, 'guru'),
     (2999, 'idol'),
     (9999999, 'legend'),
+    (9999999999999, 'staff'),
 )
 
 @register.filter
 def get_xp(user):
-    points = Follow.objects.filter(object_id=user.pk).count()
-    fans = Playlist.objects.filter(creation_user=user).aggregate(Sum('fans'))['fans__sum']
-    if fans:
-        points += fans * 3
-    points += Recommendation.objects.filter(source=user, thanks=True).count()
+    points = user.playlistprofile.points or 0
     return points
 
 def get_next_rank(user):
@@ -39,7 +36,7 @@ def get_next_rank(user):
             once = True
             continue
 
-    return (7, 'staff')
+    return (7, 'god')
 
 def get_rank(user):
     xp = get_xp(user)
@@ -50,12 +47,32 @@ def get_rank(user):
             continue
         return (level, level_rank)
 
-    return (7, 'staff')
+    return (7, 'god')
 
 @register.filter
-def get_next_rank_integer(user):
+def get_rank_number(user):
+    level = get_rank(user)
+    return level[0]
+
+@register.filter
+def get_rank_xp(user):
+    level = get_rank(user)
+    return levels[level[0]-1][0]
+
+@register.filter
+def get_rank_text(user):
+    level = get_rank(user)
+    return level[1]
+
+@register.filter
+def get_next_rank_number(user):
     level = get_next_rank(user)
     return level[0]
+
+@register.filter
+def get_next_rank_xp(user):
+    level = get_next_rank(user)
+    return levels[level[0]-1][0]
 
 @register.filter
 def get_next_rank_text(user):
@@ -63,14 +80,11 @@ def get_next_rank_text(user):
     return level[1]
 
 @register.filter
-def get_rank_integer(user):
-    level = get_rank(user)
-    return level[0]
-
-@register.filter
-def get_rank_text(user):
-    level = get_rank(user)
-    return level[1]
+def get_bar_width(user, max_width):
+    xp = float(get_xp(user))
+    next_xp = get_next_rank_xp(user)
+    width = (xp/next_xp) * max_width
+    return width
 
 @register.filter
 def affinities_with(a, b):
