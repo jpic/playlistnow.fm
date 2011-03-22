@@ -325,6 +325,13 @@ var player = {
                 player.playPlaylist(playlist, $(this).prevAll().length);
             }
         });
+        $('.playplaylist_random').live('click', function() {
+            if (!player.state.randomMode) {
+                player.state.randomMode = true;
+                $('.player_bttn_rand').css('background-position', 'bottom left');
+            }
+            player.playPlaylist(ui.currentUrl);
+        });
         $('.badvideo').live('click', function(e) {
             player.state.waitingNewVideo = true;
             player.badVideo();
@@ -418,28 +425,25 @@ var player = {
             function(e) {
                 if (player.state.repeatMode) {
                     $(this).css('background-position', 'bottom left');
+                    $(this).attr('title', 'Repeat track mode is ON (click to disable)');
                 } else {
                     $(this).css('background-position', 'top left');
+                    $(this).attr('title', 'Repeat track mode is OFF (click to enable)');
                 }
             }
         );
         $('.player_bttn_repeat').click(function(e) {
             e.preventDefault();
-
-            if (player.state.repeatMode) {
-                $(this).css('background-position', 'bottom left');
-            } else {
-                $(this).css('background-position', 'top left');
-            }
-            
             player.state.repeatMode = !player.state.repeatMode;
         });
         $('.player_bttn_rand').hover(
             function(e) {
                 if (player.state.randomMode) {
                     $(this).css('background-position', 'top left');
+                    $(this).attr('title', 'Random mode is ON (click to disable)');
                 } else {
                     $(this).css('background-position', 'bottom left');
+                    $(this).attr('title', 'Random mode is OFF (click to enable)');
                 }
             },
             function(e) {
@@ -452,13 +456,6 @@ var player = {
         );
         $('.player_bttn_rand').click(function(e) {
             e.preventDefault();
-
-            if (player.state.randomMode) {
-                $(this).css('background-position', 'bottom left');
-            } else {
-                $(this).css('background-position', 'top left');
-            }
-            
             player.state.randomMode = !player.state.randomMode;
         });
         $('div.playlist, div.playlist .play').live('click', function(e) {
