@@ -152,4 +152,9 @@ div.you_may_also_like .track{width:100px;}
 div.you_may_also_like .delete.parent.icon
 {float:right;margin-top:-6px;margin-right:2px;}
 
-
+li.rm.delete.icon.remove_track {
+    display: none;
+}
+div.playlist_track_list li.rm.delete.icon.remove_track {
+    display: inline;
+}

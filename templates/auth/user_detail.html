@@ -69,7 +69,7 @@
 
   <div class="profile-name">
     <h1 class="left" style="margin-right:10px;">{{ user }}</h1> 
-<div class="button super violet tiptip" style="margin-top:-5px;" title="level {{ user|get_rank_number }} xp {{ user|get_xp }}/{{ user|get_next_rank_xp }} next level is {{ user|get_next_rank_text }}">{% if user.is_staff %}staff{% else %}{{ user|get_rank_text }}{% endif %}</div>
+<div class="button super violet tiptip" style="margin-top:-5px;" title="{% if user == request.user %}You are{% else %}User is{% endif %} a {{ user|get_rank_text }}, {{ user|get_bar_width:100 }}% completed. Next level is {{ user|get_next_rank_text }}">{% if user.is_staff %}staff{% else %}{{ user|get_rank_text }}{% endif %}</div>
 	<div class="profile-info">
 	<ul>
 	<li>
@@ -90,7 +90,7 @@
             {% endif %}
         </li>
         {% if request.user.is_authenticated %}
-        <li><span class="afinities"><span class="bold">{{ user|affinities_with:request.user }} %</span> musical match</span></li>
+        <li><span class="afinities {{ user|affinities_with_class:request.user }}"><span class="bold">{{ user|affinities_with:request.user }} %</span> musical match</span></li>
         {% endif %}
     </ul>
 

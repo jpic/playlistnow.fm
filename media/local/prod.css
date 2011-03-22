@@ -80,10 +80,13 @@ input[type="text"].search_header:focus{border:1px solid #000;box-shadow:0 0 5px 
 .profile-info a.gfc{padding:3px 6px 3px 25px;background:transparent url(../images/ico_google.png) no-repeat 0 50%;margin-right:3px;}
 a.fan{padding:3px 3px 3px 25px;background:transparent url(../images/heart.png) no-repeat 0 50%;margin-right:10px;}
 span.fan{padding:3px 3px 3px 25px;background:transparent url(../images/heart.png) no-repeat 0 50%;margin-right:10px;}
-span.afinities{padding:3px 3px 3px 17px;background:transparent url(../images/afinities.png) no-repeat 0 50%;margin-right:10px;}
+span.afinities{padding:3px 3px 3px 17px;margin-right:10px;}
+.low_afinities {color: red;}
+.medium_afinities {color: #D57C63;}
+.high_afinities {color: green;}
 .statut{padding:3px 3px 3px 19px;background:transparent url(../images/music.png) no-repeat 0 50%;color:#777;}
 .sc{margin-bottom:5px;}
-.avatar{background:#fff;border:1px solid rgba(0,0,0,0.15);padding:3px;-moz-box-shadow:0 0 5px #DCDCDC;-webkit-box-shadow:0 0 5px #DCDCDC;}
+.avatar{background:#fff;border:1px solid rgba(0,0,0,0.15);padding:3px;}
 .avatar:hover{border-color:#802585;}
 .verysmall{width:25px;height:25px;}
 .small{width:45px;height:45px;}
@@ -216,9 +219,13 @@ li.sep{background:url(../images/sepheader.png) top left repeat-y;margin:-4px 3px
 #whotofollow .whotofollow_profile{width:130px;}
 #whotofollow .whotofollow_name{color:#400F3A;font-weight:700;}
 #whotofollow .hide{margin:5px 0pt;}
+.playplaylist_random{padding:8px 13px 3px 25px;background:transparent url(../images/bigplay.png) no-repeat 0 50%;cursor:pointer;}
+.bookmark{background:transparent url(../images/bookmark.png) no-repeat top left;padding-left:23px;}
+.bookmarked{background:transparent url(../images/bookmarked.png) no-repeat top left;padding-left:23px;}
 #hotsong .hotsong_list{width:190px;border-bottom:1px dotted #eee;padding-bottom:10px;margin-bottom:10px;}
-li.song_info{background:none;cursor:pointer;padding:4px 12px;color:#777777;font-size:12px;font-weight:bold;line-height:19px;text-align:left;text-indent:10px;}
+li.song_info{background:none;cursor:pointer;padding:4px 12px;color:#777777;font-size:12px;line-height:19px;text-align:left;text-indent:10px;}
 li.song_info span,li.song_info a{padding-left:4px;}
+.external_track {background: #1C9BC8; }
 ul.song_tools{display:none;}
 ul.song_tools li{display:inline;}
 ul.song_tools li.sharefb{padding:3px 13px 3px 25px;background:transparent url(../images/ico_facebook.png) no-repeat 0 50%;}
@@ -243,7 +250,8 @@ li.song_info.selected.dd,li.song_info.selected{background-color:rgba(70, 27, 80,
 li.song_info.dd,.dd{background-color:#f4f4f4;}
 ul.artists{display:inline;vertical-align:top;}
 ul.artists li{position:relative;float:left;display:inline;overflow-x:hidden;overflow-y:hidden;}
-ul.artists li a{display:block;margin:2px 0 0 5px;font-weight:700;font-size:11px;width:63px;height:86px;overflow:hidden;word-wrap:break-word;}
+ul.artists li a{display:block;margin:2px 0 0 5px;font-weight:700;font-size:11px;width:63px;height:102px;word-wrap:break-word;}
+ul.artists li a:hover{text-decoration:none;}
 .artist_rank{vertical-align:top;margin:0px 0 0 10px;font-size:12px;color:#492D3D;background:rgba(70, 27, 80, 0.2);padding:4px;}
 .artist_descr{padding:0px 2px;color:#666666;overflow:hidden;}
 .topcomments{background:url("../images/comments.png") no-repeat scroll left top transparent;display:block;height:10px;margin-bottom:-5px;margin-left:18px;margin-top:4px;width:60px;}
@@ -283,7 +291,7 @@ div.details.views{background:url("../images/views.png") no-repeat 8px 9px #eeeee
 div.lined{clear:left;color:#595959;margin-bottom:6px;padding-bottom:6px;}
 #playlist-tags{font-weight:bold;}
 #playlist-tags li{float:left;font-size:0.80em;line-height:20px;margin-top:0pt;margin-right:4px;margin-bottom:10px;margin-left:0pt;}
-#playlist-tags a{-moz-box-shadow:0 1px 1px #FFFFFF;background:-moz-linear-gradient(center top, #d3e6fc, #b1d2f8) repeat scroll 0 0 #b1d2f8;background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#d3e6fc), to(#b1d2f8));border:1px solid #73AEF3;color:#333333;display:block;float:left;margin:0 5px 0 0;padding:1px 5px;text-decoration:none;text-shadow:0 1px 0 #D2E8FD;}
+#playlist-tags a{-moz-box-shadow:0 1px 1px #FFFFFF;color:#AF4292;display:block;float:left;margin:0 5px 0 0;padding:1px 5px;text-decoration:none;text-shadow:0 1px 0 #D2E8FD;font-size:13px;}
 #playlist-tags a:hover{color:#000;text-decoration:none;text-shadow:0 1px 0 #fff;}
 .pagination{height:28px;margin:6px 0;}
 .pagination a.page{margin-right:4px;color:#777;display:block;padding:1px 8px;text-align:center;float:left;font-size:12px;text-decoration:none;background:#fff;border:1px solid #fff;}

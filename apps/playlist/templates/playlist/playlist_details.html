@@ -13,17 +13,16 @@
 
 {% block body %}
 <div class="left">
-    <h1>{{ object }}</h1>
+    <h1><span class="playplaylist_random tiptip" title="Lauch this playlist randomly"></span>{{ object }}</h1>
 </div>
 <div class="right">
-
         <form action="{% url playlist_fanship object.pk %}" class="authenticationRequired" method="post">
             <input type="hidden" name="action" value="{% if is_fan %}remove{% else %}add{% endif %}" />
             <input type="hidden" name="next" value="{{ request.path }}" />
-            <input type="submit" class="button super grey" value="{% if is_fan %}{% trans "Unbookmark this playlist" %}{% else %}bookmark this playlist{% endif %}" />
-        </form>
-
-    <span class="playplaylist_random">play random</span>
+            {% if is_fan %}<button type="submit" class="button super grey tiptip" title="Unbookmark this playlist"><span class="bookmarked">{% trans "Playlist Bookmarked" %}</span></button>
+            {% else %}<button type="submit" class="button super grey tiptip" title="Add this playlist in your playlists bookmarked"><span class="bookmark">{% trans "Bookmark this playlist" %}</span></button>{% endif %}
+`        </form>
+  
 
 </div>
 
@@ -35,7 +34,9 @@
 <div class="clear"></div>
 </div>
 <div class="ad_song">
+{% if not object.favorite_of.count %}
     <span style="display:none;">{% trans "add tracks" %}</span>
+
 
     <form method="get" action="{{ request.path }}">
         <input class="ad_song_field" type="text" name="term" value="Search by artist name and / or song name" onfocus="if(this.value=='Search by artist name and / or song name'){this.value='';}" id="term"  class="search"/>
@@ -43,7 +44,10 @@
         <input type="hidden" name="search_albums" value="0" />
         <input type="submit" class="searched radius-15 violet  button" value="{% trans "Search" %}"/>
     </form>
+
     <div class="clear"></div>
+
+{% endif %}
 </div>
 
 {% if tracks %}

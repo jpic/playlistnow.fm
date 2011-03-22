@@ -147,12 +147,14 @@ var ui = {
                                     } else if (last.hasClass('dd') == false && song_info.hasClass('dd') == false) {
                                         song_info.addClass('dd');
                                     }
-                                    var n = parseInt(last.find('span.number').html()) + 1;
-                                    if (!n) {
-                                        n = 1;
-                                    }
-                                    song_info.find('span.number').html(n);
-                                    ul.append(song_info);
+                                    song_info.find('span.number').remove();
+                                    song_info.hide();
+                                    song_info.addClass('recent');
+                                    ul.prepend(song_info);
+                                    song_info.slideDown();
+                                    window.setTimeout(function() {
+                                        song_info.removeClass('recent');
+                                    }, 3000);
                                 }
                             }
                         }
@@ -340,8 +342,15 @@ var ui = {
 
         $('.delete').live('click', function(e) {
             e.preventDefault();
+
+            var m = $(this).attr('class').match(/parent_level_([0-9]+)/);
             if ($(this).hasClass('parent')) {
                 var target = $(this).parent();
+            } else if (m && m[1] != undefined) {
+                var target = $(this);
+                for (var i=m[1]; i > 0; i=i-1) {
+                    target = target.parent();
+                }
             } else {
                 var target = $(this);
             }

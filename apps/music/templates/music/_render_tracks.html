@@ -31,10 +31,8 @@
                  Tweet this track
             </a>
         </li>
-        <li class="rm">
-            {% if playlist.pk and track.pk %}
-            <a href="{% url playlist_track_modify %}?action=remove&playlist_pk={{ playlist.pk }}&track_pk={{ track.pk }}">Remove</a>
-            {% endif %}
+        <li class="rm icon track_modify remove delete parent_level_2 remove_track authenticationRequired right tiptip noconfirm playlist_pk_{{ playlist.pk }}" title="Remove this song from playlist">
+            Remove
         </li>
     </ul>
 </li>

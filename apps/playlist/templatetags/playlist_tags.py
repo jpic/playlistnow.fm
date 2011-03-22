@@ -84,7 +84,7 @@ def get_bar_width(user, max_width):
     xp = float(get_xp(user))
     next_xp = get_next_rank_xp(user)
     width = (xp/next_xp) * max_width
-    return width
+    return int(width)
 
 @register.filter
 def affinities_with(a, b):
@@ -93,6 +93,16 @@ def affinities_with(a, b):
     if b.__class__.__name__ == 'User':
         b = b.playlistprofile
     return affinities_betwen(a, b)
+
+@register.filter
+def affinities_with_class(a, b):
+    affinities = affinities_with(a, b)
+    if affinities < 26:
+        return 'low_afinities'
+    if affinities < 50:
+        return 'medium_afinities'
+    else:
+        return 'high_afinities'
 
 @register.inclusion_tag('playlist/_render_playlists.html')
 def render_playlists(playlists):

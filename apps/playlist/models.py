@@ -457,7 +457,7 @@ class Playlist(models.Model):
                 Q(playlist=self) | 
                 self.added_user_tracks_condition(user)
             ) & ~self.removed_user_tracks_condition(user)
-        ).select_related().distinct()
+        ).select_related().order_by('artist__name').distinct()
 
 def autoslug(sender, instance, **kwargs):
     if not hasattr(instance, 'slug'):

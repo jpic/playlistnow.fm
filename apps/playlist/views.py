@@ -163,7 +163,7 @@ def playlist_track_modify(request,
                         playlist=context['playlist'],
                         creation_user=request.user,
                         track=context['track'],
-                        action='remove'
+                        action='rm'
                     ).save()
 
             context['status'] = 'success'

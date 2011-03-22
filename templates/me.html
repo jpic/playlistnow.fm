@@ -28,15 +28,15 @@ width:185px; height:9px;border:1px solid #616161; background:url({{ STATIC_URL }
 
 	<div class="whotofollow_list">
 		<div class="whotofollow_person">
-		<a href="{% url user_details user %}" title="{{ user.first_name }} {{ user.last_name }}"><img src="{{ user.playlistprofile.avatar_url }}" alt="{{ user }}" class="left whotofollow_img avatar"></a>
+		<a href="{{ user.get_absolute_url }}" title="{{ user.first_name }} {{ user.last_name }}"><img src="{{ user.playlistprofile.avatar_url }}" alt="{{ user }}" class="left whotofollow_img avatar"></a>
 			
 <div class="left whotofollow_profile">
 	<ul>
 		<li><a href="{% url user_details user %}" class="whotofollow_name" title="{{ user.first_name }} {{ user.last_name }}">{{ user }}</a></li>
-		<li><span class="afinities">{{ request.user|affinities_with:user }}% matching</span></li>
+		<li><span class="afinities {{ user|affinities_with_class:request.user }}">{{ request.user|affinities_with:user }}% matching</span></li>
 		<li>
         
-            <a href="{% url actstream_follow content_type_id=ctype.id  object_id=user.id %}" class="ui_ignore follow_button">
+            <a href="{% url actstream_follow content_type_id=ctype.id  object_id=user.id %}" class="ui_ignore follow_button delete parent_level_5 ">
                 <span class="follow">follow</span>
             </a>
             <a href="{% url actstream_unfollow content_type_id=ctype.id  object_id=user.id %}" class="ui_ignore unfollow_button" style="display:none">

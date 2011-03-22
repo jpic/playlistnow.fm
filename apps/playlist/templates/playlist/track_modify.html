@@ -2,7 +2,9 @@
 
 {% load i18n %}
 
+{% block head_title %}{{ track }} by {{ track.artist }}{% endblock %}
 {% block body %}
+
 {% if status = 'success' %}
 <p class="success message">
     Thanks for adding track 
@@ -21,6 +23,7 @@
     </a>
 </p>
 {% else %}
+<div style="padding:15px">
 <h1>{% trans "Confirmation Request" %}</h1>
 {% if playlist.pk and track.name %}
 <p>
@@ -28,7 +31,7 @@
 </p>
 {% endif %}
 <form action="{{ request.path }}" method="post" class="closePopup">
-
+	
     {% if playlist.pk %}
     <input type="hidden" name="playlist_pk" value="{{ playlist.pk }}" />
     {% else %}
@@ -38,7 +41,9 @@
         <label for="playlist_pk">
             {% trans "select one of your playlist" %}
         </label>
-        <select name="playlist_pk">
+        <div class="create">
+			<div>
+		<select name="playlist_pk">
             {% for playlist in user_playlists %}
             <option value="{{ playlist.pk }}">{{ playlist }}</option>
             {% endfor %}
@@ -46,6 +51,9 @@
             <option value="{{ playlist.pk }}">{{ playlist }}</option>
             {% endfor %}
         </select>
+</div>
+        	</div>
+        <div class="clear espacetop"></div>	
         {% endif %}
     {% endif %}
     {% if track.pk %}
@@ -58,9 +66,15 @@
     {% else %}
     <input type="hidden" name="track_name" value="{{ track.name }}" />
     {% endif %}
-    <input type="hidden" name="action" value="{{ action }}" />
-    <input type="submit" value="{% trans action %}" />
+    <div class="left espace">
+    	<input type="hidden" name="action" value="{{ action }}" />
+    	<input type="submit" value="{% trans action %}" class="button violet" />
+    </div>
     {% csrf_token %}
+	or <a href="{% url playlist_add %}" title="Create a new playlist">Create a new playlist</a>
+	<div class="clear"></div>
+</div>
 </form>
 {% endif %}
 {% endblock %}
+
