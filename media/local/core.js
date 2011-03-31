@@ -92,8 +92,7 @@ var ui = {
 
         $(document).bind('signalPopupOpen', ui.setupFacebook);
         $(document).bind('signalPageUpdate', ui.setupFacebook);
-
-        $(document).bind('signalPageUpdate', ui.setupForms);
+        ui.setupForms();
         $(document).bind('signalPageUpdate', ui.setupPagination);
         $(document).bind('signalPageUpdate', ui.setupAutocomplete);
         
@@ -130,6 +129,8 @@ var ui = {
                 //var song_info = element.parents('li.song_info');
                 // faster, less resistent to changes in apps/music/templates/music/_render_tracks.html
                 var song_info = element.parent().clone();
+                song_info.find('.noconfirm').removeClass('noconfirm');
+                song_info.find('.copy_track_row').removeClass('copy_track_row');
 
                 $.ajax({
                     url: playlist_track_modify,
@@ -140,22 +141,23 @@ var ui = {
                         if (element.hasClass('copy_track_row')) {
                             var ul = $('div.playlist_track_list ul.song_list');
                             if (ul != undefined) {
-                                var last = ul.find('li.song_info:last');
-                                if (last != undefined) {
-                                    if (last.hasClass('dd') && song_info.hasClass('dd')) {
+                                var first = ul.find('li.song_info:first');
+                                if (first != undefined) {
+                                    if (first.hasClass('dd') && song_info.hasClass('dd')) {
                                         song_info.removeClass('dd');
-                                    } else if (last.hasClass('dd') == false && song_info.hasClass('dd') == false) {
+                                    } else if (first.hasClass('dd') == false && song_info.hasClass('dd') == false) {
                                         song_info.addClass('dd');
                                     }
-                                    song_info.find('span.number').remove();
-                                    song_info.hide();
-                                    song_info.addClass('recent');
-                                    ul.prepend(song_info);
-                                    song_info.slideDown();
-                                    window.setTimeout(function() {
-                                        song_info.removeClass('recent');
-                                    }, 3000);
                                 }
+
+                                song_info.find('span.number').remove();
+                                song_info.hide();
+                                song_info.addClass('recent');
+                                ul.prepend(song_info);
+                                song_info.slideDown();
+                                window.setTimeout(function() {
+                                    song_info.removeClass('recent');
+                                }, 3000);
                             }
                         }
                         $('#user_notifications').append($(html).find('#user_notifications').html());
@@ -243,13 +245,17 @@ var ui = {
             var container = $(this).parent().find('div.likes');
             $.get($(this).attr('href'), {}, function() {
                 if (container.find('a').length == 1) {
+                    if (container.prev().hasClass('topcomments')) {
+                        container.prev().remove();
+                    }
                     container.remove();
                 } else {
-                    container.find('a.me').remove();
+                    container.find('.me').fadeOut();
                 }
             });
-            $(this).fadeOut();
-            $(this).next().fadeIn();
+            $(this).fadeOut('slow', function() {
+                $(this).next().fadeIn();
+            });
         });
 
 
@@ -257,33 +263,49 @@ var ui = {
             e.preventDefault();
             var after = $(this).parent().find('.before_likes');
             var container = $(this).parent().find('div.likes');
-            $(this).fadeOut();
-            $(this).prev().fadeIn();
+            $(this).fadeOut('slow', function() {
+                $(this).prev().fadeIn();
+            });
             $.get($(this).attr('href'), {}, function() {
                 if (!container.length) {
                     var html = []
                     html.push('<div class="topcomments"></div>');
                     html.push('<div class="likes">');
                     html.push('<img src="'+STATIC_URL+'images/not_newthumbup.png" class="espace" />');
-                    html.push('<a href="/me" class="me">You like it</a>');
+                    html.push('<span class="me"><a href="/me/">You</a> like it</span>');
                     html.push('</div>');
                     after.after(html.join(''));
                 } else {
-                    container.append('<a href="/me" class="me">You like it</a>');
+                    container.append('<span class="me"><a href="/me/">You</a> like it</span>');
                 }
             });
         });
 
-        $(".follow_button, .unfollow_button").live('click', function () {
-            $.post($(this).attr("href"), {});
-            $(this).parent().find(".follow_button, .unfollow_button").toggle();
-            return false
+        $('.unfollow_all_button').live('click', function() {
+            $('.unfollow_button:visible').click();
+            return false;
+        });
+        $('.follow_all_button').live('click', function() {
+            $('.follow_button:visible').click();
+            return false;
+        });
+
+        $(".follow_button, .unfollow_button").live('click', function (e) {
+            e.preventDefault();
+            if(!user.is_authenticated) {
+                ui.authenticationPopup();
+            } else {
+                $.post($(this).attr("href"), {});
+                $(this).parent().find(".follow_button, .unfollow_button").toggle();
+                return false
+            }
         });
 
         $('.tab_link').live('click', function(e) {
             var tabid = $(this).attr('class').match(/tab_id_([a-z]*)/)[1];
-            $('.tab_content').hide().removeClass('selected');
-            $('.tab_content.tab_id_'+tabid).show().addClass('selected');
+            var tabgroup = $(this).attr('class').match(/tab_group_([a-z]*)/)[1];
+            $('.tab_content.tab_group_'+tabgroup).hide().removeClass('selected');
+            $('.tab_content.tab_id_'+tabid+'.tab_group_'+tabgroup).show().addClass('selected');
         });
                 
         $('.simplemodal-close').live('click', function() {$.modal.close();});
@@ -294,8 +316,23 @@ var ui = {
             $(document).trigger('signalPlaylistTrackModificationRequest', [track, playlist, 'add', $(this)]);
         });
         $('#right_action .share').click(function(e) {
-            $('#track_menu').toggle('slow');
-        })
+            if (player.state.currentTrack == undefined) {
+                return false;
+            }
+            var p = {
+                'track_name': player.state.currentTrack.name,
+                'tab_id': 'local',
+            }
+            if (player.state.currentTrack.artist != undefined && player.state.currentTrack.artist.name != undefined) {    
+                p['artist_name'] = player.state.currentTrack.artist.name;
+            }
+            var url = music_recommendation_add + '?' + $.param(p);
+            if (!user.is_authenticated) {
+                ui.authenticationPopup(url);
+            } else {
+                ui.popup(url);
+            }
+        });
         $('.like_current_track').click(function(e) {
             var track = player.state.currentTrack;
             var playlist = { 'pk': tiny_playlist_pk };
@@ -406,7 +443,7 @@ var ui = {
     },
     'setupForms': function() {
         if (ui.settings['ajaxEnable'] && $('form').length) {
-            $('form:not(.ui_ignore)').submit(function(e) {
+            $('form:not(.ui_ignore)').live('submit', function(e) {
                 e.preventDefault();
 
 
@@ -415,39 +452,65 @@ var ui = {
                     return false;
                 }
 
+                if ($(this).hasClass('nohashchange')) {
+                    var hashchange = false;
+                } else {
+                    var hashchange = true;
+                }
+
                 var url = $(this).attr('action');
                 if (url == '') {
                     url = ui.currentUrl;
                 }
                 var form = $(this);
-    
-                $.ajax({
-                    url: url,
-                    dataType: 'html',
-                    data: $(this).serialize(),
-                    type: $(this).attr('method'),
-                    success: function(html, textStatus, request) {
-                        if (url == comment_form_target) {
-                            var html = []
-                            html.push('<div class="comment">');
-                            html.push('<a href="/me">');
-                            html.push(form.find('img.avatar').parent().html());
-                            html.push('</a>');
-                            html.push('<a href="/me">You</a> - right now');
-                            html.push('<p>');
-                            html.push(form.find('textarea').val());
-                            html.push('</p>');
-                            html.push('</div>');
-                            html = html.join('');
-                            form.find('textarea').val('');
-                            form.parent().parent().prev().append(html);
-                        } else {
-                            ui.currentUrl = url;
-                            $('#page_body_container').html(html);
-                            $(document).trigger('signalPageUpdate', [url]);
-                        }
-                    },
-                });
+
+                if (form.parent().parent().hasClass('wall')) {
+                    var target = $('.lineFeed:first');
+                    var write = function(html) {
+                        target.before(html);
+                    }
+                } else {
+                    var target = form.parent().parent().prev();
+                    var write = function(html) {
+                        target.append(html);
+                    }
+                }
+
+                if ($(this).attr('method') == 'get' || $(this).attr('method') == 'GET') {
+                    $.history.load($(this).attr('action') + '?' + $(this).serialize());
+                } else {
+                    $.ajax({
+                        url: url,
+                        dataType: 'html',
+                        data: $(this).serialize(),
+                        type: $(this).attr('method'),
+                        success: function(html, textStatus, request) {
+                            if (url == comment_form_target) {
+                                var html = []
+                                html.push('<div class="comment">');
+                                html.push('<a href="/me">');
+                                html.push(form.find('img.avatar').parent().html());
+                                html.push('</a>');
+                                html.push('<a href="/me">You</a> - right now');
+                                html.push('<p>');
+                                html.push(form.find('textarea').val());
+                                html.push('</p>');
+                                html.push('</div>');
+                                html = html.join('');
+                                form.find('textarea').val('');
+                                write(html);
+                            } else {
+                                ui.previousUrl = ui.currentUrl;
+                                ui.currentUrl = url;
+                                if (hashchange) {
+                                    window.location.hash = url;
+                                }
+                                $('#page_body_container').html(html);
+                                $(document).trigger('signalPageUpdate', [url]);
+                            }
+                        },
+                    });
+                }
             });
         }
     },
@@ -487,7 +550,12 @@ var ui = {
             }
     
             var next = $(this).next();
-            if (next.hasClass('autocomplete_pk')) {
+            if ($(this).hasClass('just_submit')) {
+                form = $(this).parents('form');
+                var callback = function(value, data) {
+                    form.submit();
+                }
+            } else if (next.hasClass('autocomplete_pk')) {
                 var callback = function(value, data) {
                     next.val(data.pk);
                 }
@@ -516,8 +584,8 @@ var ui = {
     },
     'error': function(req, textStatus, error) {
         if (textStatus == 'error') {
-            if (ui.currentRequest == req) {
-                ui.currentUrl = false;
+            if (ui.currentRequest == req && ui.previousUrl != undefined) {
+                ui.currentUrl = ui.previousUrl;
             }
             ui.notifyUser('Sorry but your request failed. Our techies have been notified by mail and will take care of it');
         }
@@ -599,6 +667,7 @@ $(document).ready(function() {
                         }
 
                         $('#page_body_container').html(html);
+                        ui.previousUrl = ui.currentUrl;
                         ui.currentUrl = hash;
                         $(document).trigger('signalPageUpdate', [hash]);
                     },

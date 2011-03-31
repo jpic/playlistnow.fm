@@ -19,6 +19,9 @@ var player = {
         $('.player_bttn_play').hide();
         $('.player_bttn_pause').show();
         $('.sidebar_Playing a').attr('href', track.url);
+        if (!$('.sidebar_Playing a:visible').length) {
+            $('.sidebar_Playing a').fadeIn();
+        }
         $('.player_current_playlist').hide();
 
         $('#right_action a.fav').css('backgroundPosition', 'left top');
@@ -60,7 +63,13 @@ var player = {
             this.state.currentPlaylist.tracks[index]) {
             this.state.currentPlaylistTrackIndex = index;
         } else {
-            this.state.currentPlaylistTrackIndex = 0;
+            if (this.state.randomMode) {
+                this.state.currentPlaylistTrackIndex = Math.floor(
+                    Math.random()*(player.state.currentPlaylist.tracks.length)
+                )
+            } else {
+                this.state.currentPlaylistTrackIndex = 0;
+            }
         }
         
         var track = this.state.currentPlaylist.tracks[this.state.currentPlaylistTrackIndex]
@@ -511,8 +520,6 @@ var player = {
                 playlist = {
                     'pk': $('#playlist_pk').html(),
                 };
-            } else {
-                console.log('could not identify playlist', $(this));
             }
             
             $(document).trigger('signalPlaylistTrackModificationRequest', [track, playlist, action, $(this)])
@@ -568,6 +575,9 @@ var player = {
 
         $(document).keydown(function(e) {
             var k = e.keyCode ? e.keyCode : e.which;          
+            if (e.target.nodeName == 'INPUT' || e.target.nodeName == 'TEXTAREA') {
+                return true;
+            }
             if (k==32) { // space
                 e.preventDefault();
                 var pause = $('.player_bttn_pause');
