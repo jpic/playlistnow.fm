@@ -6,8 +6,10 @@ from django import shortcuts
 from django import template
 from django.contrib import messages
 from django.core.cache import cache
+from django.views.decorators.cache import cache_page
 from django.contrib.auth import decorators
 from django.db.models import Q
+from django.db import connection, transaction
 from tagging.models import Tag
 from actstream import action
 
@@ -22,8 +24,9 @@ def playlist_playtrack(request):
     playlist_pk = request.POST.get('playlist_pk', False)
     if not playlist_pk:
         return http.HttpResponseBadRequest()
+    playlist_pk = int(playlist_pk)
     try:
-        playlist = Playlist.objects.get(pk=playlist_pk)
+        playlist = Playlist.objects.all_with_hidden().get(pk=playlist_pk)
     except Playlist.DoesNotExist:
         return http.HttpResponseBadRequest()
     if playlist.creation_user != request.user:
@@ -111,7 +114,7 @@ def playlist_track_modify(request,
             pass
     
     if not isinstance(context['track'], Track):
-        if context['track']['artist']:
+        if context['track']['artist']['name']:
             context['track'] = get_or_fake_track(context['track']['name'],
                 context['track']['artist']['name'])
         else:
@@ -229,16 +232,34 @@ def playlist_search_autocomplete(request, qname='query', qs=Playlist.objects.all
     
     playlist_search_url = urlresolvers.reverse('playlist_search')
 
-    qs = qs.filter(name__icontains=q)
-    qs = qs.distinct('name')
-    for playlist in qs[:15]:
-        response['suggestions'].append(playlist.name)
+    cursor = connection.cursor()
+    sql = "select distinct name, tracks_count from playlist_playlist where name like %s and tracks_count >= 8 order by tracks_count desc limit 15"
+    cursor.execute(sql, ['%%%s%%' % q])
+    for row in cursor.fetchall():
+        if row[0] in response['suggestions']:
+            continue
+        response['suggestions'].append(row[0])
         response['data'].append({
-            'url': '%s?term=%s' % (playlist_search_url, playlist.name),
+            'url': '%s?term=%s' % (playlist_search_url, row[0]),
             'html': '%s' % (
-                playlist.name,
+                row[0],
             )
         })
+
+    if len(response['data']) < 15:
+        cursor = connection.cursor()
+        sql = "select distinct name, tracks_count from playlist_playlist where tags like %s and name not like %s and tracks_count >= 8 order by tracks_count desc limit " + unicode(15-len(response['data']))
+        cursor.execute(sql, ['%%%s%%' % q,'%%%s%%' % q])
+        for row in cursor.fetchall():
+            if row[0] in response['suggestions']:
+                continue
+            response['suggestions'].append(row[0])
+            response['data'].append({
+                'url': '%s?term=%s' % (playlist_search_url, row[0]),
+                'html': '%s' % (
+                    row[0],
+                )
+            })
 
     return return_json(response)
 
@@ -247,13 +268,13 @@ def playlist_search(request,
     qs1 = Playlist.objects.filter(
         Q(name__icontains=request.GET.get('term', '')) &
         Q(tags__icontains=request.GET.get('term', ''))
-    )
+    ).filter(tracks_count__gte=8)
     qs2 = Playlist.objects.filter(
         Q(name__icontains=request.GET.get('term', ''))
-    ).exclude(id__in=qs1.values_list('id'))
+    ).exclude(id__in=qs1.values_list('id')).filter(tracks_count__gte=8)
     qs3 = Playlist.objects.filter(
-        Q(name__icontains=request.GET.get('term', ''))
-    ).exclude(id__in=qs1.values_list('id')).exclude(id__in=qs2.values_list('id'))
+        Q(tags__icontains=request.GET.get('term', ''))
+    ).exclude(id__in=qs1.values_list('id')).exclude(id__in=qs2.values_list('id')).filter(tracks_count__gte=8)
 
     context = {
         'term': request.GET.get('term', ''),
@@ -265,14 +286,20 @@ def playlist_search(request,
         context['object_list'].append(o)
     for o in qs3:
         context['object_list'].append(o)
+    
+    if len(context['object_list']) == 1:
+        return http.HttpResponseRedirect(context['object_list'][0].get_absolute_url())
+    
     context.update(extra_context or {})
     return playlist_list(request, extra_context=context)
 
 def playlist_list(request, qs=Playlist.objects.all(),
     template_name='playlist/playlist_list.html', extra_context=None):
+
     context = {}
     
-    context['object_list'] = qs.select_related(depth=3)
+    qs = qs.select_related(depth=3).filter(tracks_count__gt=7)
+    context['object_list'] = qs
 
     s = '''
     select 
@@ -285,6 +312,33 @@ def playlist_list(request, qs=Playlist.objects.all(),
     limit 15
     '''
     context['best_tags'] = Tag.objects.raw(s)
+
+    context.update(extra_context or {})
+    response = shortcuts.render_to_response(template_name, context,
+        context_instance=template.RequestContext(request))
+    return response
+
+@decorators.login_required
+def playlist_edit(request, pk, form_class=PlaylistAddForm,
+    template_name='playlist/playlist_add.html', extra_context=None):
+    context = {}
+
+    try:
+        instance = Playlist.objects.get(pk=pk, creation_user=request.user)
+    except Playlist.DoesNotExist:
+        return http.HttpResponseBadRequest()
+
+    if request.method == 'POST':
+        form = form_class(request.POST, instance=instance)
+        if form.is_valid():
+            object = form.save(commit=False)
+            object.creation_user = request.user
+            object.save()
+            return http.HttpResponseRedirect(object.get_absolute_url())
+    else:
+        form = form_class(instance=instance)
+
+    context['form'] = form
 
     context.update(extra_context or {})
     return shortcuts.render_to_response(template_name, context,
@@ -303,8 +357,17 @@ def playlist_add(request, form_class=PlaylistAddForm,
             object.save()
             return http.HttpResponseRedirect(object.get_absolute_url())
     else:
-        form = form_class()
-    
+        form = form_class(initial={
+            'tags': 'work, eat, chill...',
+            'name': 'chilling, working, eating ...',
+        })
+   
+    if form.data.get('tags', False) == 'work, eat, chill...' or \
+        form.initial.get('tags', False) == 'work, eat, chill...':
+        form['tags'].field.widget.attrs['class'] = 'magic_value'
+    if form.data.get('name', False) == 'chilling, working, eating ...' or \
+        form.initial.get('name', False) == 'chilling, working, eating ...':
+        form['name'].field.widget.attrs['class'] = 'magic_value'
     context['form'] = form
 
     context.update(extra_context or {})

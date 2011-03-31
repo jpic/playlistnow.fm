@@ -1,0 +1,23 @@
+{% extends 'site_base.html' %}
+
+{% block head_title %}Account delete{% endblock %}
+
+{% block body %}
+
+{% if status == 'toconfirm' %}
+<h1>Delete my account</h1>
+Are you sure you want to delete account {{ request.user.first_name }} {{ request.user.last_name }} ?
+<br/> <br/>
+<form action="{{ request.path_info }}" method="post">
+    <input type="submit" class="button black" value="Yes please, delete my account" />
+    <input type="hidden" name="confirm" value="ok" />
+</form>
+ <br/>
+<p><a href="{% url me %}" class="button blue">Nevermind, don't delete my account, take me back home</a></p>
+{% endif %}
+
+{% if status == 'deleted' %}
+Your account was deleted. All you have to do now is <a href="{% url acct_logout %}" class="ui_ignore">Logout</a>
+{% endif %}
+
+{% endblock %}

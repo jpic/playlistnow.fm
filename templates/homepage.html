@@ -14,34 +14,26 @@
 
 {% block body %}
 
-          <div style="width:720px;margin:10px auto;">      
-  <div style="display:block"><img title="" src="{{ STATIC_URL }}images/intro.png"></div>
-  
-<ul style="display:inline;color:#64205C;font-weight:700;">
- <li class="tab_link tab_id_playlist left espace">
-
-        Search playlists
-    </li>
- <li class="left espace">|</li>
-    <li class="tab_link tab_id_music left espace">
-        Search music
-    </li>
-      <li class="left espace">|</li>
-    <li class="tab_link tab_id_user left espace">
-        Search users
-    </li>
-     
-   
-</ul>
+<div style="width:720px;margin:10px auto;">      
+	<div style="display:block"><img title="" src="{{ STATIC_URL }}images/intro.png">
+	</div>
+	<ul style="display:inline;color:#64205C;font-weight:700;">
+		<li class="tab_link tab_id_playlist left espace tab_group_home">Search playlists</li>
+    	<li class="left espace">|</li>
+    	<li class="tab_link tab_id_music left espace tab_group_home">Search music</li>
+    	<li class="left espace">|</li>
+    	<li class="tab_link tab_id_user left espace tab_group_home">Search users</li>
+	</ul>
 </div>
-<div class="tab_content tab_id_playlist">
+
+<div class="tab_content tab_id_playlist tab_group_home">
     <form action="{% url playlist_search %}" method="get" id="search_form">
         <div class="avatar_home">
             <span>
-                <a href="home">
-                    <img title="" src="{{ STATIC_URL }}images/avatar-logged.jpg" alt="Avatar" height="50px" width="50px">
-                </a>
+            <a href="home">
+                <img title="" src="{% if request.user.is_authenticated %}{{ request.user.playlistprofile.avatar_url }}{% else %}{{ STATIC_URL }}images/avatar-logged.jpg{% endif %}" alt="Avatar" height="50px" width="50px">
             </span>
+            </a>
         </div>
         <div class="input">
             <div class="iam" id="typeOfSearch">I am</div>
@@ -53,35 +45,70 @@
             <button type="submit" class="form-search">{% trans "Search" %}</button>
         </div>
     </form>
+    
+<div style="width:727px;margin:-100px auto 30px auto;"><img title="" src="{{ STATIC_URL }}images/tellus.png"></div>
+	<div style="width:727px;margin:0px auto 30px auto;">
+<h3 style="text-align:left;">Tags that best suits my mood or my activity</h3>
+<ul id="playlist-tags">
+	<li><a title="home" href="/tags/home/" class="radius-4">home</a></li>
+	<li><a title="work" href="/tags/work/" class="radius-4" style="font-size:13px;">work</a></li>
+	<li><a title="office" href="/tags/office/" class="radius-4">office</a></li>
+	<li><a title="party" href="/tags/party/" class="radius-4" style="font-size:20px;">party</a></li>
+	<li><a title="rock" href="/tags/rock/" class="radius-4">rock</a></li>
+	<li><a title="chill" href="/tags/chill/" class="radius-4" style="font-size:16px;">chill</a></li>
+	<li><a title="love" href="/tags/love/" class="radius-4" style="font-size:14px;">love</a></li>
+	<li><a title="happy" href="/tags/happy/" class="radius-4">happy</a></li>
+	<li><a title="relax" href="/tags/relax/"class="radius-4" style="font-size:12px;">relax</a></li>
+	<li><a title="dance" href="/tags/dance/" class="radius-4" style="font-size:17px;">dance</a></li>
+	<li><a title="computer" href="/tags/computer/" class="radius-4">computer</a></li>
+	<li><a title="fun" href="/tags/fun/" class="radius-4" style="font-size:20px;">fun</a></li>
+	<li><a title="working" href="/tags/working/" class="radius-4" style="font-size:18px;">working</a></li>
+	<li><a title="school" href="/tags/school/" class="radius-4">school</a></li>
+	<li><a title="sad" href="/tags/sad/" class="radius-4" style="font-size:13px;">sad</a></li>
+	<li><a title="home" href="/tags/home/" class="radius-4">home</a></li>
+	<li><a title="work" href="/tags/work/" class="radius-4" style="font-size:15px;">work</a></li>
+	<li><a title="office" href="/tags/office/" class="radius-4">office</a></li>
+	<li><a title="party" href="/tags/party/" class="radius-4" style="font-size:20px;">party</a></li>
+	<li><a title="rock" href="/tags/rock/" class="radius-4" style="font-size:15px;">rock</a></li>
+	<li><a title="love" href="/tags/love/" class="radius-4" style="font-size:14px;">love</a></li>
+	<li><a title="happy" href="/tags/happy/" class="radius-4">happy</a></li>
+</ul>
+<div class="clear"></div>
+</div>
 </div>
 
-<div class="tab_content tab_id_music">
+<div class="tab_content tab_group_home tab_id_music">
     <form action="{% url music_search %}" method="get" id="search_form">
         <div class="avatar_home">
             <span>
                 <a href="home">
-                    <img title="" src="{{ STATIC_URL }}images/avatar-logged.jpg" alt="Avatar" height="50px" width="50px">
+                    <img title="" src="{% if request.user.is_authenticated %}{{ request.user.playlistprofile.avatar_url }}{% else %}{{ STATIC_URL }}images/avatar-logged.jpg{% endif %}" alt="Avatar" height="50px" width="50px">
                 </a>
             </span>
         </div>
-        <div class="input">
-            <div class="iam" id="typeOfSearch">Song</div>
-            <div class="inputiam">
+<div class="input">
+	<div class="iam" id="typeOfSearch">Song</div>
+     	<div class="inputiam">
                 <input  value="name or artist here..." type="text" name="term" class="autocomplete music magic_value">
-            </div>
-        </div>
+         </div>
+	</div>
         <div class="submit">
             <button type="submit" class="form-search">{% trans "Search" %}</button>
         </div>
     </form>
+<div style="width:727px;margin:-100px auto 30px auto;"><img title="" src="{{ STATIC_URL }}images/redhot.png"></div>
+	<div style="width:727px;margin:-30px auto 30px auto;">
+	<h3 style="text-align:left;">Recent Artists Bookmarked</h3>
+	{% render_artists last_artists %}
+	</div>
 </div>
 
-<div class="tab_content tab_id_user">
+<div class="tab_content tab_id_user tab_group_home">
     <form action="{% url user_search %}" method="get" id="search_form">
         <div class="avatar_home">
             <span>
                 <a href="home">
-                    <img title="" src="{{ STATIC_URL }}images/avatar-logged.jpg" alt="Avatar" height="50px" width="50px">
+                    <img title="" src="{% if request.user.is_authenticated %}{{ request.user.playlistprofile.avatar_url }}{% else %}{{ STATIC_URL }}images/avatar-logged.jpg{% endif %}" alt="Avatar" height="50px" width="50px">
                 </a>
             </span>
         </div>
@@ -95,43 +122,30 @@
             <button type="submit" class="form-search">{% trans "Search" %}</button>
         </div>
     </form>
+<div style="width:727px;margin:0px auto 30px auto;">
+<h3 style="text-align:left;">Recently Active Users</h3>
+<div style="text-align:left">
+    {% for user in last_users %}
+    <a href="{{ user.get_absolute_url }}" title="{{ user }}" class="tiptip">
+        <img src="{{ user.playlistprofile.avatar_url }}" alt="{% trans 'avatar of' %} {{ user }}" class="avatar big espace" />
+    </a>
+    {% endfor %}
+ </div>
+    </div>
 </div>
-<div style="width:727px;margin:0px auto;">
-<h3 style="text-align:left;">Tags</h3>
-<ul id="playlist-tags">
-<li><a title="home" href="/tags/home/" class="radius-4">home</a></li>
 
-<li><a title="work" href="/tags/work/" class="radius-4">work</a></li>
-
-<li><a title="office" href="/tags/office/" class="radius-4">office</a></li>
-
-<li><a title="party" href="/tags/party/" class="radius-4">party</a></li>
-
-<li><a title="rock" href="/tags/rock/" class="radius-4">rock</a></li>
-
-<li><a title="chill" href="/tags/chill/" class="radius-4">chill</a></li>
-
-<li><a title="love" href="/tags/love/" class="radius-4">love</a></li>
-
-<li><a title="happy" href="/tags/happy/" class="radius-4">happy</a></li>
-
-<li><a title="relax" href="/tags/relax/"class="radius-4">relax</a></li>
-
-<li><a title="dance" href="/tags/dance/" class="radius-4">dance</a></li>
-
-<li><a title="computer" href="/tags/computer/" class="radius-4">computer</a></li>
-
-<li><a title="fun" href="/tags/fun/" class="radius-4">fun</a></li>
-
-<li><a title="working" href="/tags/working/" class="radius-4">working</a></li>
-
-<li><a title="school" href="/tags/school/" class="radius-4">school</a></li>
-
-<li><a title="sad" href="/tags/sad/" class="radius-4">sad</a></li>
-</ul>
 <div class="clear"></div>
+<div style="width:727px;margin:20px auto 10px auto;">
+<div style="padding: 10px;background-color:#E1F2FA;" class="radius-8">
+<a href="{% url contact %}">Contact</a> <span>|</span>
+<a href="{% url credits %}">Terms</a> <span>|</span>
+            <a href="/privacy">Privacy</a> <span>|</span>
+	   		<a href="/faq">FAQ</a> <span>|</span>
+	   		<a href="{% url credits %}">Credits</a> <span>|</span>
+            <a href="/advertise">Advertise</a>
 
 
+</div>
 </div>
 {% endblock %}
 

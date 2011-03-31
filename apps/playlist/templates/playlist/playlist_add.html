@@ -4,9 +4,13 @@
 {% block head_title %}{% trans "Create a new playlist" %}{% endblock %}
 {% block body %}
 
+{% if form.instance.pk %}
+<h1>Edit your playlist details</h1>
+{% else %}
 <h1>Create a new Playlist</h1>
 <h2>You have to fill in all the fields to create your playlist</h2>
-<form action="{% url playlist_add %}" method="post" id="create">
+{% endif %}
+<form action="{% if form.instance.pk %}{% url playlist_edit form.instance.pk %}{% else %}{% url playlist_add %}{% endif %}" method="post" id="create">
 
 
 {{ form.non_field_errors }}
@@ -17,8 +21,8 @@
     {{ form.name.label_tag }}
 <div class="create">
      <div> I am
-    	<input name="{{ form.name.name }}" value="{% if form.name.data %}{{ form.name.data }}{% else %}chilling, working, eating ...{% endif %}" class="{% if not form.name.data %}magic_value{% endif %} search-input" id="{{ form.name.auto_id }}" type="text" />
-	</div>
+	    {{ form.name.as_widget }}
+    </div>
 </div>
     <br />
    <br />
@@ -26,7 +30,7 @@
     {{ form.tags.label_tag }} 
 <div class="create">
   <div>
-    	<input name="{{ form.tags.tags }}" value="{% if form.tags.data %}{{ form.tags.data }}{% else %}work, eat, chill...{% endif %}" class="{% if not form.tags.data %}magic_value{% endif %} search-input" id="{{ form.tags.auto_id }}" type="text" />
+    	{{ form.tags.as_widget }}
 	</div>
 </div>
     <br />
@@ -40,7 +44,7 @@
     {% for category in form.playlist_categories %}
         <optgroup label="{{ category }}">
         {% for subcategory in category.children.all %}
-            <option value="{{ subcategory.pk }}">
+            <option value="{{ subcategory.pk }}" {% if form.instance.category.pk == subcategory.pk %}selected="selected"{% endif %}>
                 {{ subcategory }}
             </option>
         {% endfor %}
@@ -50,30 +54,13 @@
 	</div>    
 </div>
 <br/><br/>
+    {% if form.instance.pk %}
+    <input type="submit" class="violet  button" value="{% trans "Save changes" %}" />
+    {% else %}
     <input type="submit" class="violet  button" value="{% trans "Create a playlist" %}" />
+    {% endif %}
 </form>
 
-
-
-
-<script type="text/javascript">
-$(document).ready(function() {
-    var name_def = 'working, eating, chilling ...';
-    $('#id_name').val(name_def).click(function() {
-      if ($(this).val() == name_def) {
-         $(this).val('');
-      }   
-    });
-
-    var tags_def = 'work, office, home...';
-    $('input[name=tags]').val(tags_def).click(function() {
-      if ($(this).val() == tags_def) {
-         $(this).val('');
-      }   
-    });
-});
-
-</script>
 
 {% endblock %}
 

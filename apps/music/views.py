@@ -3,6 +3,7 @@ from urllib import urlencode
 import math
 import datetime
 from lxml.html import fromstring
+import lxml
 
 from django import http
 from django import shortcuts
@@ -296,7 +297,6 @@ def music_search_autocomplete(request, qname='query'):
     try:
         upstream_response = urllib2.urlopen(url)
         upstream_response = simplejson.loads(upstream_response.read())
-        print upstream_response
     except:
         return return_json()
 
@@ -341,23 +341,41 @@ def music_search(request, qname='term',
 
     if qname in request.GET.keys():
         q = request.GET[qname]
+        max_results = 0
         
         try:
             if int(request.GET.get('search_artists', True)):
                 artist = Artist(name=q)
-                artist.lastfm_search()
+                artist.lastfm_search(page=request.GET.get('page', 1), limit=7)
                 context['artists'] = artist.matches
+                max_results = artist.opensearch_total_results
         except lxml.etree.XMLSyntaxError: # some utf8 char failed
             pass
 
         try:
             if request.GET.get('search_tracks', True):
                 track = Track(name=q)
-                track.lastfm_search()
+                track.lastfm_search(page=request.GET.get('page', 1), limit=7)
+                if track.opensearch_total_results > max_results:
+                    max_results = track.opensearch_total_results
                 context['tracks'] = track.matches
         except lxml.etree.XMLSyntaxError: # some utf8 char failed
             pass
 
+        context['current_page'] = int(request.GET.get('page', 1))
+        context['last_page'] = max_results / 7
+        context['next_page'] = False
+        if context['current_page'] != context['last_page']:
+            context['next_page'] = context['current_page'] + 1
+        context['previous_page'] = False
+        if context['current_page'] > 1:
+            context['previous_page'] = context['current_page'] - 1
+        context['page_list'] = range(1, context['last_page'])
+        if len(context['page_list']) > 7:
+            if context['current_page'] > 4:
+                context['page_list'] = context['page_list'][context['current_page']-4:context['current_page']+3]
+            else:
+                context['page_list'] = context['page_list'][0:7]
 
     context.update(extra_context or {})
     return shortcuts.render_to_response(template_name, context,

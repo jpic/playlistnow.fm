@@ -1,6 +1,7 @@
 import re
 import htmlentitydefs
 import urllib
+import datetime
 from lxml import etree
 
 from django.db import models
@@ -199,11 +200,12 @@ class MusicalEntity(models.Model):
 
         return tree
 
-    def lastfm_search(self):
+    def lastfm_search(self, page=1, limit=100):
         klass = self.__class__
-        tree = self.lastfm_get_tree(self.get_type() + '.search')
+        tree = self.lastfm_get_tree(self.get_type() + '.search', page=page, limit=limit)
 
         if tree is None: return None
+        self.opensearch_total_results = int(tree.getroot().getchildren()[0].getchildren()[1].text)
 
         for element in tree.findall('results/%smatches/%s' % (self.get_type(), self.get_type() )):
             match = klass(name=element.find('name').text)
@@ -222,10 +224,23 @@ class MusicalEntity(models.Model):
             similar.lastfm_get_info(element)
             self.similar.append(similar)
 
+def update_fans(sender, instance, **kwargs):
+    if kwargs['action'] != 'post_add' or kwargs['action'] != 'post_remove':
+        return None
+
+    if sender.__name__ == 'PlaylistProfile_fanof_artists':
+        instance.last_fan_datetime = datetime.datetime.now()
+    else:
+        return None
+    
+    instance.save()
+signals.m2m_changed.connect(update_fans)
+
 class Artist(MusicalEntity):
     name = models.CharField(max_length=255, verbose_name=_(u'name'), unique=True, blank=False)
     rank = models.IntegerField(verbose_name=_(u'rank'), null=True, blank=True)
     last_playlist = models.ForeignKey('playlist.Playlist', verbose_name=_(u'last playlist'), null=True, blank=True)
+    last_fan_datetime = models.DateTimeField(null=True, blank=True)
 
     def get_type(self):
         return 'artist'
@@ -390,11 +405,13 @@ class Track(MusicalEntity):
             artist, defaultfilters.slugify(self.name)
         ))
 
-    def lastfm_search(self):
+    def lastfm_search(self, page=1, limit=100):
         klass = self.__class__
-        tree = self.lastfm_get_tree(self.get_type() + '.search')
+        tree = self.lastfm_get_tree(self.get_type() + '.search', page=page, limit=limit)
         
         if tree is None: return None
+
+        self.opensearch_total_results = int(tree.getroot().getchildren()[0].getchildren()[1].text)
 
         for element in tree.findall('results/%smatches/%s' % (self.get_type(), self.get_type() )):
             match = klass(name=element.find('name').text, 

@@ -1,0 +1,18 @@
+{% extends 'site_base.html' %}
+{% load uni_form_tags %}
+
+{% block head_title %}Edit user settings{% endblock %}
+
+{% block body %}
+<h1>User Settings</h1>
+
+<h2>Modify your informations</h2>
+<form action="{{ request.path_info }}" method="post">
+    {% csrf_token %}
+    {{ form|as_uni_form }}
+    <input type="submit" class="button grey"/>
+</form>
+
+<h2>Delete your account</h2>
+<a href="{% url user_delete request.user.username %}" class="button black">Delete my account</a>
+{% endblock %}

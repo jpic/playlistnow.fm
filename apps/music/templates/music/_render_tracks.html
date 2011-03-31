@@ -31,8 +31,10 @@
                  Tweet this track
             </a>
         </li>
-        <li class="rm icon track_modify remove delete parent_level_2 remove_track authenticationRequired right tiptip noconfirm playlist_pk_{{ playlist.pk }}" title="Remove this song from playlist">
+        <li class="rm icon track_modify remove delete parent_level_2 remove_track authenticationRequired tiptip noconfirm playlist_pk_{{ playlist.pk }}" title="Remove this song from playlist">
+            <a class="ui_ignore" onclick="return false">
             Remove
+            </a>
         </li>
     </ul>
 </li>

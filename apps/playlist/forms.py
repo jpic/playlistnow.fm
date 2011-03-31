@@ -8,10 +8,20 @@ class PlaylistAddForm(forms.ModelForm):
         super(PlaylistAddForm, self).__init__(*args, **kwargs)
         self.playlist_categories = PlaylistCategory.objects.filter(parent__isnull=True).select_related(depth=1)
 
+    def clean_name(self):
+        name = self.cleaned_data.get('name', '')
+        if not len(name):
+            raise forms.ValidationError('Please fill the name')
+        if name == 'chilling, working, eating ...':
+            raise forms.ValidationError('Please fill in your own name, this is default name')
+        return name
+
     def clean_tags(self):
         tags = self.cleaned_data.get('tags', '')
         if not len(tags):
             raise forms.ValidationError('Please fill the tags')
+        if tags == 'work, eat, chill...':
+            raise forms.ValidationError('Please fill in your own tags, these are default tags')
         return tags
 
     class Meta:

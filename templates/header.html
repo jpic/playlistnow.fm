@@ -62,7 +62,7 @@
                     <a class="button super blue" href="{% url socialregistration_setup %}">
                        <span>Complete registration process</span>
                     </a>
-                    <a class="button super black" href="{% url acct_logout %}">
+                    <a class="button super black ui_ignore" href="{% url acct_logout %}">
                        <span>Cancel registration process</span>
                     </a>
                 </li>
@@ -95,7 +95,12 @@
                 	</li>
 					<li>
                     <a href="{% url notification_notice_settings %}">
-                      <span>Settings</span>
+                      <span>Email Settings</span>
+                    </a>
+                	</li>
+					<li>
+                    <a href="{% url user_settings request.user.username %}">
+                      <span>User settings</span>
                     </a>
                 	</li>
                 </ul>

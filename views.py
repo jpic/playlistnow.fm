@@ -6,14 +6,14 @@ from django.core import urlresolvers
 from django import http
 from django import shortcuts
 from django import template
-from django.db.models import get_model
+from django.db.models import get_model, Q
 from django.db import connection, transaction
-from django.db.models import Q
 from django.contrib.auth import decorators
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.utils.hashcompat import md5_constructor
 from django.utils.http import urlquote
+from django.contrib import messages
 
 from notification.models import Notice
 from tagging.models import Tag, TaggedItem
@@ -24,6 +24,7 @@ from endless_pagination.decorators import page_template
 from music.views import return_json
 from playlist.models import *
 from music.models import Track, Recommendation
+from forms import *
 
 def make_cache_key(fragment_name, *variables):
     args = md5_constructor(u':'.join([urlquote(var) for var in variables]))
@@ -174,19 +175,11 @@ def user_search_autocomplete(request, qname='query', qs=User.objects.all()):
         'data': [],
     }
 
-    pks_qs = qs.filter(
+    qs = qs.filter(
         Q(username__icontains=q) |
         Q(first_name__icontains=q) |
         Q(last_name__icontains=q)
-    ).values_list('pk', flat=True) # .select_related('playlistprofile').distinct('username')
-
-    # distinct not working
-    # http://stackoverflow.com/questions/3693405/django-distinct-not-behaving
-    pks = []
-    for pk in pks_qs:
-        if pk not in pks:
-            pks.append(pk)
-    qs = User.objects.filter(pk__in=pks).select_related('playlistprofile')
+    ).select_related('playlistprofile').distinct()
 
     for user in qs[:15]:
         response['suggestions'].append(unicode(user.playlistprofile))
@@ -210,6 +203,8 @@ def friends_search_autocomplete(request, qname='query'):
     q = request.GET[qname]
     qs = request.user.playlistprofile.friends()
     qs = qs.filter(Q(first_name__icontains=q) | Q(last_name__icontains=q))
+    qs = qs.distinct('pk')
+    print qs
 
     response = {
         'query': request.GET[qname].encode('utf-8'),
@@ -251,7 +246,7 @@ def user_details(request, slug, tab='activities',
         'tab': tab,
     }
     
-    if 'page' not in request.GET: 
+    if 'page' not in request.GET or tab != 'activities':
         template_name = 'auth/user_detail.html'
 
     user = shortcuts.get_object_or_404(User, username=slug)
@@ -289,12 +284,10 @@ def user_details(request, slug, tab='activities',
             )
         ).order_by('-timestamp')
         context['activities'] = activities
-    elif tab == 'follows':
-        context['follows_qs'] = follows_qs
-    elif tab == 'followers':
-        context['followers_qs'] = followers_qs
-
+    
     # for the sidebar
+    context['follows_qs'] = follows_qs
+    context['followers_qs'] = followers_qs
     context['follows'] = follows_qs._clone()[:20]
     context['followers'] = followers_qs._clone()[:20]
 
@@ -310,6 +303,10 @@ def user_details(request, slug, tab='activities',
 
     context['ctype'] = c
     context.update(extra_context or {})
+
+    if tab != 'activities':
+        del context['page_template']
+
     return shortcuts.render_to_response(template_name, context,
         context_instance=template.RequestContext(request))
 
@@ -319,7 +316,7 @@ def tag_details(request, slug,
 
     context['object'] = shortcuts.get_object_or_404(Tag, name=slug)
     context['object_list'] = TaggedItem.objects.get_by_model(
-        Playlist, context['object'])
+        Playlist, context['object']).order_by('-tracks_count')
 
     context.update(extra_context or {})
     return shortcuts.render_to_response(template_name, context,
@@ -334,6 +331,33 @@ def empty(request,
     if request.user.is_authenticated():
         context['my_playlists'] = Playlist.objects.filter(creation_user=request.user)[:20]
         context['notices'] = Notice.objects.notices_for(request.user, unseen=True)
+
+    context.update(extra_context or {})
+    return shortcuts.render_to_response(template_name, context,
+        context_instance=template.RequestContext(request))
+
+def home(request,
+    template_name='homepage.html', extra_context=None):
+    context = {}
+    
+    context['last_users'] = cache.get('last_users')
+    if context['last_users'] is None:
+        c = ContentType.objects.get_for_model(User)
+        pks = Action.objects.filter(actor_content_type=c).order_by('-timestamp').values_list('actor_object_id', flat=True)
+        final_pks = []
+        for pk in pks:
+            if len(final_pks) == 8:
+                break
+            if not pk in final_pks:
+                final_pks.append(pk)
+        context['last_users'] = User.objects.filter(pk__in=
+            final_pks).distinct().select_related('playlistprofile')
+        cache.set('last_users', list(context['last_users']), 3600*12)
+
+    context['last_artists'] = cache.get('last_artists')
+    if context['last_artists'] is None:
+        context['last_artists'] = Artist.objects.filter(last_fan_datetime__isnull=False).order_by('-last_fan_datetime')[:8]
+        cache.set('last_artists', list(context['last_artists']), 3600*12)
 
     context.update(extra_context or {})
     return shortcuts.render_to_response(template_name, context,
@@ -407,3 +431,50 @@ def me(request,
     context.update(extra_context or {})
     return shortcuts.render_to_response(template_name, context,
         context_instance=template.RequestContext(request))
+
+@decorators.login_required
+def user_settings(request, username, form_class=UserSettingsForm,
+    template_name='user_settings.html', extra_context=None):
+
+    context = {}
+    instance = shortcuts.get_object_or_404(User, username=username)
+    if instance != request.user and not request.user.is_staff:
+        return http.HttpResponseForbidden()
+    
+    if request.method == 'POST':
+        form = form_class(request.POST, instance=instance)
+        if form.is_valid():
+            form.save()
+            messages.add_message(request, messages.INFO, 
+                u'Thanks for updating your settings')
+    else:
+        form = form_class(instance=instance)
+    context['form'] = form
+    context.update(extra_context or {})
+    return shortcuts.render_to_response(template_name, context,
+        context_instance=template.RequestContext(request))
+
+@decorators.login_required
+def user_delete(request, username,
+    template_name='user_delete.html', extra_context=None):
+
+    context = {}
+    instance = shortcuts.get_object_or_404(User, username=username)
+    if instance != request.user and not request.user.is_staff:
+        return http.HttpResponseForbidden()
+
+    root = User.objects.get(username='PlaylistNow.fm')
+   
+    context['status'] = 'toconfirm'
+    if request.method == 'POST':
+        if request.POST.get('confirm', False):
+            instance.playlist_set.all().update(creation_user=root)
+            instance.delete()
+            messages.add_message(request, messages.INFO, 
+                u'Your account was deleted. There is no going back.')
+            context['status'] = 'deleted'
+    
+    context.update(extra_context or {})
+    return shortcuts.render_to_response(template_name, context,
+        context_instance=template.RequestContext(request))
+

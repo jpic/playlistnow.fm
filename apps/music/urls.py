@@ -31,7 +31,7 @@ urlpatterns += patterns('music.views',
         name='music_album_details'
     ),
     url(
-        r'track/(?P<artist>.+)/(?P<name>.+)/$',
+        r'track/(?P<artist>[^/]+)/(?P<name>[^/]+)/$',
         'music_track_details',
         name='music_track_details'
     ),

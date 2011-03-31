@@ -1,6 +1,6 @@
 {% load comments i18n %}
   <div class="comment radius-4">
-<form action="{% comment_form_target %}" method="post" class="authenticationRequired" style="margin-top:2px;">
+<form action="{% comment_form_target %}" method="post" class="authenticationRequired nohashchange" style="margin-top:2px;">
     {% if request.user.is_authenticated %}
     {% csrf_token %}
     {{ form.content_type }}

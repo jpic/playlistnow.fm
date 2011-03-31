@@ -14,6 +14,7 @@
 {% block body %}
 <div class="left">
     <h1><span class="playplaylist_random tiptip" title="Lauch this playlist randomly"></span>{{ object }}</h1>
+   
 </div>
 <div class="right">
         <form action="{% url playlist_fanship object.pk %}" class="authenticationRequired" method="post">
@@ -21,7 +22,7 @@
             <input type="hidden" name="next" value="{{ request.path }}" />
             {% if is_fan %}<button type="submit" class="button super grey tiptip" title="Unbookmark this playlist"><span class="bookmarked">{% trans "Playlist Bookmarked" %}</span></button>
             {% else %}<button type="submit" class="button super grey tiptip" title="Add this playlist in your playlists bookmarked"><span class="bookmark">{% trans "Bookmark this playlist" %}</span></button>{% endif %}
-`        </form>
+        </form>
   
 
 </div>
@@ -39,7 +40,7 @@
 
 
     <form method="get" action="{{ request.path }}">
-        <input class="ad_song_field" type="text" name="term" value="Search by artist name and / or song name" onfocus="if(this.value=='Search by artist name and / or song name'){this.value='';}" id="term"  class="search"/>
+        <input type="text" name="term" value="Search by artist name and / or song name" onfocus="if(this.value=='Search by artist name and / or song name'){this.value='';}" id="term"  class="autocomplete music search ad_song_field just_submit"/>
         <input type="hidden" name="search_artists" value="0" />
         <input type="hidden" name="search_albums" value="0" />
         <input type="submit" class="searched radius-15 violet  button" value="{% trans "Search" %}"/>
@@ -80,10 +81,12 @@
 {# enable right column #}
 {% block page_body_right_class %}block{% endblock %}
 {% block body_right %}
-<h3>{% trans "about" %}</h3>
+<h3>{% trans "about" %} <span class="right"> {% if object.creation_user == request.user and object.name != 'hidden:tiny' %}
+    <a href="{% url playlist_edit object.pk %}">Edit</a>
+    {% endif %}</span></h3>
 	<ul class="data_playlist">
 		<li class="dot">Played: <span class="bold">{{ object.play_counter }}</span> {% trans "times" %}</li>
-		<li class="dot">{% trans "Tracks" %}: <span class="bold">{{ object.tracks.count }}</span></li>
+		<li class="dot">{% trans "Tracks" %}: <span class="bold">{{ user_tracks|length }}</span></li>
 		<li class="dot">Category:
         {% if object.category.parent %}
         <a href="{{ object.category.parent.get_absolute_url }}" 
@@ -97,18 +100,20 @@
 <div class="clear espacetop"></div>
 
 <h3>{% trans "share" %}</h3>
- 	<iframe src="http://www.facebook.com/plugins/like.php?href={{ 'http://pln.yourlabs.org'|urlencode }}{{ object.get_absolute_url|urlencode }}&amp;layout=button_count&amp;show_faces=true&amp;width=94&amp;action=like&amp;colorscheme=light&amp;height=20" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:94px; height:20px;" allowTransparency="true"></iframe>
-	<iframe allowtransparency="true" frameborder="0" scrolling="no"
+<div class="share_playlist">
+<iframe allowtransparency="true" frameborder="0" scrolling="no"
         src="http://platform.twitter.com/widgets/tweet_button.html"
         style="width:98px; height:20px;"></iframe>
-
+ 	<iframe src="http://www.facebook.com/plugins/like.php?href={{ 'http://pln.yourlabs.org'|urlencode }}{{ object.get_absolute_url|urlencode }}&amp;layout=button_count&amp;show_faces=true&amp;width=94&amp;action=like&amp;colorscheme=light&amp;height=20" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:94px; height:20px;" allowTransparency="true"></iframe>
+	
+</div>
 <div class="clear espacetop"></div>
 <h3 class="fan">{{ object.fans.count }} Fans</h3>
 
 <div class="friends" style="line-height: 22px;">
     {% for fan in playlist_fans_slice %}
     <a href="{{ fan.get_absolute_url }}" class="tiptip" title="{{ fan }}">
-        <img src="{{ fan.avatar_url }}" class="avatar left espace verysmall sc" height="25" width="25" />
+        <img src="{{ fan.avatar_url }}" class="avatar verysmall sc" height="25" width="25" />
     </a>
     {% endfor %}
 </div>

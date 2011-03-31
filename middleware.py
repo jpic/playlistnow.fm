@@ -74,6 +74,9 @@ class DynamicHtmlMiddleware(object):
         if location == '/account/login/':
             response['Location'] = response['Location'] + '?modal=1'
 
+        if request.path_info == '/account/logout/':
+            response['Location'] = '/'
+
         if location and location[0] == '/':
             # internal redirect, forward ajax
             if location.find('/?') > -1:

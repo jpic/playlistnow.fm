@@ -5,6 +5,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" >
 {% endblock %}
 <head>
+    {% if request.path_info == '/account/logout/' %}
+    <script type="text/javascript">
+    window.location.href = '/';
+    </script>
+    {% endif %}
     <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
     <!-- core css -->
     <link rel="stylesheet" href="{{ STATIC_URL }}local/reset.css" />
@@ -21,6 +26,7 @@
     var playlist_track_modify = '{% url playlist_track_modify %}';
     var popup_auth = '{% url acct_login %}';
     var music_artist_fanship = '{% url music_artist_fanship %}';
+    var music_recommendation_add = '{% url music_recommendation_add %}';
     var action_delete = '{% url action_delete 0 %}';
     var music_badvideo = '{% url music_badvideo %}';
     var playlist_playtrack = '{% url playlist_playtrack %}';
@@ -136,7 +142,7 @@ function onYouTubePlayerAPIReady() {
     player.ytplayer = new YT.Player('iframeplayer', {
       height: '179',
       width: '178',
-      videoId: 'JW5meKfy3fY',
+      videoId: 'bSRyVzd-09k',
       playerVars: { 'controls': 0 },
       events: {
         'onReady': function() {

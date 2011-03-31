@@ -8,7 +8,6 @@ urlpatterns = patterns('playlist.views',
         r'list/top/$',
         'playlist_list', {
             'qs': Playlist.objects \
-                          .annotate(fans_count=Count('fans')) \
                           .order_by('-fans_count'),
         }, name='playlist_list_top'
     ),
@@ -46,6 +45,11 @@ urlpatterns = patterns('playlist.views',
         r'search/$',
         'playlist_search',
         name='playlist_search'
+    ),
+    url(
+        r'edit/(?P<pk>[0-9]+)/$',
+        'playlist_edit',
+        name='playlist_edit'
     ),
     url(
         r'add/$',

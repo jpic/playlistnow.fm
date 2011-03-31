@@ -5,33 +5,34 @@
 {% load playlist_tags %}
 {% load music_tags %}
 {% load comments %}
-
+{% load cache %}
 {% block head_title %}{% trans "playlists created by" %}: {{ user }}{% endblock %}
 
 {# enable right column #}
 {% block page_body_right_class %}block{% endblock %}
 {% block body_right %}
 
-
-<h3>Follower <a href="{% url user_details_tab user.username 'followers' %}" class="right">see all</a></h3>
+{% cache 3600 sidebar user %}
+<h3>Follower {{ followers_qs.count }} <a href="{% url user_details_tab user.username 'followers' %}" class="right">see all</a></h3>
 
 <div class="friends" style="line-height:22px;">
     {% for user in followers %}
-    <a href="{{ user.playlistprofile.get_absolute_url }}" class="tiptip" title="{{ user.playlistprofile }}"><img src="{{ user.playlistprofile.avatar_url }}" class="avatar left espace verysmall sc"></a>
+    <a href="{{ user.playlistprofile.get_absolute_url }}" class="tiptip" title="{{ user.playlistprofile }}"><img src="{{ user.playlistprofile.avatar_url }}" class="avatar  verysmall sc"></a>
     {% endfor %}
 </div>
 
 <div class="clear espacetop"></div>
 
-<h3>Following 
+<h3>Following  {{ follows_qs.count }}
     <a href="{% url user_details_tab user.username 'follows' %}" class="right">see all</a>
 </h3>
 
 <div class="friends" style="line-height:22px;">
     {% for user in follows %}
-    <a href="{{ user.playlistprofile.get_absolute_url }}" class="tiptip" title="{{ user.playlistprofile }}"><img src="{{ user.playlistprofile.avatar_url }}" class="avatar left espace verysmall sc"></a>
+    <a href="{{ user.playlistprofile.get_absolute_url }}" class="tiptip" title="{{ user.playlistprofile }}"><img src="{{ user.playlistprofile.avatar_url }}" class="avatar  verysmall sc"></a>
     {% endfor %}
 </div>
+{% endcache %}
 
 {% endblock %}
 
@@ -51,16 +52,6 @@
     </div>
 {% endif %}
 
-    <script>
-    $(function () {
-        $("#follow_button, #unfollow_button").click(function () {
-            $.post($(this).attr("href"), {});
-            $(this).parent().find("#follow_button, #unfollow_button").toggle();
-            return false
-        });
-    });
-    </script>
-
 </div>
  
  <div class="profile-picture left">
@@ -69,7 +60,7 @@
 
   <div class="profile-name">
     <h1 class="left" style="margin-right:10px;">{{ user }}</h1> 
-<div class="button super violet tiptip" style="margin-top:-5px;" title="{% if user == request.user %}You are{% else %}User is{% endif %} a {{ user|get_rank_text }}, {{ user|get_bar_width:100 }}% completed. Next level is {{ user|get_next_rank_text }}">{% if user.is_staff %}staff{% else %}{{ user|get_rank_text }}{% endif %}</div>
+<div class="button super violet tiptip" style="margin-top:-5px;" title="{% if user == request.user %}You are{% else %}{{ user }} is{% endif %} a {{ user|get_rank_text }}, {{ user|get_bar_width:100 }}% completed. Next level is {{ user|get_next_rank_text }}">{% if user.is_staff %}staff{% else %}{{ user|get_rank_text }}{% endif %}</div>
 	<div class="profile-info">
 	<ul>
 	<li>
@@ -90,7 +81,7 @@
             {% endif %}
         </li>
         {% if request.user.is_authenticated %}
-        <li><span class="afinities {{ user|affinities_with_class:request.user }}"><span class="bold">{{ user|affinities_with:request.user }} %</span> musical match</span></li>
+        <li><span class="bold afinities {{ user|affinities_with_class:request.user }}">{{ user|affinities_with:request.user }} %</span> musical match</span></li>
         {% endif %}
     </ul>
 
@@ -115,7 +106,7 @@
     </li>
     <li class="last tab {% if tab == 'recommendations' %}selected{% endif %}">
         <a class="" href="{% url user_details_tab user.username 'recommendations' %}">
-        {% trans "recommended songs" %}
+        {% trans "favorite songs" %}
         </a>
     </li>
     <div class="clear"></div>
@@ -128,8 +119,10 @@
 </div>
 {% endif %}
 
-{% if request.user.is_authenticated and request.user != user %}
+{% if request.user.is_authenticated and request.user != user and tab == 'activities' %}
+<div class="wall">
 {% render_comment_form for user %}
+</div>
 <div class="clear espacetop"></div>
 {% endif %}
 
@@ -145,6 +138,7 @@
     {% autopaginate playlists %}
     {% paginate %}
     {% render_playlists playlists %}
+    {% paginate %}
 {% endif %}
 
 {% if tab == 'follows' %}

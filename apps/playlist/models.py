@@ -65,6 +65,21 @@ def new_thanks(sender, instance, created, **kwargs):
     notification.send(recipients, 'new_thanks', context)
 signals.post_save.connect(new_thanks, sender=models.get_model('music', 'Recommendation'))
 
+def user_delete(sender, instance, **kwargs):
+    Action = models.get_model('actstream', 'Action')
+    Follow = models.get_model('actstream', 'Follow')
+    Comment = models.get_model('comments', 'Comment')
+    c = ContentType.objects.get_for_model(User)
+
+    Follow.objects.filter(user=instance).delete()
+    Follow.objects.filter(content_type=c, object_id=instance.pk).delete()
+    Comment.objects.filter(content_type=c, object_pk=instance.pk).delete()
+    Action.objects.filter(actor_content_type=c, actor_object_id=instance.pk).delete()
+    Action.objects.filter(target_content_type=c, target_object_id=instance.pk).delete()
+    Action.objects.filter(action_object_content_type=c, action_object_object_id=instance.pk).delete()
+
+signals.pre_delete.connect(user_delete, sender=models.get_model('auth', 'User'))
+
 def new_recommendation(sender, instance, created, **kwargs):
     if not created:
         return None
@@ -97,6 +112,20 @@ def yourplaylist_bookmarked(sender, instance, **kwargs):
 
         notification.send(recipients, 'yourplaylist_bookmarked', context)
 signals.m2m_changed.connect(yourplaylist_bookmarked)
+
+def update_counts(sender, instance, **kwargs):
+    if kwargs['action'] != 'post_add' and kwargs['action'] != 'post_remove':
+        return None
+
+    if sender.__name__ == 'Playlist_tracks':
+        instance.tracks_count = instance.tracks.count()
+    elif sender.__name__ == 'Playlist_fans':
+        instance.fans_count = instance.fans.count()
+    else:
+        return None
+    
+    instance.save()
+signals.m2m_changed.connect(update_counts)
 
 def new_follower(sender, instance, created, **kwargs):
     if not created:
@@ -390,9 +419,11 @@ class Playlist(models.Model):
     creation_datetime = models.DateTimeField(verbose_name=_(u'published'), auto_now_add=True)
     modification_datetime = models.DateField(verbose_name=_(u'modified'), auto_now=True)
 
-    name = models.CharField(max_length=100, verbose_name=_(u'name'))
-    slug = models.CharField(max_length=100, verbose_name=_(u'slug'))
+    name = models.CharField(max_length=200, verbose_name=_(u'name'))
+    slug = models.CharField(max_length=200, verbose_name=_(u'slug'))
     image = models.ImageField(verbose_name=_(u'icon'), null=True, blank=True, upload_to='playlist_images')
+    tracks_count = models.IntegerField(default=0)
+    fans_count = models.IntegerField(default=0)
 
     unique_autoslug = False
 

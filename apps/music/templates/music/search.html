@@ -12,30 +12,74 @@
 
 
 {% block body %}
-<form action="{% url music_search %}" method="get">
-    <input type="text" name="term" id="term" class="autocomplete music" />
-    <input type="submit" value="{% trans "Search" %}" />
-</form>
+<h2>Search</h2>
+
+  	<form action="{% url music_search %}" method="get">
+    	<div class="create">
+    		<div>
+    		<input type="text" name="term" id="term" class="autocomplete music search-input" />
+    		</div>
+    	</div>	
+    	<input type="submit" value="{% trans "Search" %}" class="button grey" />
+	</form>
 
 {% if artists %}
 <h2>{% trans "artists matching" %} '{{ request.GET.term }}'</h2>
-<ul>
+<ul class="artists">
+
     {% for artist in artists %}
     <li>
         <a href="{{ artist.get_absolute_url }}" title="{% trans "details for artist" %} {{ artist }}">
+    <img src="{{ artist.images.large }}" alt="{{ artist.name }}" class="avatar small"/>
         {{ artist.name }}
         </a>
     </li>
     {% endfor %}
 </ul>
 {% endif %}
-
+<div class="clear"></div>
 {% if tracks %}
 <h2>{% trans "tracks matching" %} '{{ request.GET.term }}'</h2>
 
 {% render_tracks tracks '' request %}
 
 {% endif %}
+
+<div class="pagination">
+{% if next_page %}
+    <a href="{{ request.path_info }}?term={{ request.GET.term|urlencode }}&page={{ next_page }}" class="next button right grey">{% trans "next" %} &rsaquo;&rsaquo;</a>
+{% else %}
+    <span class="disabled next right button grey">{% trans "next" %} &rsaquo;&rsaquo;</span>
+{% endif %}
+
+{% if 1 not in page_list %}
+    <a href="{{ request.path_info }}?term={{ request.GET.term|urlencode }}&page=1" class="page radius-4">
+        1
+    </a>
+    <span class="dott">...</span>
+{% endif %}
+{% for page in page_list %}
+    {% if page == current_page %}
+    <span class="current page radius-4">{{ page }}</span>
+    {% else %}
+    <a href="{{ request.path_info }}?term={{ request.GET.term|urlencode }}&page={{ page }}" class="page radius-4">
+        {{ page }}
+    </a>
+    {% endif %}
+{% endfor %}
+{% if last_page not in page_list %}
+    <span class="dott">...</span>
+    <a href="{{ request.path_info }}?term={{ request.GET.term|urlencode }}&page={{ last_page }}" class="page radius-4">
+        {{ last_page }}
+    </a>
+{% endif %}
+
+{% if previous_page %}
+    <a href="{{ request.path_info }}?term={{ request.GET.term|urlencode }}&page={{ previous_page }}" class="previous button right grey">&lsaquo;&lsaquo; {% trans "previous" %}</a>
+{% else %}
+    <span class="disabled previous right button grey">&lsaquo;&lsaquo; {% trans "previous" %}</span>
+{% endif %}
+</div>
 
 {% endblock %}
 

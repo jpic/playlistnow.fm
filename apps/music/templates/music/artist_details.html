@@ -42,7 +42,7 @@
 
 <div class="friends" style="line-height: 22px;">
     {% for fan in artist_fans_slice %}
-    <a href="{{ fan.get_absolute_url }}" class="tiptip" title="{{ fan }}"><img src="{{ fan.avatar_url }}" class="avatar left espace verysmall sc"></a>
+    <a href="{{ fan.get_absolute_url }}" class="tiptip" title="{{ fan }}"><img src="{{ fan.avatar_url }}" class="avatar espace verysmall sc"></a>
     {% endfor %}
 </div>
 {% endif %}

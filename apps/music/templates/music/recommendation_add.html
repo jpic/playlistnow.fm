@@ -12,20 +12,20 @@
                 Menu
             </li>
             <li class="sidebar_pln sidebar_info">
-                <a style="display: block" class="ui_ignore tab_link tab_id_local">Recommend to friend</a>
+                <a style="display: block" class="ui_ignore tab_group_recommendation tab_link tab_id_local">Recommend to friend</a>
             </li>
             <li class="sidebar_twitter sidebar_info">
-                <a style="display: block" class="ui_ignore tab_link tab_id_twitter">Share on Twitter</a>
+                <a style="display: block" class="ui_ignore tab_group_recommendation tab_link tab_id_twitter">Share on Twitter</a>
             </li>
             <li class="sidebar_facebook sidebar_info">
-                <a style="display: block" class="ui_ignore tab_link tab_id_facebook">Share on Facebook</a>
+                <a style="display: block" class="ui_ignore tab_group_recommendation tab_link tab_id_facebook">Share on Facebook</a>
             </li>
         </ul>
     </div>
 </div>
 
 <div style="width: 200px; margin-left: 210px; padding:15px 0;">
-    <div class="tab_content tab_id_local">
+    <div class="tab_group_recommendation tab_content tab_id_local">
     
         <form class="share closePopup" action="{% url music_recommendation_add %}?track_name={{ track_name|urlencode }}&artist_name={{ artist_name|urlencode }}&track_pk={{ track_pk }}" method="post">
             {{ form.non_field_errors }}
@@ -40,7 +40,7 @@
             <span class="simplemodal-close button black">cancel</span>
         </form>
     </div>
-    <div class="tab_content tab_id_twitter">
+    <div class="tab_group_recommendation tab_content tab_id_twitter">
     <h1>Share on Twitter</h1>
         {% if twitterprofile %}
         <form class="share closePopup" action="{% url music_recommendation_add %}?track_name={{ track_name|urlencode }}&artist_name={{ artist_name|urlencode }}&track_pk={{ track_pk }}&method=twitter" method="post">
@@ -64,7 +64,7 @@
         </p>
         {% endif %}
     </div>
-    <div class="tab_content tab_id_facebook">
+    <div class="tab_group_recommendation tab_content tab_id_facebook">
      <h1>Share on Facebook</h1>
         {% if facebookprofile %}
         <form class="closePopup share" action="{% url music_recommendation_add %}?track_name={{ track_name|urlencode }}&artist_name={{ artist_name|urlencode }}&track_pk={{ track_pk }}&method=facebook" method="post">

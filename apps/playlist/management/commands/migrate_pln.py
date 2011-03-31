@@ -5,6 +5,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django import db
 from django.contrib.auth.models import User
 from actstream.models import follow
+from django.db.models import signals
 
 from jpic.slughifi import slughifi
 from jpic.progressbar import ProgressBar
@@ -23,13 +24,22 @@ class Command(BaseCommand):
         conn = backend.DatabaseWrapper({'NAME': 'pln', 'USER': 'root', 'PASSWORD': '', 'HOST': 'localhost', 'PORT': '3306', 'OPTIONS': ''})
         old = conn.cursor()
 
-        self.sync_users_accounts(old)
+        signals.pre_save.disconnect(yourplaylist_bookmarked)
+        signals.m2m_changed.disconnect(update_counts)
+        signals.post_save.disconnect(new_follower)
+        signals.post_save.disconnect(new_follow)
+        signals.post_save.disconnect(playlist_create_activity)
+        signals.m2m_changed.disconnect(last_playlist)
+        signals.pre_save.disconnect(get_info_if_no_image)
+        signals.m2m_changed.disconnect(update_fans)
+
+        #self.sync_users_accounts(old)
         #self.sync_followers(old)
         #self.sync_categories(old)
         #self.sync_tracks(old)
         #self.sync_playlists(old)
         #self.sync_tiny_playlist(old)
-        #self.sync_artists(old)
+        self.sync_artists(old)
 
     def count_table(self, old, table):
         old.execute('select count(*) from %s' % table)
@@ -108,7 +118,7 @@ class Command(BaseCommand):
             user.first_name = old_user[1]
             user.save()
 
-            user.playlistprofile.points = old_user[5]
+            user.playlistprofile.points = old_user[5] or 0
             if old_user[3]:
                 user.playlistprofile.user_location = old_user[3]
             if old_user[4]:
@@ -213,12 +223,12 @@ class Command(BaseCommand):
 
             playlist.name = old_playlist[1]
             playlist.play_counter = old_playlist[2]
-            playlist.creation_datetime = old_playlist[3] or datetime.now()
+            playlist.creation_datetime = old_playlist[3] or datetime.datetime.now()
             try:
                 playlist.creation_user = User.objects.get(pk=old_playlist[4])
             except User.DoesNotExist:
                 # assign orphin playlists to root
-                playlist.creation_user = User.objects.get(username='root')
+                playlist.creation_user = User.objects.get(username='PlaylistNow.fm')
 
             old.execute('''
 select 

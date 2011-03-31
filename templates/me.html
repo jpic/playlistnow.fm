@@ -6,6 +6,7 @@
 {% block page_body_right_class %}block{% endblock %}
 {% block body_right %}
 <h3>Hi {{ user }}</h3>
+<p>You are a <span class="bold">{{ user|get_rank_text }}</span>, {{ user|get_bar_width:100 }}% completed. Next level is <span class="bold">{{ user|get_next_rank_text }}</span>.</p>
 
 <style type="text/css">
 .exp_bar {
@@ -13,7 +14,7 @@
     background:url({{ STATIC_URL }}images/medals/progbar_1.png) top left repeat-x;
 }
 .exp_bar.container {
-width:185px; height:9px;border:1px solid #616161; background:url({{ STATIC_URL }}images/medals/progbarbg_1.png) top left repeat-x;    -webkit-border-radius: 6px;-moz-border-radius: 6px;border-radius: 6px;
+margin-top:10px;width:185px; height:9px;border:1px solid #616161; background:url({{ STATIC_URL }}images/medals/progbarbg_1.png) top left repeat-x;    -webkit-border-radius: 6px;-moz-border-radius: 6px;border-radius: 6px;
 }
 </style>
 <div class="exp_bar container">
@@ -23,6 +24,7 @@ width:185px; height:9px;border:1px solid #616161; background:url({{ STATIC_URL }
 <div class="clear espacetop"></div>
 {% if who_to_follow %}
 <h3>who to follow ?</h3>
+<div class="sub_title">Suggestions for you</div>
     {% for user in who_to_follow %}
 <div id="whotofollow">
 
@@ -32,24 +34,22 @@ width:185px; height:9px;border:1px solid #616161; background:url({{ STATIC_URL }
 			
 <div class="left whotofollow_profile">
 	<ul>
-		<li><a href="{% url user_details user %}" class="whotofollow_name" title="{{ user.first_name }} {{ user.last_name }}">{{ user }}</a></li>
-		<li><span class="afinities {{ user|affinities_with_class:request.user }}">{{ request.user|affinities_with:user }}% matching</span></li>
-		<li>
-        
-            <a href="{% url actstream_follow content_type_id=ctype.id  object_id=user.id %}" class="ui_ignore follow_button delete parent_level_5 ">
-                <span class="follow">follow</span>
+		<li><a href="{{ user.get_absolute_url }}" class="whotofollow_name" title="{{ user.first_name }} {{ user.last_name }}">{{ user }}</a> &middot;
+		     <a href="{% url actstream_follow content_type_id=ctype.id  object_id=user.id %}" class="ui_ignore follow_button delete parent_level_5 ">
+                <span class="bold">follow</span>
             </a>
             <a href="{% url actstream_unfollow content_type_id=ctype.id  object_id=user.id %}" class="ui_ignore unfollow_button" style="display:none">
-                <span class="unfollow">unfollow</span>
-            </a> 
-        
-        </li>
+                <span class="bold">unfollow</span>
+            </a>
+		</li>
+		<li><span class="afinities {{ user|affinities_with_class:request.user }}" bold>{{ request.user|affinities_with:user }}%</span> matching</span></li>
+	
 	</ul>
 </div>
 
 		</div>  
 
-<div class="left hide"><a href="" title="Hide">x</a></div>
+
 
 <div class="clear"></div>
 	</div>
@@ -66,17 +66,11 @@ width:185px; height:9px;border:1px solid #616161; background:url({{ STATIC_URL }
 
 {% endblock %}
 {% block body %}
-<h1>friend feed</h1>
+<h1>Activity from your friends</h1>
+
 <div class="list">
 
     {% include 'auth/user_activities.html' %}  
-    
-    <script type="text/javascript">
-    $('.comment_form_toggle').click(function(e) {
-        e.preventDefault();
-        $(this).parent().find('.comment_form_contents').toggle('slow');
-    });
-    </script>
 </div>
 
 {% endblock %}

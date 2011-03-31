@@ -15,10 +15,45 @@ handler500 = "pinax.views.server_error"
 urlpatterns = patterns("",
     url(
         r'^$',
-        'music.views.music_search', {
+        views.home, {
             'template_name': 'homepage.html',
         },
         name='music_search'
+    ),
+    url(
+        r'^terms/$',
+        direct_to_template, {
+            'template': 'terms.html',
+        },
+        name='terms'
+    ),
+    url(
+        r'^privacy/$',
+        direct_to_template, {
+            'template': 'privacy.html',
+        },
+        name='privacy'
+    ),
+    url(
+        r'^advertise/$',
+        direct_to_template, {
+            'template': 'advertise.html',
+        },
+        name='advertise'
+    ),
+    url(
+        r'^contact/$',
+        direct_to_template, {
+            'template': 'contact.html',
+        },
+        name='contact'
+    ),
+    url(
+        r'^credits/$',
+        direct_to_template, {
+            'template': 'credits.html',
+        },
+        name='credits'
     ),
 # deprecating
 #    url(
@@ -55,6 +90,17 @@ urlpatterns = patterns("",
     url(r'^registration/', include(registration.urls)),
     url(r'^unfollow/(?P<content_type_id>\d+)/(?P<object_id>\d+)/$',
         'actstream.views.follow_unfollow', {'do_follow':False}, 'actstream_unfollow'),
+    url(
+        r'^delete/(?P<username>[^/]+)/$', 
+        views.user_delete,
+        name='user_delete'
+    ),
+
+    url(
+        r'^settings/(?P<username>[^/]+)/$', 
+        views.user_settings,
+        name='user_settings'
+    ),
     url(
         r'^me/$', 
         views.me,

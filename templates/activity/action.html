@@ -8,7 +8,7 @@
 {% if activity.open %}
 <div class="lineFeed">
     <div class="lineFeedAvatar">
-        <a href="{% url user_details activity.actor.username %}" title="{% trans "details of user" %} {{ activity.actor }}">
+        <a href="{{ activity.actor.get_absolute_url }}" title="{% trans "details of user" %} {{ activity.actor }}">
             <img src="{{ activity.actor.playlistprofile.avatar_url }}" class="avatar small left espace" />
         </a>
     </div>
@@ -17,7 +17,7 @@
 
         <div class="lineFeedContentWhat">
 {% if activity.verb == 'recommends' %}
-    <a href="{% url user_details activity.actor.username %}" title="{% trans "see details of user" %} {{ activity.actor }}" class="bold">
+    <a href="{{ activity.actor.get_absolute_url }}" title="{% trans "see details of user" %} {{ activity.actor }}" class="bold">
         {{ activity.actor }}
     </a>
     recommends this track to
@@ -30,7 +30,7 @@
 {% endif %}
 {% if activity.verb == 'added track to playlist' %}
     {% if activity.open %}
-        <a href="{% url user_details activity.actor.username %}" title="{% trans "see details of user" %} {{ activity.actor }}" class="bold">
+        <a href="{{ activity.actor.get_absolute_url }}" title="{% trans "see details of user" %} {{ activity.actor }}" class="bold">
             {{ activity.actor }}
         </a>
         added to playlist
@@ -49,7 +49,7 @@
 {% endif %}
 {% if activity.verb == 'becomes fan of artist' %}
     {% if activity.open %}
-        <a href="{% url user_details activity.actor.username %}" title="{% trans "see details of user" %} {{ activity.actor }}" class="bold">
+        <a href="{{ activity.actor.get_absolute_url }}" title="{% trans "see details of user" %} {{ activity.actor }}" class="bold">
             {{ activity.actor }}
         </a>
         {% if activity.close %}
@@ -65,7 +65,7 @@
 {% endif %}
 {% if activity.verb == 'liked track' %}
     {% if activity.open %}
-        <a href="{% url user_details activity.actor.username %}" title="{% trans "see details of user" %} {{ activity.actor }}" class="bold">
+        <a href="{{ activity.actor.get_absolute_url }}" title="{% trans "see details of user" %} {{ activity.actor }}" class="bold">
             {{ activity.actor }}
         </a>
         {% if activity.close %}
@@ -83,7 +83,7 @@
     {% endif %}
 {% endif %}
 {% if activity.verb == 'started following' %}
-    <a href="{% url user_details activity.actor.username %}" title="{% trans "see details of user" %} {{ activity.actor }}" class="bold">
+    <a href="{{ activity.actor.get_absolute_url }}" title="{% trans "see details of user" %} {{ activity.actor }}" class="bold">
         {{ activity.actor }}
     </a>
     {{ activity.verb }}
@@ -93,7 +93,7 @@
     </a>
 {% endif %}
 {% if activity.verb == 'bookmarks playlist' %}
-    <a href="{% url user_details activity.actor.username %}" title="{% trans "see details of user" %} {{ activity.actor }}" class="bold">
+    <a href="{{ activity.actor.get_absolute_url }}" title="{% trans "see details of user" %} {{ activity.actor }}" class="bold">
         {{ activity.actor }}
     </a>
     {{ activity.verb }}
@@ -102,7 +102,7 @@
     </a>
 {% endif %}
 {% if activity.verb == 'created playlist' %}
-    <a href="{% url user_details activity.actor.username %}" title="{% trans "see details of user" %} {{ activity.actor }}" class="bold">
+    <a href="{{ activity.actor.get_absolute_url }}" title="{% trans "see details of user" %} {{ activity.actor }}" class="bold">
         {{ activity.actor }}
     </a>
     {{ activity.verb }}
@@ -134,16 +134,17 @@
         {% get_comment_count for activity.earliest_of_group as comment_count %}
         <div class="lineFeedContentWhen"> 
             {{ action.timestamp|timesince }} ago -
-            
+            {% if request.user.is_authenticated %}
             <a class="authenticationRequired ui_ignore unlike" href="{% url action_unlike activity.earliest_of_group.pk %}" style="{% if action not in request.user.playlistprofile.fanof_actions.all %}display: none{% endif %}">Unlike</a>
             <a class="ui_ignore like authenticationRequired" href="{% url action_like activity.earliest_of_group.pk %}" style="{% if action in request.user.playlistprofile.fanof_actions.all %}display: none{% endif %}">I Like</a>
+            {% endif %}
             {% if activity.verb == 'recommends' and request.user == activity.action_object.target and not activity.action_object.thanks %}
             <span>
             - <a class="delete parent" href="{% url music_recommendation_thank activity.action_object.pk %}">Thank</a>
             </span>
             {% endif %}
             - 
-            <span class="comment_form_toggle" class="link">Comment (<span class="bold">{{ comment_count }}</span>)</span>
+            <span class="comment_form_toggle link">Comment (<span class="bold">{{ comment_count }}</span>)</span>
 
             <div class="before_likes" style="display:none;"></div>
             {% if action.fans.count %}
@@ -151,7 +152,9 @@
             <div class="likes">
             <img src="{{ STATIC_URL }}images/not_newthumbup.png">
                 {% for fan in action.fans.all %}
-                <a href="{% url user_details fan.user.username %}" class="{% if fan.user == request.user %}me{% endif %}">{{ fan.user }} </a> likes this.
+                <span class="{% if fan == request.user.playlistprofile %}me{% endif %}">
+                    <a href="{{ fan.get_absolute_url }}">{{ fan }} </a> likes this.
+                </span>
                 {% endfor %}
             </div>
             {% endif %}

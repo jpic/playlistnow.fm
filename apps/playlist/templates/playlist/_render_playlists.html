@@ -2,15 +2,15 @@
 {% for object in object_list %}
 <div class="playlist line play radius-4">
     <div class="icon" class="play" style="margin:4px 10px 0 10px;">
-        <img src="{{ object.creation_user.playlistprofile.avatar_url }}" alt="{% trans "play" %} {{ object }}"  class="play avatar" />
+        <img src="{{ object.creation_user.playlistprofile.avatar_url }}" alt="{% trans "play" %} {{ object }}"  class="play avatar medium_small" />
     </div>
 
     <div class="description play"> 
-        <div style="padding-bottom:1px;">
+        <div style="padding-bottom:1px;margin-top:2px;">
             <span class="dTitle play">
                 <a href="{{ object.get_absolute_url }}" title="{% trans "play" %} {{ object }}" class="playlist link">{{ object }}</a>
             </span>
-            <span class="dValue small_font play">({{ object.tracks.count }})</span>
+            <span class="dValue small_font play">({{ object.tracks_count }})</span>
        </div>
 
         {% if object.category %}

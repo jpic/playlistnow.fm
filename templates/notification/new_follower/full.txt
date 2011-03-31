@@ -1,8 +1,11 @@
-{{ follow.user }} now follows your
-activities on {{ site.name }}!
+Hi,
 
-[This is a placeholder for: a text to persuade the recipient to follow the
-user in question]
+{{ follow.user }} is now following you
+on {{ site.name }}.
 
-Visit his profile and follow him if you want on:
+
+Check out his profile and follow him if you want on:
 http://{{ site.domain }}{{ follow.user.get_absolute_url }}
+
+Thanks,
+The Playlistnow Team
