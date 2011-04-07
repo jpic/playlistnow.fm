@@ -178,3 +178,4 @@ function onYouTubePlayerAPIReady() {
 </body>
 </html>
 {% endif %}
+{% if request.ajax %}<div style="display:none"><div class="currentUrl">{{ request.get_full_path }}</div></div>{% endif %}

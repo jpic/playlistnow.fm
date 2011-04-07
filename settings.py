@@ -191,3 +191,5 @@ try:
     from local_settings import *
 except ImportError:
     pass
+
+ROOT_USERID=1

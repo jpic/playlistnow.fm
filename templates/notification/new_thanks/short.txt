@@ -1,1 +1,1 @@
-{{ recommendation.source }} recommends {{ recommendation.track }} by {{ recommendation.track.artist }} to You !
+{{ recommendation.target }} thanks you for recommending {{ recommendation.track }} by {{ recommendation.track.artist }} to You !

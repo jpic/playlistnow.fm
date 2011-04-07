@@ -1,6 +1,7 @@
 from operator import or_
 from datetime import date, timedelta
 
+from django.conf import settings
 from django.core.cache import cache
 from django.core import urlresolvers
 from django import http
@@ -46,6 +47,14 @@ def group_activities(activities):
     group_verbs = ('liked track', 'added track to playlist', 'becomes fan of artist')
     for activity in activities:
         if previous and activity.verb == previous.verb and activity.verb in group_verbs and activity.actor == previous.actor:
+            if activity.verb == 'added track to playlist' and activity.target != previous.target:
+                do_group = False
+            else:
+                do_group = True
+        else:
+            do_group = False
+
+        if do_group:
             # this activity groups with the previous one
             group.append(activity)
         else:
@@ -463,7 +472,7 @@ def user_delete(request, username,
     if instance != request.user and not request.user.is_staff:
         return http.HttpResponseForbidden()
 
-    root = User.objects.get(username='PlaylistNow.fm')
+    root = User.objects.get(pk=settings.ROOT_USERID)
    
     context['status'] = 'toconfirm'
     if request.method == 'POST':

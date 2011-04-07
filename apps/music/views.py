@@ -56,12 +56,12 @@ def music_recommendation_thank(request, id):
     r.source.playlistprofile.save()
 
     r.thanks = True
-    r.thank_date = datetime.now()
+    r.thank_date = datetime.datetime.now()
     r.save()
     
     action.send(request.user, verb='thanks recommendation', action_object=r)
 
-    return http.HttpResponse('you thanked')
+    return http.HttpResponse('thanks for thanking <a href="%s">%s</a> for his recommendation' % (r.source.get_absolute_url(), r.source), status=201)
 
 @decorators.login_required
 def music_recommendation_add(request, form_class=RecommendationForm,
@@ -87,7 +87,7 @@ def music_recommendation_add(request, form_class=RecommendationForm,
                 context['track'].get_absolute_url(),
                 unicode(context['track']),
             )
-            return http.HttpResponse(msg)
+            return http.HttpResponse(msg, status=201)
         elif request.GET.get('method', False) == 'twitter':
             session_key = 'oauth_%s_access_token' % get_token_prefix(settings.TWITTER_REQUEST_TOKEN_URL)
             if session_key in request.session.keys():
@@ -118,7 +118,7 @@ def music_recommendation_add(request, form_class=RecommendationForm,
                 context['track'].get_absolute_url(),
                 unicode(context['track']),
             )
-            return http.HttpResponse(msg)
+            return http.HttpResponse(msg, status=201)
         else:
             form = form_class(request.POST, instance=Recommendation(source=request.user, track=context['track']))
             if form.is_valid():
@@ -132,7 +132,7 @@ def music_recommendation_add(request, form_class=RecommendationForm,
                     unicode(recommendation.target.first_name),
                     unicode(recommendation.target.last_name),
                 )
-                return http.HttpResponse(msg)
+                return http.HttpResponse(msg, status=201)
             else:
                 print form.errors
     else:
@@ -309,6 +309,8 @@ def music_search_autocomplete(request, qname='query'):
     for doc in upstream_response['response']['docs']:
         if 'image' in doc.keys():
             doc['html'] = '<img src="http://userserve-ak.last.fm/serve/34s/%s" /> ' % doc['image']
+        else:
+            doc['html'] = ''
         if 'track' in doc.keys():
             doc['url'] = urlresolvers.reverse('music_track_details', args=(
                 defaultfilters.slugify(doc['artist']),
@@ -323,7 +325,7 @@ def music_search_autocomplete(request, qname='query'):
             continue
         elif 'artist' in doc.keys():
             doc['url'] =  urlresolvers.reverse('music_artist_details', args=(
-                defaultfilters.slugify(doc['artist']),
+                defaultfilters.slugify(doc['artist'].replace('&', 'and')),
             ))
             doc['html'] += doc['artist']
             suggestion = doc['artist']

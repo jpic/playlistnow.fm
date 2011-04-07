@@ -63,7 +63,9 @@
             {% endif %}
             <input type="hidden" name="action" value="{% if is_fan %}remove{% else %}add{% endif %}" />
             <input type="hidden" name="next" value="{{ request.path }}" />
-            <input type="submit" class="button super grey" value="{% if is_fan %}{% trans "stop being fan" %}{% else %}become fan{% endif %}" />
+
+            {% if is_fan %}<button type="submit" class="button super grey tiptip" title="Quit artist fanclub"><span class="bookmarked">{% trans "You are fan" %}</span></button>
+            {% else %}<button type="submit" class="button super grey tiptip" title="Become fan, add this artist to your favorites"><span class="bookmark">{% trans "Become fan" %}</span></button>{% endif %}
         </form>
     </div>
     </div>

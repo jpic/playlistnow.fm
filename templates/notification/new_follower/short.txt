@@ -1,1 +1,1 @@
-You have a new follower: {{ follow.user }}!
+{{ follow.user }} now follows you!

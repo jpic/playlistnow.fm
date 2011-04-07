@@ -3,8 +3,8 @@
         "pk": 1, 
         "model": "sites.site", 
         "fields": {
-            "domain": "example.com", 
-            "name": "Example Site"
+            "domain": "pln.yourlabs.org",
+            "name": "PLN beta 3 in preparation"
         }
     }
 ]

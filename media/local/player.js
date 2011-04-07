@@ -493,7 +493,7 @@ var player = {
         });
         $('.track_modify').live('click', function(e) {
             if (!user.is_authenticated) {
-                return false;
+                return ui.authenticationPopup();
             }
             e.preventDefault();
             var track_line = $(this);
@@ -538,7 +538,7 @@ var player = {
                     if ($('#playlist_pk').length && $('#playlist_pk').html() == player.tiny_playlist.object.pk) {
                         $(this).parent().fadeOut();
                     }
-                    if (track.name == player.state.currentTrack.name) {
+                    if (player.state.currentTrack != undefined && track.name == player.state.currentTrack.name) {
                         $('#right_action a.fav').css('backgroundPosition', 'left top');
                         $('#right_action a.fav').removeClass('remove_track');
                         $('#right_action a.fav').addClass('add_track');
@@ -548,7 +548,7 @@ var player = {
                     $(this).removeClass('add_track');
                     $(this).addClass('remove_track');
                     player.tiny_playlist.tracks.push(track);
-                    if (track.name == player.state.currentTrack.name) {
+                    if (player.state.currentTrack != undefined && track.name == player.state.currentTrack.name) {
                         $('#right_action a.fav').css('backgroundPosition', 'left bottom');
                         $('#right_action a.fav').addClass('remove_track');
                         $('#right_action a.fav').removeClass('add_track');

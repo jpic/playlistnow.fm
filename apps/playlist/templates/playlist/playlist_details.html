@@ -17,13 +17,15 @@
    
 </div>
 <div class="right">
+   
+{% if request.user != object.creation_user and not object.favorite_of.count %}
         <form action="{% url playlist_fanship object.pk %}" class="authenticationRequired" method="post">
             <input type="hidden" name="action" value="{% if is_fan %}remove{% else %}add{% endif %}" />
             <input type="hidden" name="next" value="{{ request.path }}" />
             {% if is_fan %}<button type="submit" class="button super grey tiptip" title="Unbookmark this playlist"><span class="bookmarked">{% trans "Playlist Bookmarked" %}</span></button>
             {% else %}<button type="submit" class="button super grey tiptip" title="Add this playlist in your playlists bookmarked"><span class="bookmark">{% trans "Bookmark this playlist" %}</span></button>{% endif %}
         </form>
-  
+{% endif %}  
 
 </div>
 
@@ -87,6 +89,7 @@
 	<ul class="data_playlist">
 		<li class="dot">Played: <span class="bold">{{ object.play_counter }}</span> {% trans "times" %}</li>
 		<li class="dot">{% trans "Tracks" %}: <span class="bold">{{ user_tracks|length }}</span></li>
+    {% if request.user != object.creation_user and not object.favorite_of.count %}
 		<li class="dot">Category:
         {% if object.category.parent %}
         <a href="{{ object.category.parent.get_absolute_url }}" 
@@ -95,7 +98,8 @@
         {% endif %}
         <a href="{{ object.category.get_absolute_url }}" title="{% trans "playlists for object.category" %} {{ object.category }}">{{ object.category }}</a></li>
 		<li class="dot">Tags: {% show_tags_for object %}</li>
-	</ul>
+	{% endif %}
+    </ul>
 
 <div class="clear espacetop"></div>
 

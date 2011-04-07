@@ -22,18 +22,27 @@ def get_info_if_no_image(sender, instance, **kwargs):
     if not isinstance(instance, MusicalEntity):
         return None
     
+    if not instance.name:
+        return None
+
     if not instance.image_medium:
         instance.lastfm_get_info()
 signals.pre_save.connect(get_info_if_no_image)
 
 def save_if_fake_track(track):
     if not track.artist.pk:
-        track.artist.save()
-        # set track.artist_id
-        track.artist = track.artist
+        try:
+            track.artist = Artist.objects.get(name=track.artist.name)
+        except Artist.DoesNotExist:
+            track.artist.save()
+            # set track.artist_id
+            track.artist = track.artist
 
     if not track.pk:
-        track.save()
+        try:
+            track = Track.objects.get(artist=track.artist, name=track.name)
+        except Track.DoesNotExist:
+            track.save()
 
     return track
 
@@ -114,7 +123,7 @@ class MusicalEntity(models.Model):
 
     def get_absolute_url(self):
         return urlresolvers.reverse('music_%s_details' % self.get_type(), 
-            args=(defaultfilters.slugify(self.name),))
+            args=(defaultfilters.slugify(self.name.replace('&', 'and')),))
 
     def __unicode__(self):
         return self.name
@@ -225,7 +234,7 @@ class MusicalEntity(models.Model):
             self.similar.append(similar)
 
 def update_fans(sender, instance, **kwargs):
-    if kwargs['action'] != 'post_add' or kwargs['action'] != 'post_remove':
+    if kwargs['action'] != 'post_add':
         return None
 
     if sender.__name__ == 'PlaylistProfile_fanof_artists':
@@ -341,6 +350,9 @@ class Track(MusicalEntity):
     youtube_id = models.CharField(max_length=11, null=True, blank=True)
     youtube_bugs = models.IntegerField(default=0)
 
+    class Meta:
+        unique_together = (('artist', 'name'),)
+
     def to_dict(self, with_artist=True, with_youtube_best_id=True):
         data = {
             'name': self.name,
@@ -398,11 +410,11 @@ class Track(MusicalEntity):
             artist = self.artist.name
         else:
             artist = self.artist
-
-        artist = defaultfilters.slugify(artist)
+        
+        artist = defaultfilters.slugify(artist.replace('&', 'and'))
 
         return urlresolvers.reverse('music_track_details', args=(
-            artist, defaultfilters.slugify(self.name)
+            artist, defaultfilters.slugify(self.name.replace('&', 'and'))
         ))
 
     def lastfm_search(self, page=1, limit=100):

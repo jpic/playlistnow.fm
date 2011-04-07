@@ -14,7 +14,7 @@
 			<li class="dir">Activities
 				<ul>
 					<li class="first"><a href="{% url me %}" title="Friend Feed">Friends Activities</a></li>
-					<li><a href="{% url notification_notices %}" title="you have {{ notices.count }} new notifications">Notifications <span class="bold">({{ notices.count }})</span></a></li>
+					<li><a href="{% url notification_notices %}" title="you have {{ notices.count }} new notifications">Notifications <span class="bold notices_count">({{ notices.count }})</span></a></li>
 				</ul>
 		</ul>
     </li>  

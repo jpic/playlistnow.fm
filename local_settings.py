@@ -98,14 +98,14 @@ INTERNAL_IPS = [
 
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-        'LOCATION': '/var/tmp/django_cache',
+        #'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        #'LOCATION': '/var/tmp/django_cache',
         #'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
         #'LOCATION': 'unique-snowflake',
-        #'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
     }
 }
-CACHE_BACKEND = 'file:///var/tmp/django_cache'
+#CACHE_BACKEND = 'file:///var/tmp/django_cache'
 
 
 OPENID_REDIRECT_NEXT = '/accounts/openid/done/'

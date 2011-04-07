@@ -36,6 +36,10 @@ def new_user_unicode(self):
     return '%s %s' % (self.first_name, self.last_name)
 User.__unicode__ = new_user_unicode
 
+def new_user_get_absolute_url(self):
+    return urlresolvers.reverse('user_details', args=(self.username,))
+User.get_absolute_url = new_user_get_absolute_url
+
 def twitter_url(sender, instance, **kwargs):
     if instance.nick:
         instance.url = 'http://twitter.com/%s' % instance.nick
@@ -376,7 +380,7 @@ class PlaylistCategory(models.Model):
         try:
             return urlresolvers.reverse('playlist_category_details_with_parent', 
                 args=(self.parent.slug, self.slug,))
-        except PlaylistCategory.DoesNotExist:
+        except:
             return urlresolvers.reverse('playlist_category_details', 
                 args=(self.slug,))
 

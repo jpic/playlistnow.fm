@@ -69,7 +69,7 @@
         {% if facebookprofile %}
         <form class="closePopup share" action="{% url music_recommendation_add %}?track_name={{ track_name|urlencode }}&artist_name={{ artist_name|urlencode }}&track_pk={{ track_pk }}&method=facebook" method="post">
             {% csrf_token %}
-            <textarea name="message">{% if track.artist.name %}{{ track.artist.name }} - {% endif %}{{ track.name }} {{ twitterurl }}</textarea>
+            <textarea name="message">{% if track.artist.name %}{{ track.artist.name }} - {% endif %}{{ track.name }} {{ facebookurl }}</textarea>
              <input value="share" type="submit" class="button blue"/>
             <span class="simplemodal-close button black">cancel</span>
         </form>

@@ -95,6 +95,11 @@ def playlist_track_modify(request,
         }
     }
 
+    if context['track']['artist']['name']:
+        context['track']['artist']['name'] = context['track']['artist']['name'].replace('&amp;', 'and')
+    if context['track']['name']:
+        context['track']['name'] = context['track']['name'].replace('&amp;', 'and')
+
     if context['playlist']['pk']:
         try:
             context['playlist'] = Playlist.objects.all_with_hidden().get(pk=context['playlist']['pk'])
@@ -189,7 +194,8 @@ def playlist_track_modify(request,
                     context['playlist'].get_absolute_url(),
                     unicode(context['playlist']),
                 )
-            messages.add_message(request, messages.INFO, msg)
+            #messages.add_message(request, messages.INFO, msg)
+            return http.HttpResponse(msg, status=201)
         #except Exception:
             #context['status'] = 'error'
             #messages.add_message(request, messages.INFO, msg)

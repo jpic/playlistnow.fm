@@ -68,26 +68,6 @@ var ui = {
             } else {
                 $('.simplemodal-data .tab_link.tab_id_' + m[1]).trigger('click');
             }
-
-            $('#simplemodal-data form.closePopup').submit(function(e) {
-                e.preventDefault();
-                $.modal.close();
-
-                $.ajax({
-                    url: $(this).attr('action'),
-                    data: $(this).serialize(),
-                    type: $(this).attr('method'),
-                    dataType: 'html',
-                    success: function(html, textStatus, request) {
-                        var htmlnotifications = $(html).find('#user_notifications');
-                        if (htmlnotifications.html()) {
-                            $('#user_notifications').append(htmlnotifications.html());
-                        } else {
-                            $('#user_notifications').append('<li>' + html + '</li>');
-                        }
-                    },
-                });
-            });
         });
 
         $(document).bind('signalPopupOpen', ui.setupFacebook);
@@ -160,7 +140,7 @@ var ui = {
                                 }, 3000);
                             }
                         }
-                        $('#user_notifications').append($(html).find('#user_notifications').html());
+                        ui.notifyUser(html);
                         $(document).trigger('signalPlaylistUpdate', [data.playlist_pk]);
                     },
                 });
@@ -228,6 +208,11 @@ var ui = {
         if (!ui.settings['ajaxEnable']) {
             return undefined;
         }
+
+        $('.reset_notices_count').live('click', function(e) {
+            $('.notices_count').html('(0)');
+            $('.notices_count').removeClass('bold');
+        });
 
         $('.toggle.tools').live('click', function(e) {
             var li = $(this).parent();
@@ -443,19 +428,16 @@ var ui = {
     },
     'setupForms': function() {
         if (ui.settings['ajaxEnable'] && $('form').length) {
+            $('#simplemodal-data form.closePopup').live('submit', function(e) {
+                $.modal.close();
+            });
+
             $('form:not(.ui_ignore)').live('submit', function(e) {
                 e.preventDefault();
-
 
                 if ($(this).hasClass('authenticationRequired') && !user.is_authenticated) {
                     ui.authenticationPopup();
                     return false;
-                }
-
-                if ($(this).hasClass('nohashchange')) {
-                    var hashchange = false;
-                } else {
-                    var hashchange = true;
                 }
 
                 var url = $(this).attr('action');
@@ -484,30 +466,32 @@ var ui = {
                         dataType: 'html',
                         data: $(this).serialize(),
                         type: $(this).attr('method'),
-                        success: function(html, textStatus, request) {
-                            if (url == comment_form_target) {
-                                var html = []
-                                html.push('<div class="comment">');
-                                html.push('<a href="/me">');
-                                html.push(form.find('img.avatar').parent().html());
-                                html.push('</a>');
-                                html.push('<a href="/me">You</a> - right now');
-                                html.push('<p>');
-                                html.push(form.find('textarea').val());
-                                html.push('</p>');
-                                html.push('</div>');
-                                html = html.join('');
-                                form.find('textarea').val('');
-                                write(html);
-                            } else {
-                                ui.previousUrl = ui.currentUrl;
-                                ui.currentUrl = url;
-                                if (hashchange) {
-                                    window.location.hash = url;
+                        statusCode: {
+                            201: function(html, textStatus, request) {
+                                ui.notifyUser(html);
+                            },
+                            200: function(html, textStatus, request) {
+                                if (url == comment_form_target) {
+                                    var html = []
+                                    html.push('<div class="comment">');
+                                    html.push('<a href="/me">');
+                                    html.push(form.find('img.avatar').parent().html());
+                                    html.push('</a>');
+                                    html.push('<a href="/me">You</a> - right now');
+                                    html.push('<p>');
+                                    html.push(form.find('textarea').val());
+                                    html.push('</p>');
+                                    html.push('</div>');
+                                    html = html.join('');
+                                    form.find('textarea').val('');
+                                    write(html);
+                                } else {
+                                    ui.previousUrl = ui.currentUrl;
+                                    ui.currentUrl = url;
+                                    $('#page_body_container').html(html);
+                                    $(document).trigger('signalPageUpdate', [url]);
                                 }
-                                $('#page_body_container').html(html);
-                                $(document).trigger('signalPageUpdate', [url]);
-                            }
+                            },
                         },
                     });
                 }
@@ -587,7 +571,7 @@ var ui = {
             if (ui.currentRequest == req && ui.previousUrl != undefined) {
                 ui.currentUrl = ui.previousUrl;
             }
-            ui.notifyUser('Sorry but your request failed. Our techies have been notified by mail and will take care of it');
+            ui.notifyUser('Sorry but your request failed or you aborted it. In the first case, our techie have been notified by mail and will take care of it');
         }
     },
     'authenticationPopup': function(url) {
@@ -638,15 +622,6 @@ var ui = {
 }
 
 $(document).ready(function() {
-    var urls = [
-        //{
-            //'urlmatch': /^\/action/,
-            //'success': function(html, textStatus, request) {
-                //$.history.load(ui.currentUrl);
-            //},
-        //},
-    ];
-
     if (ui.settings.ajaxEnable) {
         $.getScript(STATIC_URL + "jquery.history.js", function() {
             $.history.init(function(hash) {
@@ -654,29 +629,37 @@ $(document).ready(function() {
                     return true;
                 }
 
+                var loadPage = function(html, textStatus, request) {
+                    $('#page_body_container').html(html);
+                    ui.previousUrl = ui.currentUrl;
+                    
+                    var currentUrl = $('div.currentUrl');
+                    if (currentUrl && currentUrl.length) {
+                        ui.currentUrl = currentUrl.text();
+                    } else {
+                        ui.currentUrl = hash;
+                    }
+                    
+                    $(document).trigger('signalPageUpdate', [hash]);
+                }
+                var showNotice = function(html, textStatus, request) {
+                    ui.notifyUser(html);
+                }
+
                 $.ajax({
                     url: hash,
                     dataType: 'html',
-                    success: function(html, textStatus, request) {
-                        for(var i in urls) {
-                            if(hash.match(urls[i]['urlmatch'])) {
-                                var cb=urls[i]['success'];
-                                cb(html, textStatus, request);
-                                return true;
-                            }
-                        }
-
-                        $('#page_body_container').html(html);
-                        ui.previousUrl = ui.currentUrl;
-                        ui.currentUrl = hash;
-                        $(document).trigger('signalPageUpdate', [hash]);
+                    statusCode: {
+                        201: showNotice,
+                        200: loadPage,
+                        304: loadPage,
                     },
                 });
     
                 if (!ui.ready) {
                     ui.init();
                 }
-            }, { unescape: ",/?=" });
+            }, { unescape: ",/?= " });
         });
     }
 });

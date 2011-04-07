@@ -30,7 +30,7 @@
     {% trans "Do you want to" %} {% trans action %} {{ track.name }} {% if track.artist.name %} {% trans "by" %} {{ track.artist.name }}{% endif %} {% trans "to" %} {{ playlist }} ?
 </p>
 {% endif %}
-<form action="{{ request.path }}" method="post" class="closePopup">
+<form action="{{ request.path }}" method="post" class="closePopup 201_is_notification">
 	
     {% if playlist.pk %}
     <input type="hidden" name="playlist_pk" value="{{ playlist.pk }}" />

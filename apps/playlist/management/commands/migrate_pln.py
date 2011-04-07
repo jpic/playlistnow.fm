@@ -6,6 +6,7 @@ from django import db
 from django.contrib.auth.models import User
 from actstream.models import follow
 from django.db.models import signals
+from django.conf import settings
 
 from jpic.slughifi import slughifi
 from jpic.progressbar import ProgressBar
@@ -23,13 +24,14 @@ class Command(BaseCommand):
         backend = db.load_backend('mysql')
         conn = backend.DatabaseWrapper({'NAME': 'pln', 'USER': 'root', 'PASSWORD': '', 'HOST': 'localhost', 'PORT': '3306', 'OPTIONS': ''})
         old = conn.cursor()
+        self.old_root_ids = (175319, 57488)
 
         signals.pre_save.disconnect(yourplaylist_bookmarked)
         signals.m2m_changed.disconnect(update_counts)
-        signals.post_save.disconnect(new_follower)
-        signals.post_save.disconnect(new_follow)
-        signals.post_save.disconnect(playlist_create_activity)
-        signals.m2m_changed.disconnect(last_playlist)
+        signals.post_save.disconnect(new_follower, sender=Follow)
+        signals.post_save.disconnect(new_follow, sender=Follow)
+        signals.post_save.disconnect(playlist_create_activity, sender=Playlist)
+        signals.m2m_changed.disconnect(last_playlist, sender=Playlist.tracks.through)
         signals.pre_save.disconnect(get_info_if_no_image)
         signals.m2m_changed.disconnect(update_fans)
 
@@ -40,6 +42,15 @@ class Command(BaseCommand):
         #self.sync_playlists(old)
         #self.sync_tiny_playlist(old)
         self.sync_artists(old)
+
+    def get_user(self, pk):
+        if pk in self.old_root_ids:
+            return User.objects.get(pk=settings.ROOT_USERID)
+        else:
+            try:
+                return User.objects.get(pk=pk)
+            except User.DoesNotExist:
+                return User.objects.get(pk=settings.ROOT_USERID)
 
     def count_table(self, old, table):
         old.execute('select count(*) from %s' % table)
@@ -56,8 +67,8 @@ class Command(BaseCommand):
             if not old_follower[1]: continue
 
             try:
-                user = User.objects.get(pk=old_follower[0])
-                follower = User.objects.get(pk=old_follower[1])
+                user = self.get_user(old_follower[0])
+                follower = self.get_user(old_follower[1])
                 follow(follower, user, False)
             except:
                 continue
@@ -108,7 +119,10 @@ class Command(BaseCommand):
             # skipping the couple of nonames
             if not old_user[1]: continue
 
-            user, created = User.objects.get_or_create(pk=old_user[0])
+            if old_user[0] in self.old_root_ids:
+                user = User.objects.get(pk=settings.ROOT_USERID)
+            else:
+                user, created = User.objects.get_or_create(pk=old_user[0])
             count = 0
             user.username = slughifi(old_user[1])[:30] or count
             while User.objects.filter(username=user.username).exclude(pk=user.pk).count():
@@ -147,20 +161,51 @@ class Command(BaseCommand):
         print "Migrating tiny playlist ..."
         prog = ProgressBar(0, self.count_table(old, 'users_likedSongs'), 77, mode='fixed')
 
-        old.execute('select * from users_likedSongs')
+        old.execute('select ls.userId, s.title, a.name from users_likedSongs ls left join songs s on s.id = ls.songId left join artists a on a.id = s.artistId')
         for old_liked in old.fetchall():
+            if old_liked[0] == 0:
+                continue
             try:
-                user = User.objects.get(pk=old_liked[0])
-                track = Track.objects.get(pk=old_liked[1])
-                user.playlistprofile.tiny_playlist.tracks.add(track)
-
-                # todo: user old_liked[2] timestamp to correct the action
-
+                user = self.get_user(old_liked[0])
+            except User.DoesNotExist:
                 prog.increment_amount()
                 print prog, '\r',
                 sys.stdout.flush()
-            except:
-                pass
+                continue
+
+            if not old_liked[1]:
+                prog.increment_amount()
+                print prog, '\r',
+                sys.stdout.flush()
+                continue
+
+            artist_name = old_liked[2]
+            if not artist_name:
+                artist_name = 'YouTube'
+
+            try:
+                artist = Artist.objects.get(name__iexact=artist_name)
+            except Artist.DoesNotExist:
+                artist = Artist(name=artist_name)
+                artist.save()
+
+            try:
+                track = Track.objects.get(name__iexact=old_liked[1], artist=artist)
+            except Track.DoesNotExist:
+                track = Track(artist=artist, name=old_liked[1])
+                track.save()
+            
+            try:
+                user.playlistprofile.tiny_playlist.tracks.add(track)
+            except PlaylistProfile.DoesNotExist:
+                user.save()
+                user.playlistprofile.tiny_playlist.tracks.add(track)
+
+            # todo: user old_liked[2] timestamp to correct the action
+
+            prog.increment_amount()
+            print prog, '\r',
+            sys.stdout.flush()
 
     def sync_users_fans(self,old):
         print "Migrating users activities ..."
@@ -168,7 +213,7 @@ class Command(BaseCommand):
 
         old.execute('select * from users_activities where type=9')
         for old_activity in old.fetchall():
-            user = User.objects.get(pk=old_activity[1])
+            user = self.get_user(old_activity[1])
 
             if old_activity[5] == 9:
                 artist = Artist.objects.get(pk=old_activity[6])
@@ -189,8 +234,13 @@ class Command(BaseCommand):
             # skip empty artist names
             if not old_activity[2]: continue
 
-            artist, created = Artist.objects.get_or_create(pk=old_activity[1], name=old_activity[2])
-            if created or not artist.image_small:
+            try:
+                artist = Artist.objects.get(name__iexact=old_activity[2])
+            except Artist.DoesNotExist:
+                artist = Artist(name=old_activity[2])
+                artist.save()
+
+            if not artist.image_small:
                 # set the name for lastfm to find
                 artist.name = old_activity[2]
                 artist.lastfm_get_info()
@@ -200,7 +250,7 @@ class Command(BaseCommand):
                 artist.save()
             
             try:
-                user = User.objects.get(pk=old_activity[0])
+                user = self.get_user(old_activity[0])
             except User.DoesNotExist:
                 continue
             
@@ -224,11 +274,7 @@ class Command(BaseCommand):
             playlist.name = old_playlist[1]
             playlist.play_counter = old_playlist[2]
             playlist.creation_datetime = old_playlist[3] or datetime.datetime.now()
-            try:
-                playlist.creation_user = User.objects.get(pk=old_playlist[4])
-            except User.DoesNotExist:
-                # assign orphin playlists to root
-                playlist.creation_user = User.objects.get(username='PlaylistNow.fm')
+            playlist.creation_user = self.get_user(old_playlist[4])
 
             old.execute('''
 select 
@@ -258,11 +304,10 @@ where
                 # skipping more dead relations weee
                 if not old_fan[0]: continue
 
-                try:
-                    fan = User.objects.get(pk=old_fan[0])
-                    playlist.fans.add(fan.playlistprofile)
-                except:
-                    pass
+                fan = self.get_user(old_fan[0])
+                playlist.fans.add(fan.playlistprofile)
+
+            playlist.fans_count = playlist.fans.count()
 
             old.execute('''
 select 
@@ -276,13 +321,33 @@ pt.playlistId = %s
             playlist.save()
 
 
-            old.execute('select songId from playlists_songs where playlistId = %s' % int(playlist.pk))
+            old.execute('select ps.songId, s.title, a.name from playlists_songs ps left join songs s on ps.songId = s.id left join artists a on a.id = s.artistId where ps.playlistId = %s' % int(playlist.pk))
             for old_song in old.fetchall():
                 # skipping more dead relations weee
                 if not old_song[0]:
                     continue
-                playlist.tracks.add(Track.objects.get(pk=old_song[0]))
+                
+                artist_name = old_song[2]
+                if not artist_name:
+                    artist_name = 'YouTube'
 
+                try:
+                    artist = Artist.objects.get(name__iexact=artist_name)
+                except Artist.DoesNotExist:
+                    artist = Artist(name=artist_name)
+                    artist.save()
+
+                try:
+                    track = Track.objects.get(name__iexact=old_song[1], artist=artist)
+                except Track.DoesNotExist:
+                    track = Track(artist=artist, name=old_song[1])
+                    track.save()
+
+                playlist.tracks.add(track)
+
+            playlist.tracks_count = playlist.tracks.count()
+            playlist.save()
+            
             prog.increment_amount()
             print prog, '\r',
             sys.stdout.flush()
@@ -306,20 +371,21 @@ left join youtubeSongs ys on ys.songId = s.id
 left join artists a on a.id = s.artistId
         ''')
         for old_track in old.fetchall():
-            artist, created = Artist.objects.get_or_create(pk=old_track[4])
-            artist.name = old_track[5]
-            artist.save()
-
+            # this bugs for some reason
+            # artist, created = Artist.objects.get_or_create(name__iexact=old_track[5])
             try:
-                track = Track.objects.get(pk=old_track[0])
+                artist = Artist.objects.get(name__iexact=old_track[5])
+            except Artist.DoesNotExist:
+                artist = Artist(name=old_track[5])
+                artist.save()
+            try:
+                track = Track.objects.get(name__iexact=old_track[1])
             except Track.DoesNotExist:
-                track = Track(pk=old_track[0])
+                track = Track(name=old_track[1], artist=artist)
 
-            track.name = old_track[1]
             track.play_counter = old_track[2]
             track.youtube_id = old_track[3]
             track.youtube_bugs = old_track[6]
-            track.artist = artist
 
             track.save()
 
