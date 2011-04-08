@@ -146,7 +146,7 @@ def playlist_track_modify(request,
         getattr(context['track'], 'name', False) and \
         request.method == 'POST':
 
-        save_if_fake_track(context['track'])
+        context['track'] = save_if_fake_track(context['track'])
 
         if not getattr(context['track'], 'youtube_id', False):
             context['track'].youtube_id = context['track'].youtube_get_best()

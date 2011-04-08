@@ -24,6 +24,9 @@
     <a href="{{ activity.action_object.target.get_absolute_url }}" title="{% trans "details of" %} {{ activity.action_object.target }}" class="bold">
         {{ activity.action_object.target }}
     </a>
+    {% if activity.action_object.message %}
+    with message: {{ activity.action_object.message }}
+    {% endif %}
     {% with activity.action_object.track as track %}
     {% render_track track '' request %}
     {% endwith %}

@@ -109,7 +109,8 @@ var ui = {
                 //var song_info = element.parents('li.song_info');
                 // faster, less resistent to changes in apps/music/templates/music/_render_tracks.html
                 var song_info = element.parent().clone();
-                song_info.find('.noconfirm').removeClass('noconfirm');
+                song_info.find('.add.noconfirm').removeClass('noconfirm');
+                song_info.find('.rm').addClass('noconfirm');
                 song_info.find('.copy_track_row').removeClass('copy_track_row');
 
                 $.ajax({
@@ -428,12 +429,17 @@ var ui = {
     },
     'setupForms': function() {
         if (ui.settings['ajaxEnable'] && $('form').length) {
-            $('#simplemodal-data form.closePopup').live('submit', function(e) {
-                $.modal.close();
-            });
-
             $('form:not(.ui_ignore)').live('submit', function(e) {
                 e.preventDefault();
+
+                if ($(this).hasClass('local') && $(this).hasClass('share')) {
+                    if ($(this).find('input.autocomplete_pk').val() == '') {
+                        alert('please type part of your friend name and then click on his name in the autocomplete menu');
+                        e.stopPropagation();
+                        e.stopImmediatePropagation();
+                        return false;
+                    }
+                }
 
                 if ($(this).hasClass('authenticationRequired') && !user.is_authenticated) {
                     ui.authenticationPopup();
@@ -495,6 +501,10 @@ var ui = {
                         },
                     });
                 }
+            });
+
+            $('#simplemodal-data form.closePopup').live('submit', function(e) {
+                $.modal.close();
             });
         }
     },

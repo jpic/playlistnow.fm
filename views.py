@@ -280,6 +280,8 @@ def user_details(request, slug, tab='activities',
 
     if tab == 'playlists':
         context['playlists'] = user.playlist_set.all()
+    elif tab == 'bookmarked-playlists':
+        context['playlists'] = user.playlistprofile.fanof_playlists.all()
     elif tab == 'activities':
         activities = Action.objects.filter(
             Q(pk__in=actor_stream(user).values_list('pk')) |
@@ -436,6 +438,8 @@ def me(request,
 
     if 'page' not in request.GET: 
         template_name = 'me.html'
+
+    context['hot_tracks'] = list(set(context['hot_tracks']))
 
     context.update(extra_context or {})
     return shortcuts.render_to_response(template_name, context,

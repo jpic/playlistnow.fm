@@ -27,11 +27,11 @@
 <div style="width: 200px; margin-left: 210px; padding:15px 0;">
     <div class="tab_group_recommendation tab_content tab_id_local">
     
-        <form class="share closePopup" action="{% url music_recommendation_add %}?track_name={{ track_name|urlencode }}&artist_name={{ artist_name|urlencode }}&track_pk={{ track_pk }}" method="post">
+        <form class="share local closePopup" action="{% url music_recommendation_add %}?track_name={{ track_name|urlencode }}&artist_name={{ artist_name|urlencode }}&track_pk={{ track_pk }}" method="post">
             {{ form.non_field_errors }}
             {% csrf_token %}
             {{ form.target.errors|as_uni_errors }}
-            <label>Enter a friend name</label>
+            <label>Type part of your friend name, and click on his name</label>
             <input type="text" class="autocomplete friends friend_select" style="width: 230px" />
             <input type="hidden" class="autocomplete_pk" name="target" />
             <label>Message (optionnel)</label>

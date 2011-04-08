@@ -168,6 +168,7 @@ def new_comment(sender, instance, created, **kwargs):
     # if the object is a user action then also notify the actor
     if instance.content_object.__class__.__name__ == 'Action':
         activity = instance.content_object
+        context['url'] = activity.actor.get_absolute_url()
         update_timestamp_pks = [activity.pk]
         
         group_verbs = ('liked track', 'added track to playlist', 'becomes fan of artist')
@@ -193,15 +194,10 @@ def new_comment(sender, instance, created, **kwargs):
             instance.content_object.action_object not in recipients and \
             instance.content_object.action_object != instance.user:
             recipients.append(instance.content_object.action_object)
-            context['url'] = urlresolvers.reverse(
-                'user_details', args=(instance.content_object.action_object.username,))
-
         if instance.content_object.target.__class__.__name__ == 'User' and \
             instance.content_object.target not in recipients and \
             instance.content_object.target != instance.user:
             recipients.append(instance.content_object.target)
-            context['url'] = urlresolvers.reverse(
-                'user_details', args=(instance.content_object.target.username,))
         context['activity'] = instance.content_object
         notification.send(recipients, 'new_comment', context)
 
@@ -266,9 +262,11 @@ def affinities_betwen(profile1, profile2):
 
     result1 = cache.get(key1)
     if result1:
+        print 'got from cache'
         return result1
     result2 = cache.get(key2)
     if result2:
+        print 'got from cache'
         return result2
 
     factors = []

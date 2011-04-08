@@ -281,9 +281,17 @@ def music_track_details(request, name, artist, album=None,
 
     context['object'] = Track(name=name)
     context['object'].artist = Artist(name=artist)
+
+    try:
+        context['object'] = Track.objects.get(artist__name__iexact=context['object'].artist.name, name__iexact=context['object'].name)
+        context['playlists'] = context['object'].playlist_set.all().order_by('-tracks_count')[:5]
+        context['fans'] = User.objects.filter(playlistprofile__tiny_playlist__tracks=context['object'])[:5]
+    except Track.DoesNotExist:
+        pass
+
     context['object'].lastfm_get_info()
     context['object'].lastfm_get_similar()
-    context['object'].similar = context['object'].similar[:3]
+    context['object'].similar = context['object'].similar[:7]
 
     context.update(extra_context or {})
     return shortcuts.render_to_response(template_name, context,
@@ -320,7 +328,10 @@ def music_search_autocomplete(request, qname='query'):
                 doc['track'],
                 doc['artist']
             )
-            suggestion = doc['track']
+            suggestion = '%s %s' % (
+                doc['artist'],
+                doc['track'],
+            )
         elif 'album' in doc.keys():
             continue
         elif 'artist' in doc.keys():

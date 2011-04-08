@@ -94,7 +94,7 @@
         {% trans "activities" %}
         </a>
     </li>
-    <li class="tab {% if tab == 'playlists' %}selected{% endif %}">
+    <li class="tab {% if tab == 'playlists' or tab == 'bookmarked-playlists' %}selected{% endif %}">
         <a class="" href="{% url user_details_tab user.username 'playlists' %}">
         {% trans "playlists" %}
         </a>
@@ -127,14 +127,30 @@
 {% endif %}
 
 {% if tab == 'activities' %}
-<h2>recent activities</h2>
+<h2>{% trans 'recent activities' %}</h2>
 <div class="list">
     {% include 'auth/user_activities.html' %}  
 </div>
 {% endif %}
 
-{% if tab == 'playlists' %}
-<h2>my playlists</h2>
+
+
+    {% if tab == 'playlists' %}
+        <h2 class="left">{% trans 'my playlists' %}</h2>
+    {% endif %}
+    {% if tab == 'bookmarked-playlists' %}
+        <h2 class="left">{% trans 'bookmarked playlists' %}</h2>
+    {% endif %}
+    
+    {% if tab == 'playlists' or tab == 'bookmarked-playlists' %}
+    <div class="right"><a href="{% url user_details_tab user.username 'playlists' %}" title="{% trans 'created by' %} {{ user }}">
+        {% trans 'created' %}
+    </a>
+    /
+    <a href="{% url user_details_tab user.username 'bookmarked-playlists' %}" title="{% trans 'bookmarked by' %} {{ user }}">
+        {% trans 'bookmarked' %}
+    </a></div>
+    <div class="clear"></div>
     {% autopaginate playlists %}
     {% paginate %}
     {% render_playlists playlists %}

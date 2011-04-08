@@ -150,7 +150,7 @@ urlpatterns = patterns("",
         name='user_details'
     ),
     url(
-        r'^user/(?P<slug>[^/]+)/(?P<tab>\w+)/$', 
+        r'^user/(?P<slug>[^/]+)/(?P<tab>[\w-]+)/$', 
         views.user_details,
         name='user_details_tab'
     ),

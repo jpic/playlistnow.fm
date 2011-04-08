@@ -22,7 +22,7 @@ var player = {
         if (!$('.sidebar_Playing a:visible').length) {
             $('.sidebar_Playing a').fadeIn();
         }
-        $('.player_current_playlist').hide();
+        $('.player_current_playlist').parent().hide();
 
         $('#right_action a.fav').css('backgroundPosition', 'left top');
         $('#right_action a.fav').attr('title', 'Like this track');
@@ -38,6 +38,22 @@ var player = {
         if (!fromHistory) {
             this.state.trackHistory.push(track);
             this.state.currentTrackHistoryIndex = this.state.trackHistory.length - 1;
+        }
+
+
+        var currentPlaylist = $('.player_current_playlist');
+
+        if (this.state.currentTrack.playlist['object']['name']) {
+            currentPlaylist.html(
+                track.playlist['object']['name']
+            );
+            currentPlaylist.attr(
+                'href',
+                track.playlist['object']['url']
+            );
+            currentPlaylist.parent().show();
+        } else {
+            currentPlaylist.parent().hide();
         }
 
         if (playlist.object.pk != undefined && playlist.object.pk > 0) {
@@ -81,21 +97,6 @@ var player = {
         }
 
         this.playTrack(track, this.state.currentPlaylist, fromHistory);
-
-        var currentPlaylist = $('.player_current_playlist');
-
-        if (this.state.currentPlaylist['object']['name']) {
-            currentPlaylist.html(
-                track.playlist['object']['name']
-            );
-            currentPlaylist.attr(
-                'href',
-                track.playlist['object']['url']
-            );
-            currentPlaylist.show();
-        } else {
-            currentPlaylist.hide();
-        }
     },
     'playPlaylist': function(playlist, offset, callback) {
         if (typeof playlist == 'object') {

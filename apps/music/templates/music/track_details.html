@@ -2,6 +2,9 @@
 
 {% load i18n %}
 {% load music_tags %}
+{% load playlist_tags %}
+{% load pagination_tags %}
+{% load activity_tags %}
 
 {% block extra_head %}
 <meta name="keywords" content="{% for tag in object.tags %}{{ tag }}{% endfor %}" />
@@ -12,7 +15,7 @@
 
 {% block body %}
 <h1>{{ object.name }}{% if object.artist %} {% trans "by" %} {{ object.artist.name }}{% endif %}</h1>
-<hr style="height:2px; background:#ddd;">
+<hr style="height:1px; background:#ddd;">
     <div class="clear"></div>
 {% if object.image_large %}
 <img src="{{ object.image_large }}" alt="{{ object }}" />
@@ -21,14 +24,35 @@
 {% render_track object '' request %}
 
 {% if object.description %}
-<div class="espacetop"></div>
-<p>{{ object.description|striptags|safe }}</p>
-{% endif %}
-<div class="clear"></div>
-<br/>
-{% if object.similar %}
-<h2>{% trans "similar tracks" %}</h2>
-{% render_tracks object.similar '' request %}
+    <div class="espacetop"></div>
+<p class="artist_descr">{{ object.description|striptags|safe }}</p>
 {% endif %}
 
+{% if object.similar %}
+    <div class="espacetop"></div>
+<h2 class="similar_art" style="display: inline-block;">{% trans "similar tracks" %}</h2>
+    {% render_tracks object.similar '' request %}
+{% endif %}
+
+{% if playlists %}
+    <div class="espacetop"></div>
+    <h2 class="all_tr" style="display: inline;">{% trans "playlists with this track" %} ({{ playlists.count }})</h2>
+    {% autopaginate playlists %}
+    {% paginate %}
+    {% render_playlists playlists %}
+    {% paginate %}
+{% endif %}
+
+{% if fans %}
+    <div class="espacetop"></div>
+    
+<h2 class="top_tracks">They like {{ object.name }}</h2>
+    {% for fan in fans %}
+        <div>
+            <a href="{{ fan.get_absolute_url }}" title="{{ fan }}" class="left espace tiptip">
+                <img src="{{ fan.playlistprofile.avatar_url }}" alt="{% trans 'avatar of' %} {{ fan }}" class="avatar medium"/>
+            </a>
+        </div>
+    {% endfor %}
+{% endif %}
 {% endblock %}
