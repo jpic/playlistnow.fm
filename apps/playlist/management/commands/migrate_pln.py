@@ -22,7 +22,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         backend = db.load_backend('mysql')
-        conn = backend.DatabaseWrapper({'NAME': 'pln', 'USER': 'root', 'PASSWORD': '', 'HOST': 'localhost', 'PORT': '3306', 'OPTIONS': ''})
+        conn = backend.DatabaseWrapper({'NAME': 'playlistpnow', 'USER': 'root', 'PASSWORD': 'YsD9c6WJ', 'HOST': 'localhost', 'PORT': '3306', 'OPTIONS': ''})
         old = conn.cursor()
         self.old_root_ids = (175319, 57488)
 
@@ -35,12 +35,12 @@ class Command(BaseCommand):
         signals.pre_save.disconnect(get_info_if_no_image)
         signals.m2m_changed.disconnect(update_fans)
 
-        #self.sync_users_accounts(old)
-        #self.sync_followers(old)
-        #self.sync_categories(old)
-        #self.sync_tracks(old)
-        #self.sync_playlists(old)
-        #self.sync_tiny_playlist(old)
+        self.sync_users_accounts(old)
+        self.sync_followers(old)
+        self.sync_categories(old)
+        self.sync_tracks(old)
+        self.sync_playlists(old)
+        self.sync_tiny_playlist(old)
         self.sync_artists(old)
 
     def get_user(self, pk):

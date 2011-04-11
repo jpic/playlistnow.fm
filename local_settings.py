@@ -14,10 +14,10 @@ logger.setLevel(logging.NOTSET)
 
 DATABASES = {
     'default': {
-        'ENGINE': 'postgresql_psycopg2', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'password': 'MBzdUqeStHXd13VllGudNgBiFb1HGg',                       # Or path to database file if using sqlite3.
-        'USER': 'pln.yourlabs.org',                             # Not used with sqlite3.
-        'NAME': 'pln.yourlabs.org',                         # Not used with sqlite3.
+        'ENGINE': 'mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+        'PASSWORD': 'stnh23stnhBEUNT32',                       # Or path to database file if using sqlite3.
+        'USER': 'beta',                             # Not used with sqlite3.
+        'NAME': 'beta_pln',                         # Not used with sqlite3.
         'HOST': '',                             # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '',                             # Set to empty string for default. Not used with sqlite3.
     }
@@ -98,7 +98,7 @@ INTERNAL_IPS = [
 ]
 
 
-CACHE_BACKEND = "uwsgicache://"
+#CACHE_BACKEND = "uwsgicache://"
 CACHE_MIDDLEWARE_SECONDS = 60
 CACHE_MIDDLEWARE_KEY_PREFIX = 'beta'
 CACHES = {
@@ -108,7 +108,7 @@ CACHES = {
         #'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
         #'LOCATION': 'unique-snowflake',
         #'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
-        'BACKEND': 'uwsgicache',
+        #'BACKEND': 'uwsgicache',
     }
 }
 #CACHE_BACKEND = 'file:///var/tmp/django_cache'
@@ -202,6 +202,6 @@ TIME_ZONE = "Europe/Paris"
 
 ROBOTS_USE_SITEMAP = False
 
-EMAIL_SUBJECT_PREFIX='[pln alpha] '
-DEFAULT_FROM_EMAIL='jpic@pln.yourlabs.org'
-SERVER_EMAIL='jpic@pln.yourlabs.org'
+EMAIL_SUBJECT_PREFIX='[pln beta] '
+DEFAULT_FROM_EMAIL='beta@playlistnow.fm'
+SERVER_EMAIL='beta@playlistnow.fm'
