@@ -77,6 +77,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE_CLASSES = [
     'middleware.DynamicHtmlMiddleware',
+    'django.middleware.cache.UpdateCacheMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -88,6 +89,7 @@ MIDDLEWARE_CLASSES = [
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'pagination.middleware.PaginationMiddleware',
     'socialregistration.middleware.FacebookMiddleware',
+    'django.middleware.cache.FetchFromCacheMiddleware',
 ]
 INTERNAL_IPS = [
     #'83.38.0.213',
@@ -96,13 +98,17 @@ INTERNAL_IPS = [
 ]
 
 
+CACHE_BACKEND = "uwsgicache://"
+CACHE_MIDDLEWARE_SECONDS = 60
+CACHE_MIDDLEWARE_KEY_PREFIX = 'beta'
 CACHES = {
     'default': {
         #'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
         #'LOCATION': '/var/tmp/django_cache',
         #'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
         #'LOCATION': 'unique-snowflake',
-        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+        #'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+        'BACKEND': 'uwsgicache',
     }
 }
 #CACHE_BACKEND = 'file:///var/tmp/django_cache'
