@@ -619,7 +619,7 @@ var ui = {
         if ($('#fb-root').length < 1) return true;
 
         function initFb() {
-            FB.init({ apiKey: '738ca1d67fa0e795c8a5604278278e8e', status: true, cookie: true, xfbml: true});
+            FB.init({ apiKey: '5d962efae6ae8422f3c60ac58ec6a91a', status: true, cookie: true, xfbml: true});
         }
 
         if (ui.facebookJsLoaded == undefined) {

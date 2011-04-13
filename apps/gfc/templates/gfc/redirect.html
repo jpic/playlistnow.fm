@@ -10,7 +10,7 @@ google.load('friendconnect', '0.8');
 <script type="text/javascript"> 
 google.friendconnect.container.setParentUrl('/' /* location of rpc_relay.html and canvas.html */);
 google.friendconnect.container.initOpenSocialApi({
-site: '09173394585243409353',
+site: '{{ gfc_site_id }}',
 onload: function(securityToken) { initAllData(); }
 });
 </script> 

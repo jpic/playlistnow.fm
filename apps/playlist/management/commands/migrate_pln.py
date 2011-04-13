@@ -35,12 +35,12 @@ class Command(BaseCommand):
         signals.pre_save.disconnect(get_info_if_no_image)
         signals.m2m_changed.disconnect(update_fans)
 
-        self.sync_users_accounts(old)
-        self.sync_followers(old)
-        self.sync_categories(old)
-        self.sync_tracks(old)
-        self.sync_playlists(old)
-        self.sync_tiny_playlist(old)
+        #self.sync_users_accounts(old)
+        #self.sync_followers(old)
+        #self.sync_categories(old)
+        #self.sync_tracks(old)
+        #self.sync_playlists(old)
+        #self.sync_tiny_playlist(old)
         self.sync_artists(old)
 
     def get_user(self, pk):

@@ -11,17 +11,30 @@ logger = logging.getLogger()
 logger.addHandler(hdlr)
 logger.setLevel(logging.NOTSET)
 
+from socket import gethostname; HOSTNAME=gethostname()
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'PASSWORD': 'stnh23stnhBEUNT32',                       # Or path to database file if using sqlite3.
-        'USER': 'beta',                             # Not used with sqlite3.
-        'NAME': 'beta_pln',                         # Not used with sqlite3.
-        'HOST': '',                             # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '',                             # Set to empty string for default. Not used with sqlite3.
+if HOSTNAME == 'ns309087.ovh.net':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+            'PASSWORD': 'stnh23stnhBEUNT32',                       # Or path to database file if using sqlite3.
+            'USER': 'beta',                             # Not used with sqlite3.
+            'NAME': 'beta_pln',                         # Not used with sqlite3.
+            'HOST': '',                             # Set to empty string for localhost. Not used with sqlite3.
+            'PORT': '',                             # Set to empty string for default. Not used with sqlite3.
+        }
     }
-}
+elif HOSTNAME == 'tina':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'postgresql_psycopg2', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+            'password': 'MBzdUqeStHXd13VllGudNgBiFb1HGg',                       # Or path to database file if using sqlite3.
+            'USER': 'pln.yourlabs.org',                             # Not used with sqlite3.
+            'NAME': 'pln.yourlabs.org',                         # Not used with sqlite3.
+            'HOST': '',                             # Set to empty string for localhost. Not used with sqlite3.
+            'PORT': '',                             # Set to empty string for default. Not used with sqlite3.
+        }
+    }
 
 
 INSTALLED_APPS = [
@@ -98,21 +111,16 @@ INTERNAL_IPS = [
 ]
 
 
-#CACHE_BACKEND = "uwsgicache://"
-CACHE_MIDDLEWARE_SECONDS = 60
-CACHE_MIDDLEWARE_KEY_PREFIX = 'beta'
-CACHES = {
-    'default': {
-        #'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-        #'LOCATION': '/var/tmp/django_cache',
-        #'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        #'LOCATION': 'unique-snowflake',
-        #'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
-        #'BACKEND': 'uwsgicache',
+if HOSTNAME == 'ns309087.ovh.net':
+    CACHE_BACKEND = "memcached://127.0.0.1:11211/"
+    CACHE_MIDDLEWARE_SECONDS = 60
+    CACHE_MIDDLEWARE_KEY_PREFIX = 'beta'
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+            'LOCATION': '127.0.0.1:11211',
+        }
     }
-}
-#CACHE_BACKEND = 'file:///var/tmp/django_cache'
-
 
 OPENID_REDIRECT_NEXT = '/accounts/openid/done/'
 
@@ -144,17 +152,17 @@ ADMIN_TOOLS_MENU = 'menu.CustomMenu'
 LASTFM_API_KEY = 'a67b55859d8b3cf1ed3bb2c9a5c59898'
 LASTFM_API_SECRET = 'c7970cc5b664b1b1e19a3f471ebc1b12'
 
-TWITTER_CONSUMER_KEY = '61g88FE8bBXLDwck7gaRlA'
-TWITTER_CONSUMER_SECRET_KEY = '4Tza4RltIdTgBODWdCflfGWFlIRtbFIL1bBz7Z7OBE'
+TWITTER_CONSUMER_KEY = 'p252OYzorJKGyYZ2wDLpQ'
+TWITTER_CONSUMER_SECRET_KEY = 'IZinFz5Ul4mWFvxMySil97jaXKDnlebWTfFf3bQHU'
 TWITTER_REQUEST_TOKEN_URL = 'https://api.twitter.com/oauth/request_token'
 TWITTER_ACCESS_TOKEN_URL = 'https://api.twitter.com/oauth/access_token'
 TWITTER_AUTHORIZATION_URL = 'https://api.twitter.com/oauth/authorize'
 
-FACEBOOK_APP_ID = '117753378295717'
-FACEBOOK_API_KEY = '738ca1d67fa0e795c8a5604278278e8e'
-FACEBOOK_SECRET_KEY = '5068add1ba6569c0ed1ecbba4e8f6f56'
+FACEBOOK_APP_ID = '216106061737413'
+FACEBOOK_API_KEY = '5d962efae6ae8422f3c60ac58ec6a91a'
+FACEBOOK_SECRET_KEY = '0a22c003c98ca96a11071082ded82e5f'
 
-GOOGLE_SITE_ID = '09173394585243409353'
+GOOGLE_SITE_ID = '08546160909140751983'
 
 AUTHENTICATION_BACKENDS = (
     'backends.ModelBackend',

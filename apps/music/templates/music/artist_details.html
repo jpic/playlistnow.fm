@@ -93,7 +93,7 @@
             </span> 
 			
        
-            <a href="fan" class="fan bold">{% if object.local_artist.fans.count %}{{ object.local_artist.fans.count }}{% else %}0{% endif %} fans</a>
+            <a href="{% url music_artist_details_tab object|slugify 'fans' %}" class="fan bold">{% if object.local_artist.fans.count %}{{ object.local_artist.fans.count }}{% else %}0{% endif %} fans</a>
 
         </li>
         <li><span class="location">Next event:</span></li>

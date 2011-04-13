@@ -130,13 +130,13 @@ class MusicalEntity(models.Model):
 
     def youtube_cache_reset(self):
         term = self.youtube_get_term()
-        key = 'youtube_entries for ' + term
+        key = defaultfilters.slugify('youtube_entries for ' + term)
         cache.delete(key)
 
     @property
     def youtube_entries(self):
         term = self.youtube_get_term()
-        key = 'youtube_entries for ' + term
+        key = defaultfilters.slugify('youtube_entries for ' + term)
         entry = cache.get(key)
 
         if entry:

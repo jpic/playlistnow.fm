@@ -30,7 +30,7 @@
     <form action="{% url playlist_search %}" method="get" id="search_form">
         <div class="avatar_home">
             <span>
-            <a href="home">
+            <a href="/">
                 <img title="" src="{% if request.user.is_authenticated %}{{ request.user.playlistprofile.avatar_url }}{% else %}{{ STATIC_URL }}images/avatar-logged.jpg{% endif %}" alt="Avatar" height="50px" width="50px">
             </span>
             </a>
@@ -81,7 +81,7 @@
     <form action="{% url music_search %}" method="get" id="search_form">
         <div class="avatar_home">
             <span>
-                <a href="home">
+                <a href="/">
                     <img title="" src="{% if request.user.is_authenticated %}{{ request.user.playlistprofile.avatar_url }}{% else %}{{ STATIC_URL }}images/avatar-logged.jpg{% endif %}" alt="Avatar" height="50px" width="50px">
                 </a>
             </span>
@@ -107,7 +107,7 @@
     <form action="{% url user_search %}" method="get" id="search_form">
         <div class="avatar_home">
             <span>
-                <a href="home">
+                <a href="/">
                     <img title="" src="{% if request.user.is_authenticated %}{{ request.user.playlistprofile.avatar_url }}{% else %}{{ STATIC_URL }}images/avatar-logged.jpg{% endif %}" alt="Avatar" height="50px" width="50px">
                 </a>
             </span>

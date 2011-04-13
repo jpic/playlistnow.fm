@@ -257,16 +257,14 @@ def suggested_users_for(user):
     return sorted_users
 
 def affinities_betwen(profile1, profile2):
-    key1 = '%s and %s affinities' % (profile1.pk, profile2.pk)
-    key2 = '%s and %s affinities' % (profile2.pk, profile1.pk)
+    key1 = defaultfilters.slugify('%s and %s affinities' % (profile1.pk, profile2.pk))
+    key2 = defaultfilters.slugify('%s and %s affinities' % (profile2.pk, profile1.pk))
 
     result1 = cache.get(key1)
     if result1:
-        print 'got from cache'
         return result1
     result2 = cache.get(key2)
     if result2:
-        print 'got from cache'
         return result2
 
     factors = []
@@ -306,6 +304,7 @@ def affinities_betwen(profile1, profile2):
         percent = 100
 
     #cache.set(key1, percent, 7200)
+    #cache.set(key2, percent, 7200)
 
     return percent
 

@@ -19,6 +19,7 @@
     <!-- core js -->
     <script src="{% block jquery_src %}{{ STATIC_URL }}jquery.min.js{% endblock %}" type="text/javascript"></script>
     <script type="text/javascript">
+    {% cache 99999 js_links %}
     var STATIC_URL = '{{ STATIC_URL }}';
     var music_search_autocomplete = '{% url music_search_autocomplete %}';
     var user_search_autocomplete = '{% url user_search_autocomplete %}';
@@ -32,6 +33,7 @@
     var playlist_playtrack = '{% url playlist_playtrack %}';
     var friends_search_autocomplete = '{% url friends_search_autocomplete %}';
     var comment_form_target = '/comments/post/';
+    {% endcache %}
     var tiny_playlist_pk = {% if request.user.is_authenticated %}{{ request.user.playlistprofile.tiny_playlist.pk }}{% else %}0{% endif %};
     </script>
     <script type="text/javascript" src="{{ STATIC_URL }}jquery.autocomplete/jquery.autocomplete.js"></script>
