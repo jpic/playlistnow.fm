@@ -170,11 +170,17 @@ def music_badvideo(request):
         t = Track.objects.get(pk=bad_track_pk)
     t.youtube_cache_reset()
 
-    for e in t.youtube_entries:
+    key = defaultfilters.slugify('bad videos for ' + t.youtube_get_term())
+    if not 'bad videos' in request.session:
+        request.session['bad videos'] = {}
+    if not key in request.session['bad videos']:
+        request.session['bad videos'][key] = []
+    request.session['bad videos'][key].append(bad_youtube_id)
+
+    for e in youtube_entry_generator(t.youtube_entries):
         m = re.match(r'.*/([0-9A-Za-z_-]*)/?$', e.id.text)
-        if m and m.group(1) != bad_youtube_id:
+        if m.group(1) not in request.session['bad videos'][key]:
             new_id = m.group(1)
-            break
 
     if new_id:
         Track.objects.filter(youtube_id=bad_youtube_id).update(

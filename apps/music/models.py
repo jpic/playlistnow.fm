@@ -18,6 +18,25 @@ import gdata.youtube.service
 # Prevent: XMLSyntaxError: Attempt to load network entity
 etree.set_default_parser(etree.XMLParser(no_network=False, recover=True))
 
+def youtube_entry_generator(entries):
+    for entry in entries:
+        m = re.match(r'.*/([0-9A-Za-z_-]*)/?$', entry.id.text)
+        if not m:
+            continue
+        if not m.group(1):
+            continue
+        id = m.group(1)
+        t = etree.parse('http://gdata.youtube.com/feeds/api/videos/%s' % id)
+        r = t.xpath('.//yt:state', namespaces={'yt':'http://gdata.youtube.com/schemas/2007'})
+        restricted = False
+        for i in r:
+            if 'restricted' in i.text:
+                restricted = True
+        if restricted:
+            continue
+
+        yield entry
+
 def get_info_if_no_image(sender, instance, **kwargs):
     if not isinstance(instance, MusicalEntity):
         return None
