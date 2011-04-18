@@ -395,18 +395,21 @@ def me(request,
                 'socialregistration_complete'))
     
     user = request.user
-    activities = Action.objects.filter(
-        Q(pk__in=user_stream(user).values_list('pk')) |
-        Q(pk__in=actor_stream(user).values_list('pk')) |
-        Q(
-            action_object_content_type = ContentType.objects.get_for_model(Recommendation),
-            action_object_object_id__in = Recommendation.objects.filter(target=user).values_list('id')
-        ) | 
-        Q(
-            target_content_type = ContentType.objects.get_for_model(User),
-            target_object_id = user.pk
-        )
-    ).order_by('-timestamp')
+    if user.follow_set.count() > 0:
+        activities = Action.objects.filter(
+            Q(pk__in=user_stream(user).values_list('pk')) |
+            Q(pk__in=actor_stream(user).values_list('pk')) |
+            Q(
+                action_object_content_type = ContentType.objects.get_for_model(Recommendation),
+                action_object_object_id__in = Recommendation.objects.filter(target=user).values_list('id')
+            ) |
+            Q(
+                target_content_type = ContentType.objects.get_for_model(User),
+                target_object_id = user.pk
+            )
+        ).order_by('-timestamp')
+    else:
+        activities = actor_stream(User.objects.get(pk=settings.ROOT_USERID))
     context['activities'] = activities
 
     context['who_to_follow'] = suggested_users_for(user)
