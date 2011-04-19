@@ -44,6 +44,7 @@ var ui = {
             }
 
             $('.tab_link:first').trigger('click');
+            $('#tiptip_holder').fadeOut();
             $('.tiptip').tipTip();
 
             if ($('div.you_may_also_like li').length > 0) {
@@ -68,6 +69,7 @@ var ui = {
             } else {
                 $('.simplemodal-data .tab_link.tab_id_' + m[1]).trigger('click');
             }
+            $('#tiptip_holder').fadeOut();
         });
 
         $(document).bind('signalPopupOpen', ui.setupFacebook);
