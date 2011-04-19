@@ -11,9 +11,12 @@ logger = logging.getLogger()
 logger.addHandler(hdlr)
 logger.setLevel(logging.NOTSET)
 
+
+PROJECT_PATH = os.path.realpath(os.path.dirname(__file__))
+
 from socket import gethostname; HOSTNAME=gethostname()
 
-if HOSTNAME == 'ns309087.ovh.net':
+if PROJECT_PATH == '/srv/beta.playlistnow.fm/main':
     DATABASES = {
         'default': {
             'ENGINE': 'mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
@@ -24,7 +27,18 @@ if HOSTNAME == 'ns309087.ovh.net':
             'PORT': '',                             # Set to empty string for default. Not used with sqlite3.
         }
     }
-elif HOSTNAME == 'tina':
+elif PROJECT_PATH == '/srv/playlistnow.fm/main':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+            'PASSWORD': 'stnthSTNSTNHSHTNEUSTNhsNTHN2323',                       # Or path to database file if using sqlite3.
+            'USER': 'prod',                             # Not used with sqlite3.
+            'NAME': 'prod_pln',                         # Not used with sqlite3.
+            'HOST': '',                             # Set to empty string for localhost. Not used with sqlite3.
+            'PORT': '',                             # Set to empty string for default. Not used with sqlite3.
+        }
+    }
+elif PROJECT_PATH == '/srv/pln.yourlabs.org/main':
     DATABASES = {
         'default': {
             'ENGINE': 'postgresql_psycopg2', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
@@ -111,10 +125,10 @@ INTERNAL_IPS = [
 ]
 
 
-if HOSTNAME == 'ns309087.ovh.net':
+if PROJECT_PATH == '/srv/playlistnow.fm/main':
     CACHE_BACKEND = "memcached://127.0.0.1:11211/"
     CACHE_MIDDLEWARE_SECONDS = 60
-    CACHE_MIDDLEWARE_KEY_PREFIX = 'beta'
+    CACHE_MIDDLEWARE_KEY_PREFIX = 'prod'
     CACHES = {
         'default': {
             'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
