@@ -1,0 +1,25 @@
+{% extends "tagging_ext/base.html" %}
+
+{% block head_title %}All {{model }} listings for "{{ tag }}" {% endblock %}
+
+{% block body %}
+
+<h2>All {{model }} listings for <i>"{{ tag }}"</i></h2>
+
+<div id="tagging-ext-main">
+    
+    <div id="tagging-ext-sidebar">
+        {% include "tagging_ext/sidebar.html" %}
+    </div>
+    <div id="tagging-ext-content">
+        <ul>
+            {% for result in results %}
+                {% include content_template %}
+            {% endfor %}
+
+        </ul>
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends "tagging_ext/base.html" %}
+
+{% block head_title %}{{ tag }}{% endblock %}
+
+{% block body %}
+
+<h2>All listings for <i>"{{ tag }}"</i></h2>
+
+<div id="tagging-ext-main">
+    
+    <div id="tagging-ext-sidebar">
+        {% include "tagging_ext/sidebar.html" %}
+    </div>
+
+</div>
+
+
+{% endblock %}

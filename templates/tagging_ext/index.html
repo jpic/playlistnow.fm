@@ -1,0 +1,16 @@
+{% extends "tagging_ext/base.html" %}
+
+{% block head_title %}Tags{% endblock %}
+
+{% block body %}
+
+<h1>Tags</h1>
+
+<ul>
+    {% for tag in tags %}
+        <li><a href="{% url tagging_ext_tag tag.tag.name %}">{{ tag.tag.name }}</a> ( {{ tag.count }} )</li>
+    {% endfor %}
+
+</ul>
+
+{% endblock %}
