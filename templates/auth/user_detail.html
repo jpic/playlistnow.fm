@@ -65,14 +65,14 @@
 	<ul>
 	<li>
 			<span class="location">{{ user.playlistprofile.user_location }}</span> 
-            {% if facebookprofile %}
+            {% if facebookprofile and facebookprofile.uid %}
 			
-                <a href="{{ facebookprofile.url }}" class="facebook">{% if facebookprofile.nick %}{{ facebookprofile.nick }}{% else %}<span class="bold">Facebook</span>{% endif %}</a>
+                <a href="{% if facebookprofile.url %}{{ facebookprofile.url }}{% else %}http://www.facebook.com/profile.php?id={{ facebookprofile.uid }}{% endif %}" class="ui_ignore facebook">{% if facebookprofile.nick %}{{ facebookprofile.nick }}{% else %}<span class="bold">Facebook</span>{% endif %}</a>
             {% endif %}
    
             {% if twitterprofile %}
 	       
-			<a href="{{ twitterprofile.url }}" class="twitter">{% if twitterprofile.nick %}{{ twitterprofile.nick }}{% else %}<span class="bold">Twitter</span>{% endif %}</a>
+			<a href="{% if twitterprofile.url %}{{ twitterprofile.url }}{% else %}http://twitter.com/{{ twitterprofile.nick }}{% endif %}" class="twitter ui_ignore">{% if twitterprofile.nick %}{{ twitterprofile.nick }}{% else %}<span class="bold">Twitter</span>{% endif %}</a>
             {% endif %}
 
             {% if gfcprofile.url %}

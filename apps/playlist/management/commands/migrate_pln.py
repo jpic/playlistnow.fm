@@ -1,5 +1,7 @@
 import sys
 import datetime
+import urllib
+import simplejson
 
 from django.core.management.base import BaseCommand, CommandError
 from django import db
@@ -15,6 +17,7 @@ from playlist.models import *
 from music.models import *
 from gfc.models import *
 from socialregistration.models import *
+import gfc
 
 class Command(BaseCommand):
     args = 'n/a'
@@ -35,13 +38,13 @@ class Command(BaseCommand):
         signals.pre_save.disconnect(get_info_if_no_image)
         signals.m2m_changed.disconnect(update_fans)
 
-        #self.sync_users_accounts(old)
+        self.sync_users_accounts(old)
         #self.sync_followers(old)
         #self.sync_categories(old)
         #self.sync_tracks(old)
         #self.sync_playlists(old)
         #self.sync_tiny_playlist(old)
-        self.sync_artists(old)
+        #self.sync_artists(old)
 
     def get_user(self, pk):
         if pk in self.old_root_ids:
@@ -139,14 +142,34 @@ class Command(BaseCommand):
                 user.playlistprofile.avatar_url = old_user[4]
             user.playlistprofile.save()
            
-            old.execute('select * from users_accounts where userId = ' + str(old_user[0]))
+            old.execute('select * from users_accounts where accountType = "TWITTER" and userId = ' + str(old_user[0]))
             for old_account in old.fetchall():
                 if old_account[1] == 'FACEBOOK':
                     p, created=FacebookProfile.objects.get_or_create(uid=old_account[2], user=user)
+
+                    filename, message = urllib.urlretrieve('https://graph.facebook.com/%s' % old_account[2])
+                    fp = open(filename)
+                    upstream = simplejson.load(fp)
+                    fp.close()
+
+                    if upstream:
+                        p.nick = upstream['name']
+                        if 'link' in upstream:
+                            p.url = upstream['link']
+                        else:
+                            p.url = 'http://www.facebook.com/profile.php?id=%s' % old_account[2]
+
                     p.save()
                 
                 elif old_account[1] == 'TWITTER':
                     p, created=TwitterProfile.objects.get_or_create(twitter_id=old_account[2],user=user)
+                    old.execute('select * from twitter_tokens where twitterUserId = "%s"' % old_account[2])
+                    old_profile = old.fetchone()
+                    if old_profile is not None:
+                        p.access_token = old_profile[1]
+                        p.token_secret = old_profile[2]
+                    p.nick = old_account[5].replace('http://twitter.com/', '').replace('http://www.twitter.com/', '')
+                    p.url = old_account[5]
                     p.save()
                 
                 elif old_account[1] == 'GOOGLE':
