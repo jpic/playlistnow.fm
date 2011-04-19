@@ -38,8 +38,9 @@ class Command(BaseCommand):
         signals.pre_save.disconnect(get_info_if_no_image)
         signals.m2m_changed.disconnect(update_fans)
 
-        self.sync_users_accounts(old)
+        #self.sync_users_accounts(old)
         #self.sync_followers(old)
+        self.sync_friends(old)
         #self.sync_categories(old)
         #self.sync_tracks(old)
         #self.sync_playlists(old)
@@ -59,6 +60,27 @@ class Command(BaseCommand):
         old.execute('select count(*) from %s' % table)
         result = old.fetchone()
         return result[0]
+
+    def sync_friends(self, old):
+        print "Migrating friends ..."
+        prog = ProgressBar(0, self.count_table(old, 'users_friends_v2'), 77, mode='fixed')
+
+        old.execute('select * from users_friends_v2')
+        for old_friend in old.fetchall():
+            if not old_friend[0]: continue
+            if not old_friend[1]: continue
+
+            try:
+                user1 = self.get_user(old_friend[0])
+                user2 = self.get_user(old_friend[1])
+                follow(user1, user2, False)
+                follow(user2, user1, False)
+            except:
+                continue
+
+            prog.increment_amount()
+            print prog, '\r',
+            sys.stdout.flush()
 
     def sync_followers(self, old):
         print "Migrating followers ..."
