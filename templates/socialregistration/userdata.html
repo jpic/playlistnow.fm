@@ -8,10 +8,10 @@
 
 {% include 'socialregistration/_steps.html' %}
 
-<form action="{% url socialregistration_userdata %}" method="post" class="uniForm ui_ignore" style="input:border:1px solid #cccccc;input:hover:border:1px solid #000;">
+<form action="{% url socialregistration_userdata %}" method="post" class="uniForm ui_ignore">
     {{ form.non_field_errors|as_uni_errors }}
     {% csrf_token %}
     {{ form|as_uni_form }}
-    <div class="buttonHolder"><button class="primaryAction" type="submit">{% trans "Complete my registration" %}</button></div>
+    <div class="buttonHolder"><button class="primaryAction" type="submit" class="button blue">{% trans "Complete my registration" %}</button></div>
 </form>
 {% endblock %}
