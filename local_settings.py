@@ -235,5 +235,9 @@ ADMINS = [
     ('James Pic', 'jamespic@gmail.com'),
     ('Jonathan Younes', 'sms2night@gmail.com'),
 ]
-DEBUG=False
-TEMPLATE_DEBUG=False
+if PROJECT_PATH == '/home/srv/beta.playlistnow.fm/main':
+    DEBUG=True
+    TEMPLATE_DEBUG=True
+elif PROJECT_PATH == '/home/srv/playlistnow.fm/main':
+    DEBUG=False
+    TEMPLATE_DEBUG=False
