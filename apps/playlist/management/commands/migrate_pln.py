@@ -40,12 +40,12 @@ class Command(BaseCommand):
 
         #self.sync_users_accounts(old)
         #self.sync_followers(old)
-        self.sync_friends(old)
+        #self.sync_friends(old)
         #self.sync_categories(old)
         #self.sync_tracks(old)
         #self.sync_playlists(old)
         #self.sync_tiny_playlist(old)
-        #self.sync_artists(old)
+        self.sync_artists(old)
 
     def get_user(self, pk):
         if pk in self.old_root_ids:
@@ -164,15 +164,19 @@ class Command(BaseCommand):
                 user.playlistprofile.avatar_url = old_user[4]
             user.playlistprofile.save()
            
-            old.execute('select * from users_accounts where accountType = "TWITTER" and userId = ' + str(old_user[0]))
+            old.execute('select * from users_accounts where userId = ' + str(old_user[0]))
             for old_account in old.fetchall():
                 if old_account[1] == 'FACEBOOK':
                     p, created=FacebookProfile.objects.get_or_create(uid=old_account[2], user=user)
 
-                    filename, message = urllib.urlretrieve('https://graph.facebook.com/%s' % old_account[2])
-                    fp = open(filename)
-                    upstream = simplejson.load(fp)
-                    fp.close()
+                    upstream = None
+                    try:
+                        filename, message = urllib.urlretrieve('https://graph.facebook.com/%s' % old_account[2])
+                        fp = open(filename)
+                        upstream = simplejson.load(fp)
+                        fp.close()
+                    except:
+                        pass
 
                     if upstream:
                         p.nick = upstream['name']

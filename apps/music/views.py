@@ -97,7 +97,7 @@ def music_recommendation_add(request, form_class=RecommendationForm,
 
             for twitterprofile in request.user.twitterprofile_set.all():
                 request.session[session_key] = {
-                    'oauth_token_secret': 'krEu2rA0BbTyLmCfTQtHfv34wrFE6qVmLGRB9YR5es4', 
+                    'oauth_token_secret': twitterprofile.token_secret, 
                     'oauth_token': twitterprofile.access_token, 
                     'user_id': twitterprofile.user_id,
                     'screen_name': twitterprofile.nick,
@@ -107,7 +107,7 @@ def music_recommendation_add(request, form_class=RecommendationForm,
                     settings.TWITTER_CONSUMER_SECRET_KEY,
                     settings.TWITTER_REQUEST_TOKEN_URL,
                 )
-                client.query('http://api.twitter.com/1/statuses/update.json', 'POST', {'status': request.POST.get('message')})
+                client.query('http://api.twitter.com/1/statuses/update.json', 'POST', {'status': request.POST.get('message').encode('utf-8')})
             
             if restore:
                 request.session[session_key] = restore
@@ -138,7 +138,7 @@ def music_recommendation_add(request, form_class=RecommendationForm,
     else:
         form = form_class()
 
-    base = 'http://%s' % request.META.get('HTTP_HOST', 'http://pln.yourlabs.org')
+    base = 'http://%s' % request.META.get('HTTP_HOST', 'http://playlistnow.fm')
     profiles = request.user.twitterprofile_set.all()
     if profiles:
         context['twitterprofile'] = profiles[0]
@@ -201,9 +201,12 @@ def music_artist_fanship(request):
         if not artist.image_medium:
             artist.lastfm_get_info()
     else:
-        artist = Artist(name=request.POST.get('artist_name'))
-        artist.lastfm_get_info()
-        artist.save()
+        try:
+            artist = Artist.objects.get(name__iexact=request.POST.get('artist_name'))
+        except Artist.DoesNotExist:
+            artist = Artist(name=request.POST.get('artist_name'))
+            artist.lastfm_get_info()
+            artist.save()
     
     if request.POST.get('action') == 'add':
         artist.fans.add(request.user.playlistprofile)
@@ -326,10 +329,13 @@ def music_search_autocomplete(request, qname='query'):
         else:
             doc['html'] = ''
         if 'track' in doc.keys():
-            doc['url'] = urlresolvers.reverse('music_track_details', args=(
-                defaultfilters.slugify(doc['artist']),
-                defaultfilters.slugify(doc['track']),
-            ))
+            try:
+                doc['url'] = urlresolvers.reverse('music_track_details', args=(
+                    defaultfilters.slugify(doc['artist']),
+                    defaultfilters.slugify(doc['track']),
+                ))
+            except:
+                continue
             doc['html'] += '%s / %s' % (
                 doc['track'],
                 doc['artist']
@@ -367,7 +373,7 @@ def music_search(request, qname='term',
                 artist = Artist(name=q)
                 artist.lastfm_search(page=request.GET.get('page', 1), limit=7)
                 context['artists'] = artist.matches
-                max_results = artist.opensearch_total_results
+                max_results = getattr(artist, 'opensearch_total_results', 0)
         except lxml.etree.XMLSyntaxError: # some utf8 char failed
             pass
 
@@ -375,7 +381,7 @@ def music_search(request, qname='term',
             if request.GET.get('search_tracks', True):
                 track = Track(name=q)
                 track.lastfm_search(page=request.GET.get('page', 1), limit=7)
-                if track.opensearch_total_results > max_results:
+                if getattr(track, 'opensearch_total_results', -1) > max_results:
                     max_results = track.opensearch_total_results
                 context['tracks'] = track.matches
         except lxml.etree.XMLSyntaxError: # some utf8 char failed

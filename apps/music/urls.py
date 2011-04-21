@@ -1,10 +1,7 @@
 from django.conf.urls.defaults import *
 
 # @todo: implement lang ?
-urlpatterns = patterns('',
-    url(r'artist/booker-t-the-mgs', 'django.views.generic.simple.redirect_to', {'url': '/music/artist/booker-t-%26-the-mgs', 'permanent': True}),
-)
-urlpatterns += patterns('music.views',
+urlpatterns = patterns('music.views',
     url(
         r'search/$',
         'music_search',

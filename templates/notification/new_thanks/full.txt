@@ -1,7 +1,5 @@
 {{ recommendation.target }} thanks you for recommending {{ recommendation.track }} by {{ recommendation.track.artist }}!
 
-[Text to persuade to recommend more]
-
 Or check out all the music from {{ recommendation.track.artist }}:
 http://{{ site.domain }}{{ recommendation.track.artist.get_absolute_url }}
 

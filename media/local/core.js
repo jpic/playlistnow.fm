@@ -59,6 +59,12 @@ var ui = {
                     }
                 });
             });
+
+            $('a.twitter-share-button').each(function(i) {
+                var loadedTweetButton = new twttr.TweetButton($(this).get(0));
+                loadedTweetButton.render();
+
+            });
         });
         $(document).bind('signalPopupOpen', ui.setupAutocomplete)
         $(document).bind('signalPopupOpen', ui.twitterCounter)
@@ -621,7 +627,7 @@ var ui = {
         if ($('#fb-root').length < 1) return true;
 
         function initFb() {
-            FB.init({ apiKey: '5d962efae6ae8422f3c60ac58ec6a91a', status: true, cookie: true, xfbml: true});
+            FB.init({ apiKey: 'deb205b1c3050bd7ae82c4bbc3772c59', status: true, cookie: true, xfbml: true});
         }
 
         if (ui.facebookJsLoaded == undefined) {

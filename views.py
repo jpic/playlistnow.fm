@@ -351,7 +351,7 @@ def home(request,
     template_name='homepage.html', extra_context=None):
     context = {}
     
-    context['last_users'] = cache.get('last_users')
+    context['last_users'] = None # cache.get('last_users')
     if context['last_users'] is None:
         c = ContentType.objects.get_for_model(User)
         pks = Action.objects.filter(actor_content_type=c).order_by('-timestamp').values_list('actor_object_id', flat=True)
@@ -365,7 +365,7 @@ def home(request,
             final_pks).distinct().select_related('playlistprofile')
         cache.set('last_users', list(context['last_users']), 3600*12)
 
-    context['last_artists'] = cache.get('last_artists')
+    context['last_artists'] = None # cache.get('last_artists')
     if context['last_artists'] is None:
         context['last_artists'] = Artist.objects.filter(last_fan_datetime__isnull=False).order_by('-last_fan_datetime')[:8]
         cache.set('last_artists', list(context['last_artists']), 3600*12)
@@ -395,21 +395,18 @@ def me(request,
                 'socialregistration_complete'))
     
     user = request.user
-    if user.follow_set.count() > 0:
-        activities = Action.objects.filter(
-            Q(pk__in=user_stream(user).values_list('pk')) |
-            Q(pk__in=actor_stream(user).values_list('pk')) |
-            Q(
-                action_object_content_type = ContentType.objects.get_for_model(Recommendation),
-                action_object_object_id__in = Recommendation.objects.filter(target=user).values_list('id')
-            ) |
-            Q(
-                target_content_type = ContentType.objects.get_for_model(User),
-                target_object_id = user.pk
-            )
-        ).order_by('-timestamp')
-    else:
-        activities = actor_stream(User.objects.get(pk=settings.ROOT_USERID))
+    activities = Action.objects.filter(
+        Q(pk__in=user_stream(user).values_list('pk')) |
+        Q(pk__in=actor_stream(user).values_list('pk')) |
+        Q(
+            action_object_content_type = ContentType.objects.get_for_model(Recommendation),
+            action_object_object_id__in = Recommendation.objects.filter(target=user).values_list('id')
+        ) |
+        Q(
+            target_content_type = ContentType.objects.get_for_model(User),
+            target_object_id = user.pk
+        )
+    ).order_by('-timestamp')
     context['activities'] = activities
 
     context['who_to_follow'] = suggested_users_for(user)

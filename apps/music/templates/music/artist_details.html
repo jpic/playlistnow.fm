@@ -20,7 +20,7 @@
 {# enable right column #}
 {% block page_body_right_class %}block{% endblock %}
 {% block body_right %}
-<h3>{% if playlists_including_artist.count %}{{ playlists_including_artist.count }}{% endif %} playlist <a href="{% url music_artist_details_tab object|slugify 'playlists' %}" class="right">see all</a></h3>
+<h3>{% if playlists_including_artist.count %}{{ playlists_including_artist.count }}{% endif %} playlist <a href="{{ object.get_playlists_tab_absolute_url }}" class="right">see all</a></h3>
 			
 {% if playlists_including_artist_slice %}
 <ul class="sidebar_list">
@@ -38,7 +38,7 @@
 {% if artist_fans_slice %}
 <div class="espacetop"></div>
 
-<h3><span class="fan">{% if object.local_artist.fans.count %}{{ object.local_artist.fans.count }}{% else %}0{% endif %} Fans</span> <a href="{% url music_artist_details_tab object|slugify 'fans' %}" class="right">see all</a></h3>
+<h3><span class="fan">{% if object.local_artist.fans.count %}{{ object.local_artist.fans.count }}{% else %}0{% endif %} Fans</span> <a href="{{ object.get_fans_tab_absolute_url }}" class="right">see all</a></h3>
 
 <div class="friends" style="line-height: 22px;">
     {% for fan in artist_fans_slice %}
@@ -93,7 +93,7 @@
             </span> 
 			
        
-            <a href="{% url music_artist_details_tab object|slugify 'fans' %}" class="fan bold">{% if object.local_artist.fans.count %}{{ object.local_artist.fans.count }}{% else %}0{% endif %} fans</a>
+            <a href="{{ object.get_fans_tab_absolute_url }}" class="fan bold">{% if object.local_artist.fans.count %}{{ object.local_artist.fans.count }}{% else %}0{% endif %} fans</a>
 
         </li>
         <li><span class="location">Next event:</span></li>
@@ -105,27 +105,27 @@
  
  <ul id="tab_artist" class="tab_artist fake_tabs">
     <li class="tab first {% if tab == 'overview' %}selected{% endif %}">
-        <a class="" href="{% url music_artist_details_tab object|slugify 'overview' %}">
+        <a class="" href="{{ object.get_overview_tab_absolute_url }}">
         {% trans "overview" %}
         </a>
     </li>
     <li class="tab {% if tab == 'music' or tab == 'playlists' %}selected{% endif %}">
-        <a class="" href="{% url music_artist_details_tab object|slugify 'music' %}">
+        <a class="" href="{{ object.get_music_tab_absolute_url }}">
         {% trans "music" %}
         </a>
     </li>
     <li class="tab {% if tab == 'fans' %}selected{% endif %}">
-        <a class="" href="{% url music_artist_details_tab object|slugify 'fans' %}">
+        <a class="" href="{{ object.get_fans_tab_absolute_url }}">
         {% trans "fans" %}
         </a>
     </li>
     <li class="tab {% if tab == 'similar' %}selected{% endif %}">
-        <a class="" href="{% url music_artist_details_tab object|slugify 'similar' %}">
+        <a class="" href="{{ object.get_similar_tab_absolute_url }}">
         {% trans "similar artists" %}
         </a>
     </li>
     <li class="tab last {% if tab == 'events' %}selected{% endif %}">
-        <a class="" href="{% url music_artist_details_tab object|slugify 'events' %}">
+        <a class="" href="{{ object.get_events_tab_absolute_url }}">
         {% trans "events" %}
         </a>
     </li>
@@ -158,7 +158,7 @@
 
     {% if object.tracks %}
 <h2 class="top_tracks" style="display:inline-block"> 
-    <a href="{% url music_artist_details_tab object|slugify 'music' %}" title="{% trans 'more tracks' %}">
+    <a href="{{ object.get_music_tab_absolute_url }}" title="{% trans 'more tracks' %}">
         {% trans "top tracks" %}
         <span class="trail_title">{% trans '(see all tracks)' %}</span>
     </a>
@@ -170,7 +170,7 @@
     {% endif %}
 <div class="espacetop"></div>
 <h2 class="similar_art" style="display:inline-block">
-    <a href="{% url music_artist_details_tab object|slugify 'similar' %}" title="{% trans 'all similar artists' %}">
+    <a href="{{ object.get_similar_tab_absolute_url }}" title="{% trans 'all similar artists' %}">
         {% trans "similar artists" %}
         <span class="trail_title">{% trans '(see all similar artists)' %}</span>
     </a>
@@ -184,12 +184,12 @@
 
 
    
-        <a class="{% if tab == 'music' %}selected{% endif %}" href="{% url music_artist_details_tab object|slugify 'music' %}">
+        <a class="{% if tab == 'music' %}selected{% endif %}" href="{{ object.get_music_tab_absolute_url }}">
         {% trans "tracks" %}
         </a>
   /
   
-        <a class="{% if tab == 'playlists' %}selected{% endif %}" href="{% url music_artist_details_tab object|slugify 'playlists' %}">
+        <a class="{% if tab == 'playlists' %}selected{% endif %}" href="{{ object.get_playlists_tab_absolute_url }}">
         {% trans "playlists" %}
         </a>
 

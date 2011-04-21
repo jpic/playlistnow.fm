@@ -158,12 +158,15 @@ def socialregistration_userdata(request, form_class=UserDataForm,
             initial = {
                 'first_name': upstream['first_name'],
                 'last_name': upstream['last_name'],
-                'location': upstream['location']['name'],
                 'email': upstream['email'],
                 'avatar_url': 'http://graph.facebook.com/%s/picture' % request.facebook.user['uid'],
                 'nick': '%s %s' % (upstream['first_name'], upstream['last_name']),
                 'url': upstream['link'],
             }
+            if 'location' in upstream:
+                initial['location'] = upstream['location']['name']
+            else:   
+                initial['location'] = ''
 
         elif profile.__class__.__name__ == 'TwitterProfile':
             client = OAuthTwitter(
@@ -173,7 +176,7 @@ def socialregistration_userdata(request, form_class=UserDataForm,
             )
             upstream = client.get_user_info()
             initial = {
-                'first_name': upstream['name'],
+                'first_name': '',
                 'last_name': upstream['name'],
                 'location': upstream['location'],
                 'email': '',

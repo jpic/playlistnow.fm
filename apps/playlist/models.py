@@ -257,8 +257,11 @@ def suggested_users_for(user):
     return sorted_users
 
 def affinities_betwen(profile1, profile2):
-    key1 = defaultfilters.slugify('%s and %s affinities' % (profile1.pk, profile2.pk))
-    key2 = defaultfilters.slugify('%s and %s affinities' % (profile2.pk, profile1.pk))
+    try:
+        key1 = defaultfilters.slugify('%s and %s affinities' % (profile1.pk, profile2.pk))
+        key2 = defaultfilters.slugify('%s and %s affinities' % (profile2.pk, profile1.pk))
+    except AttributeError:
+        return '?'
 
     result1 = cache.get(key1)
     if result1:

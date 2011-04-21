@@ -1,3 +1,4 @@
+import logging
 import simplejson
 import math
 
@@ -17,6 +18,8 @@ from music.views import return_json
 from music.models import *
 from models import *
 from forms import *
+
+logger = logging.getLogger(__name__)
 
 def playlist_playtrack(request):
     if not request.method == 'POST':

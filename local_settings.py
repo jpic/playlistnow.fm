@@ -16,7 +16,7 @@ PROJECT_PATH = os.path.realpath(os.path.dirname(__file__))
 
 from socket import gethostname; HOSTNAME=gethostname()
 
-if PROJECT_PATH == '/srv/beta.playlistnow.fm/main':
+if PROJECT_PATH == '/home/srv/beta.playlistnow.fm/main':
     DATABASES = {
         'default': {
             'ENGINE': 'mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
@@ -27,7 +27,7 @@ if PROJECT_PATH == '/srv/beta.playlistnow.fm/main':
             'PORT': '',                             # Set to empty string for default. Not used with sqlite3.
         }
     }
-elif PROJECT_PATH == '/srv/playlistnow.fm/main':
+elif PROJECT_PATH == '/home/srv/playlistnow.fm/main':
     DATABASES = {
         'default': {
             'ENGINE': 'mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
@@ -38,7 +38,7 @@ elif PROJECT_PATH == '/srv/playlistnow.fm/main':
             'PORT': '',                             # Set to empty string for default. Not used with sqlite3.
         }
     }
-elif PROJECT_PATH == '/srv/pln.yourlabs.org/main':
+elif PROJECT_PATH == '/home/srv/pln.yourlabs.org/main':
     DATABASES = {
         'default': {
             'ENGINE': 'postgresql_psycopg2', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
@@ -121,11 +121,9 @@ MIDDLEWARE_CLASSES = [
 INTERNAL_IPS = [
     #'83.38.0.213',
     #'81.36.51.224',
-    #'127.0.0.1',
+    '79.150.121.5',
 ]
-
-
-if PROJECT_PATH == '/srv/playlistnow.fm/main':
+if PROJECT_PATH == '/home/srv/playlistnow.fm/main':
     CACHE_BACKEND = "memcached://127.0.0.1:11211/"
     CACHE_MIDDLEWARE_SECONDS = 60
     CACHE_MIDDLEWARE_KEY_PREFIX = 'prod'
@@ -163,20 +161,25 @@ OPENID_AX_PROVIDER_MAP = {'Google': {'email': 'http://axschema.org/contact/email
 
 ADMIN_TOOLS_MENU = 'menu.CustomMenu'
 
-LASTFM_API_KEY = 'a67b55859d8b3cf1ed3bb2c9a5c59898'
-LASTFM_API_SECRET = 'c7970cc5b664b1b1e19a3f471ebc1b12'
+LASTFM_API_KEY = '645b4f357740c4759d67a78bb5a864d7'
+LASTFM_API_SECRET = 'deae62b2d89e744ab30be459af2ca293'
+#LASTFM_API_KEY = 'a67b55859d8b3cf1ed3bb2c9a5c59898'
+#LASTFM_API_SECRET = 'c7970cc5b664b1b1e19a3f471ebc1b12'
 
-TWITTER_CONSUMER_KEY = 'p252OYzorJKGyYZ2wDLpQ'
-TWITTER_CONSUMER_SECRET_KEY = 'IZinFz5Ul4mWFvxMySil97jaXKDnlebWTfFf3bQHU'
+TWITTER_CONSUMER_KEY = '5p5RXWbnJQFBtSlBz2ftA'
+TWITTER_CONSUMER_SECRET_KEY = 'QVCspo9tn84X4e11WTGjdDoJtjsJm9LVdih5RY794'
+#beta
+#TWITTER_CONSUMER_KEY = 'p252OYzorJKGyYZ2wDLpQ'
+#TWITTER_CONSUMER_SECRET_KEY = 'IZinFz5Ul4mWFvxMySil97jaXKDnlebWTfFf3bQHU'
 TWITTER_REQUEST_TOKEN_URL = 'https://api.twitter.com/oauth/request_token'
 TWITTER_ACCESS_TOKEN_URL = 'https://api.twitter.com/oauth/access_token'
 TWITTER_AUTHORIZATION_URL = 'https://api.twitter.com/oauth/authorize'
 
-FACEBOOK_APP_ID = '216106061737413'
-FACEBOOK_API_KEY = '5d962efae6ae8422f3c60ac58ec6a91a'
-FACEBOOK_SECRET_KEY = '0a22c003c98ca96a11071082ded82e5f'
+FACEBOOK_APP_ID = '86928100945'
+FACEBOOK_API_KEY = 'deb205b1c3050bd7ae82c4bbc3772c59'
+FACEBOOK_SECRET_KEY = '0cb9e1d29fe6d86be0cecab93106fffe'
 
-GOOGLE_SITE_ID = '08546160909140751983'
+GOOGLE_SITE_ID = '01734141454554986527'
 
 AUTHENTICATION_BACKENDS = (
     'backends.ModelBackend',
@@ -224,6 +227,13 @@ TIME_ZONE = "Europe/Paris"
 
 ROBOTS_USE_SITEMAP = False
 
-EMAIL_SUBJECT_PREFIX='[pln beta] '
-DEFAULT_FROM_EMAIL='beta@playlistnow.fm'
-SERVER_EMAIL='beta@playlistnow.fm'
+EMAIL_SUBJECT_PREFIX='[PlaylistNow.fm] '
+DEFAULT_FROM_EMAIL='noreply@playlistnow.fm'
+SERVER_EMAIL='noreply@playlistnow.fm'
+
+ADMINS = [
+    ('James Pic', 'jamespic@gmail.com'),
+    ('Jonathan Younes', 'sms2night@gmail.com'),
+]
+DEBUG=False
+TEMPLATE_DEBUG=False

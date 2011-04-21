@@ -1,4 +1,5 @@
 import re
+import logging
 import htmlentitydefs
 import urllib
 import datetime
@@ -15,6 +16,7 @@ from django.core.cache import cache
 import gdata.youtube
 import gdata.youtube.service
 
+logger = logging.getLogger(__name__)
 # Prevent: XMLSyntaxError: Attempt to load network entity
 etree.set_default_parser(etree.XMLParser(no_network=False, recover=True))
 
@@ -25,14 +27,17 @@ def youtube_entry_generator(entries):
             continue
         if not m.group(1):
             continue
-        id = m.group(1)
-        t = etree.parse('http://gdata.youtube.com/feeds/api/videos/%s' % id)
-        r = t.xpath('.//yt:state', namespaces={'yt':'http://gdata.youtube.com/schemas/2007'})
-        restricted = False
-        for i in r:
-            if 'restricted' in i.text:
-                restricted = True
-        if restricted:
+        try:
+            id = m.group(1)
+            t = etree.parse('http://gdata.youtube.com/feeds/api/videos/%s' % id)
+            r = t.xpath('.//yt:state', namespaces={'yt':'http://gdata.youtube.com/schemas/2007'})
+            restricted = False
+            for i in r:
+                if 'restricted' in i.text:
+                    restricted = True
+            if restricted:
+                continue
+        except:
             continue
 
         yield entry
@@ -193,7 +198,8 @@ class MusicalEntity(models.Model):
             method,
             urllib.urlencode(kwargs)
         )
-        print url
+
+        logger.info(url)
 
         try:
             tree = etree.parse(url)
@@ -310,6 +316,25 @@ class Artist(MusicalEntity):
             event = Event(artist=self, name=name)
             event.lastfm_get_info(element)
             self.events.append(event)
+
+    def get_tab_absolute_url(self, tab):
+        return urlresolvers.reverse('music_artist_details_tab', args=(
+            defaultfilters.slugify(self.name.replace('&', 'and')),
+            tab
+        ))
+
+    def get_fans_tab_absolute_url(self):
+        return self.get_tab_absolute_url('fans')
+    def get_overview_tab_absolute_url(self):
+        return self.get_tab_absolute_url('overview')
+    def get_music_tab_absolute_url(self):
+        return self.get_tab_absolute_url('music')
+    def get_similar_tab_absolute_url(self):
+        return self.get_tab_absolute_url('similar')
+    def get_events_tab_absolute_url(self):
+        return self.get_tab_absolute_url('events')
+    def get_playlists_tab_absolute_url(self):
+        return self.get_tab_absolute_url('playlists')
 
 class Event(MusicalEntity):
     artist = models.ForeignKey(Artist, verbose_name=_(u'artist'))
@@ -431,9 +456,13 @@ class Track(MusicalEntity):
             artist = self.artist
         
         artist = defaultfilters.slugify(artist.replace('&', 'and'))
+        name = defaultfilters.slugify(self.name.replace('&', 'and'))
+
+        if artist == 'youtube' and not len(name):
+            return urlresolvers.reverse('music_artist_details', args=(artist,))
 
         return urlresolvers.reverse('music_track_details', args=(
-            artist, defaultfilters.slugify(self.name.replace('&', 'and'))
+            artist, name
         ))
 
     def lastfm_search(self, page=1, limit=100):

@@ -4,7 +4,5 @@
 Comment:
 {{ comment.comment }}
 
-[Text to persuade the reader to reply]
-
 Reply on {{ comment.content_object.actor }}'s profile: 
 http://{{ site.domain }}{{ comment.content_object.actor.get_absolute_url }}

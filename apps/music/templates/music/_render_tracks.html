@@ -9,7 +9,7 @@
     {% if track.artist.name != 'YouTube' %}
     <span class="dash" style="color:#bebdbd">-</span> 
     {% endif %}
-    <a title="Details of track {{ track }}" href="{{ track.get_absolute_url }}" class="label track">{{ track.name|safe }}</a>
+    <a title="Details of track {{ track }}" href="{{ track.get_absolute_url }}" class="label track">{{ track }}</a>
     
     <span class="icon track_modify add add_track authenticationRequired right tiptip {% if playlist %}noconfirm copy_track_row playlist_pk_{{ playlist.pk }}{% endif %}" title="Add this song to {% if not playlist %}a Playlist{% else %}playlist {{ playlist }}{% endif %}"></span>
     <span class="icon love tiny_playlist {% if track in request.tiny_tracks %}remove_track {% if request.user.playlistprofile.tiny_playlist == playlist %}delete parent{% endif %}{% else %}add_track{% endif %} track_modify authenticationRequired right tiptip noconfirm {% if playlist and playlist == request.user.playlistprofile.tiny_playlist %}copy_track_row{% endif %} {% if request.user.is_authenticated %}playlist_pk_{{ request.user.playlistprofile.tiny_playlist.pk }}{% endif %}" title="{% if track in request.tiny_tracks %}Unlike and remove from your Tiny Playlist{% else %}Like and add to your tiny Playlist{% endif %}" style="{% if track in request.tiny_tracks %}background-position: left bottom;{% endif %}"></span>
@@ -17,22 +17,22 @@
     <span class="right tools toggle icon tiptip" title="More actions for this track"></span>
     <ul class="song_tools">
         <li class="recommend">
-            <a href="{% url music_recommendation_add %}?artist_name={{ track.artist.name|urlencode }}&track_name={{ track.name|urlencode }}&tab_id=local" class="popup authenticationRequired">
+            <a rel="nofollow" href="{% url music_recommendation_add %}?artist_name={{ track.artist.name|urlencode }}&track_name={{ track.name|urlencode }}&tab_id=local" class="popup authenticationRequired">
         		Recommend this track
             </a>
         </li>
         <li class="sharefb">
-            <a href="{% url music_recommendation_add %}?artist_name={{ track.artist.name|urlencode }}&track_name={{ track.name|urlencode }}&tab_id=facebook" class="popup authenticationRequired">
+            <a rel="nofollow" href="{% url music_recommendation_add %}?artist_name={{ track.artist.name|urlencode }}&track_name={{ track.name|urlencode }}&tab_id=facebook" class="popup authenticationRequired">
                  Share this track
             </a>
         </li>
         <li class="sharetw">
-            <a href="{% url music_recommendation_add %}?artist_name={{ track.artist.name|urlencode }}&track_name={{ track.name|urlencode }}&tab_id=twitter" class="popup authenticationRequired">
+            <a rel="nofollow" href="{% url music_recommendation_add %}?artist_name={{ track.artist.name|urlencode }}&track_name={{ track.name|urlencode }}&tab_id=twitter" class="popup authenticationRequired">
                  Tweet this track
             </a>
         </li>
         <li class="rm icon track_modify remove delete parent_level_2 remove_track authenticationRequired tiptip noconfirm playlist_pk_{{ playlist.pk }}" title="Remove this song from playlist">
-            <a class="ui_ignore" onclick="return false">
+            <a rel="refollow" class="ui_ignore" onclick="return false">
             Remove
             </a>
         </li>
