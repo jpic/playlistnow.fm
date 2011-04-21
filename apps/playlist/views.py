@@ -395,6 +395,11 @@ def playlist_details(request, user, slug, default_format=False, qname='term',
         )
     except Playlist.DoesNotExist:
         return http.Http404()
+    except Playlist.MultipleObjectsReturned:
+        object = Playlist.objects.all_with_hidden().filter(
+            creation_user__username=user,
+            slug=slug
+        ).order_by('-tracks_count')[0]
 
     if request.user.is_authenticated():
         serialized = object.to_dict(for_user=request.user)
