@@ -420,7 +420,8 @@ def playlist_details(request, user, slug, default_format=False, qname='term',
     if q:
         track = Track(name=q)
         track.lastfm_search()
-        context['tracks'] = track.matches[(page*paginate_by)-1:(page*paginate_by)-1+paginate_by]
+        import ipdb; ipdb.set_trace()
+        context['tracks'] = track.matches[((page-1)*paginate_by):((page-1)*paginate_by)+paginate_by]
         context['totalPages'] = int(math.ceil(len(track.matches) / paginate_by))
         context['allPages'] = range(1, context['totalPages'] + 1)
         context['currentPage'] = page
