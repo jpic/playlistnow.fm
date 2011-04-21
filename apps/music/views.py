@@ -123,6 +123,7 @@ def music_recommendation_add(request, form_class=RecommendationForm,
             form = form_class(request.POST, instance=Recommendation(source=request.user, track=context['track']))
             if form.is_valid():
                 save_if_fake_track(context['track'])
+                form.instance.track = context['track']
                 recommendation = form.save()
                 action.send(request.user, verb='recommends', action_object=recommendation)
                 msg = 'thanks for recommending <a href="%s">%s</a> to <a href="%s">%s %s</a>' % (
