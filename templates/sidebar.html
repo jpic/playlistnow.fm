@@ -19,7 +19,7 @@
 
                 </a>
             </li>
-            {% if request.user.is_authenticated %}
+            {% if request.user.is_authenticated and request.user.username %}
               <li class="sidebar_Myplaylists sidebar_info">
                 
                 <a href="{% url user_details_tab request.user.username 'playlists' %}">
