@@ -396,7 +396,10 @@ def me(request,
     
     user = request.user
     activities = Action.objects.filter(
-        Q(pk__in=user_stream(user).values_list('pk')) |
+        Q(pk__in=Action.objects.filter(
+                actor_content_type = ContentType.objects.get_for_model(User),
+                actor_object_id__in = user.follow_set.all().values_list('object_id')
+            ).values_list('pk')) |
         Q(pk__in=actor_stream(user).values_list('pk')) |
         Q(
             action_object_content_type = ContentType.objects.get_for_model(Recommendation),
