@@ -3,5 +3,5 @@
 {% block head_title %}registration failed{% endblock %}
 
 {% block body %}
-Something with your authentication went wrong, maybe your popup blocker is active, you can <a href="{% url gfc_redirect %}">refresh the page to ensure you are not already logged in</a> or <a href="{% url acct_signup %}" title="Signup page">try another login provider</a>.
+Something with your authentication went wrong, maybe your popup blocker is active, you can <a href="/" class="ui_ignore">refresh the website to ensure you are not already logged in</a> or <a href="{% url acct_signup %}" title="Signup page">try another login provider</a>.
 {% endblock %}
