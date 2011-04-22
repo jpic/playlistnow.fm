@@ -394,7 +394,7 @@ def playlist_details(request, user, slug, default_format=False, qname='term',
             slug=slug
         )
     except Playlist.DoesNotExist:
-        return http.Http404()
+        return http.HttpResponseNotFound()
     except Playlist.MultipleObjectsReturned:
         object = Playlist.objects.all_with_hidden().filter(
             creation_user__username=user,
