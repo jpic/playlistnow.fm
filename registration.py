@@ -67,8 +67,13 @@ def socialregistration_userdata(request, form_class=UserDataForm,
         profile = request.session['socialregistration_profile']
         user = request.session['socialregistration_user']
     elif request.user.is_authenticated():
-        profile = request.session['socialregistration_profile']
-        user = request.session['socialregistration_user']
+        if request.user.facebookprofile_set.count():
+            profile = request.user.facebookprofile_set.all()[0]
+        elif request.user.twitterprofile_set.count():
+            profile = request.user.twitterprofile_set.all()[0]
+        if request.user.gfcprofile_set.count():
+            profile = request.user.gfcprofile_set.all()[0]
+        user = request.user
     else:
         return http.HttpResponseRedirect(urlresolvers.reverse(
             'acct_signup'))
