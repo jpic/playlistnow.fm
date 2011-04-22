@@ -6,7 +6,7 @@
         </h1>
         <ul id="menu">
              <li class="seplogo">&nbsp;</li>
-            {% if request.user.is_authenticated and request.user.username %}
+            {% if request.user.is_authenticated %}
             
        <li>
          <ul id="nav" class="dropdown dropdown-horizontal">
@@ -24,7 +24,8 @@
          
          <ul id="nav" class="dropdown dropdown-horizontal">
 
-	<li class="dir">You
+	<li class="dir">
+    {% if request.user.username %}You
 		<ul>
 			<li class="first"><a href="{% url user_details request.user.username %}" title="Your Profile {{ request.user }}">Your Profile</a></li>
 			<li class="first"><a href="{% url user_details_tab request.user.username 'playlists' %}" title="Your Profile">Your Playlists</a></li>
@@ -33,6 +34,9 @@
 
 
 	</ul>
+    {% else %}
+        <a href="{% url me %}">You</a>
+    {% endif %}
 	</ul>
     </li> 
               
