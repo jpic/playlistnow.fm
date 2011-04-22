@@ -12,10 +12,12 @@
         '{{ track }}'
     </a>
 
+    {% if track.artist %}
     by 
     <a href="{{ track.artist.get_absolute_url }}" title="{{ track.artist }}">
         '{{ track.artist }}'
     </a>
+    {% endif %}
 
     to playlist 
     <a href="{{ playlist.get_absolute_url }}" title="{{ playlist }}">
