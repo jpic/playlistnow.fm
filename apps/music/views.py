@@ -82,7 +82,7 @@ def music_recommendation_add(request, form_class=RecommendationForm,
 
     if request.method == 'POST' and context['track']:
         if request.GET.get('method', False) == 'facebook':
-            request.facebook.graph.put_wall_post(request.POST.get('message'))
+            request.facebook.graph.put_wall_post(request.POST.get('message').encode('utf-8'))
             msg = 'thanks for sharing <a href="%s">%s</a> on Facebook' % (
                 context['track'].get_absolute_url(),
                 unicode(context['track']),
