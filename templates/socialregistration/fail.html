@@ -1,0 +1,7 @@
+{% extends 'site_base.html' %}
+
+{% block head_title %}registration failed{% endblock %}
+
+{% block body %}
+Something with your authentication went wrong, you can <a href="{% url gfc_redirect %}">refresh the page</a> or <a href="{% url acct_signup %}" title="Signup page">try another login provider</a>.
+{% endblock %}

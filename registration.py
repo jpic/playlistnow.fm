@@ -127,6 +127,11 @@ def socialregistration_userdata(request, form_class=UserDataForm,
             auth.login(request, user)
             request.user = user
 
+            if not user:
+                logger.info('NOT USER IN REGISTRATION!')
+                return shortcuts.render_to_response('socialregistration/fail.html', context,
+                    context_instance=template.RequestContext(request))
+
             friends = []
             conditions = []
             
