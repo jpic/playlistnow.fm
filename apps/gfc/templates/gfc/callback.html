@@ -1,1 +1,8 @@
-callback template
+{% if error %}
+Google FriendConnect authentication failed (we cannot find your friendconnect cookie).
+<br />
+Please check that your popup blocker did block it.
+<br />
+You can <a href="{% url gfc_redirect %}">refresh the page</a> or <a href="{% url acct_signup %}" title="Signup page">try another login provider</a>.
+<br />
+{% endif %}

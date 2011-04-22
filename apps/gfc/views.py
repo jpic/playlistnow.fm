@@ -39,7 +39,7 @@ def gfc_callback(request,
 
     st = request.COOKIES.get('fcauth' + settings.GOOGLE_SITE_ID, False)
     if not st:
-        context.error = GFC_ERROR
+        context['error'] = 'nocookie'
         return shortcuts.render_to_response(template_name, context,
             context_instance=template.RequestContext(request))
 
