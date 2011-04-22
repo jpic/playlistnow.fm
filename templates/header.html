@@ -6,7 +6,7 @@
         </h1>
         <ul id="menu">
              <li class="seplogo">&nbsp;</li>
-            {% if request.user.is_authenticated %}
+            {% if request.user.is_authenticated and request.user.username %}
             
        <li>
          <ul id="nav" class="dropdown dropdown-horizontal">
