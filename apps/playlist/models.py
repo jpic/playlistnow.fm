@@ -205,7 +205,7 @@ def new_comment(sender, instance, created, **kwargs):
     elif instance.content_object.__class__.__name__ == 'User':
         if instance.content_object != instance.user:
             context['comment'] = instance
-            recipients.append(instance.content_object)
+            recipients = [instance.content_object]
             action.send(instance.user, verb='wall posted', target=instance.content_object, action_object=instance)
             notification.send(recipients, 'new_message', context)
 
