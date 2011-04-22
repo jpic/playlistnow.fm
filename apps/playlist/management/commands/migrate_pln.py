@@ -43,9 +43,9 @@ class Command(BaseCommand):
         #self.sync_friends(old)
         #self.sync_categories(old)
         #self.sync_tracks(old)
-        #self.sync_playlists(old)
+        self.sync_playlists(old)
         #self.sync_tiny_playlist(old)
-        self.sync_artists(old)
+        #self.sync_artists(old)
 
     def get_user(self, pk):
         if pk in self.old_root_ids:
@@ -210,7 +210,7 @@ class Command(BaseCommand):
         print "Migrating tiny playlist ..."
         prog = ProgressBar(0, self.count_table(old, 'users_likedSongs'), 77, mode='fixed')
 
-        old.execute('select ls.userId, s.title, a.name from users_likedSongs ls left join songs s on s.id = ls.songId left join artists a on a.id = s.artistId')
+        old.execute('select ls.userId, s.title, a.name from users_likedSongs ls left join songs s on s.id = ls.songId left join artists a on a.id = s.artistId where s.artistId = 0')
         for old_liked in old.fetchall():
             if old_liked[0] == 0:
                 continue
@@ -370,7 +370,7 @@ pt.playlistId = %s
             playlist.save()
 
 
-            old.execute('select ps.songId, s.title, a.name from playlists_songs ps left join songs s on ps.songId = s.id left join artists a on a.id = s.artistId where ps.playlistId = %s' % int(playlist.pk))
+            old.execute('select ps.songId, s.title, a.name from playlists_songs ps left join songs s on ps.songId = s.id left join artists a on a.id = s.artistId where ps.playlistId = %s and s.artistId = 0' % int(playlist.pk))
             for old_song in old.fetchall():
                 # skipping more dead relations weee
                 if not old_song[0]:
@@ -418,6 +418,7 @@ select
 from songs s 
 left join youtubeSongs ys on ys.songId = s.id 
 left join artists a on a.id = s.artistId
+where s.artistId = 0
         ''')
         for old_track in old.fetchall():
             # this bugs for some reason
