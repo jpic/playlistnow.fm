@@ -117,6 +117,7 @@ MIDDLEWARE_CLASSES = [
     'pagination.middleware.PaginationMiddleware',
     'socialregistration.middleware.FacebookMiddleware',
     'django.middleware.cache.FetchFromCacheMiddleware',
+    'middleware.OldUrlsMiddleware',
 ]
 INTERNAL_IPS = [
     #'83.38.0.213',

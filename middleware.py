@@ -4,6 +4,7 @@ import hotshot
 from django import http
 from django.conf import settings
 from django.core import urlresolvers
+from django.template import defaultfilters
 
 JS_AGENTS = [
     'gecko',
@@ -17,6 +18,21 @@ BOTS = [
     'googlebot',
 ]
 IGNORE = r'^(site_media)|(ajax)'
+
+class OldUrlsMiddleware(object):
+    def process_response(self, request, response):
+        if response.status_code != 404:
+            return response
+        path = request.META.get('PATH_INFO', '/')
+
+        m = re.match(r'.*/song/(?P<artist>[^/]*)/(?P<track>[^/]*)/?$', path)
+        if m is not None:
+            return http.HttpResponseRedirect(urlresolvers.reverse('music_track_details', args=(
+                defaultfilters.slugify(m.group('artist').replace('+', ' ')),
+                defaultfilters.slugify(m.group('track').replace('+', ' ')),
+            )))
+
+        return http.HttpResponse(status=401)
 
 class DynamicHtmlMiddleware(object):
     def process_request(self, request):
