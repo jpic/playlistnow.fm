@@ -155,7 +155,8 @@ class MusicalEntity(models.Model):
     def youtube_cache_reset(self):
         term = self.youtube_get_term()
         key = defaultfilters.slugify('youtube_entries for ' + term)
-        cache.delete(key)
+        if len(key) <= 250: # MemcachedKeyLengthError: Key length is > 250
+            cache.delete(key)
 
     @property
     def youtube_entries(self):
