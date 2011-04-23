@@ -486,12 +486,6 @@ var player = {
                 $.history.load(player.state.currentPlaylist.object.url);
             });
         });
-        $('.song_play .remove').live('click', function(e) {
-            e.preventDefault();
-            var track = player.parseRenderedTrack($(this).parent());
-            var playlist = false;
-            $(document).trigger('signalPlaylistTrackModificationRequest', [track, playlist, 'remove', $(this)])
-        });
         $('.track_modify').live('click', function(e) {
             if (!user.is_authenticated) {
                 return ui.authenticationPopup();
