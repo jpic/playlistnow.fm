@@ -360,6 +360,8 @@ def playlist_add(request, form_class=PlaylistAddForm,
 
     if request.method == 'POST':
         form = form_class(request.POST)
+        form.user = request.user
+
         if form.is_valid():
             object = form.save(commit=False)
             object.creation_user = request.user
