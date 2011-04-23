@@ -243,3 +243,4 @@ if PROJECT_PATH == '/home/srv/beta.playlistnow.fm/main':
 elif PROJECT_PATH == '/home/srv/playlistnow.fm/main':
     DEBUG=False
     TEMPLATE_DEBUG=False
+SEND_BROKEN_LINK_EMAILS=True
