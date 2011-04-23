@@ -161,7 +161,11 @@ class MusicalEntity(models.Model):
     def youtube_entries(self):
         term = self.youtube_get_term()
         key = defaultfilters.slugify('youtube_entries for ' + term)
-        entry = cache.get(key)
+
+        if len(key) <= 250: # MemcachedKeyLengthError: Key length is > 250
+            entry = cache.get(key)
+        else:
+            entry = None
 
         if entry:
             return entry
@@ -178,7 +182,8 @@ class MusicalEntity(models.Model):
         #query.restriction = 'fr'
         feed = client.YouTubeQuery(query)
 
-        cache.set(key, feed.entry, 24*3600)
+        if len(key) <= 250: # MemcachedKeyLengthError: Key length is > 250
+            cache.set(key, feed.entry, 24*3600)
 
         return feed.entry
 
