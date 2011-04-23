@@ -306,6 +306,11 @@ def affinities_betwen(profile1, profile2):
     if percent > 100:
         percent = 100
 
+    if profile1_playlists_count == 0 \
+        and profile1_artists_count == 0 \
+        and profile1_tracks_count == 0:
+        percent = 0
+
     #cache.set(key1, percent, 7200)
     #cache.set(key2, percent, 7200)
 
