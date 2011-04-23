@@ -206,11 +206,8 @@ def playlist_track_modify(request,
             pass
 
     context.update(extra_context or {})
-    try:
-        return shortcuts.render_to_response(template_name, context,
-            context_instance=template.RequestContext(request))
-    except:
-        logger.info('TRACK_MODIFY ERROR BY %s WITH CONTEXT %s' % (request.user, context))
+    return shortcuts.render_to_response(template_name, context,
+        context_instance=template.RequestContext(request))
 
 def playlist_category_details(request, slug, parent_slug=None,
     template_name='playlist/category_details.html', extra_context=None):
