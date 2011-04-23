@@ -31,6 +31,12 @@ class OldUrlsMiddleware(object):
                 m.group('tag'),
             )))
 
+        m = re.match(r'.*/artist/(?P<artist>[^/]*)/?$', path)
+        if m is not None:
+            return http.HttpResponseRedirect(urlresolvers.reverse('music_artist_details', args=(
+                defaultfilters.slugify(m.group('artist').replace('+', ' ')),
+            )))
+
         m = re.match(r'.*/song/(?P<artist>[^/]*)/(?P<track>[^/]*)/?$', path)
         if m is not None:
             return http.HttpResponseRedirect(urlresolvers.reverse('music_track_details', args=(
