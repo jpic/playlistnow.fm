@@ -778,7 +778,7 @@ ul.dropdown form input.button {
 
 ul.dropdown *.dir {
  padding-right: 20px;
- background-image: url(images/nav-arrow-down.png);
+ /*background-image: url(images/nav-arrow-down.png);*/
  background-position: 100% 50%;
  background-repeat: no-repeat;
 }
