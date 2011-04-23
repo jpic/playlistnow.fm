@@ -348,8 +348,12 @@ def music_search_autocomplete(request, qname='query'):
         elif 'album' in doc.keys():
             continue
         elif 'artist' in doc.keys():
+            a = defaultfilters.slugify(doc['artist'].replace('&', 'and'))
+            if not a:
+                continue
+
             doc['url'] =  urlresolvers.reverse('music_artist_details', args=(
-                defaultfilters.slugify(doc['artist'].replace('&', 'and')),
+                a,
             ))
             doc['html'] += doc['artist']
             suggestion = doc['artist']
