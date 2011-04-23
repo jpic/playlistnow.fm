@@ -86,7 +86,9 @@ var ui = {
         
         $(document).bind('signalPlaylistTrackModificationRequest', function(e, track, playlist, action, element) {
             /* read playlist_track_modify first */
-            var data = {}
+            var data = {
+                'url': document.location.hash,
+            }
             
             if (track.pk != undefined) {
                 data['track_pk'] = track.pk;
