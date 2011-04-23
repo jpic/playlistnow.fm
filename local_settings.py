@@ -120,9 +120,7 @@ MIDDLEWARE_CLASSES = [
     'middleware.OldUrlsMiddleware',
 ]
 INTERNAL_IPS = [
-    #'83.38.0.213',
-    #'81.36.51.224',
-    '79.150.121.5',
+    '79.151.162.220',
 ]
 if PROJECT_PATH == '/home/srv/playlistnow.fm/main':
     CACHE_BACKEND = "memcached://127.0.0.1:11211/"

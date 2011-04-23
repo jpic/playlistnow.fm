@@ -25,6 +25,12 @@ class OldUrlsMiddleware(object):
             return response
         path = request.META.get('PATH_INFO', '/')
 
+        m = re.match(r'.*/tags/(?P<tag>[^/]*)/?$', path)
+        if m is not None:
+            return http.HttpResponseRedirect(urlresolvers.reverse('tag_details', args=(
+                m.group('tag'),
+            )))
+
         m = re.match(r'.*/song/(?P<artist>[^/]*)/(?P<track>[^/]*)/?$', path)
         if m is not None:
             return http.HttpResponseRedirect(urlresolvers.reverse('music_track_details', args=(
