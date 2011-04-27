@@ -99,7 +99,7 @@ def socialregistration_userdata(request, form_class=UserDataForm,
                 user_slug_test = user_slug + unicode(i)
                 while User.objects.filter(username=user_slug_test).count() >0:
                     i += 1
-                    user_slug_test = user_slug + i
+                    user_slug_test = user_slug + str(i)
                 user.username = user_slug_test
             else:
                 user.username = user_slug
