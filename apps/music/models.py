@@ -21,6 +21,10 @@ logger = logging.getLogger(__name__)
 etree.set_default_parser(etree.XMLParser(no_network=False, recover=True))
 
 def youtube_entry_generator(entries, exclude=''):
+    OK = (
+        'Syndication of this video was restricted by its owner.',
+    )
+
     for entry in entries:
         m = re.match(r'.*/([0-9A-Za-z_-]*)/?$', entry.id.text)
         if not m:
@@ -29,20 +33,21 @@ def youtube_entry_generator(entries, exclude=''):
             continue
         if m.group(1) in exclude:
             continue
-        try:
-            id = m.group(1)
-            t = etree.parse('http://gdata.youtube.com/feeds/api/videos/%s' % id)
-            r = t.xpath('.//yt:state', namespaces={'yt':'http://gdata.youtube.com/schemas/2007'})
-            restricted = False
-            for i in r:
-                if 'restricted' in i.text:
-                    restricted = True
-            if restricted:
-                continue
-        except:
-            continue
+        yield m.group(1)
+        #try:
+            #id = m.group(1)
+            #t = etree.parse('http://gdata.youtube.com/feeds/api/videos/%s' % id)
+            #r = t.xpath('.//yt:state', namespaces={'yt':'http://gdata.youtube.com/schemas/2007'})
+            #restricted = False
+            #for i in r:
+                #if 'restricted' in i.text and i.text not in OK:
+                    #restricted = True
+            #if restricted:
+                #continue
+        #except:
+            #continue
 
-        yield entry
+        #yield entry
 
 def get_info_if_no_image(sender, instance, **kwargs):
     if not isinstance(instance, MusicalEntity):
