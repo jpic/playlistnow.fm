@@ -160,7 +160,7 @@ class MusicalEntity(models.Model):
         if len(key) <= 250: # MemcachedKeyLengthError: Key length is > 250
             cache.delete(key)
 
-    def youtube_ids(self, bad_ids):
+    def youtube_ids(self, bad_ids=''):
         for entry in youtube_entry_generator(self.youtube_entries, bad_ids):
             m = re.match(r'.*/([0-9A-Za-z_-]*)/?$', entry.id.text)
             yield m.group(1)
