@@ -421,7 +421,7 @@ def playlist_details(request, user, slug, default_format=False, qname='term',
     if request.user.is_authenticated():
         context['user_tracks'] = object.all_user_tracks(request.user)
     else:
-        context['user_tracks'] = object.tracks.all()
+        context['user_tracks'] = object.tracks.all().order_by('artist__name')
 
     q = request.GET.get(qname, False)
     page = int(request.GET.get('page', 1))
