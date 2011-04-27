@@ -20,12 +20,14 @@ logger = logging.getLogger(__name__)
 # Prevent: XMLSyntaxError: Attempt to load network entity
 etree.set_default_parser(etree.XMLParser(no_network=False, recover=True))
 
-def youtube_entry_generator(entries):
+def youtube_entry_generator(entries, exclude=''):
     for entry in entries:
         m = re.match(r'.*/([0-9A-Za-z_-]*)/?$', entry.id.text)
         if not m:
             continue
         if not m.group(1):
+            continue
+        if m.group(1) in exclude:
             continue
         try:
             id = m.group(1)
@@ -158,9 +160,8 @@ class MusicalEntity(models.Model):
         if len(key) <= 250: # MemcachedKeyLengthError: Key length is > 250
             cache.delete(key)
 
-    @property
-    def youtube_ids(self):
-        for entry in youtube_entry_generator(self.youtube_entries):
+    def youtube_ids(self, bad_ids):
+        for entry in youtube_entry_generator(self.youtube_entries, bad_ids):
             m = re.match(r'.*/([0-9A-Za-z_-]*)/?$', entry.id.text)
             yield m.group(1)
 

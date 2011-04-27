@@ -172,11 +172,9 @@ def music_badvideo(request):
     else:
         t = Track.objects.get(pk=bad_track_pk)
 
-    import ipdb; ipdb.set_trace()
-
     ids = []
     new_id = False
-    for id in t.youtube_ids:
+    for id in t.youtube_ids(bad_ids):
         ids.append(id)
         if id not in bad_ids:
             new_id = id
