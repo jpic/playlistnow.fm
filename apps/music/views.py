@@ -1,3 +1,4 @@
+import random
 import urllib2
 from urllib import urlencode
 import math
@@ -162,30 +163,29 @@ def music_badvideo(request):
     bad_track_pk = request.POST.get('track_pk', '')
     bad_track_name = request.POST.get('track_name', '')
     bad_artist_name = request.POST.get('artist_name', '')
+    bad_ids = request.POST.get('bad_ids', '')
+    bad_id = request.POST.get('youtube_id')
 
     if not bad_track_pk:
         t = Track(name=bad_track_name)
         t.artist = Artist(name=bad_artist_name)
-        t.youtube_cache_reset()
     else:
         t = Track.objects.get(pk=bad_track_pk)
-    t.youtube_cache_reset()
 
-    key = defaultfilters.slugify('bad videos for ' + t.youtube_get_term())
-    if not 'bad videos' in request.session:
-        request.session['bad videos'] = {}
-    if not key in request.session['bad videos']:
-        request.session['bad videos'][key] = []
-    request.session['bad videos'][key].append(bad_youtube_id)
+    ids = t.youtube_ids
+    new_id = False
+    for id in ids:
+        if id not in bad_ids:
+            new_id = id
+            break
 
-    for e in youtube_entry_generator(t.youtube_entries):
-        m = re.match(r'.*/([0-9A-Za-z_-]*)/?$', e.id.text)
-        if m.group(1) not in request.session['bad videos'][key]:
-            new_id = m.group(1)
+    if not new_id:
+        new_id = bad_id
+        while new_id == bad_id:
+            new_id = ids[random.randint(0, len(ids)-1)]
 
-    if new_id:
-        Track.objects.filter(youtube_id=bad_youtube_id).update(
-            youtube_id=new_id)
+    Track.objects.filter(youtube_id=bad_youtube_id).update(
+        youtube_id=new_id)
 
     return http.HttpResponse(new_id)
 

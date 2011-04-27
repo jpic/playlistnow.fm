@@ -262,16 +262,31 @@ var player = {
         if (player.state == undefined || player.state.currentTrack == undefined) {
             return false;
         }
+
+        if (player.state.videoRegistry == undefined) {
+            player.state.videoRegistry = {};
+        }
+
         var bad_data = {
             'youtube_id': player.state.currentTrack.youtube_best_id,
             'track_name': player.state.currentTrack.name,
         }
+        key = player.state.currentTrack.name;
         if (player.state.currentTrack.pk != undefined) {
             bad_data['track_pk'] = player.state.currentTrack.pk;
+            key = player.state.currentTrack.pk;
         }
         if (player.state.currentTrack.artist.name != undefined) {
             bad_data['artist_name'] = player.state.currentTrack.artist.name;
+            key = player.state.currentTrack.name + ' ' + player.state.currentTrack.artist.name;
         }
+        if (player.state.videoRegistry[key] == undefined) {
+            player.state.videoRegistry[key] = [];
+        }
+        if ($.inArray(player.state.currentTrack.youtube_best_id, player.state.videoRegistry[key]) == -1) {
+            player.state.videoRegistry[key].push(player.state.currentTrack.youtube_best_id);
+        }
+        bad_data['bad_ids'] = player.state.videoRegistry[key].join(';');
 
         $.ajax({
             url: music_badvideo + '?a=' + new Date(),
@@ -281,6 +296,9 @@ var player = {
             success: function(text, textStatus, request) {
                 player.state.waitingNewVideo = false;
                 player.state.currentTrack.youtube_best_id = text;
+                if ($.inArray(text, player.state.videoRegistry[key]) > -1) {
+                    player.state.videoRegistry[key] = [];
+                }
                 player.ytplayer.loadVideoById(player.state.currentTrack.youtube_best_id);
                 player.state.playingTrackSince = new Date();
                 $('#ajaxload').fadeOut();

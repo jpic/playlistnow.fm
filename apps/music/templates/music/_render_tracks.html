@@ -4,7 +4,7 @@
     <span class="icon play"></span>
     <span class="number play">{{ forloop.counter }}</span>
 
-    <a style="display:none" title="{{ track.youtube_get_best }}" class="hidden youtube_play" href="{{ track.youtube_get_best }}"></a>
+    <a style="display:none" title="{{ track.youtube_get_best }}" class="hidden youtube_play" href="{{ track.youtube_get_best }}" rel="nofollow"></a>
     <a title="{{ track.artist.name }}" class="artist" href="{{ track.artist.get_absolute_url }}" style="{% if track.artist.name == 'YouTube' %}display: none;{% endif %}font-weight:bold">{{ track.artist.name|safe }}</a>
     {% if track.artist.name != 'YouTube' %}
     <span class="dash" style="color:#bebdbd">-</span> 

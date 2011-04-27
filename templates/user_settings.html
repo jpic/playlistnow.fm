@@ -7,12 +7,18 @@
 <h1>User Settings</h1>
 
 <h2>Modify your informations</h2>
-<form action="{{ request.path_info }}" method="post">
+<form action="{{ request.path_info }}" method="post" class="uniForm">
     {% csrf_token %}
-    {{ form|as_uni_form }}
+    {{ form.first_name.errors }}
+    {{ form.first_name }}
+    
+    {{ form.last_name.errors }}
+    {{ form.last_name }}
     <input type="submit" class="button grey"/>
 </form>
-
+  <br/>
+<hr style="height: 2px; background: none repeat scroll 0% 0% rgb(221, 221, 221);">
+<div class="espacetop"></div>
 <h2>Delete your account</h2>
-<a href="{% url user_delete request.user.username %}" class="button black">Delete my account</a>
+<a href="{% url user_delete request.user.username %}" class="button black">Delete my account (you'll have to confirme on the next page)</a>
 {% endblock %}

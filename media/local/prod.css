@@ -301,7 +301,7 @@ li.song_info.selected.dd,li.song_info.selected{background-color:rgba(70, 27, 80,
 li.song_info.dd,.dd{background-color:#f4f4f4;}
 ul.artists{display:inline;vertical-align:top;}
 ul.artists li{position:relative;float:left;display:inline;overflow-x:hidden;overflow-y:hidden;}
-ul.artists li a{display:block;margin:2px 0 0 5px;font-weight:700;font-size:11px;width:63px;height:102px;word-wrap:break-word;}
+ul.artists li a{display:block;margin:2px 0 0 5px;font-weight:700;font-size:11px;width:63px;height:99px;word-wrap:break-word;}
 ul.artists li a:hover{text-decoration:none;}
 .artist_rank{vertical-align:top;margin:0px 0 0 10px;font-size:12px;color:#492D3D;background:rgba(70, 27, 80, 0.2);padding:4px;}
 .artist_descr{padding:0px 2px;color:#666666;overflow:hidden;}
@@ -757,7 +757,6 @@ ul.dropdown form input.text {
  border-width: 0;
  background: transparent url(images/bg_search-field.png) 0 0 no-repeat;
  color: #969696;
-
  vertical-align: middle;
 }
 
@@ -803,3 +802,21 @@ border: 1px solid #E9D8EA;}
 
 
 .tab_link{cursor:pointer;}
+.feed_likes{background:url(../images/star_sm.png) no-repeat 0 top transparent;margin-right:2px;margin-left:2px;padding-left:18px;}
+.feed_add{background:url(../images/add_sm.png) no-repeat 0 top transparent;margin-right:2px;margin-left:2px;padding-left:18px;}
+.feed_pl{background:url(../images/feed_pl.png) no-repeat 0 top transparent;margin-right:2px;margin-left:2px;padding-left:18px;}
+
+.uniForm input[type="text"]{
+-moz-border-radius: 4px 4px 4px 4px;
+    background: none repeat scroll 0 0 white;
+    border: 1px solid #D6D6D6;
+    padding: 10px 5px;
+    font-size:12px;
+    width:470px;
+    color: #777777;
+    }
+    
+    .uniForm input[type="text"]:hover{border: 1px solid #323334;}
+    .uniForm input[type="text"]:focus{border: 1px solid #323334;}
+    
+  .uniForm label{  color: #777777;}

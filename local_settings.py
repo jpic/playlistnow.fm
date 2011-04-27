@@ -132,6 +132,16 @@ if PROJECT_PATH == '/home/srv/playlistnow.fm/main':
             'LOCATION': '127.0.0.1:11211',
         }
     }
+elif PROJECT_PATH == '/home/srv/beta.playlistnow.fm/main':
+    CACHE_BACKEND = "memcached://127.0.0.1:11211/"
+    CACHE_MIDDLEWARE_SECONDS = 60
+    CACHE_MIDDLEWARE_KEY_PREFIX = 'prod'
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+            'LOCATION': '127.0.0.1:11211',
+        }
+    }
 
 OPENID_REDIRECT_NEXT = '/accounts/openid/done/'
 
