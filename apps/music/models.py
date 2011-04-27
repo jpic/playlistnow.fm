@@ -1,5 +1,3 @@
-import sha
-import time
 import re
 import logging
 import htmlentitydefs
@@ -17,14 +15,10 @@ from django.core.cache import cache
 
 import gdata.youtube
 import gdata.youtube.service
-import gdata.service
 
 logger = logging.getLogger(__name__)
 # Prevent: XMLSyntaxError: Attempt to load network entity
 etree.set_default_parser(etree.XMLParser(no_network=False, recover=True))
-
-def digest(s):
-    return sha.sha(s).hexdigest()
 
 def youtube_entry_generator(entries):
     for entry in entries:
@@ -46,7 +40,7 @@ def youtube_entry_generator(entries):
         except:
             continue
 
-        yield m.group(1)
+        yield entry
 
 def get_info_if_no_image(sender, instance, **kwargs):
     if not isinstance(instance, MusicalEntity):
@@ -166,37 +160,9 @@ class MusicalEntity(models.Model):
 
     @property
     def youtube_ids(self):
-        term = self.youtube_get_term()
-        key = digest(defaultfilters.slugify('youtube_ids for ' + term))
-        results = cache.get(key)
-
-        if results:
-            return results
-
-        client = gdata.youtube.service.YouTubeService()
-        query = gdata.youtube.service.YouTubeVideoQuery()
-        
-        query.vq = term.encode('utf-8')
-        query.max_results = 15
-        query.start_index = 1
-        query.racy = 'exclude'
-        query.format = '5'
-        query.orderby = 'relevance'
-        #query.restriction = 'fr'
-
-        stop = False
-        try:
-            feed = client.YouTubeQuery(query)
-            stop = True
-        except gdata.service.RequestError:
-            return None
-        
-        results = []
-        for id in youtube_entry_generator(feed.entry):
-            results.append(id)
-        
-        cache.set(key, results, 38*3600)
-        return results
+        for entry in youtube_entry_generator(self.youtube_entries):
+            m = re.match(r'.*/([0-9A-Za-z_-]*)/?$', entry.id.text)
+            yield m.group(1)
 
     @property
     def youtube_entries(self):
@@ -210,7 +176,6 @@ class MusicalEntity(models.Model):
 
         if entry:
             return entry
-        print "NO CACHE FOR %s" % key
 
         client = gdata.youtube.service.YouTubeService()
         query = gdata.youtube.service.YouTubeVideoQuery()
@@ -226,7 +191,6 @@ class MusicalEntity(models.Model):
 
         if len(key) <= 250: # MemcachedKeyLengthError: Key length is > 250
             cache.set(key, feed.entry, 24*3600)
-            print "SET %s" % cache.get(key)
 
         return feed.entry
 
@@ -412,7 +376,7 @@ class Album(MusicalEntity):
    
     def youtube_get_term(self):
         try:
-            return u'%s %s' % (
+            return u'%s - %s' % (
                 self.artist.name,
                 self.name
             )
@@ -463,8 +427,15 @@ class Track(MusicalEntity):
     def youtube_get_best(self):
         if self.youtube_id:
             return self.youtube_id
-        if len(self.youtube_ids) > 0:
-            return self.youtube_ids[0]
+        elif len(self.youtube_entries) > 0:
+            m = re.match(r'.*/([0-9A-Za-z_-]*)/?$', self.youtube_entries[0].id.text)
+            if m:
+                return m.group(1)
+            else:
+                print "failed to find youtube in", self.youtube_entries
+                print "failed to find youtube in", self.youtube_entries[0]
+                print "failed to find youtube in", self.youtube_entries[0].id
+                print "failed to find youtube in", self.youtube_entries[0].id.text
 
     def lastfm_get_info(self, tree=None):
         tree = super(Track, self).lastfm_get_info(tree)
