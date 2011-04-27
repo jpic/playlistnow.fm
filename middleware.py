@@ -55,7 +55,7 @@ class OldUrlsMiddleware(object):
                 defaultfilters.slugify(m.group('track').replace('+', ' ')),
             )))
 
-        return http.HttpResponse(status=401)
+        return http.HttpResponse(status=410)
 
 class DynamicHtmlMiddleware(object):
     def process_request(self, request):
