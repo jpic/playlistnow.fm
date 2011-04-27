@@ -14,11 +14,14 @@ class PlaylistAddForm(forms.ModelForm):
             raise forms.ValidationError('Please fill the name')
         if name == 'chilling, working, eating ...':
             raise forms.ValidationError('Please fill in your own name, this is default name')
-        try:
-            Playlist.objects.get(creation_user=self.user, name__iexact=name)
+        q = Playlist.objects.filter(creation_user=self.user, name__iexact=name)
+        if self.instance.pk:
+            q = q.exclude(pk=self.instance.pk)
+            
+        if q.count() > 0:
             raise forms.ValidationError('You already have a playlist with title "%s". Please select another title for this playlist' % name)
-        except Playlist.DoesNotExist, Playlist.MultipleObjectsReturned:
-            return name
+        
+        return name
 
     def clean_tags(self):
         tags = self.cleaned_data.get('tags', '')
