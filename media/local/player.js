@@ -295,12 +295,18 @@ var player = {
             type: 'post',
             success: function(text, textStatus, request) {
                 player.state.waitingNewVideo = false;
+                old_youtube_id = player.state.currentTrack.youtube_best_id;
                 player.state.currentTrack.youtube_best_id = text;
-                if ($.inArray(text, player.state.videoRegistry[key]) > -1) {
+                if (old_youtube_id == text) {
+                    ui.notifyUser('There are no other youtube results we can stream');
+                    $('#ajaxload').fadeOut();
+                    return true;
+                } else if ($.inArray(text, player.state.videoRegistry[key]) > -1) {
                     player.state.videoRegistry[key] = [];
-                    ui.notifyUser('You are back to the first video');
-                }
-                else if (player.state.currentTrack.pk != undefined) {
+                    ui.notifyUser('You saw all available videos ...');
+                } else if (player.state.currentTrack.pk != undefined) {
+                    ui.notifyUser('Next youtube result found and saved, loading ...');
+                } else {
                     ui.notifyUser('Next youtube result found, loading ...');
                 }
                 player.ytplayer.loadVideoById(player.state.currentTrack.youtube_best_id);
