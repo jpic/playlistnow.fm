@@ -174,17 +174,15 @@ def music_badvideo(request):
 
     ids = []
     new_id = False
+    
     for id in t.youtube_ids(bad_ids):
-        ids.append(id)
-        if id not in bad_ids:
-            new_id = id
-            break
+        new_id = id
+        break
 
     if not new_id:
-        new_id = bad_id
-        if len(ids) > 1:
-            while new_id == bad_id:
-                new_id = ids[random.randint(0, len(ids)-1)]
+        for id in t.youtube_ids():
+            new_id = id
+            break
 
     if isinstance(new_id, str) and len(new_id) > 4:
         Track.objects.filter(youtube_id=bad_youtube_id).update(
