@@ -184,8 +184,9 @@ def music_badvideo(request):
         while new_id == bad_id:
             new_id = ids[random.randint(0, len(ids)-1)]
 
-    Track.objects.filter(youtube_id=bad_youtube_id).update(
-        youtube_id=new_id)
+    if isinstance(new_id, str) and len(new_id) > 4:
+        Track.objects.filter(youtube_id=bad_youtube_id).update(
+            youtube_id=new_id)
 
     return http.HttpResponse(new_id)
 
