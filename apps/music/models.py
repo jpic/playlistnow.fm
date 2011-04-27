@@ -159,6 +159,12 @@ class MusicalEntity(models.Model):
             cache.delete(key)
 
     @property
+    def youtube_ids(self):
+        for entry in youtube_entry_generator(self.youtube_entries):
+            m = re.match(r'.*/([0-9A-Za-z_-]*)/?$', entry.id.text)
+            yield m.group(1)
+
+    @property
     def youtube_entries(self):
         term = self.youtube_get_term()
         key = defaultfilters.slugify('youtube_entries for ' + term)
