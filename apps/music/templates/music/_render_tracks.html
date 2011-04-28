@@ -1,5 +1,6 @@
 <ul class="song_list">
 {% for track in tracks %}
+    {% if track.get_absolute_url and track.artist.get_absolute_url %}
 <li class="song_play song_info radius-4 {% cycle "dd" "" %} {% if track.pk %}track_pk_{{ track.pk }}{% else %}external_track{% endif %}">
     <span class="icon play"></span>
     <span class="number play">{{ forloop.counter }}</span>
@@ -34,9 +35,12 @@
         <li class="rm icon track_modify remove delete parent_level_2 remove_track authenticationRequired tiptip noconfirm playlist_pk_{{ playlist.pk }}" title="Remove this song from playlist">
             <a rel="refollow" class="ui_ignore" onclick="return false">
             Remove
-            </a>
-        </li>
     </ul>
 </li>
+    {% else %}
+    <li class="song_info radius-4 {% cycle "dd" "" %} {% if track.pk %}track_pk_{{ track.pk }}{% else %}external_track{% endif %} unsupported">
+        <span class="bold">{{ track.artist.name }}</span> - {{ track.name }} (unsuported track, sorry)
+    </li>
+    {% endif %}
 {% endfor %}
 </ul>
