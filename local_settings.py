@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'admin_tools.dashboard',
 
     # Django
+    'django.contrib.markup',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
