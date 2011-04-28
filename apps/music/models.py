@@ -33,7 +33,7 @@ def youtube_entry_generator(entries, exclude=''):
             continue
         if m.group(1) in exclude:
             continue
-        yield m.group(1)
+        yield entry
         #try:
             #id = m.group(1)
             #t = etree.parse('http://gdata.youtube.com/feeds/api/videos/%s' % id)
