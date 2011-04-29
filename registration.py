@@ -87,9 +87,9 @@ def socialregistration_userdata(request, form_class=UserDataForm,
             profile = request.session['socialregistration_profile']
             userdata = request.session['socialregistration_userdata']
 
-            user.first_name = userdata['first_name']
-            user.last_name = userdata['last_name']
-            user.email = userdata['email']
+            user.first_name = userdata.get('first_name', '')
+            user.last_name = userdata.get('last_name', '')
+            user.email = userdata.get('email', '')
             user_slug = defaultfilters.slugify('%s %s' % (
                 user.first_name,
                 user.last_name
@@ -105,15 +105,15 @@ def socialregistration_userdata(request, form_class=UserDataForm,
                 user.username = user_slug
             user.save()
 
-            user.playlistprofile.user_location = userdata['location']
-            user.playlistprofile.avatar_url = userdata['avatar_url']
+            user.playlistprofile.user_location = userdata.get('location', '')
+            user.playlistprofile.avatar_url = userdata.get('avatar_url', '')
             user.playlistprofile.user = user
             user.playlistprofile.save()
 
             profile.user = user
-            profile.avatar_url = userdata['avatar_url']
-            profile.url = userdata['url']
-            profile.nick = userdata['nick']
+            profile.avatar_url = userdata.get('avatar_url', '')
+            profile.url = userdata.get('url', '')
+            profile.nick = userdata.get('nick', '')
             profile.save()
 
             if 'socialregistration_user' in request.session: 
@@ -166,12 +166,12 @@ def socialregistration_userdata(request, form_class=UserDataForm,
         if profile.__class__.__name__ == 'FacebookProfile':
             upstream = request.facebook.graph.request(request.facebook.user['uid'])
             initial = {
-                'first_name': upstream['first_name'],
-                'last_name': upstream['last_name'],
-                'email': upstream['email'],
+                'first_name': upstream.get('first_name', ''),
+                'last_name': upstream.get('last_name', ''),
+                'email': upstream.get('email', ''),
                 'avatar_url': 'http://graph.facebook.com/%s/picture' % request.facebook.user['uid'],
-                'nick': '%s %s' % (upstream['first_name'], upstream['last_name']),
-                'url': upstream['link'],
+                'nick': '%s %s' % (upstream.get('first_name', ''), upstream.get('last_name', '')),
+                'url': upstream.get('link', ''),
             }
             if 'location' in upstream:
                 initial['location'] = upstream['location']['name']
@@ -187,8 +187,8 @@ def socialregistration_userdata(request, form_class=UserDataForm,
             upstream = client.get_user_info()
             initial = {
                 'first_name': '',
-                'last_name': upstream['name'],
-                'location': upstream['location'],
+                'last_name': upstream.get('name', ''),
+                'location': upstream.get('location', ''),
                 'email': '',
                 'avatar_url': upstream['profile_image_url'],
                 'url': 'http://twitter.com/%s' % upstream['screen_name'],
@@ -200,8 +200,8 @@ def socialregistration_userdata(request, form_class=UserDataForm,
             req = opensocial.FetchPersonRequest(profile.uid, ['@all'])
             upstream = container.send_request(req)
             initial = {
-                'first_name': upstream['displayName'],
-                'last_name': upstream['displayName'],
+                'first_name': upstream.get('displayName', ''),
+                'last_name': '',
                 'location': '',
                 'email': '',
                 'avatar_url': upstream['thumbnailUrl'],
