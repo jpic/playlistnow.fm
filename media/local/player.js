@@ -296,6 +296,9 @@ var player = {
             success: function(text, textStatus, request) {
                 player.state.waitingNewVideo = false;
                 old_youtube_id = player.state.currentTrack.youtube_best_id;
+                $('a[href='+old_youtube_id+']').each(function() {
+                    $(this).attr('href', text);
+                });
                 player.state.currentTrack.youtube_best_id = text;
                 if (old_youtube_id == text) {
                     ui.notifyUser('There are no other youtube results we can stream');

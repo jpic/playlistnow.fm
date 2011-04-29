@@ -180,7 +180,8 @@ class MusicalEntity(models.Model):
         else:
             entry = None
 
-        if entry:
+        # crap results demonstrated: http://gdata.youtube.com/demo/index.html
+        if entry and len(entry):
             return entry
 
         client = gdata.youtube.service.YouTubeService()
@@ -435,7 +436,8 @@ class Track(MusicalEntity):
             return self.youtube_id
         elif len(self.youtube_entries) > 0:
             m = re.match(r'.*/([0-9A-Za-z_-]*)/?$', self.youtube_entries[0].id.text)
-            if m:
+            if m and m.group(1):
+                Track.objects.filter(name__iexact=self.name, artist__name__iexact=self.artist.name).update(youtube_id=m.group(1))
                 return m.group(1)
             else:
                 print "failed to find youtube in", self.youtube_entries
