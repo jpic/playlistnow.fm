@@ -153,8 +153,11 @@ class MusicalEntity(models.Model):
         }
 
     def get_absolute_url(self):
+        slug = defaultfilters.slugify(self.name.replace('&', 'and'))
+        if not len(slug):
+            slug = urllib.quote(self.name.encode('utf-8'))
         return urlresolvers.reverse('music_%s_details' % self.get_type(), 
-            args=(defaultfilters.slugify(self.name.replace('&', 'and')),))
+            args=(slug,))
 
     def __unicode__(self):
         return self.name
@@ -475,8 +478,8 @@ class Track(MusicalEntity):
         else:
             artist = self.artist
         
-        artist = defaultfilters.slugify(artist.replace('&', 'and'))
-        name = defaultfilters.slugify(self.name.replace('&', 'and'))
+        artist = defaultfilters.slugify(artist.replace('&', 'and')) or urllib.quote(artist.encode('utf-8'))
+        name = defaultfilters.slugify(self.name.replace('&', 'and')) or urllib.quote(name.encode('utf-8'))
 
         if artist == 'youtube' and not len(name):
             return urlresolvers.reverse('music_artist_details', args=(artist,))
