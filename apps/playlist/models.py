@@ -533,7 +533,10 @@ signals.post_save.connect(playlist_create_activity, sender=Playlist)
 def last_playlist(sender, instance, action, **kwargs):
     if action == 'post_add':
         for pk in kwargs.pop('pk_set'):
-            a = Playlist.tracks.field.rel.to.objects.get(pk=pk).artist
-            a.last_playlist = instance
-            a.save()
+            try:
+                a = Playlist.tracks.field.rel.to.objects.get(pk=pk).artist
+                a.last_playlist = instance
+                a.save()
+            except:
+                pass
 signals.m2m_changed.connect(last_playlist, sender=Playlist.tracks.through)
