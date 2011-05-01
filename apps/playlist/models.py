@@ -469,7 +469,7 @@ class Playlist(models.Model):
             if for_user:
                 tracks = self.all_user_tracks(for_user)
             else:
-                tracks = self.tracks.model.objects.filter(playlist=self).select_related()
+                tracks = self.tracks.model.objects.filter(playlist=self).select_related().order_by('artist__name', 'name')
 
             for track in tracks:
                 data['tracks'].append(track.to_dict(
@@ -497,7 +497,7 @@ class Playlist(models.Model):
                 Q(playlist=self) | 
                 self.added_user_tracks_condition(user)
             ) & ~self.removed_user_tracks_condition(user)
-        ).select_related().order_by('artist__name').distinct()
+        ).select_related().order_by('artist__name', 'name').distinct()
 
 def autoslug(sender, instance, **kwargs):
     if not hasattr(instance, 'slug'):
