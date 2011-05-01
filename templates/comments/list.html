@@ -12,7 +12,7 @@
     <div style="display: table-cell;vertical-align: top;width: 10000px;">
 		<a class="bold" href="{{ comment.user.get_absolute_url }}" title="Details of user {{ comment.user }}">{{ comment.user }}</a> <span style="color:#ae72ae;">({% if comment.user.is_staff %}staff{% else %}{{ comment.user|get_rank_text }}{% endif %})</span>  
         
-        {{ comment.comment|markdown:"safe" }}
+        {{ comment.comment|markdown:"safe"|linebreaksbr }}
 
         <p class="date">{{ comment.submit_date|naturalday }}</p>
       </div>
