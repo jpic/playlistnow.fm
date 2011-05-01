@@ -478,15 +478,17 @@ class Track(MusicalEntity):
         else:
             artist = self.artist
         
-        artist = defaultfilters.slugify(artist.replace('&', 'and')) or urllib.quote(artist.encode('utf-8'))
-        name = defaultfilters.slugify(self.name.replace('&', 'and')) or urllib.quote(name.encode('utf-8'))
+        artist = defaultfilters.slugify(artist.replace('&', 'and')) or urllib.quote(artist.replace('&', 'and').encode('utf-8'))
+        name = defaultfilters.slugify(self.name.replace('&', 'and')) or urllib.quote(self.name.replace('&', 'and').encode('utf-8'))
 
-        if artist == 'youtube' and not len(name):
+        if not len(name):
             return urlresolvers.reverse('music_artist_details', args=(artist,))
 
-        return urlresolvers.reverse('music_track_details', args=(
+        url = urlresolvers.reverse('music_track_details', args=(
             artist, name
         ))
+
+        return url
 
     def lastfm_search(self, page=1, limit=100):
         klass = self.__class__
