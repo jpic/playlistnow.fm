@@ -102,6 +102,11 @@ urlpatterns = patterns("",
         name='user_settings'
     ),
     url(
+        r'^all/$', 
+        views.all,
+        name='all'
+    ),
+    url(
         r'^me/$', 
         views.me,
         name='me'

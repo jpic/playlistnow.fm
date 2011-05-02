@@ -1,0 +1,79 @@
+{% extends "site_base.html" %}
+{% load activity_tags %}
+{% load playlist_tags %}
+{% load music_tags %}
+{# enable right column #}
+{% block page_body_right_class %}block{% endblock %}
+{% block body_right %}
+
+{% if request.user.is_authenticated %}
+    <h3>Hi {{ user }}</h3>
+    <p>You are a <span class="bold">{{ user|get_rank_text }}</span>, {{ user|get_bar_width:100 }}% completed. Next level is <span class="bold">{{ user|get_next_rank_text }}</span>.</p>
+
+    <style type="text/css">
+    .exp_bar {
+        height: 12px;
+        background:url({{ STATIC_URL }}images/medals/progbar_1.png) top left repeat-x;
+    }
+    .exp_bar.container {
+    margin-top:10px;width:185px; height:9px;border:1px solid #616161; background:url({{ STATIC_URL }}images/medals/progbarbg_1.png) top left repeat-x;    -webkit-border-radius: 6px;-moz-border-radius: 6px;border-radius: 6px;
+    }
+    </style>
+    <div class="exp_bar container">
+        <div class="exp_bar" style="width:{{ user|get_bar_width:185 }}px">
+        </div>
+    </div>
+    <div class="clear espacetop"></div>
+{% endif %}
+{% if who_to_follow %}
+<h3>who to follow ?</h3>
+<div class="sub_title">Suggestions for you</div>
+    {% for user in who_to_follow %}
+<div id="whotofollow">
+
+	<div class="whotofollow_list">
+		<div class="whotofollow_person">
+		<a href="{{ user.get_absolute_url }}" title="{{ user.first_name }} {{ user.last_name }}"><img src="{{ user.playlistprofile.avatar_url }}" alt="{{ user }}" class="left whotofollow_img avatar"></a>
+			
+<div class="left whotofollow_profile">
+	<ul>
+		<li><a href="{{ user.get_absolute_url }}" class="whotofollow_name" title="{{ user.first_name }} {{ user.last_name }}">{{ user }}</a> &middot;
+		     <a href="{% url actstream_follow content_type_id=ctype.id  object_id=user.id %}" class="ui_ignore follow_button delete parent_level_5 ">
+                <span class="bold">follow</span>
+            </a>
+            <a href="{% url actstream_unfollow content_type_id=ctype.id  object_id=user.id %}" class="ui_ignore unfollow_button" style="display:none">
+                <span class="bold">unfollow</span>
+            </a>
+		</li>
+		<li><span class="afinities {{ user|affinities_with_class:request.user }}" bold>{{ request.user|affinities_with:user }}%</span> matching</span></li>
+	
+	</ul>
+</div>
+
+		</div>  
+
+
+
+<div class="clear"></div>
+	</div>
+	
+
+</div>
+    {% endfor %}
+{% endif %}
+
+{% if hot_tracks %}
+<h3>Hot song in the community today</h3>
+{% render_tracks hot_tracks '' request %}
+{% endif %}
+
+{% endblock %}
+{% block body %}
+<h1>Activity from the community</h1>
+
+<div class="list">
+
+    {% include 'auth/user_activities.html' %}  
+</div>
+
+{% endblock %}

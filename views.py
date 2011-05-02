@@ -374,6 +374,53 @@ def home(request,
     return shortcuts.render_to_response(template_name, context,
         context_instance=template.RequestContext(request))
 
+@page_template('auth/user_activities.html')
+def all(request,
+    template_name='all.html', extra_context=None):
+    context = {}
+
+    activities = Action.objects.all().order_by('-timestamp')
+    context['activities'] = activities
+
+    if request.user.is_authenticated():
+        user = request.user
+        context['who_to_follow'] = suggested_users_for(user)
+        context['ctype'] = ContentType.objects.get_for_model(User)
+
+    context['hot_tracks'] = []
+    like_qs = Action.objects.filter(timestamp__gte=date.today() - timedelta(1))
+    like_qs = like_qs.filter(verb='liked track')
+    if request.user.is_authenticated():
+        like_qs = like_qs.exclude(action_object_object_id__in=user.playlistprofile.tiny_playlist.tracks.all().values_list('pk'))
+    like_friends_qs = like_qs
+    
+    def get_sorted_tracks_from_actions(actions):
+        points = {}
+        for pk in actions.values_list('action_object_object_id', flat=True):
+            if pk not in points.keys():
+                points[pk] = 0
+            points[pk] += 1
+
+        sorted_points = sorted(points.iteritems(), key=operator.itemgetter(1))
+        sorted_points.reverse()
+        sorted_pks = [pk for pk, points in sorted_points][:8]
+        tracks = Track.objects.filter(pk__in=sorted_pks)
+        sorted_tracks = sorted(tracks, key=lambda track: sorted_pks.index(track.pk))
+        return sorted_tracks
+
+    context['hot_tracks'] += get_sorted_tracks_from_actions(like_friends_qs)
+    if len(context['hot_tracks']) < 8:
+        context['hot_tracks'] += get_sorted_tracks_from_actions(like_friends_qs)
+
+    if 'page' not in request.GET: 
+        template_name = 'all.html'
+
+    context['hot_tracks'] = list(set(context['hot_tracks']))
+
+    context.update(extra_context or {})
+    return shortcuts.render_to_response(template_name, context,
+        context_instance=template.RequestContext(request))
+
 @decorators.login_required
 @page_template('auth/user_activities.html')
 def me(request,
