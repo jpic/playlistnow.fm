@@ -239,7 +239,11 @@ def music_artist_details(request, name, tab='overview', paginate_by=10,
 
     name = name.replace('-', ' ')
     context['object'] = Artist(name=name)
-    context['object'].lastfm_get_info()
+    try:
+        context['object'].lastfm_get_info()
+    except:
+        context['lastfm_error'] = True
+
     try:
         context['object'].local_artist = Artist.objects.get(name__iexact=context['object'].name)
 
@@ -300,8 +304,14 @@ def music_track_details(request, name, artist, album=None,
     except Track.DoesNotExist:
         pass
 
-    context['object'].lastfm_get_info()
-    context['object'].lastfm_get_similar()
+    try:
+        context['object'].lastfm_get_info()
+        context['object'].lastfm_get_similar()
+    except:
+        context['lastfm_error'] = True
+        msg = u'we could not get a reply from last.fm api, please try again in a minute or so'
+        messages.add_message(request, messages.INFO, msg)
+
     context['object'].similar = context['object'].similar[:7]
 
     context.update(extra_context or {})
