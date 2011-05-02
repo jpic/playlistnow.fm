@@ -143,8 +143,9 @@
 </div>
 {% endif %}
 
-
-
+{% if lastfm_error %}
+<span class="info share_playlist" style="display: block;">We could not get a response from last.fm API, please try again a little later</span>
+{% endif %}
 
 {% if tab == 'overview' %}
 

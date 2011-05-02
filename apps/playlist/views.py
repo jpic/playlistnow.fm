@@ -426,12 +426,15 @@ def playlist_details(request, user, slug, default_format=False, qname='term',
     q = request.GET.get(qname, False)
     page = int(request.GET.get('page', 1))
     if q:
-        track = Track(name=q)
-        track.lastfm_search()
-        context['tracks'] = track.matches[((page-1)*paginate_by):((page-1)*paginate_by)+paginate_by]
-        context['totalPages'] = int(math.ceil(len(track.matches) / paginate_by))
-        context['allPages'] = range(1, context['totalPages'] + 1)
-        context['currentPage'] = page
+        try:
+            track = Track(name=q)
+            track.lastfm_search()
+            context['tracks'] = track.matches[((page-1)*paginate_by):((page-1)*paginate_by)+paginate_by]
+            context['totalPages'] = int(math.ceil(len(track.matches) / paginate_by))
+            context['allPages'] = range(1, context['totalPages'] + 1)
+            context['currentPage'] = page
+        except:
+            context['lastfm_error'] = True
 
     if request.user.is_authenticated():
         context['is_fan'] = request.user.playlistprofile.fanof_playlists.filter(pk=object.pk).count()
