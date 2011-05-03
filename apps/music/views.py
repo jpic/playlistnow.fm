@@ -257,21 +257,24 @@ def music_artist_details(request, name, tab='overview', paginate_by=10,
     except Artist.DoesNotExist:
         pass
 
-    if tab == 'music':
-        context['object'].lastfm_get_tracks()
+    try:
+        if tab == 'music':
+            context['object'].lastfm_get_tracks()
 
-        page = int(request.GET.get('page', 1))
-        context['tracks'] = context['object'].tracks[(page-1)*paginate_by:(page-1)*paginate_by+paginate_by]
-        context['totalPages'] = int(math.ceil(len(context['object'].tracks) / paginate_by))
-        context['allPages'] = range(1, context['totalPages'] + 1)
-        context['currentPage'] = page
-    elif tab == 'similar':
-        context['object'].lastfm_get_similar()
-    elif tab == 'events':
-        context['object'].lastfm_get_events()
-    elif tab == 'overview':
-        context['object'].lastfm_get_tracks()
-        context['object'].tracks = context['object'].tracks[0:5]
+            page = int(request.GET.get('page', 1))
+            context['tracks'] = context['object'].tracks[(page-1)*paginate_by:(page-1)*paginate_by+paginate_by]
+            context['totalPages'] = int(math.ceil(len(context['object'].tracks) / paginate_by))
+            context['allPages'] = range(1, context['totalPages'] + 1)
+            context['currentPage'] = page
+        elif tab == 'similar':
+            context['object'].lastfm_get_similar()
+        elif tab == 'events':
+            context['object'].lastfm_get_events()
+        elif tab == 'overview':
+            context['object'].lastfm_get_tracks()
+            context['object'].tracks = context['object'].tracks[0:5]
+    except:
+        context['lastfm_error'] = True
 
     context.update(extra_context or {})
     return shortcuts.render_to_response(template_name, context,
