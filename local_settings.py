@@ -241,7 +241,7 @@ TIME_ZONE = "Europe/Paris"
 ROBOTS_USE_SITEMAP = False
 
 EMAIL_SUBJECT_PREFIX='[PlaylistNow.fm] '
-DEFAULT_FROM_EMAIL='noreply@playlistnow.fm'
+DEFAULT_FROM_EMAIL='PlaylistNow.fm <noreply@playlistnow.fm>'
 SERVER_EMAIL='noreply@playlistnow.fm'
 
 ADMINS = [
