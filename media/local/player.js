@@ -176,6 +176,25 @@ var player = {
         }
         player.state.playingTrackSince = new Date();
 
+        // update radio playlist every 5 minutes
+        d = new Date();
+        in_radio = player.state != undefined && player.state.currentPlaylist != undefined && player.state.currentPlaylist.radio_artist != undefined;
+        if (in_radio && (this.state.lastRadioHit == undefined || d.getTime() - this.state.lastRadioHit > 5*6000)) {
+            player.state.lastRadioHit = d.getTime();
+            $.get(
+                player.state.currentPlaylist.object.radioUrl,
+                {
+                    'format': 'json',
+                },
+                function(data, textStatus, req) {
+                    console.log('reloading currentPlaylist with', data);
+                    player.state.currentPlaylist = data;
+                    $('#ajaxload').fadeOut();
+                },
+                'json'
+            );
+        }
+
         return true;
     },
     'parseTrackList': function(ul) {

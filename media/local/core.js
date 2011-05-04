@@ -220,6 +220,11 @@ var ui = {
             return undefined;
         }
 
+        $('a.play_playlist_json_url').live('click', function(e) {
+            e.preventDefault();
+            player.playPlaylist($(this).attr('href')+'?ajax=1');
+        });
+
         $('.reset_notices_count').live('click', function(e) {
             $('.notices_count').html('(0)');
             $('.notices_count').removeClass('bold');

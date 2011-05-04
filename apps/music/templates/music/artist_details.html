@@ -54,7 +54,10 @@
    <div class="profile">
    
  <div class="right" style="margin-top:-5px;">
-<div class="follow">
+    <div class="radio espace left">    
+    <a href="{% url radio_artist object.name %}" class="button grey  ui_ignore play_playlist_json_url" rel="nofollow">Launch radio</a>
+	</div>	
+<div class="follow left">
         <form action="{% url music_artist_fanship %}" class="authenticationRequired" method="post">
             {% if object.local_artist.pk %}
             <input type="hidden" name="artist_pk" value="{{ object.local_artist.pk }}" />
@@ -67,7 +70,9 @@
             {% if is_fan %}<button type="submit" class="button super grey tiptip" title="Quit artist fanclub"><span class="bookmarked">{% trans "You are fan" %}</span></button>
             {% else %}<button type="submit" class="button super grey tiptip" title="Become fan, add this artist to your favorites"><span class="bookmark">{% trans "Become fan" %}</span></button>{% endif %}
         </form>
+         
     </div>
+
     </div>
     {% if object.images.large %}
      <div class="profile-picture left">
@@ -82,6 +87,7 @@
         <span class="artist_rank">Ranked {{ object.local_artist.rank }}</span>
     {% endif %}
     </h1> 
+
 
    <div class="profile-info">
 	<ul>
@@ -102,7 +108,8 @@
 </div>    
 </div>
  <div class="clear"></div>
- 
+
+
  <ul id="tab_artist" class="tab_artist fake_tabs">
     <li class="tab first {% if tab == 'overview' %}selected{% endif %}">
         <a class="" href="{{ object.get_overview_tab_absolute_url }}">

@@ -50,7 +50,7 @@ def youtube_entry_generator(entries, exclude=''):
         #yield entry
 
 def get_info_if_no_image(sender, instance, **kwargs):
-    if not isinstance(instance, MusicalEntity):
+    if not isinstance(instance, Artist):
         return None
     
     if not instance.name:
