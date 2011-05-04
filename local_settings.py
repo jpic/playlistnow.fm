@@ -91,6 +91,7 @@ INSTALLED_APPS = [
     'tagging',
     'music',
     'playlist',
+    'radio',
     'django_extensions',
     'jpic',
     'pagination',
