@@ -65,6 +65,13 @@ var ui = {
                 loadedTweetButton.render();
 
             });
+            
+            var external_links = $('a[href^="http://"]');
+            external_links.addClass('ui_ignore');
+            external_links.attr({
+                target: "_blank", 
+                title: "Opens in a new window"
+            });
         });
         $(document).bind('signalPopupOpen', ui.setupAutocomplete)
         $(document).bind('signalPopupOpen', ui.twitterCounter)
@@ -358,8 +365,9 @@ var ui = {
         });
 
         $('a:not(a.endless_more):not(a.ui_ignore):not(a.tab_link)').live('click', function(e) {
-            e.preventDefault();
             var url = $(this).attr('href');
+            e.preventDefault();
+
             if ($(this).hasClass('authenticationRequired') && !user.is_authenticated) {
                 ui.authenticationPopup(url);
             } else if ($(this).hasClass('simplemodal-contain')) {
