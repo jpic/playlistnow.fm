@@ -36,6 +36,11 @@
 
 <div class="clear"></div>
 </div>
+{% if object.creation_user.username == 'radio' %}
+<p style="color:black">
+This is a <span class="bold">magic</span> playlist. The more you use it, the more tracks are automatically added. This page is automatically updated when tracks are added.
+</p>
+{% endif %}
 {% if object.creation_user.username != 'radio' and not object.favorite_of.count %}
 <div class="ad_song">
     <span style="display:none;">{% trans "add tracks" %}</span>

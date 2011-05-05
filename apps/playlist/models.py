@@ -1,5 +1,6 @@
 import simplejson
 import operator
+import urllib
 from datetime import datetime
 
 from django.contrib.auth.models import User
@@ -476,6 +477,11 @@ class Playlist(models.Model):
                     with_artist=with_tracks_artist,
                     with_youtube_best_id=with_tracks_youtube_best_id
                 ))
+
+        if self.creation_user.username == 'radio':
+            data['radio_artist'] = self.name
+            data['object']['radioUrl'] = urlresolvers.reverse('radio_artist',
+                args=(urllib.quote(self.name),))
 
         return data
 

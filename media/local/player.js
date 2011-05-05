@@ -187,8 +187,11 @@ var player = {
                     'format': 'json',
                 },
                 function(data, textStatus, req) {
-                    console.log('reloading currentPlaylist with', data);
                     player.state.currentPlaylist = data;
+                    var reload = $('div.playlist_track_list.playlist_pk_' + data.object.pk).length;
+                    if (reload > 0) {
+                        $.history.load(data.object.url + '?update=' + d.getTime());
+                    }
                     $('#ajaxload').fadeOut();
                 },
                 'json'

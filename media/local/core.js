@@ -229,7 +229,9 @@ var ui = {
 
         $('a.play_playlist_json_url').live('click', function(e) {
             e.preventDefault();
-            player.playPlaylist($(this).attr('href')+'?ajax=1');
+            player.playPlaylist($(this).attr('href')+'?ajax=1', 0, function(playlist, offset) {
+                $.history.load(player.state.currentPlaylist.object.url);
+            });
         });
 
         $('.reset_notices_count').live('click', function(e) {
