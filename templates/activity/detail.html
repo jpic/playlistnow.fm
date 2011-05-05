@@ -1,0 +1,54 @@
+{% extends 'site_base.html' %}
+{% load activity_tags i18n comments %}
+
+{% block body %}
+<div class="lineFeed">
+    <div class="lineFeedAvatar">
+        <a href="{{ activity.actor.get_absolute_url }}" title="{% trans "details of user" %} {{ activity.actor }}">
+            <img src="{{ activity.actor.playlistprofile.avatar_url }}" class="avatar small left espace" />
+        </a>
+    </div>
+    <div class="lineFeedContent">
+    {% with action as activity %}
+        {% display_action activity %}
+    {% endwith %}
+    {% get_comment_count for activity as comment_count %}
+        <div class="lineFeedContentWhen"> 
+            {{ action.timestamp|timesince }} ago -
+            {% if request.user.is_authenticated %}
+            <a class="authenticationRequired ui_ignore unlike" href="{% url action_unlike activity.pk %}" style="{% if action not in request.user.playlistprofile.fanof_actions.all %}display: none{% endif %}">Unlike</a>
+            <a class="ui_ignore like authenticationRequired" href="{% url action_like activity.pk %}" style="{% if action in request.user.playlistprofile.fanof_actions.all %}display: none{% endif %}">I Like</a>
+            {% endif %}
+            {% if activity.verb == 'recommends' and request.user == activity.action_object.target and not activity.action_object.thanks %}
+            <span>
+            - <a class="delete parent" href="{% url music_recommendation_thank activity.action_object.pk %}">Thank</a>
+            </span>
+            {% endif %}
+            - 
+            <span class="comment_form_toggle link">Comment (<span class="bold">{{ comment_count }}</span>)</span>
+
+            <div class="before_likes" style="display:none;"></div>
+            {% if action.fans.count %}
+         
+            <div class="likes">
+            <img src="{{ STATIC_URL }}images/not_newthumbup.png">
+                {% for fan in action.fans.all %}
+                <span class="{% if fan == request.user.playlistprofile %}me{% endif %}">
+                    <a href="{{ fan.get_absolute_url }}">{{ fan }} </a> likes this.
+                </span>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {% render_comment_list for activity %}
+            
+            {% if request.user.is_authenticated %}
+            <div style="{% if not comment_count %}display: none{% endif %}" class="comment_form_contents" >
+            {% render_comment_form for activity %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="clear"></div>
+</div>
+{% endblock %}
