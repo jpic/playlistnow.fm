@@ -1,6 +1,6 @@
 {% load comments i18n %}
-  <div class="comment radius-4">
-<form action="{% comment_form_target %}" method="post" class="authenticationRequired" style="margin-top:2px;">
+<div class="comment radius-4">
+    <form action="{% comment_form_target %}" method="post" class="authenticationRequired" style="margin-top:2px;">
     {% if request.user.is_authenticated %}
     {% csrf_token %}
     {{ form.content_type }}
@@ -8,17 +8,20 @@
     {{ form.timestamp }}
     {{ form.security_hash }}
     {% endif %}
-      <a href="{{ request.user.get_absolute_url }}"><img src="{{ request.user.playlistprofile.avatar_url }}" class="avatar verysmall left espace"></a>
+    <a href="{{ request.user.get_absolute_url }}"><img src="{{ request.user.playlistprofile.avatar_url }}" class="avatar verysmall left espace"></a>
     <input type="hidden" name="next" value="{{ request.path }}" />
-<div style="display: table-cell;vertical-align: top;width: 10000px;">
-    {{ form.comment }}
-<div class="clear"></div>
-    <input type="submit" class="submit-post super button blue" value="Comment" style="float: left">
-    <span style="font-size: 85%; display: block; text-align: right; padding-top:7px">
-        <a class="ui_ignore" target="_new" href="http://daringfireball.net/projects/markdown/syntax#link">Markdown syntax</a> is allowed
-    </span>
+    <div style="display: table-cell;vertical-align: top;width: 10000px;">
+        {{ form.comment }}
+        <div class="clear"></div>
+        <div style="float:left">
+            <input type="submit" class="submit-post super button blue" value="Comment">
+        </div>
+        <div style="font-size: 80%; display: block; text-align: right; line-height: 14px;">
+            <a href="http://daringfireball.net/projects/markdown/syntax#link">Markdown syntax</a> is allowed
+            <br />
+            Example <a href="http://daringfireball.net/projects/markdown/syntax#link">link</a>: [example link title](http://example.com)
+        </span>
     </div>
     <div class="clear"></div>
-   
-</form>
+    </form>
 </div>
