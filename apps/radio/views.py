@@ -35,6 +35,10 @@ def radio_artist(request, name, tab='overview', paginate_by=10,
     try:
         artist = Artist.objects.get(name__iexact=name)
     except Artist.DoesNotExist:
+        artist = Artist.objects.get(name__iexact=name + ' ')
+    except Artist.DoesNotExist:
+        artist = Artist.objects.get(name__iexact=' ' + name)
+    except Artist.DoesNotExist:
         artist = Artist(name=name)
         artist.save()
 
