@@ -481,7 +481,7 @@ class Playlist(models.Model):
         if self.creation_user.username == 'radio':
             data['radio_artist'] = self.name
             data['object']['radioUrl'] = urlresolvers.reverse('radio_artist',
-                args=(urllib.quote(self.name),))
+                args=(urllib.quote(self.name.encode('utf-8')),))
 
         return data
 
