@@ -18,7 +18,7 @@ def radio_artist(request, name, tab='overview', paginate_by=10,
     name = name.strip()
 
     if 'format' not in request.GET.keys():
-        return http.HttpResponse(u'We need to upgrade your javascript. <a href="http://playlistnow.fm/music/artist/%s/">click here to continue</a>' % name)
+        return http.HttpResponse(u'We need to upgrade your javascript. <a class="ui_ignore" href="http://playlistnow.fm/music/artist/%s/">click here to continue</a>' % name)
 
     # magic user holds all radios
     radio, created = User.objects.get_or_create(username='radio')
@@ -61,7 +61,10 @@ def radio_artist(request, name, tab='overview', paginate_by=10,
         if not track.youtube_id:
             track.youtube_id = track.youtube_get_best()
             youtube_calls -= 1
-            track.save()
+            try:
+                track.save()
+            except:
+                continue
 
         playlist.tracks.add(track)
 
