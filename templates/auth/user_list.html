@@ -1,20 +1,72 @@
 {% extends 'site_base.html' %}
 {% load pagination_tags %}
+{% load playlist_tags %}
 {% load i18n %}
 
 {% block body %}
+<h1>Leaderboard</h1>
+<h2><span class="fire">Playlistnow's users ranked by levels</span></h2>
+<ul id="tab_artist" class="tab_artist fake_tabs">
+	<li class="tab">  
+		<a href="{{ request.path_info }}?level=rookie">rookie</a>
+	</li>
+	<li class="tab"> 
+    <a href="{{ request.path_info }}?level=dj">dj</a>
+    </li>
+    <li class="tab"> 
+    <a href="{{ request.path_info }}?level=rock star">rock star</a>
+    </li>
+    <li class="tab"> 
+    <a href="{{ request.path_info }}?level=guru">guru</a>
+    </li>
+    <li class="tab"> 
+    <a href="{{ request.path_info }}?level=idol">idol</a>
+    </li>
+    <li class="tab"> 
+    <a href="{{ request.path_info }}?level=legend">legend</a>
+    </li>
+     <div class="clear"></div>
 
-    {% autopaginate object_list %}
-    {% paginate %}
-
-    <ul>
+</ul>
+   
+    <table class="leveldata users" cellspacing="0">
+    <tbody>
+        <tr>
+         <th class="list-title">Ranking</th>
+            <th>Name</th>
+            <th>Level</th>
+            <th>Points</th>
+            <th>Playlists</th>
+            <th></th>
+        </tr>
     {% for user in object_list %}
-        <li>
-            <a href="{{ user.playlistprofile.get_absolute_url }}" title="{% trans 'details of user' %} {{ user.playlistprofile }}">
-            <img src="{{ user.playlistprofile.avatar_url }}" alt="{% trans 'avatar of' %} {{ user.playlistprofile }}" />
-            {{ user.playlistprofile }}
-            </a>
-        </li>
+        <tr>
+            <td>
+                <a href="{{ user.playlistprofile.get_absolute_url }}" title="{% trans 'details of user' %} {{ user.playlistprofile }}">
+                <img src="{{ user.playlistprofile.avatar_url }}" alt="{% trans 'avatar of' %} {{ user.playlistprofile }}" class="avatar small"/>
+                </a>
+            </td>
+            <td>
+                <a href="{{ user.playlistprofile.get_absolute_url }}" title="{% trans 'details of user' %} {{ user.playlistprofile }}">
+                <span class="bold">{{ user }}</a>
+                </a>
+            </td>
+            <td>
+                <span class="bold">{{ user|get_rank_text }}</span>
+            </td>
+            <td>
+                <span class="afinities">{{ user.playlistprofile.points }}</span>
+            </td>
+            <td>
+               <span class="statut">{{ user.playlist_set.count }}</span>
+            </td>
+            <td>
+                <a href="" class="button grey">Follow</a>
+            </td>
+        </tr>
     {% endfor %}
-    </ul>
+ 	</tbody>
+ 	</table>
+ 	 {% autopaginate object_list %}
+    {% paginate %}
 {% endblock %}

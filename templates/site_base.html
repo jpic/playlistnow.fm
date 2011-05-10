@@ -153,7 +153,7 @@ function onYouTubePlayerAPIReady() {
       events: {
         'onReady': function() {
             player.ytplayer.setVolume(60);
-            setInterval(player.update, 500);
+            setInterval(player.update, 1000);
         },
         'onStateChange': player.update,
         'onError': player.badVideo,

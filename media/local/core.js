@@ -229,6 +229,11 @@ var ui = {
 
         $('a.play_playlist_json_url').live('click', function(e) {
             e.preventDefault();
+            if ($(this).hasClass('disable-random') && player.state.randomMode) {
+                player.state.randomMode = false;
+                $('.player_bttn_rand').css('background-position', 'top left');
+                ui.notifyUser('Random mode disabled, radio loading ...');
+            }
             player.playPlaylist($(this).attr('href')+'?ajax=1', 0, function(playlist, offset) {
                 $.history.load(player.state.currentPlaylist.object.url);
             });

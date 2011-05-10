@@ -348,27 +348,13 @@ var player = {
             player.hiliteFavoriteTracks();
         });
         $(document).bind('signalPlaylistUpdate', function(e, playlist_pk) {
-            if(!player.state.currentPlaylist) {
-                return true;
-            }
-            
-            if ($('div.playlist_track_list.playlist_pk_' + playlist_pk).length < 1) {
-                // not updating a rendered playlist, we don't care about updates
-                return true;
-            }
-            
             if (! player.state.currentPlaylist) {
                 // not playlist any playlist, we don't care about updates
                 return true;
             }
-
-            if ( player.state.currentPlaylist.object.pk == undefined ) {
-                // the currently playlist playlist is virtual, we don't care
-                return true;
-            }
-
-            if ( player.state.currentPlaylist.object.pk != playlist_pk ) {
-                // the currently playlist playlist was not updated, we don't care
+           
+            if ($('div.playlist_track_list.playlist_pk_' + playlist_pk).length < 1) {
+                // not updating a rendered playlist, we don't care about updates
                 return true;
             }
 
@@ -395,6 +381,7 @@ var player = {
             if (!player.state.randomMode) {
                 player.state.randomMode = true;
                 $('.player_bttn_rand').css('background-position', 'bottom left');
+                ui.notifyUser('Random mode enabled, loading playlist ...');
             }
             player.playPlaylist(ui.currentUrl);
         });

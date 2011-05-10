@@ -256,3 +256,14 @@ elif PROJECT_PATH == '/home/srv/playlistnow.fm/main':
     DEBUG=False
     TEMPLATE_DEBUG=False
 SEND_BROKEN_LINK_EMAILS=True
+
+USER_LEVELS = (
+    (29, 'rookie'),
+    (99, 'dj'),
+    (399, 'rock star'),
+    (999, 'guru'),
+    (2999, 'idol'),
+    (9999999, 'legend'),
+    (9999999999999, 'staff'),
+)
+

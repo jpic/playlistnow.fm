@@ -214,8 +214,8 @@ li.sep{background:url(../images/sepheader.png) top left repeat-y;margin:-4px 3px
 #sidebar .sidebar_list{margin:0;padding:0;}
 #sidebar .divider{height:1px;display:block;margin:10px 0;}
 #sidebar ul.sidebar_list li.menu_top{background:#dbdbdb url(../images/sidebar_list.png) top left;padding-left:10px;line-height:6px;color:#747474;padding-top:-1px;height:18px;text-shadow:0 1px 0 #FFFFFF;font-weight:500;}
-.sidebar_action{background:#dbdbdb url(../images/sidebar_action.png) top left;padding-left:10px;color:#747474;height:30px;text-shadow:0 1px 0 #FFFFFF;font-weight:500;position:absolute;bottom:0;border-top:1px solid #D1D1D1;z-index:1000;width:169px;}
-.sidebar_video{background:#dbdbdb url(../images/sidebar_list.png) bottom left;padding-left:10px;color:#747474;padding-left:10px;line-height:16px;text-shadow:0 1px 0 #FFFFFF;font-weight:500;position:absolute;bottom:173;border-top:1px solid #D1D1D1;z-index:1000;width:169px;}
+.sidebar_action{padding-top:5px;background:#dbdbdb url(../images/sidebar_action.png) top left;color:#747474;height:30px;text-shadow:0 1px 0 #FFFFFF;font-weight:500;position:absolute;bottom:0;border-top:1px solid #D1D1D1;z-index:1000;width:178px;}
+.sidebar_video{font-size:10px;padding-top:2px;background:#dbdbdb url(../images/sidebar_list.png) bottom left;padding-left:10px;color:#747474;padding-left:10px;line-height:16px;text-shadow:0 1px 0 #FFFFFF;font-weight:500;position:absolute;bottom:173;border-top:1px solid #D1D1D1;z-index:1000;width:169px;}
 .sidebar_info{line-height:16px;list-style:none;}
 .sidebar_info a{background:url(../images/sidebar_a_bg.png) bottom left repeat-x;display:block;margin:0 0 0px 0;line-height:16px;padding:6px 6px 9px 6px;overflow:hidden;position:relative;}
 .sidebar_info a .label{display:block;line-height:14px;color:#3C3C3C;margin-left:20px;padding-top:-1px;}
@@ -393,7 +393,7 @@ div.ad_song .ad_song_field{
     position: absolute;
     right: 281px;}
 .ad{background:#e5e5e5 url(../images/tab_bg.png) repeat-x top left;border-top:1px solid #A6A6A6;padding:10px;}
-.delete.icon{display:block;background:url(../images/remove.png) no-repeat bottom left;height:16px;width:16px;padding:6px 0 0 0;}
+.delete.icon{display:block;background:url(../images/remove.png) no-repeat bottom left;height:16px;width:16px;padding:6px 0 0 16px;}
 .homepage{text-align:center;}
 .trail_title{font-size:75%;padding-left:1em;text-transform:capitalize;font-weight:bold;color:#461b50 !important;}
 .list .lineFeed{border-bottom:1px solid #E7E7E7;padding:10px 0px;}
@@ -429,9 +429,9 @@ span.fanok{background:url(../images/fanok.png) no-repeat 0 50%;padding:3px 16px 
 .add_friend{width:360px;min-height:60px;margin:0;float:left;padding:15px;border:1px solid #e5e5e5;background:#fff;margin-right:10px;margin-bottom:8px;-webkit-border-radius:2px;-moz-border-radius:2px;border-radius:2px;}
 .add_friend:first-child{margin:0;}
 .lineFeedContentWhat .delete{float:right;}
-a.fullscreen{padding:3px 6px 13px 25px;background:transparent url(../images/fullscreen.png) no-repeat 0 50%;}
-a.badvideo{padding:3px 6px 13px 25px;background:transparent url(../images/badvideo.png) no-repeat 0 50%;}
-
+span.fullscreen{color:#000000;font-size:11px;padding:5px 0px 13px 25px;background:transparent url(../images/fullscreen.png) no-repeat 3px 4px;margin-right:4px;}
+a.badvideo{padding:3px 6px 13px 25px;background:transparent url(../images/badvideo.png) no-repeat 3px 2px;font-size:11px;}
+span.fire{background:url(../images/star.png) no-repeat 0 -19px;width:16px;height:16px;padding-left:20px;padding-top:2px;}
 #iframeplayer{position:absolute;bottom:0;}
 #player{position:fixed;left:0;bottom:0;width:100%;height:72px;background:#e2e2e2 url(../images/player/player_bg.png) repeat-x top left;z-index:1000;}
 #player_content{height:72px;color:#fff;margin:0px 0 0 10px;}
@@ -820,3 +820,34 @@ border: 1px solid #E9D8EA;}
     .uniForm input[type="text"]:focus{border: 1px solid #323334;}
     
   .uniForm label{  color: #777777;}
+  
+  
+  table.leveldata {
+    border-collapse: collapse;
+    margin: 0 0 25px;
+    padding: 0;
+    width: 100%;
+}
+
+table.leveldata th.list-title {
+ font-weight:700;
+  text-align:left;
+}
+
+table.leveldata th {
+   
+    font-size:12px;background:url(../images/statut_bg.png) top left repeat-x;margin:10px 0;color:#852A89;border-left:1px solid #E7DBE9;border-right:1px solid #E7DBE9;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.2;
+    padding: 10px 0px;
+    text-align:left;
+}
+
+table.leveldata th, table.leveldata td {
+    border-bottom: 1px solid #DDDDDD;
+    margin: 0;
+    padding: 10px;
+    vertical-align: middle;
+}
+

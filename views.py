@@ -242,7 +242,20 @@ def user_search(request, qname='term', qs=User.objects.all(),
         Q(username__icontains=q) |
         Q(first_name__icontains=q) |
         Q(last_name__icontains=q)
-    ).select_related('playlistprofile')
+    )
+    
+    level = request.GET.get('level', None)
+    if level:
+        i = 0
+        while i < len(settings.USER_LEVELS):
+            if settings.USER_LEVELS[i][1] == level:
+                qs = qs.filter(playlistprofile__points__lte=settings.USER_LEVELS[i][0])
+                if i > 0:
+                    qs = qs.filter(playlistprofile__points__gt=settings.USER_LEVELS[i-1][0])
+                break
+            i += 1
+
+    qs = qs.select_related('playlistprofile')
     context['object_list'] = qs
     context.update(extra_context or {})
     return shortcuts.render_to_response(template_name, context,
