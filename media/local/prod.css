@@ -851,3 +851,8 @@ table.leveldata th, table.leveldata td {
     vertical-align: middle;
 }
 
+
+#page_body_right .song_info span.number { display: none; }
+#page_body_right .song_info span.add { display: none; }
+#page_body_right .song_info span.love { display: none; }
+#page_body_right .song_info span.tools { display: none; }
