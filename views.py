@@ -245,7 +245,9 @@ def user_search(request, qname='term', qs=User.objects.all(),
     )
     
     level = request.GET.get('level', None)
-    if level:
+    if level == 'staff':
+        qs = qs.filter(is_staff=True)
+    elif level:
         i = 0
         while i < len(settings.USER_LEVELS):
             if settings.USER_LEVELS[i][1] == level:

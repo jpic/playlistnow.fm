@@ -122,7 +122,7 @@ MIDDLEWARE_CLASSES = [
     'middleware.OldUrlsMiddleware',
 ]
 INTERNAL_IPS = [
-    '79.151.162.220',
+    '79.159.156.87',
 ]
 if PROJECT_PATH == '/home/srv/playlistnow.fm/main':
     CACHE_BACKEND = "memcached://127.0.0.1:11211/"
@@ -267,3 +267,5 @@ USER_LEVELS = (
     (9999999999999, 'staff'),
 )
 
+SONGKICK_API_KEY='lVqjxnUkqkXuBXDi'
+SONGKICK_URL='http://api.songkick.com/api/3.0/events.json?apikey=%s' % SONGKICK_API_KEY

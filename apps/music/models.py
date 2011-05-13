@@ -367,6 +367,9 @@ class Event(MusicalEntity):
             tree = self.lastfm_get_tree(self.get_type() + '.getInfo').find(self.get_type())
         
         self.name = tree.find('venue/name').text
+        self.city = tree.find('venue/location/city').text
+        self.country = tree.find('venue/location/country').text
+        self.date = tree.find('startDate').text
         for element in tree.findall('image'):
             self.images[element.attrib['size']] = element.text
 

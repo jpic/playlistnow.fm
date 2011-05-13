@@ -102,7 +102,9 @@
             <a href="{{ object.get_fans_tab_absolute_url }}" class="fan bold">{% if object.local_artist.fans.count %}{{ object.local_artist.fans.count }}{% else %}0{% endif %} fans</a>
 
         </li>
-        <li><span class="location">Next event:</span></li>
+        <li><span class="location">Next event:</span>
+            <a href="{{ upstream_events.resultsPage.results.event.0.uri }}" class="ui_ignore" >{{ upstream_events.resultsPage.results.event.0.displayName }}</a>   <a href="{{ object.get_events_tab_absolute_url }}" class="bold">(see all)</a>
+        </li>
     </ul>
 </div>
 </div>    
@@ -259,14 +261,23 @@
 {% endif %}
 
 {% if tab == 'events' %}
-<h2 class="event">{% trans 'events of artist' %} {{ object }}</h2>
-<div class="list">
-{% for event in object.events %}
-<div class="lineFeed">
-{{ event }}
-</div>
-{% endfor %}
-</div>
+    <h2 class="event">{% trans 'events of artist' %} {{ object }}</h2>
+    <table class="leveldata users" cellspacing="0">
+    <tbody>
+        <tr>
+        	<th class="list-title">{% trans 'Event' %}</th>
+            <th>{% trans 'Location' %}</th>
+            <th>{% trans 'Buy' %}</th>
+        </tr>
+    {% for event in upstream_events.resultsPage.results.event %}
+        <tr>
+            <td><span class="bold"><a href="{{ event.uri }}">{{ event.displayName }}</a></span></td>
+            <td>{{ event.location.city }}</td>
+            <td><a href="{{ event.uri }}" class="button violet">{% trans 'Buy' %}</a></td>
+        </tr>
+    {% endfor %}
+    </tbody>
+    </table>    
 {% endif %}
 
 {% endblock %}

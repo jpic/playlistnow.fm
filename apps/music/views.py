@@ -1,16 +1,18 @@
 import random
 import urllib2
-from urllib import urlencode
+from urllib import urlencode, urlopen
 import math
 import datetime
 from lxml.html import fromstring
 import lxml
+import simplejson
 
 from django import http
 from django import shortcuts
 from django import template
 from django.db.models import get_model
 from django.db.models import Q
+from django.core.cache import cache
 from django.template import defaultfilters
 from django.contrib.auth import decorators
 from django.conf import settings
@@ -268,13 +270,35 @@ def music_artist_details(request, name, tab='overview', paginate_by=10,
             context['currentPage'] = page
         elif tab == 'similar':
             context['object'].lastfm_get_similar()
-        elif tab == 'events':
-            context['object'].lastfm_get_events()
         elif tab == 'overview':
             context['object'].lastfm_get_tracks()
             context['object'].tracks = context['object'].tracks[0:5]
     except:
         context['lastfm_error'] = True
+
+    key = 'events for %s' % context['object'].name
+    key = key.replace(' ', '-')
+    value = False
+    if len(key) <= 250:
+        value = cache.get(key)
+
+    if not value:
+        try:
+            context['object'].events = []
+            url = '%s&%s' % (
+                settings.SONGKICK_URL,
+                urlencode({
+                    'artist_name': context['object'].name,
+                })
+            )
+            upstream_events = simplejson.load(urlopen(url))
+            value = context['upstream_events'] = upstream_events
+            if len(key) <= 250:
+                cache.set(key, value, 3600*6)
+        except:
+            pass
+    else:
+        context['upstream_events'] = value
 
     context.update(extra_context or {})
     return shortcuts.render_to_response(template_name, context,

@@ -1,34 +1,41 @@
 {% extends 'site_base.html' %}
+{% load activity_tags %}
 {% load pagination_tags %}
 {% load playlist_tags %}
 {% load i18n %}
 
 {% block body %}
+
 <h1>Leaderboard</h1>
 <h2><span class="fire">Playlistnow's users ranked by levels</span></h2>
 <ul id="tab_artist" class="tab_artist fake_tabs">
-	<li class="tab">  
+	<li class="first tab {% if request.GET.level == 'rookie' %}selected{% endif %}">
 		<a href="{{ request.path_info }}?level=rookie">rookie</a>
 	</li>
-	<li class="tab"> 
-    <a href="{{ request.path_info }}?level=dj">dj</a>
+	<li class="tab {% if request.GET.level == 'dj' %}selected{% endif %}">
+        <a href="{{ request.path_info }}?level=dj">dj</a>
     </li>
-    <li class="tab"> 
-    <a href="{{ request.path_info }}?level=rock star">rock star</a>
+	<li class="tab {% if request.GET.level == 'rock star' %}selected{% endif %}">
+        <a href="{{ request.path_info }}?level=rock star">rock star</a>
     </li>
-    <li class="tab"> 
-    <a href="{{ request.path_info }}?level=guru">guru</a>
+	<li class="tab {% if request.GET.level == 'guru' %}selected{% endif %}">
+        <a href="{{ request.path_info }}?level=guru">guru</a>
     </li>
-    <li class="tab"> 
-    <a href="{{ request.path_info }}?level=idol">idol</a>
+	<li class="tab {% if request.GET.level == 'idol' %}selected{% endif %}">
+        <a href="{{ request.path_info }}?level=idol">idol</a>
     </li>
-    <li class="tab"> 
-    <a href="{{ request.path_info }}?level=legend">legend</a>
+	<li class="tab {% if request.GET.level == 'legend' %}selected{% endif %}">
+        <a href="{{ request.path_info }}?level=legend">legend</a>
+    </li>
+	<li class="tab {% if request.GET.level == 'staff' %}selected{% endif %}">
+        <a href="{{ request.path_info }}?level=staff">staff</a>
     </li>
      <div class="clear"></div>
 
 </ul>
    
+    {% autopaginate object_list %}
+    {% get_user_contenttype ctype %}
     <table class="leveldata users" cellspacing="0">
     <tbody>
         <tr>
@@ -61,12 +68,17 @@
                <span class="statut">{{ user.playlist_set.count }}</span>
             </td>
             <td>
-                <a href="" class="button grey">Follow</a>
+                <a href="{% url actstream_follow content_type_id=ctype.id  object_id=user.id %}" class="super button grey right follow_button ui_ignore" style="margin-top:14px;{% if user in request.user.playlistprofile.follows %}display:none{%endif%}">
+                    <span class="follow">follow</span>
+                </a>
+                <a href="{% url actstream_unfollow content_type_id=ctype.id  object_id=user.id %}" class="super button green right unfollow_button ui_ignore" style="margin-top:14px;{% if user not in request.user.playlistprofile.follows %}display:none{% endif %}{% if not request.user.is_authenticated %}display:none;{% endif %}">
+                    <span class="unfollow">following</span>
+                </a> 
+
             </td>
         </tr>
     {% endfor %}
  	</tbody>
  	</table>
- 	 {% autopaginate object_list %}
     {% paginate %}
 {% endblock %}

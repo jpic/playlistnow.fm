@@ -4,5 +4,5 @@
 Comment:
 {{ comment.comment }}
 
-Reply on {{ comment.content_object.actor }}'s profile: 
-http://{{ site.domain }}{{ comment.content_object.actor.get_absolute_url }}
+Reply on: 
+http://{{ site.domain }}{{ comment.content_object.get_absolute_url }}
