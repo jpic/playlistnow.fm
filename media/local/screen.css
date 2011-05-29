@@ -33,7 +33,7 @@ body, #html_body_wrapper {
 #sidebar {
   left: 0;
     top: 40px;
-    bottom: 72px;
+    bottom: 36px;
     position: fixed;
     width: 184px;
 }

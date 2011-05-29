@@ -102,6 +102,8 @@ INSTALLED_APPS = [
     'actstream',
     'django.contrib.comments',
     'endless_pagination',
+
+    'sentry.client',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -269,3 +271,6 @@ USER_LEVELS = (
 
 SONGKICK_API_KEY='lVqjxnUkqkXuBXDi'
 SONGKICK_URL='http://api.songkick.com/api/3.0/events.json?apikey=%s' % SONGKICK_API_KEY
+
+SENTRY_KEY = 'ENUTntheou)(098eu)(E0U983$@#$@34342oasuth90$#@$#@'
+SENTRY_REMOTE_URL = 'http://beta.yourlabs.org/sentry/store/'

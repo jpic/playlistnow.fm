@@ -24,3 +24,5 @@ django-endless-pagination
 # Put project-specific requirements here.
 # See http://pip-installer.org/requirement-format.html for more information.
 Markdown
+pip install -e git+https://github.com/dcramer/django-sentry.git#egg=sentry
+
