@@ -390,7 +390,7 @@ def playlist_details(request, user, slug, default_format=False, qname='term',
     paginate_by=5, 
     template_name='playlist/playlist_details.html', extra_context=None):
     context = {}
-    crash
+
     try:
         object = Playlist.objects.all_with_hidden().get(
             creation_user__username=user,

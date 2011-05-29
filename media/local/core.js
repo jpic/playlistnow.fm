@@ -92,7 +92,6 @@ var ui = {
         $(document).bind('signalPageUpdate', ui.setupAutocomplete);
         
         $(document).bind('signalPlaylistTrackModificationRequest', function(e, track, playlist, action, element) {
-            console.log('signalPlaylistTrackModificationRequest');
             /* read playlist_track_modify first */
             var data = {
                 'url': document.location.hash,

@@ -348,7 +348,6 @@ var player = {
             player.hiliteFavoriteTracks();
         });
         $(document).bind('signalPlaylistUpdate', function(e, playlist_pk) {
-            console.log('signalPlaylistUpdate');
             if (! player.state.currentPlaylist) {
                 // not playlist any playlist, we don't care about updates
                 return true;
@@ -361,7 +360,6 @@ var player = {
 
             var new_playlist = player.parseTrackList($('div.playlist_track_list.playlist_pk_' + playlist_pk));
             player.state.currentPlaylist.tracks = new_playlist.tracks;
-            console.log('done playlist update');
         });
         $('li.song_play').live('click', function(e) {
             /* use when li.click != a.clikc */
