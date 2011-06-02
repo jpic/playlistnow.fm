@@ -15,7 +15,7 @@
 {% block body %}
 
 <div style="width:720px;margin:10px auto;">      
-	<div style="display:block"><img title="" src="{{ STATIC_URL }}images/intro.png">
+	<div style="display:block"><img alt="Playlistnow.fm" src="{{ STATIC_URL }}images/intro.png" />
 	</div>
 	<ul style="display:inline;color:#64205C;font-weight:700;">
 		<li class="tab_link tab_id_playlist left espace tab_group_home">Search playlists</li>
@@ -31,14 +31,15 @@
         <div class="avatar_home">
             <span>
             <a href="/">
-                <img title="" src="{% if request.user.is_authenticated %}{{ request.user.playlistprofile.avatar_url }}{% else %}{{ STATIC_URL }}images/avatar-logged.jpg{% endif %}" alt="Avatar" height="50px" width="50px">
+                <img title="" src="{% if request.user.is_authenticated %}{{ request.user.playlistprofile.avatar_url }}{% else %}{{ STATIC_URL }}images/avatar-logged.jpg{% endif %}" alt="Avatar" height="50px" width="50px" />
+            </a>
             </span>
             </a>
         </div>
         <div class="input">
             <div class="iam" id="typeOfSearch">I am</div>
             <div class="inputiam">
-                <input  value="chilling, working, eating ..." type="text" name="term" class="autocomplete playlist magic_value">
+                <input  value="chilling, working, eating ..." type="text" name="term" class="autocomplete playlist magic_value" />
             </div>
         </div>
         <div class="submit">
@@ -46,7 +47,7 @@
         </div>
     </form>
     
-<div style="width:727px;margin:-100px auto 30px auto;"><img title="" src="{{ STATIC_URL }}images/tellus.png"></div>
+<div style="width:727px;margin:-100px auto 30px auto;"><img src="{{ STATIC_URL }}images/tellus.png" /></div>
 	<div style="width:727px;margin:0px auto 30px auto;">
 <h3 style="text-align:left;">Tags that best suits my mood or my activity</h3>
 <ul id="playlist-tags">
@@ -82,21 +83,21 @@
         <div class="avatar_home">
             <span>
                 <a href="/">
-                    <img title="" src="{% if request.user.is_authenticated %}{{ request.user.playlistprofile.avatar_url }}{% else %}{{ STATIC_URL }}images/avatar-logged.jpg{% endif %}" alt="Avatar" height="50px" width="50px">
+                    <img title="" src="{% if request.user.is_authenticated %}{{ request.user.playlistprofile.avatar_url }}{% else %}{{ STATIC_URL }}images/avatar-logged.jpg{% endif %}" alt="Avatar" height="50px" width="50px" />
                 </a>
             </span>
         </div>
 <div class="input">
 	<div class="iam" id="typeOfSearch">Song</div>
      	<div class="inputiam">
-                <input  value="name or artist here..." type="text" name="term" class="autocomplete music magic_value">
+                <input  value="name or artist here..." type="text" name="term" class="autocomplete music magic_value" />
          </div>
 	</div>
         <div class="submit">
             <button type="submit" class="form-search">{% trans "Search" %}</button>
         </div>
     </form>
-<div style="width:727px;margin:-100px auto 30px auto;"><img title="" src="{{ STATIC_URL }}images/redhot.png"></div>
+<div style="width:727px;margin:-100px auto 30px auto;"><img title="" src="{{ STATIC_URL }}images/redhot.png" /></div>
 	<div style="width:727px;margin:-30px auto 30px auto;">
 	<h3 style="text-align:left;">Recent Artists Bookmarked</h3>
 	{% render_artists last_artists %}
@@ -108,14 +109,14 @@
         <div class="avatar_home">
             <span>
                 <a href="/">
-                    <img title="" src="{% if request.user.is_authenticated %}{{ request.user.playlistprofile.avatar_url }}{% else %}{{ STATIC_URL }}images/avatar-logged.jpg{% endif %}" alt="Avatar" height="50px" width="50px">
+                    <img title="" src="{% if request.user.is_authenticated %}{{ request.user.playlistprofile.avatar_url }}{% else %}{{ STATIC_URL }}images/avatar-logged.jpg{% endif %}" alt="Avatar" height="50px" width="50px" />
                 </a>
             </span>
         </div>
         <div class="input">
             <div class="iam" id="typeOfSearch">User</div>
             <div class="inputiam">
-                <input  value="type a user name or login here..." type="text" name="term" class="autocomplete user magic_value">
+                <input  value="type a user name or login here..." type="text" name="term" class="autocomplete user magic_value" />
             </div>
         </div>
         <div class="submit">

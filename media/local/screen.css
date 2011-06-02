@@ -9,7 +9,7 @@ body, #html_body_wrapper {
 .hidden, a.hidden, div.hidden { display: none; }
 
 #track_menu {
-    bottom: 72px;
+    bottom: 39px;
     left: 180px;
     position: fixed;
     display: none;
@@ -20,7 +20,7 @@ body, #html_body_wrapper {
     bottom: 0;
     left: 0;
     position: fixed;
-    height: 72px;
+    height: 39px;
     width: 100%;
 }
 #topheader {
@@ -40,8 +40,8 @@ body, #html_body_wrapper {
 
 #page_body_container {
     left: 184px;
-    bottom: 72px;
-    top: 41px;
+    bottom: 40px;
+    top: 40px;
     right: 0;
     overflow: auto;
     position: fixed;
@@ -69,6 +69,7 @@ body, #html_body_wrapper {
     left: 45%;
     position: fixed;
     top: 12px;
+    z-index: 1000;
 }
 
 #simplemodal-overlay {

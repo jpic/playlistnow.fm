@@ -122,14 +122,17 @@
     {% include 'header.html' %}
 </div>
 
-<div id="player">
-{% include 'player.html' %}
-</div>
-
 <div id="ajaxload">
     <img src="{{ STATIC_URL }}local/ajax-loader.gif" />
     {% trans "loading" %}
 </div>
+
+<div id="player">
+{% include 'player.html' %}
+</div>
+
+
+
 {% if request.noreload %}
 <script type="text/javascript">
 $(document).ready(function(){ 
@@ -153,7 +156,9 @@ function onYouTubePlayerAPIReady() {
       events: {
         'onReady': function() {
             player.ytplayer.setVolume(60);
-            setInterval(player.update, 1000);
+            setTimeout(function() {
+                player.update()
+            }, 1000);
         },
         'onStateChange': player.update,
         'onError': player.badVideo,

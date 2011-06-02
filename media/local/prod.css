@@ -216,7 +216,7 @@ li.sep{background:url(../images/sepheader.png) top left repeat-y;margin:-4px 3px
 #sidebar ul.sidebar_list li.menu_top{background:#dbdbdb url(../images/sidebar_list.png) top left;padding-left:10px;line-height:6px;color:#747474;padding-top:-1px;height:18px;text-shadow:0 1px 0 #FFFFFF;font-weight:500;}
 
 .sidebar_information{padding-top:5px;background:#dbdbdb url(../images/sidebar_action.png) top left;color:#747474;height:50px;text-shadow:0 1px 0 #FFFFFF;font-weight:500;position:absolute;bottom:30px;border-top:1px solid #D1D1D1;z-index:1000;width:178px;}
-.sidebar_action{background:#dbdbdb url(../images/sidebar_action.png) top left;color:#747474;height:30px;text-shadow:0 1px 0 #FFFFFF;font-weight:500;position:absolute;bottom:0;border-top:1px solid #D1D1D1;z-index:1000;width:172px;padding:5px 0px 0 2px;}
+.sidebar_action{background:#dbdbdb url(../images/sidebar_action.png) top left;color:#747474;height:30px;text-shadow:0 1px 0 #FFFFFF;font-weight:500;position:absolute;bottom:0;border-top:1px solid #D1D1D1;z-index:1000;width:176px;padding:5px 0px 0 2px;}
 .sidebar_action span.divider_action{color:#000000;font-size:11px;padding:7px 0px 10px 5px;background:transparent url(../images/divider_sidebar.png) repeat-y 3px 4px;margin-right:4px;}
 .sidebar_video{font-size:10px;padding-top:2px;padding-left:10px;color:#747474;padding-left:10px;line-height:16px;text-shadow:0 1px 0 #FFFFFF;font-weight:500;position:absolute;bottom:173;border-top:1px solid #D1D1D1;z-index:1000;width:169px;}
 
@@ -865,7 +865,6 @@ table.leveldata th, table.leveldata td {
 
 .songInfo {
     padding: 0 20px 0 0;
-    width: 100px;
    
 }
 
@@ -873,13 +872,11 @@ table.leveldata th, table.leveldata td {
 font-weight:500;
 display:block;
  overflow:hidden;
- width:100px;
   height:17px;}
  
  .songInfo span.artist {
 display:block;
  overflow:hidden;
- width:100px;
  height:13px;} 
  
 a.add_sidebar{background:url(../images/adpl.png) no-repeat 0 top transparent;margin:0 7px;padding:2px 0 0 18px;}

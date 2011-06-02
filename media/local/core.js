@@ -100,10 +100,10 @@ var ui = {
                     lis.fadeOut();
                 }, 3000);
             }
+            window.setTimeout(clearNotifications, 1000);
         }
         window.setTimeout(function() {
             clearNotifications();
-            window.setTimeout(clearNotifications, 1000);
         }, 1000);
 
         // initializes links for ajax requests
@@ -127,12 +127,10 @@ var ui = {
 
         function hiddenHeight(element)
         {
-            console.log("HIDDENHEIGHT");
             var height = 0;
             $(element).children().each(function() {
                 height = height + $(this).outerHeight(false);
             });
-            console.log("HIDDENHEIGHT END");
             return height;
         }
 
@@ -733,6 +731,5 @@ $(document).ready(function() {
                 }
             }, { unescape: ",/?= " });
         });
-        // $('#ajaxload').fadeOut();
     }
 });

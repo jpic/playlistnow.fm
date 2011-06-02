@@ -17,7 +17,7 @@ var player = {
 
         $('.player_current_artist').html(track.artist.name);
         $('.player_current_artist').attr('href', track.artist.url);
-        $('.player_current_track').html(track.name + ' - ');
+        $('.player_current_track').html(track.name);
         $('.player_current_track').attr('href', track.url);
         $('.player_bttn_play').hide();
         $('.player_bttn_pause').show();
@@ -390,8 +390,6 @@ var player = {
                     count ++;
                 }
             }
-            console.log('offset', count, prevAll);
-
             var playlist = player.parseTrackList($(this).parent());
             player.playPlaylist(playlist, count);
         });
@@ -706,6 +704,8 @@ var player = {
         if(plState == -1 && player.state.playingTrackSince != false && new Date() - player.state.playingTrackSince > 15000) {
             player.playNext();
         }
+
+        setTimeout(function() { player.update(); }, 1000);
     }
 }
 
