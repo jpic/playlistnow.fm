@@ -7,6 +7,9 @@ var player = {
     'ytplayer': false,
     'tiny_playlist': {},
     'playTrack': function(track, playlist, fromHistory /* new in history ? (bool) */) {
+        if (!track.youtube_best_id) {
+            return false;
+        }
         player.ytplayer.loadVideoById(track.youtube_best_id);
         player.state.playingTrackSince = new Date();
         this.state.currentTrack = track;
@@ -28,7 +31,7 @@ var player = {
         $('#right_action a.fav').attr('title', 'Like this track');
         for(i in player.tiny_playlist.tracks) {
             var compare = player.tiny_playlist.tracks[i];
-            if (compare.name == track.name && compare.artist.name == track.artist.name) {
+            if (compare.url == track.url) {
                 $('#right_action a.fav').css('backgroundPosition', 'left bottom');
                 $('#right_action a.fav').attr('title', 'Unlike this track');
                 break;
@@ -120,7 +123,6 @@ var player = {
                         player.playPlaylistTrack(offset);
                     }
                     if (callback) callback(playlist, offset);
-                    $('#ajaxload').fadeOut();
                 },
                 'json'
             );
@@ -192,7 +194,6 @@ var player = {
                     if (reload > 0) {
                         $.history.load(data.object.url + '?update=' + d.getTime());
                     }
-                    $('#ajaxload').fadeOut();
                 },
                 'json'
             );
@@ -324,7 +325,6 @@ var player = {
                 player.state.currentTrack.youtube_best_id = text;
                 if (old_youtube_id == text) {
                     ui.notifyUser('There are no other youtube results we can stream');
-                    $('#ajaxload').fadeOut();
                     return true;
                 } else if ($.inArray(text, player.state.videoRegistry[key]) > -1) {
                     player.state.videoRegistry[key] = [];
@@ -336,19 +336,31 @@ var player = {
                 }
                 player.ytplayer.loadVideoById(player.state.currentTrack.youtube_best_id);
                 player.state.playingTrackSince = new Date();
-                $('#ajaxload').fadeOut();
             },
             beforeSend: ui.beforeSend,
             error: ui.error,
         });
     },
     'initBinds': function() {
+        // part of the player html which is loaded when this is executed
+        // *not* using .live() is acceptable and a performence optimisation
+        $('.do.add.current.track').click(function(e) {
+            var track = player.state.currentTrack;
+            var playlist = false;
+            ui.trackPlaylistAction(track, playlist, 'add', $(this));
+        });
+        $('.do.share.current.track').click(function(e) {
+            e.preventDefault();
+            try {
+                ui.shareTrackPopup(player.state.currentTrack);
+            } catch(e) {}
+        });
+
         $(document).bind('signalPageUpdate', function() {
             player.hiliteCurrentTrack();
             player.hiliteFavoriteTracks();
         });
         $(document).bind('signalPlaylistUpdate', function(e, playlist_pk) {
-            console.log('signalPlaylistUpdate');
             if (! player.state.currentPlaylist) {
                 // not playlist any playlist, we don't care about updates
                 return true;
@@ -361,7 +373,6 @@ var player = {
 
             var new_playlist = player.parseTrackList($('div.playlist_track_list.playlist_pk_' + playlist_pk));
             player.state.currentPlaylist.tracks = new_playlist.tracks;
-            console.log('done playlist update');
         });
         $('li.song_play').live('click', function(e) {
             /* use when li.click != a.clikc */
@@ -371,13 +382,18 @@ var player = {
             e.preventDefault();
             track = player.parseRenderedTrack($(this));
             var li = $(this);
-            
-            if (li.parents('div.playlist_track_list').find('#playlist_pk').length) {
-                player.playPlaylist(ui.currentUrl, $(this).prevAll().length);
-            } else {
-                var playlist = player.parseTrackList($(this).parent());
-                player.playPlaylist(playlist, $(this).prevAll().length);
+           
+            var count = 0;
+            var prevAll = $(this).prevAll();
+            for (i=0; i<prevAll.length; i++) {
+                if (prevAll[i]) {
+                    count ++;
+                }
             }
+            console.log('offset', count, prevAll);
+
+            var playlist = player.parseTrackList($(this).parent());
+            player.playPlaylist(playlist, count);
         });
         $('.playplaylist_random').live('click', function() {
             if (!player.state.randomMode) {
@@ -386,6 +402,17 @@ var player = {
                 ui.notifyUser('Random mode enabled, loading playlist ...');
             }
             player.playPlaylist(ui.currentUrl);
+        });
+        $('a.play_playlist_json_url').live('click', function(e) {
+            e.preventDefault();
+            if ($(this).hasClass('disable-random') && player.state.randomMode) {
+                player.state.randomMode = false;
+                $('.player_bttn_rand').css('background-position', 'top left');
+                ui.notifyUser('Random mode disabled, radio loading ...');
+            }
+            player.playPlaylist($(this).attr('href')+'?ajax=1', 0, function(playlist, offset) {
+                $.history.load(player.state.currentPlaylist.object.url);
+            });
         });
         $('.badvideo').live('click', function(e) {
             player.state.waitingNewVideo = true;
@@ -559,19 +586,13 @@ var player = {
                 };
             }
             
-            $(document).trigger('signalPlaylistTrackModificationRequest', [track, playlist, action, $(this)])
+            ui.trackPlaylistAction(track, playlist, action, $(this));
 
             if ($(this).hasClass('tiny_playlist')) {
                 if ($(this).hasClass('remove_track')) {
                     $(this).css('backgroundPosition', 'left top');
                     $(this).removeClass('remove_track');
                     $(this).addClass('add_track');
-                    for(i in player.tiny_playlist.tracks) {
-                        var compare = player.tiny_playlist.tracks[i];
-                        if (compare.name == track.name && compare.artist.name == track.artist.name) {
-                            player.tiny_playlist.tracks.splice(i, 1);
-                        }
-                    }
                     if ($('#playlist_pk').length && $('#playlist_pk').html() == player.tiny_playlist.object.pk) {
                         $(this).parent().fadeOut();
                     }
@@ -584,7 +605,6 @@ var player = {
                     $(this).css('backgroundPosition', 'left bottom');
                     $(this).removeClass('add_track');
                     $(this).addClass('remove_track');
-                    player.tiny_playlist.tracks.push(track);
                     if (player.state.currentTrack != undefined && track.name == player.state.currentTrack.name) {
                         $('#right_action a.fav').css('backgroundPosition', 'left bottom');
                         $('#right_action a.fav').addClass('remove_track');
@@ -635,7 +655,7 @@ var player = {
         if (player.ytplayer.getDuration == undefined) {
             return false;
         }
-        if (player.state == undefined) {
+        if (player.state == undefined || player.state < 0) {
             return false;
         }
 
@@ -650,8 +670,12 @@ var player = {
         var timebarWidth = 548;
         var plState = player.ytplayer.getPlayerState();
         
-        document.getElementById('player_progress_bar').style.width = percent * (timebarWidth / 100) + "px";
-        document.getElementById('player_loading_bar').style.width = percentload * (timebarWidth / 100) + "px";
+        if (percent) {
+            document.getElementById('player_progress_bar').style.width = percent * (timebarWidth / 100) + "px";
+        }
+        if (percentload) {
+            document.getElementById('player_loading_bar').style.width = percentload * (timebarWidth / 100) + "px";
+        }
 
         t = Math.round(part);
         var s = t % 60; 

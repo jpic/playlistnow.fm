@@ -91,90 +91,19 @@ var ui = {
         $(document).bind('signalPageUpdate', ui.setupPagination);
         $(document).bind('signalPageUpdate', ui.setupAutocomplete);
         
-        $(document).bind('signalPlaylistTrackModificationRequest', function(e, track, playlist, action, element) {
-            console.log('signalPlaylistTrackModificationRequest');
-            /* read playlist_track_modify first */
-            var data = {
-                'url': document.location.hash,
-            }
-            
-            if (track.pk != undefined) {
-                data['track_pk'] = track.pk;
-            }
-            else if (track.name != undefined) {
-                data['track_name'] = track.name;
-            }
-            
-            if (track.artist != undefined && track.artist.name != undefined) {
-                data['artist_name'] = track.artist.name;
-            }
-
-            if (playlist.pk != undefined) {
-                data['playlist_pk'] = playlist.pk;
-            }
-            else if (playlist.name != undefined) {
-                data['playlist_name'] = playlist.name;
-            }
-
-            if (action != undefined) {
-                data['action'] = action;
-            }
         
-            if (!user.is_authenticated) {
-                ui.authenticationPopup()
-            } else if (element && element.hasClass('noconfirm')) {
-                data['direct_to_playlist'] = 1;
-                //var song_info = element.parents('li.song_info');
-                // faster, less resistent to changes in apps/music/templates/music/_render_tracks.html
-                var song_info = element.parent().clone();
-                song_info.find('.add.noconfirm').removeClass('noconfirm');
-                song_info.find('.rm').addClass('noconfirm');
-                song_info.find('.copy_track_row').removeClass('copy_track_row');
-
-                $.ajax({
-                    url: playlist_track_modify,
-                    dataType: 'html',
-                    data: data,
-                    type: 'post',
-                    success: function(html, textStatus, request) {
-                        if (element.hasClass('copy_track_row')) {
-                            var ul = $('div.playlist_track_list ul.song_list');
-                            if (ul != undefined) {
-                                var first = ul.find('li.song_info:first');
-                                if (first != undefined) {
-                                    if (first.hasClass('dd') && song_info.hasClass('dd')) {
-                                        song_info.removeClass('dd');
-                                    } else if (first.hasClass('dd') == false && song_info.hasClass('dd') == false) {
-                                        song_info.addClass('dd');
-                                    }
-                                }
-
-                                song_info.find('span.number').remove();
-                                song_info.hide();
-                                song_info.addClass('recent');
-                                ul.prepend(song_info);
-                                song_info.slideDown();
-                                window.setTimeout(function() {
-                                    song_info.removeClass('recent');
-                                }, 3000);
-                            }
-                        }
-                        ui.notifyUser(html);
-                        $(document).trigger('signalPlaylistUpdate', [data.playlist_pk]);
-                    },
-                });
-            } else {
-                ui.popup(playlist_track_modify + '?' + $.param(data));
-            }
-        });
-
-        window.setInterval(function() {
+        // using setTimeout() instead of setInterval() for performances
+        function clearNotifications() {
             if ($('#user_notifications li').length > 0) {
                 var lis = $('#user_notifications li');
                 window.setTimeout(function() {
                     lis.fadeOut();
                 }, 3000);
             }
+        }
+        window.setTimeout(function() {
+            clearNotifications();
+            window.setTimeout(clearNotifications, 1000);
         }, 1000);
 
         // initializes links for ajax requests
@@ -198,10 +127,12 @@ var ui = {
 
         function hiddenHeight(element)
         {
+            console.log("HIDDENHEIGHT");
             var height = 0;
             $(element).children().each(function() {
                 height = height + $(this).outerHeight(false);
             });
+            console.log("HIDDENHEIGHT END");
             return height;
         }
 
@@ -227,18 +158,6 @@ var ui = {
         if (!ui.settings['ajaxEnable']) {
             return undefined;
         }
-
-        $('a.play_playlist_json_url').live('click', function(e) {
-            e.preventDefault();
-            if ($(this).hasClass('disable-random') && player.state.randomMode) {
-                player.state.randomMode = false;
-                $('.player_bttn_rand').css('background-position', 'top left');
-                ui.notifyUser('Random mode disabled, radio loading ...');
-            }
-            player.playPlaylist($(this).attr('href')+'?ajax=1', 0, function(playlist, offset) {
-                $.history.load(player.state.currentPlaylist.object.url);
-            });
-        });
 
         $('.reset_notices_count').live('click', function(e) {
             $('.notices_count').html('(0)');
@@ -326,39 +245,16 @@ var ui = {
                 
         $('.simplemodal-close').live('click', function() {$.modal.close();});
 
-        $('.add_current_track').click(function(e) {
-            var track = player.state.currentTrack;
-            var playlist = false;
-            $(document).trigger('signalPlaylistTrackModificationRequest', [track, playlist, 'add', $(this)]);
-        });
-        $('#right_action .share').click(function(e) {
-            if (player.state.currentTrack == undefined) {
-                return false;
-            }
-            var p = {
-                'track_name': player.state.currentTrack.name,
-                'tab_id': 'local',
-            }
-            if (player.state.currentTrack.artist != undefined && player.state.currentTrack.artist.name != undefined) {    
-                p['artist_name'] = player.state.currentTrack.artist.name;
-            }
-            var url = music_recommendation_add + '?' + $.param(p);
-            if (!user.is_authenticated) {
-                ui.authenticationPopup(url);
-            } else {
-                ui.popup(url);
-            }
-        });
         $('.like_current_track').click(function(e) {
             var track = player.state.currentTrack;
-            var playlist = { 'pk': tiny_playlist_pk };
+            
             if ($(this).css('backgroundPosition') == '0% 100%') {
                 var action = 'remove';
             } else {
                 var action = 'add';
             }
-            $(document).trigger('signalPlaylistTrackModificationRequest', [track, playlist, action, $(this)]);
-            player.tiny_playlist.tracks.push(track);
+            
+            ui.trackPlaylistAction(track, player.tiny_playlist, action, $(this));
             if ($(this).css('backgroundPosition') == '0% 100%') {
                 $(this).css('backgroundPosition', 'left top');
                 $('.song_info.selected .love.icon').css('backgroundPosition', 'left top');
@@ -374,6 +270,10 @@ var ui = {
 
         $('a:not(a.endless_more):not(a.ui_ignore):not(a.tab_link)').live('click', function(e) {
             var url = $(this).attr('href');
+            if (!url) {
+                return true;
+            }
+
             e.preventDefault();
 
             if ($(this).hasClass('authenticationRequired') && !user.is_authenticated) {
@@ -660,6 +560,137 @@ var ui = {
             initFb();
         }
     },
+
+    /* the end of ui depends on player */
+    'shareTrackPopup': function(track) {
+        if (!user.is_authenticated)
+            return ui.authenticationPopup();
+
+        if (!track)
+            return false;
+
+        var params = {
+            'track_name': track.name,
+            'tab_id': 'local',
+        }
+
+        try {
+            params['artist_name'] = track.artist.name;
+        } catch (e) {}
+
+        var url = music_recommendation_add + '?' + $.param(param);
+        ui.popup(url);
+    },
+    'likeTrack': function(track) {
+        var i, key, action;
+        
+        action = $(this).css('backgroundPosition') == '0% 100%' ?
+                        'remove' :
+                        'add';
+
+        ui.trackPlaylistAction(track, player.tiny_playlist.pk, action, $(this));
+        if (action == 'add') {
+            player.tiny_playlist.tracks.push(track);
+        } else {
+            for(i=0; i < player.tiny_playlist.tracks.length; i++) {
+                if (player.tiny_playlist.tracks[i].url == track.url) {
+                    key = i;
+                    break;
+                }
+            }
+
+            player.tiny_playlist.tracks.splice(key, 1);
+        }
+    },
+    'trackPlaylistAction': function(track, playlist, action, element) {
+        if (!action) {
+            return false;
+        }
+
+        if (!user.is_authenticated) {
+            return ui.authenticationPopup();
+        }
+
+        var data = {
+            'url': document.location.hash,
+            'action': action,
+        }
+
+        if (track.pk) {
+            data['track_pk'] = track.pk;
+        } else {
+            data['track_name'] = track.name;
+        }
+
+        try {
+            data['artist_name'] = track.artist.name;
+        } catch (e) {}
+
+        try {
+            data['playlist_pk'] = playlist.pk;
+        } catch(e) {
+            data['playlist_name'] = playlist.name;
+        }
+
+        if (element && element.hasClass('noconfirm')) {
+            data['direct_to_playlist'] = 1;
+            //var song_info = element.parents('li.song_info');
+            // faster, less resistent to changes in apps/music/templates/music/_render_tracks.html
+            var song_info = element.parent().clone();
+            song_info.find('.add.noconfirm').removeClass('noconfirm');
+            song_info.find('.rm').addClass('noconfirm');
+            song_info.find('.copy_track_row').removeClass('copy_track_row');
+
+
+            $.ajax({
+                url: playlist_track_modify,
+                dataType: 'html',
+                data: data,
+                type: 'post',
+                success: function(html, textStatus, request) {
+                    if (element.hasClass('copy_track_row')) {
+                        var ul = $('div.playlist_track_list ul.song_list');
+                        if (ul != undefined) {
+                            var first = ul.find('li.song_info:first');
+                            if (first != undefined) {
+                                if (first.hasClass('dd') && song_info.hasClass('dd')) {
+                                    song_info.removeClass('dd');
+                                } else if (first.hasClass('dd') == false && song_info.hasClass('dd') == false) {
+                                    song_info.addClass('dd');
+                                }
+                            }
+
+                            song_info.find('span.number').remove();
+                            song_info.hide();
+                            song_info.addClass('recent');
+                            ul.prepend(song_info);
+                            song_info.slideDown();
+                            window.setTimeout(function() {
+                                song_info.removeClass('recent');
+                            }, 3000);
+                        }
+                    }
+                    
+                    if (action == 'add') {
+                        playlist.tracks.push(track);
+                    } else {
+                        for(i in playlist.tracks) {
+                            var compare = playlist.tracks[i];
+                            if (compare.url == track.url) {
+                                playlist.tracks.splice(i, 1);
+                            }
+                        }
+                    }
+                    
+                    ui.notifyUser(html);
+                    $(document).trigger('signalPlaylistUpdate', [data.playlist_pk]);
+                },
+            });
+        } else {
+            var url = playlist_track_modify + '?' + $.param(data);
+            ui.popup(url);
+        }
+    }
 }
 
 $(document).ready(function() {
@@ -702,5 +733,6 @@ $(document).ready(function() {
                 }
             }, { unescape: ",/?= " });
         });
+        // $('#ajaxload').fadeOut();
     }
 });
