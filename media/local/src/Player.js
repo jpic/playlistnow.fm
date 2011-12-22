@@ -1,23 +1,46 @@
-function Player(favorites) {
-    this.favorites = favorites;
-}
-Player.prototype.play = function(track) {
-  this.currentlyPlayingTrack = track;
-  this.isPlaying = true;
-};
+var Player = (function() {
+    $('.do_add_current_track').click(function(e) {
+    });
+    $('.do_share_current_track').click(function(e) {
+    });
+    $('li.song_play').live('click', function(e) {
+        /* use when li.click != a.clikc */
+        if( e.target != this ) {
+            return true;
+        }
+        track = Player.parseRenderedTrack($(this));
+        // get track's playlist
+    });
 
-Player.prototype.pause = function() {
-  this.isPlaying = false;
-};
+    function playTrack(track) {
+    }
+    function queueTracks(tracks) {
+    }
 
-Player.prototype.resume = function() {
-  if (this.isPlaying) {
-    throw new Error("track is already playing");
-  }
+    return {
+        queue: [],
+        history: [],
+        play: function(arg) {
+            // just interrupts the current track and play this
+            // if track
+            playTrack(arg);
 
-  this.isPlaying = true;
-};
+            // if url
+            playlist = Model.fetchPlaylist(arg);
+            // else
+            playlist = arg
 
-Player.prototype.makeFavorite = function() {
-  this.currentlyPlayingTrack.persistFavoriteStatus(true);
-};
+            playTrack(playlist.tracks[0]);
+            queueTracks(playlist.tracks[
+        },
+        queue: function(arg) {
+            // just interrupts the current track and queue this
+            // if track
+            queueTrack(arg);
+            // if queuelist
+            queuePlaylist(arg);
+            // if url
+            queuePlaylist(Model.fetchPlaylist(arg));
+        },
+    }
+})();

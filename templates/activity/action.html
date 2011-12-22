@@ -36,7 +36,7 @@
             {{ activity.actor }}
         </a>
         <span class="feed_add">added to playlist</span>
-        <a href="{{ activity.target.get_absolute_url }}" title="{% trans "details of" %} {{ activity.target }}" class="bold">
+        <a href="{{ activity.target.get_absolute_url }}" title="{% trans "details of" %} {{ activity.target }}" class="bold playlist">
             {{ activity.target }}
         </a>
         {% if activity.close %}
@@ -70,11 +70,13 @@
         <a href="{{ activity.actor.get_absolute_url }}" title="{% trans "see details of user" %} {{ activity.actor }}" class="bold">
             {{ activity.actor }}
         </a>
+        <span class="feed_likes"><a class="playlist.detail" href="{{ activity.actor.playlistprofile.tiny_playlist.get_absolute_url }}">likes</a>
         {% if activity.close %}
-        <span class="feed_likes">likes this track</span>
+            these tracks
         {% else %}
-        <span class="feed_likes">likes these tracks</span>
+            this track
         {% endif %}
+        </span>
     {% endif %}
     {% if activity.close %}
         {% if activity.action_object_group %}

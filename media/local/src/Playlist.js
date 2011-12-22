@@ -5,11 +5,10 @@ function Playlist(kwargs) {
     this.pk = kwargs.hasOwnProperty('pk') ? kwargs.pk : null;
     this.name = kwargs.hasOwnProperty('name') ? kwargs.name : '';
     this.url = kwargs.hasOwnProperty('url') ? kwargs.url : '';
-    // backward compatibility
-    this.object = this;
 }
 
 Playlist.prototype.add = function(track) {
+    Model.addTrackToPlaylist(track, this);
     this.tracks.push(track);
 }
 
@@ -36,5 +35,6 @@ Playlist.prototype.remove = function(track) {
 
     if (key != undefined) {
         this.tracks.splice(key, 1);
+        Model.removeTrackFromPlaylist(track, this);
     }
 }

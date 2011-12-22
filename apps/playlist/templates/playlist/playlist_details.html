@@ -12,8 +12,12 @@
 {% endblock %}
 
 {% block body %}
+<div id="gory_detail">
+    <a class="this playlist detail" rel="nofollow" href="{{ object.get_absolute_url }}" title="{{ object }}">{{ object }}</a>
+</div>
+
 <div class="left">
-    <h1><span class="playplaylist_random tiptip" title="Lauch this playlist randomly"></span>{{ object }}</h1>
+    <h1><span class="this playplaylist_random tiptip" title="Lauch this playlist randomly"></span>{{ object }}</h1>
    
 </div>
 <div class="right">
