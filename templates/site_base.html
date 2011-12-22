@@ -167,13 +167,6 @@ function onYouTubePlayerAPIReady() {
         $(document).trigger('signalPageUpdate');
     });
     {% endif %}
-
-    function facebookConnect(form){
-        function handleResponse(response){
-            form.submit();
-        }
-        FB.login(handleResponse,{scope:'user_location,email,publish_stream,offline_access,status_update,read_stream'});
-    }
 </script>
 
 

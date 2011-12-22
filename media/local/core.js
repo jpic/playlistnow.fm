@@ -85,8 +85,6 @@ var ui = {
             $('#tiptip_holder').fadeOut();
         });
 
-        $(document).bind('signalPopupOpen', ui.setupFacebook);
-        $(document).bind('signalPageUpdate', ui.setupFacebook);
         ui.setupForms();
         $(document).bind('signalPageUpdate', ui.setupPagination);
         $(document).bind('signalPageUpdate', ui.setupAutocomplete);
@@ -644,20 +642,6 @@ var ui = {
                 $(document).trigger('signalPopupOpen');
             },
         });
-    },
-    'setupFacebook': function() {
-        if ($('#fb-root').length < 1) return true;
-
-        function initFb() {
-            FB.init({ apiKey: 'deb205b1c3050bd7ae82c4bbc3772c59', status: true, cookie: true, xfbml: true});
-        }
-
-        if (ui.facebookJsLoaded == undefined) {
-            $.getScript('http://connect.facebook.net/en_US/all.js', initFb);
-            ui.facebookJsLoaded = true;
-        } else {
-            initFb();
-        }
     },
 }
 

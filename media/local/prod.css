@@ -414,7 +414,7 @@ ul.signin li div.connect{padding:14px 0 9px 45px;background:transparent url(../i
 ul.signin li div.fill_form{padding:14px 0 9px 45px;background:transparent url(../images/fill_form.png) no-repeat 0 50%;font-weight:700;font-size:15px;color:#CCCCCC;}
 ul.signin li div.find_friends{padding:14px 0 9px 45px;background:transparent url(../images/find_friends.png) no-repeat 0 50%;font-weight:700;font-size:15px;color:#CCCCCC;}
 ul.signin li div.connect_text{padding:0 5px;font-size:12px;color:#999999;}
-span.facebook{padding:3px 6px 3px 25px;background:transparent url(../images/ico_facebook.png) no-repeat 0 50%;}
+a.facebook{padding:3px 6px 3px 25px;background:transparent url(../images/ico_facebook.png) no-repeat 0 50%;}
 span.twitter{padding:3px 6px 3px 25px;background:transparent url(../images/ico_twitter.png) no-repeat 0 50%;}
 span.google{padding:3px 6px 3px 25px;background:transparent url(../images/ico_google.png) no-repeat 0 50%;}
 span.following{background:url(../images/following.png) no-repeat 0 50%;padding:3px 6px 3px 25px;}

@@ -103,7 +103,26 @@ INSTALLED_APPS = [
     'django.contrib.comments',
     'endless_pagination',
     'sentry.client',
+    'la_facebook',
 ]
+
+FACEBOOK_APP_ID = '281162428598744'
+FACEBOOK_APP_SECRET = '33ac89c1a9bd2315c2292d0a9ffe5e1d'
+
+AUTH_PROFILE_MODULE="connect.Profile"
+
+LOGIN_REDIRECT_URL="/"
+
+FACEBOOK_ACCESS_SETTINGS = { 
+        "FACEBOOK_APP_ID": FACEBOOK_APP_ID,
+        "FACEBOOK_APP_SECRET": FACEBOOK_APP_SECRET,
+        "LOG_LEVEL": "DEBUG",
+        "LOG_FILE": "/tmp/la_facebook.log",
+        # The following keys are optional
+        # TODO - Comment next line out but still have tests pass
+        "CALLBACK": "la_facebook.callbacks.default.default_facebook_callback", 
+        "PROVIDER_SCOPE": ['email','publish_stream'], # here as sample - optional
+}
 
 MIDDLEWARE_CLASSES = [
     'middleware.DynamicHtmlMiddleware',
@@ -118,7 +137,6 @@ MIDDLEWARE_CLASSES = [
     'pinax.middleware.security.HideSensistiveFieldsMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'pagination.middleware.PaginationMiddleware',
-    'socialregistration.middleware.FacebookMiddleware',
     'django.middleware.cache.FetchFromCacheMiddleware',
     'middleware.OldUrlsMiddleware',
 ]
@@ -187,10 +205,6 @@ TWITTER_REQUEST_TOKEN_URL = 'https://api.twitter.com/oauth/request_token'
 TWITTER_ACCESS_TOKEN_URL = 'https://api.twitter.com/oauth/access_token'
 TWITTER_AUTHORIZATION_URL = 'https://api.twitter.com/oauth/authorize'
 
-FACEBOOK_APP_ID = '86928100945'
-FACEBOOK_API_KEY = 'deb205b1c3050bd7ae82c4bbc3772c59'
-FACEBOOK_SECRET_KEY = '0cb9e1d29fe6d86be0cecab93106fffe'
-
 if PROJECT_PATH == '/home/srv/beta.playlistnow.fm/main':
     GOOGLE_SITE_ID = '08546160909140751983'
 elif PROJECT_PATH == '/home/srv/playlistnow.fm/main':
@@ -198,7 +212,6 @@ elif PROJECT_PATH == '/home/srv/playlistnow.fm/main':
 
 AUTHENTICATION_BACKENDS = (
     'backends.ModelBackend',
-    'socialregistration.auth.FacebookAuth',
     'socialregistration.auth.TwitterAuth',
     'socialregistration.auth.OpenIDAuth',
     'gfc.auth.GfcAuth',
@@ -214,20 +227,23 @@ UI_IGNORE_URLS = (
     
     '/account/logout/',
 
-    '/socialregistration/facebook/login/',
-    '/socialregistration/facebook/connect',
+    '/la_facebook/login',
+    '/la_facebook/callback',
+    '/la_facebook/login/',
+    '/la_facebook/callback/',
     '/socialregistration/twitter',
     #'/socialregistration/setup',
     '/registration/userdata',
     '/music/badvideo',
 )
 
+AUTH_PROFILE_MODULE='gfc.LaFacebookProfile'
+
 GENERATE_USERNAME = False
 SOCIALREGISTRATION_GENERATE_USERNAME = GENERATE_USERNAME
 
 AJAX_NAVIGATION = True
 LOGIN_REDIRECT_URL = '/me/'
-FACEBOOK_OFFLINE_ACCESS = True
 
 ACCOUNT_EMAIL_VERIFICATION = False
 ACCOUNT_UNIQUE_EMAIL = EMAIL_CONFIRMATION_UNIQUE_EMAIL = False

@@ -4,7 +4,6 @@
 {% load uni_form_tags %}
 {% load ifsetting_tag %}
 {% load account_tags %}
-{% load facebook_tags %}
 {% load twitter_tags %}
 
 {% block head_title %}{% trans "Login" %}{% endblock %}
@@ -48,12 +47,11 @@
 		Connect your Facebook account to Playlistnow to sign up or sign in by clicking the button Connect with Facebook.
 		</div>
 
-   <!-- FBJS start -->
-    {% facebook_js %}
-   <!-- FBJS end -->
-   {% facebook_button %}
-   <!-- FB button end -->
-   	<div class="clear"></div>
+    <a href="{% url la_facebook_login %}?next=/me/" class="super button grey large ui_ignore">
+        <span class="facebook bold">Connect with facebook</span>
+    </a>
+	
+    <div class="clear"></div>
 </div>
 
 <div class="tab_group_login tab_content tab_id_twitter inside">

@@ -1,5 +1,6 @@
 import random
 import urllib2
+import httplib2
 from urllib import urlencode, urlopen
 import math
 import datetime
@@ -85,7 +86,11 @@ def music_recommendation_add(request, form_class=RecommendationForm,
 
     if request.method == 'POST' and context['track']:
         if request.GET.get('method', False) == 'facebook':
-            request.facebook.graph.put_wall_post(request.POST.get('message').encode('utf-8'))
+            h = httplib2.Http()
+            resp, ct = h.request('https://graph.facebook.com/me/feed', 'POST', urlencode({
+                'access_token':request.user.userassociation_set.all()[0].token,
+                'message': request.POST.get('message').encode('utf-8')
+            }))
             msg = 'thanks for sharing <a href="%s">%s</a> on Facebook' % (
                 context['track'].get_absolute_url(),
                 unicode(context['track']),
@@ -147,7 +152,7 @@ def music_recommendation_add(request, form_class=RecommendationForm,
     if profiles:
         context['twitterprofile'] = profiles[0]
         context['twitterurl'] = shorten_url(base+context['track'].get_absolute_url())
-    profiles = request.user.facebookprofile_set.all()
+    profiles = request.user.userassociation_set.all()
     if profiles:
         context['facebookprofile'] = profiles[0]
         context['facebookurl'] = base+context['track'].get_absolute_url()

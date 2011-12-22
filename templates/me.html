@@ -22,8 +22,9 @@ margin-top:10px;width:185px; height:9px;border:1px solid #616161; background:url
 	</div>
 </div>
 <div class="clear espacetop"></div>
-{% if who_to_follow %}
 <h3>who to follow ?</h3>
+<a href="{% url socialregistration_friends %}">Find friends from facebook, twitter and/or google</a>
+{% if who_to_follow %}
 <div class="sub_title">Suggestions for you</div>
 <br/>
     {% for user in who_to_follow %}
@@ -69,6 +70,9 @@ margin-top:10px;width:185px; height:9px;border:1px solid #616161; background:url
 {% block body %}
 <h1>Activity from your friends</h1>
 <h2>Who to follow ? Discover the <a href="{% url user_search %}?level=legend" alt="leaderboard">leaderboard</a></h2>
+
+<a href="{% url socialregistration_friends %}">Find friends from facebook, twitter and/or google</a>
+
 <div class="list">
 
     {% include 'auth/user_activities.html' %}  

@@ -455,7 +455,7 @@ def me(request,
         else:
             return http.HttpResponseRedirect(urlresolvers.reverse(
                 'socialregistration_complete'))
-    
+
     user = request.user
     activities = Action.objects.filter(
         Q(pk__in=Action.objects.filter(

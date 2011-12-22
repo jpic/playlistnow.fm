@@ -2,7 +2,6 @@
 
 {% load i18n %}
 {% load uni_form_tags %}
-{% load facebook_tags %}
 
 {% block head_title %}{% trans "Signup" %}{% endblock %}
 
@@ -21,10 +20,8 @@
 <div style="margin:26px 0;padding:10px;">
     <ul>
         <li style="width:30%;float:left;padding:2px 10px 0 10px;">
-            {% facebook_js %}
-            {% facebook_button %}
             <p style="color: #999999;font-size:12px;margin-top:10px;">
-                <span class="bold">Connect your Facebook</span>
+                <a href="{% url la_facebook_login %}?next=/me" class="bold ui_ignore">Connect your Facebook</a>
                  to sign in by clicking the button Connect with Facebook.
             </p>
         </li>

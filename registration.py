@@ -1,3 +1,4 @@
+import httplib2
 import logging
 import gfc
 import opensocial
@@ -71,8 +72,8 @@ def socialregistration_userdata(request, form_class=UserDataForm,
             profile = request.user.facebookprofile_set.all()[0]
         elif request.user.twitterprofile_set.count():
             profile = request.user.twitterprofile_set.all()[0]
-        if request.user.gfcprofile_set.count():
-            profile = request.user.gfcprofile_set.all()[0]
+        if request.user.la_facebookprofile_set.count():
+            profile = request.user.la_facebookprofile_set.all()[0]
         user = request.user
     else:
         return http.HttpResponseRedirect(urlresolvers.reverse(
@@ -152,11 +153,11 @@ def socialregistration_userdata(request, form_class=UserDataForm,
                 twitter_ids = [x['id'] for x in res]
                 conditions.append(Q(twitterprofile__twitter_id__in=twitter_ids))
 
-            for gfcprofile in user.gfcprofile_set.all():
-                container = gfc.my_opensocial_container(request)
+            for la_facebookprofile in user.gfcprofile_set.all():
+                container = la_facebook.my_opensocial_container(request)
                 res = container.fetch_friends()
-                gfc_ids = [x['id'] for x in res]
-                conditions.append(Q(gfcprofile__uid__in=gfc_ids))
+                la_facebook_ids = [x['id'] for x in res]
+                conditions.append(Q(la_facebookprofile__uid__in=gfc_ids))
             
             for u in User.objects.filter(reduce(operator.or_,conditions)):
                 follow(user, u)
@@ -196,7 +197,7 @@ def socialregistration_userdata(request, form_class=UserDataForm,
             }
 
         elif profile.__class__.__name__ == 'GfcProfile':
-            container = gfc.my_opensocial_container(request)
+            container = la_facebook.my_opensocial_container(request)
             req = opensocial.FetchPersonRequest(profile.uid, ['@all'])
             upstream = container.send_request(req)
             initial = {
@@ -225,10 +226,11 @@ def socialregistration_friends(request,
     conditions = []
     user = request.user
     
-    for facebookprofile in user.facebookprofile_set.all():
-        print facebookprofile
-        friendlist = request.facebook.graph.request(request.facebook.user['uid'] + '/friends')
-        facebook_ids = [x['id'] for x in friendlist['data']]
+    for facebookprofile in user.userassociation_set.all():
+        h = httplib2.Http()
+        resp, ct = h.request('https://graph.facebook.com/me/friends?' 
+            + urllib.urlencode({'access_token': facebookprofile.token,}))
+        facebook_ids = [x['id'] for x in simplejson.loads(ct)['data']]
         conditions.append(Q(facebookprofile__uid__in=facebook_ids))
 
     if user.twitterprofile_set.count():
