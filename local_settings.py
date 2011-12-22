@@ -106,23 +106,7 @@ INSTALLED_APPS = [
     'la_facebook',
 ]
 
-FACEBOOK_APP_ID = '281162428598744'
-FACEBOOK_APP_SECRET = '33ac89c1a9bd2315c2292d0a9ffe5e1d'
-
-AUTH_PROFILE_MODULE="connect.Profile"
-
 LOGIN_REDIRECT_URL="/"
-
-FACEBOOK_ACCESS_SETTINGS = { 
-        "FACEBOOK_APP_ID": FACEBOOK_APP_ID,
-        "FACEBOOK_APP_SECRET": FACEBOOK_APP_SECRET,
-        "LOG_LEVEL": "DEBUG",
-        "LOG_FILE": "/tmp/la_facebook.log",
-        # The following keys are optional
-        # TODO - Comment next line out but still have tests pass
-        "CALLBACK": "la_facebook.callbacks.default.default_facebook_callback", 
-        "PROVIDER_SCOPE": ['email','publish_stream'], # here as sample - optional
-}
 
 MIDDLEWARE_CLASSES = [
     'middleware.DynamicHtmlMiddleware',
@@ -153,6 +137,8 @@ if PROJECT_PATH == '/home/srv/playlistnow.fm/main':
             'LOCATION': '127.0.0.1:11211',
         }
     }
+    FACEBOOK_APP_ID = '86928100945'
+    FACEBOOK_APP_SECRET = '0cb9e1d29fe6d86be0cecab93106fffe'
 elif PROJECT_PATH == '/home/srv/beta.playlistnow.fm/main':
     CACHE_BACKEND = "memcached://127.0.0.1:11211/"
     CACHE_MIDDLEWARE_SECONDS = 60
@@ -163,6 +149,8 @@ elif PROJECT_PATH == '/home/srv/beta.playlistnow.fm/main':
             'LOCATION': '127.0.0.1:11211',
         }
     }
+    FACEBOOK_APP_ID = '86928100945'
+    FACEBOOK_APP_SECRET = '0cb9e1d29fe6d86be0cecab93106fffe'
 
 OPENID_REDIRECT_NEXT = '/accounts/openid/done/'
 
@@ -273,6 +261,20 @@ elif PROJECT_PATH == '/home/srv/playlistnow.fm/main':
     DEBUG=False
     TEMPLATE_DEBUG=False
 SEND_BROKEN_LINK_EMAILS=True
+
+
+FACEBOOK_ACCESS_SETTINGS = { 
+        "FACEBOOK_APP_ID": FACEBOOK_APP_ID,
+        "FACEBOOK_APP_SECRET": FACEBOOK_APP_SECRET,
+        "LOG_LEVEL": "DEBUG",
+        "LOG_FILE": "/tmp/la_facebook.log",
+        # The following keys are optional
+        # TODO - Comment next line out but still have tests pass
+        "CALLBACK": "la_facebook.callbacks.default.default_facebook_callback", 
+        "PROVIDER_SCOPE": ['email','publish_stream'], # here as sample - optional
+}
+
+
 
 USER_LEVELS = (
     (29, 'rookie'),

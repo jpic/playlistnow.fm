@@ -135,29 +135,34 @@ def socialregistration_userdata(request, form_class=UserDataForm,
 
             friends = []
             conditions = []
-            
-            for facebookprofile in user.facebookprofile_set.all():
-                print facebookprofile
-                friendlist = request.facebook.graph.request(request.facebook.user['uid'] + '/friends')
-                facebook_ids = [x['id'] for x in friendlist['data']]
+             
+            for facebookprofile in user.userassociation_set.all():
+                h = httplib2.Http()
+                resp, ct = h.request('https://graph.facebook.com/me/friends?' 
+                    + urllib.urlencode({'access_token': facebookprofile.token,}))
+                facebook_ids = [x['id'] for x in simplejson.loads(ct)['data']]
                 conditions.append(Q(facebookprofile__uid__in=facebook_ids))
 
-            if user.twitterprofile_set.count():
-                client = OAuthTwitter(
-                    request, settings.TWITTER_CONSUMER_KEY,
-                    settings.TWITTER_CONSUMER_SECRET_KEY,
-                    settings.TWITTER_REQUEST_TOKEN_URL,
-                )
-            for twitterprofile in user.twitterprofile_set.all():
-                res = simplejson.loads(client.query('http://api.twitter.com/1/statuses/friends.json'))
-                twitter_ids = [x['id'] for x in res]
-                conditions.append(Q(twitterprofile__twitter_id__in=twitter_ids))
+            try:
+                if user.twitterprofile_set.count():
+                    client = OAuthTwitter(
+                        request, settings.TWITTER_CONSUMER_KEY,
+                        settings.TWITTER_CONSUMER_SECRET_KEY,
+                        settings.TWITTER_REQUEST_TOKEN_URL,
+                    )
+                for twitterprofile in user.twitterprofile_set.all():
+                    res = simplejson.loads(client.query('http://api.twitter.com/1/statuses/friends.json'))
+                    twitter_ids = [x['id'] for x in res]
+                    conditions.append(Q(twitterprofile__twitter_id__in=twitter_ids))
+            
+                for gfcprofile in user.gfcprofile_set.all():
+                    container = gfc.my_opensocial_container(request)
+                    res = container.fetch_friends()
+                    gfc_ids = [x['id'] for x in res]
+                    conditions.append(Q(gfcprofile__uid__in=gfc_ids))
+            except:
+                pass
 
-            for la_facebookprofile in user.gfcprofile_set.all():
-                container = la_facebook.my_opensocial_container(request)
-                res = container.fetch_friends()
-                la_facebook_ids = [x['id'] for x in res]
-                conditions.append(Q(la_facebookprofile__uid__in=gfc_ids))
             
             for u in User.objects.filter(reduce(operator.or_,conditions)):
                 follow(user, u)
@@ -233,22 +238,25 @@ def socialregistration_friends(request,
         facebook_ids = [x['id'] for x in simplejson.loads(ct)['data']]
         conditions.append(Q(facebookprofile__uid__in=facebook_ids))
 
-    if user.twitterprofile_set.count():
-        client = OAuthTwitter(
-            request, settings.TWITTER_CONSUMER_KEY,
-            settings.TWITTER_CONSUMER_SECRET_KEY,
-            settings.TWITTER_REQUEST_TOKEN_URL,
-        )
-    for twitterprofile in user.twitterprofile_set.all():
-        res = simplejson.loads(client.query('http://api.twitter.com/1/statuses/friends.json'))
-        twitter_ids = [x['id'] for x in res]
-        conditions.append(Q(twitterprofile__twitter_id__in=twitter_ids))
+    try:
+        if user.twitterprofile_set.count():
+            client = OAuthTwitter(
+                request, settings.TWITTER_CONSUMER_KEY,
+                settings.TWITTER_CONSUMER_SECRET_KEY,
+                settings.TWITTER_REQUEST_TOKEN_URL,
+            )
+        for twitterprofile in user.twitterprofile_set.all():
+            res = simplejson.loads(client.query('http://api.twitter.com/1/statuses/friends.json'))
+            twitter_ids = [x['id'] for x in res]
+            conditions.append(Q(twitterprofile__twitter_id__in=twitter_ids))
 
-    for gfcprofile in user.gfcprofile_set.all():
-        container = gfc.my_opensocial_container(request)
-        res = container.fetch_friends()
-        gfc_ids = [x['id'] for x in res]
-        conditions.append(Q(gfcprofile__uid__in=gfc_ids))
+        for gfcprofile in user.gfcprofile_set.all():
+            container = gfc.my_opensocial_container(request)
+            res = container.fetch_friends()
+            gfc_ids = [x['id'] for x in res]
+            conditions.append(Q(gfcprofile__uid__in=gfc_ids))
+    except: 
+        pass
 
     context['friends'] = User.objects.filter(reduce(operator.or_,conditions))
     context['follows'] = [f.actor for f in user.follow_set.all()]
