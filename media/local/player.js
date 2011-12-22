@@ -370,12 +370,8 @@ var player = {
             track = player.parseRenderedTrack($(this));
             var li = $(this);
             
-            if (li.parents('div.playlist_track_list').find('#playlist_pk').length) {
-                player.playPlaylist(ui.currentUrl, $(this).prevAll().length);
-            } else {
-                var playlist = player.parseTrackList($(this).parent());
-                player.playPlaylist(playlist, $(this).prevAll().length);
-            }
+            var playlist = player.parseTrackList($(this).parent());
+            player.playPlaylist(playlist, $(this).prevAll().length);
         });
         $('.playplaylist_random').live('click', function() {
             if (!player.state.randomMode) {

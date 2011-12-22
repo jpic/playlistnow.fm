@@ -506,3 +506,15 @@ class Track(MusicalEntity):
                 artist=Artist(name=element.find('artist').text))
             match.lastfm_get_info(element)
             self.matches.append(match)
+
+#class DeleteCrashException(Exception):
+    #pass
+#def delete_crash(sender, **kwargs):
+    #exceptions = (
+        #'TaggedItem',
+        #'Session',
+    #)
+    #if sender.__name__ in exceptions:
+        #return None
+    #raise DeleteCrashException('%s, %s' % (sender, kwargs))
+#signals.pre_delete.connect(delete_crash)

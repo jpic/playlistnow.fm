@@ -1,4 +1,5 @@
 {% spaceless %}
+{% load markup %}
 {% load i18n %}
 {% load comments %}
 {% load music_tags %}
@@ -45,7 +46,7 @@
         this tracks
         {% endif %}
     {% endif %}
-    {% if activity.close %}
+    {% if activity.close and activity.action_object_group %}
         {% render_tracks activity.action_object_group '' request %}
     {% endif %}
 {% endif %}
@@ -61,7 +62,9 @@
         {% endif %}
     {% endif %}
     {% if activity.close %}
-        {% render_artists activity.action_object_group %}
+        {% if activity.action_object_group %}
+            {% render_artists activity.action_object_group %}
+        {% endif %}
         <div class="clear"></div>
     {% endif %}
 {% endif %}
@@ -78,9 +81,9 @@
     {% endif %}
     {% if activity.close %}
         {% if activity.action_object_group %}
-        {% render_tracks activity.action_object_group '' request %}
+            {% render_tracks activity.action_object_group '' request %}
         {% else %}
-        {% render_track activity.action_object '' request %}
+            {% render_track activity.action_object '' request %}
         {% endif %}
     {% endif %}
 {% endif %}
@@ -125,7 +128,7 @@
     <a class="bold" href="{{ activity.actor.get_absolute_url }}" title="{% trans "details of user" %} {{ activity.actor }}">{{ activity.actor }}</a>
     posted a message to
     <a class="bold" href="{{ activity.target.get_absolute_url }}" title="{% trans "details of user" %} {{ activity.target }}">{{ activity.target }}</a>
-    <p class="message">{{ activity.action_object.comment }}</p>
+    <p class="message">{{ activity.action_object.comment|markdown:"safe"|linebreaksbr }}</p>
 {% endif %}
 
 {% if request.user.is_authenticated and request.user == activity.actor %}
